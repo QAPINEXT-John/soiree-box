@@ -1,16 +1,16 @@
 {
- "version": "4.3",
+ "version": "4.4",
  "apk": 28,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Mises à jour obligatoires : tout le monde joue toujours sur la même version",
-  "Dans un salon, l'hôte voit qui doit mettre à jour avant de lancer une partie"
+  "Classement de la soirée réparé : affichage propre, ex aequo au même rang",
+  "Les écrans ne glissent plus sur le côté"
  ],
  "files": {
   "core.js": {
-   "h": "1f97df9cfa3d87e8916a08832110e643864ec31d5cc73deb247d1f7aa0057193",
-   "s": 93194
+   "h": "184cfa6d48e390ac4690a999f7d3f52917c691a2f0ced875f7b986bcc051a99f",
+   "s": 93322
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -173,8 +173,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "7d06674ee87965ff15fc6cc3568a9ad8b0b6585d17d54b75d5e569912f5a46d5",
-   "s": 40691
+   "h": "485effff0fa5590f1b2ea9e296c47c0a01ffa896defb6136abd56cc8ca22e438",
+   "s": 40888
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",

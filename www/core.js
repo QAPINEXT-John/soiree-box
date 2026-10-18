@@ -741,7 +741,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.3";
+const VERSION = "4.4";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -1021,8 +1021,9 @@ function tallyHTML(t, played){
   const r = A(t).map(A).filter(x => x[0] && x[1] > 0);
   if(!r.length) return "";
   const top = r[0][1];
-  return '<div class="tally"><span class="eyebrow">Classement de la soirée' + (played ? " · " + plural(played, "partie") : "") + '</span><ol>' +
-    r.slice(0, 5).map(x => '<li' + (x[1] === top ? ' class="top"' : "") + '><span class="nm">' + esc(x[0]) + '</span><span class="w">' + plural(x[1], "victoire") + "</span></li>").join("") + "</ol></div>";
+  let rank = 0, prev = -1;
+  return '<div class="sbt"><span class="eyebrow">Classement de la soirée' + (played ? " · " + plural(played, "partie") : "") + '</span><ol>' +
+    r.slice(0, 6).map((x, i) => { if(x[1] !== prev){ rank = i + 1; prev = x[1]; } return '<li' + (x[1] === top ? ' class="first"' : "") + '><span class="rk">' + rank + '</span><span class="nm">' + esc(x[0]) + '</span><span class="w">' + plural(x[1], "victoire") + "</span></li>"; }).join("") + "</ol></div>";
 }
 // Versions dans le salon : chaque téléphone annonce la sienne (presence.v).
 function peerV(p){ return clean(pres(p).v, 12); }

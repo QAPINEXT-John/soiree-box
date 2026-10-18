@@ -156,15 +156,15 @@ button{font:inherit; color:inherit; cursor:pointer}
 .last b{font-size:16px}
 #ll-tally{margin:4px 0 14px}
 .last .again{margin-top:10px}
-.tally{margin-top:10px; padding-top:10px; border-top:1.5px dashed var(--line)}
-#ll-tally .tally{margin:0; padding:0; border:0}
-.tally ol{list-style:none; margin:6px 0 0; padding:0; display:flex; flex-direction:column; gap:4px; counter-reset:t}
-.tally li{display:flex; align-items:baseline; gap:8px; font-size:14px; counter-increment:t}
-.tally li::before{content:counter(t); font-family:var(--f-disp); font-weight:800; color:var(--muted); width:14px}
-.tally li .nm{flex:1; font-weight:700}
-.tally li .w{color:var(--muted); font-size:13px}
-.tally li.top::before{color:var(--tone, var(--acc))}
-.tally li.top .w{color:var(--ink)}
+.sbt{margin-top:10px; padding-top:10px; border-top:1.5px dashed var(--line)}
+#ll-tally .sbt{margin:0; padding:0; border:0}
+.sbt ol{list-style:none; margin:8px 0 0; padding:0; display:flex; flex-direction:column; gap:6px}
+.sbt li{display:flex; align-items:center; gap:10px; font-size:15px; min-width:0}
+.sbt li .rk{flex:none; width:22px; height:22px; display:grid; place-items:center; border-radius:99px; background:var(--soft); color:var(--muted); font-family:var(--f-disp); font-weight:800; font-size:13px}
+.sbt li .nm{flex:1; min-width:0; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.sbt li .w{flex:none; color:var(--muted); font-size:13px}
+.sbt li.first .rk{background:var(--tone, var(--acc)); color:var(--on-acc, #14101a)}
+.sbt li.first .w{color:var(--ink); font-weight:700}
 /* Coups de théâtre (rejouabilité) */
 .twist{display:flex; flex-direction:column; gap:2px; padding:10px 14px 11px; margin:0 0 12px; border-radius:14px; background:var(--soft); border:1.5px dashed var(--tone, var(--acc)); text-align:left}
 .twist .tw-k{display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--tone, var(--acc))}
@@ -266,7 +266,7 @@ td{padding:8px 4px; border-top:1px solid var(--line); vertical-align:top; overfl
 @media (prefers-reduced-motion:reduce){ .btn,.bar .fl{transition:none} }
 /* ---------- Ergonomie mobile ---------- */
 button,.tile,.opt,.pack,.seg button,.ab button,.pad button{touch-action:manipulation; -webkit-user-select:none; user-select:none}
-.top{position:sticky; top:0; z-index:6; background:var(--bg); margin-inline:-4px; padding-inline:4px; padding-block:4px}
+.top{position:sticky; top:0; z-index:6; background:var(--bg); padding-block:4px; box-shadow:-4px 0 0 var(--bg), 4px 0 0 var(--bg)}
 .link{min-height:44px; display:inline-flex; align-items:center; padding:0 4px}
 .top .link{padding:0 2px}
 .seg button{min-height:46px}
