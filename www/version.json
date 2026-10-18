@@ -1,0 +1,185 @@
+{
+ "version": "4.2",
+ "apk": 27,
+ "apkMin": 27,
+ "base": "https://qapinext-john.github.io/soiree-box/",
+ "notes": [
+  "Mises à jour directement dans l'appli : plus besoin de retélécharger l'APK",
+  "Action ou vérité et Punchline, avec leurs paquets 18+",
+  "Réseau qui marche entre wifi et 4G, avec reprise d'hôte"
+ ],
+ "files": {
+  "core.js": {
+   "h": "f0df9c0dd50c917fef82daf1628ada56ae05e3172cd063890a0b6757d0f7f2ad",
+   "s": 89610
+  },
+  "firebase-app-compat.js": {
+   "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
+   "s": 32039
+  },
+  "firebase-auth-compat.js": {
+   "h": "4697f7d3fb4d4f6c5aa997303688e25ad7188f4ad8d092ac9ffe4cc8f8a946fd",
+   "s": 140149
+  },
+  "firebase-config.js": {
+   "h": "4869e7bdd92598f225138149a6890dcf375d8808a06e6cc223aebe4ca225ef11",
+   "s": 786
+  },
+  "firebase-database-compat.js": {
+   "h": "235d12f716e9a766244f577e5f8ba83f3a28a1a7429e5cb438ede8d0ea810cb6",
+   "s": 163817
+  },
+  "fonts/LICENSE-Bricolage.txt": {
+   "h": "923f4ddf0fd39f9b7794ab0df7332f3d95dc43e8ad7ec2289d6d9e8491177f51",
+   "s": 4401
+  },
+  "fonts/LICENSE-Figtree.txt": {
+   "h": "bb272dfcd8801eb31fb98fe51828f76f0e41ac82f89256101df8021aa3d30ce2",
+   "s": 4387
+  },
+  "fonts/bricolage-grotesque-latin-600-normal.woff2": {
+   "h": "b34fc8c1ef0ac8798455ac2979eae4b4f90f0d327e3584d1032fa77a8a9a66ca",
+   "s": 22456
+  },
+  "fonts/bricolage-grotesque-latin-700-normal.woff2": {
+   "h": "4c373ce3c1cca41c864eb3e27c059a59fc6310547ab9c9b6cd780d387ba24206",
+   "s": 22384
+  },
+  "fonts/bricolage-grotesque-latin-800-normal.woff2": {
+   "h": "3e1b5f0a56ee995b7c1445bc54e6ec98c5dffb585ef5c4baf86731cf68e27c61",
+   "s": 21844
+  },
+  "fonts/bricolage-grotesque-latin-ext-600-normal.woff2": {
+   "h": "9903537bd117c519eedf2d80824d1cb4591238edde5ecd00b9d69fef5c9e9375",
+   "s": 10616
+  },
+  "fonts/bricolage-grotesque-latin-ext-700-normal.woff2": {
+   "h": "25d714d702deab603819c7fbc619d6d63d86a0d055fa61b3b9f0453f9d5e697a",
+   "s": 10632
+  },
+  "fonts/bricolage-grotesque-latin-ext-800-normal.woff2": {
+   "h": "e101adfee20e88db3b345948b0bdc43da40253cc8c7139d7752d01704718d825",
+   "s": 10496
+  },
+  "fonts/figtree-latin-400-normal.woff2": {
+   "h": "cb2880eb4d03a4e6b3e5c3b2812772b6922694d333c4ed8aa529d774ff346e25",
+   "s": 11528
+  },
+  "fonts/figtree-latin-600-normal.woff2": {
+   "h": "7f51b3b3e5d27301d34903e74cc550d8cbff6842e1933ea676014da9b1c4aa90",
+   "s": 11676
+  },
+  "fonts/figtree-latin-800-normal.woff2": {
+   "h": "05a101d93357967f4681b1aa74f623fbda1ab075fbcb5da416316911f31c73f8",
+   "s": 11528
+  },
+  "fonts/figtree-latin-ext-400-normal.woff2": {
+   "h": "0926098f7ed20f2e2057f5c73062f4a2ec2adbbf3452851627ac939e703e2fd9",
+   "s": 6264
+  },
+  "fonts/figtree-latin-ext-600-normal.woff2": {
+   "h": "8079eb7af98c075e115fba584d0d3e647ad914e549d80488aa6b90bba354ad01",
+   "s": 6224
+  },
+  "fonts/figtree-latin-ext-800-normal.woff2": {
+   "h": "64e10a526c861dbd6b9b1eb5836fea5e7d254431d6ab29a935c8bdc635d5d5d2",
+   "s": 6236
+  },
+  "games/actionverite.js": {
+   "h": "aa4b5a24ca3bde1fcbf61f0bbbffafabb50ef324ed32112e7182dbc6bd726829",
+   "s": 63925
+  },
+  "games/defis.js": {
+   "h": "97c22b49361644c32fda1d6829f1a6778519cb724294cc4303cde87e02046645",
+   "s": 41222
+  },
+  "games/dernierecarte.js": {
+   "h": "d0054c78f767b9ba295c6f9c262f89c7be110e95691a5728ddfa61ae274c9e4a",
+   "s": 54437
+  },
+  "games/killer.js": {
+   "h": "200307423687a99b089d633d744813c387432fe10166ea57b3fe8ec1bb653780",
+   "s": 48044
+  },
+  "games/loupgarou.js": {
+   "h": "84adf6429c3a81f6e299de1a67a6b0bf2f2ff533885d8aa0f51cc45687536af3",
+   "s": 54910
+  },
+  "games/menteurs.js": {
+   "h": "9845a542a4ee65ee690ab7d2e5b17643767e1df013d6219ce930cefe827e1a09",
+   "s": 37765
+  },
+  "games/motsint.js": {
+   "h": "57bf4708b9d6caed5360e4d25be635a0eb698f0d9b0fa130ecdf6c40494be522",
+   "s": 31554
+  },
+  "games/note10.js": {
+   "h": "49cf7218b78bbfc27f3814a1e9559c08623d3a99b19a163e92e611a8152da432",
+   "s": 69081
+  },
+  "games/priorites.js": {
+   "h": "4ddc3fc28ab108dbfa9374960bf3ac68dddc7cdfbc010c223ee78d20344488d8",
+   "s": 29316
+  },
+  "games/punchline.js": {
+   "h": "79439413f828358721ca976281e4a1c6409148b645badfa01efcf2fcb985c80c",
+   "s": 73112
+  },
+  "games/purete.js": {
+   "h": "531e13963837d31b1bd696c2546df2fb859528e09dad9f0f4f1139b78853e82a",
+   "s": 32374
+  },
+  "games/quiadit.js": {
+   "h": "b0674479e6dc5c7d510e15a735fff0f0fa9fab31a583a2a71525d73429177bdc",
+   "s": 35205
+  },
+  "games/quiplus.js": {
+   "h": "96b12f5bf925698453a187a267ea9e19f0e11c0eb5ac3260caecc33f47cb25b0",
+   "s": 25786
+  },
+  "games/redflag.js": {
+   "h": "965b002dd38a7866d916616ffc74f6a917e7918464775a3b15898f21a09d58ed",
+   "s": 47479
+  },
+  "games/tupref.js": {
+   "h": "4b049eb158435e085637c376ff053744a29ed737bf9e40be641acc960bff4107",
+   "s": 28791
+  },
+  "games/undercover.js": {
+   "h": "6757b153953c4b9c13c1935ce1e57818c29f8fdb9c4a20e7e72dee7f1aa05b35",
+   "s": 36375
+  },
+  "icons/apple-touch-icon.png": {
+   "h": "c6a8d73afcfb5db146ca68617cea122c1b06465d3a6bde68efe2ecc2d8ece998",
+   "s": 10706
+  },
+  "icons/favicon-64.png": {
+   "h": "724fd402231e8a1cac119a1e2f8273e459ba141b67194a10ad9226f2ec0ffeac",
+   "s": 3120
+  },
+  "icons/icon-1024.png": {
+   "h": "078171752818d3265811a9b022bc16eb2587394c4eef9f0b88206e9cbd6eb82d",
+   "s": 34306
+  },
+  "icons/icon-192.png": {
+   "h": "62fa492961254966e5006abc251b310956d8792210d7723b4a99a095bebc7153",
+   "s": 11416
+  },
+  "icons/icon-512.png": {
+   "h": "61ad77bc828f4b6e037985abe2d4a8719576a17f20dff891cd6eabab21e739f8",
+   "s": 31122
+  },
+  "icons/maskable-512.png": {
+   "h": "158f21af06aa95bc6e72d83ffbf1c54ee23f6af4c48055e79f84fd506802b0e7",
+   "s": 25520
+  },
+  "index.html": {
+   "h": "75cac55688dddd81c8fbcd6db05e3523bef17b64ada7a12a2b24541784fa32a9",
+   "s": 40195
+  },
+  "manifest.webmanifest": {
+   "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
+   "s": 705
+  }
+ }
+}

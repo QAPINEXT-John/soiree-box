@@ -1,0 +1,26 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "rooms": {
+      "$code": {
+        ".read": "auth != null && $code.matches(/^[A-Z]{4}$/)",
+        "meta": {
+          ".write": "auth != null && $code.matches(/^[A-Z]{4}$/) && (!data.exists() || data.child('created').val() < now - 43200000 || (newData.child('created').val() === data.child('created').val() && newData.child('hostUid').val() === auth.uid && root.child('rooms/' + $code + '/players/' + data.child('hostUid').val() + '/online').val() !== true))",
+          ".validate": "newData.child('hostUid').val() === auth.uid && newData.child('created').isNumber()"
+        },
+        "g": {
+          ".write": "auth != null && root.child('rooms/' + $code + '/meta/hostUid').val() === auth.uid"
+        },
+        "priv": {
+          ".write": "auth != null && root.child('rooms/' + $code + '/meta/hostUid').val() === auth.uid"
+        },
+        "players": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        }
+      }
+    }
+  }
+}

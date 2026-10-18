@@ -1,0 +1,5 @@
+{
+  "base": "https://qapinext-john.github.io/soiree-box/",
+  "apkMin": 27,
+  "_aide": "base = adresse publique où le dossier www est publié (GitHub Pages). apkMin = plus petit versionCode Android capable d'utiliser cette version : à augmenter seulement si la partie Android (dossier android/src) change."
+}

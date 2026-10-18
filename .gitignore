@@ -1,0 +1,6 @@
+# Clé de signature de l'APK : ne jamais la publier.
+android/signing/
+# Fichiers de compilation
+android/build/
+*.idsig
+.DS_Store
