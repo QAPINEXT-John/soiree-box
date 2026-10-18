@@ -309,6 +309,11 @@ button,.tile,.opt,.pack,.seg button,.ab button,.pad button{touch-action:manipula
 .upd .btn{min-height:50px; font-size:17px}
 .upd .pg{height:10px; border-radius:99px; background:var(--soft); overflow:hidden}
 .upd .pg i{display:block; height:100%; background:var(--acc); border-radius:99px; transition:width .25s}
+.gate{position:fixed; inset:0; z-index:90; background:var(--bg); display:flex; align-items:center; justify-content:center; padding:24px 16px calc(24px + env(safe-area-inset-bottom,0px)); overflow-y:auto}
+.gate[hidden]{display:none}
+.gate-in{width:100%; max-width:480px; display:flex; flex-direction:column; gap:16px}
+.gate .brand-s{font-family:var(--f-disp); font-weight:800; font-size:30px; letter-spacing:-.02em; text-align:center}
+.pill.late{background:var(--bad); color:var(--dark, #14101a)}
 .ver{margin:0 auto; font-size:13px; color:var(--muted); text-align:center}
 .ver button{background:none; border:0; color:var(--muted); font:inherit; font-weight:700; text-decoration:underline; text-underline-offset:3px; padding:8px 4px; min-height:40px}
 /* Signaler un bug */

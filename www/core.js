@@ -404,7 +404,7 @@ async function relayRoom(code, asHost){
     if(top === "c"){
       if(!host || o.f === me || o.f !== t.slice(2)) return;
       if(o.bye){ if(roster.delete(o.f)) changed(); return; }
-      const p = mergePatch({}, o.p && typeof o.p === "object" ? o.p : {}, ["name", "in", "x"]), pj = JSON.stringify(p);
+      const p = mergePatch({}, o.p && typeof o.p === "object" ? o.p : {}, ["name", "in", "x", "v"]), pj = JSON.stringify(p);
       if(pj.length > 8000) return;
       const r = roster.get(o.f);
       if(!r && roster.size >= 16) return;
@@ -691,6 +691,7 @@ function show(name){
   SCREENS.forEach(s => { $("#s-" + s).hidden = s !== name; });
   const el = $("#s-" + name); if(el){ el.scrollTop = 0; enter(el); }
   current = name; trail("Écran " + name);
+  if(typeof updateGate === "function") try{ updateGate(); }catch(e){}
 }
 
 /* ---------- Panneau du bas (fiche de jeu) ---------- */
@@ -740,7 +741,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.2";
+const VERSION = "4.3";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -918,7 +919,7 @@ function goHome(){ accent(""); keepAwake(false); show("home"); renderHome(); }
 /* =================== Mises à jour sans réinstaller (appli Android) ===================
    L'appli vérifie en ligne (version.json) s'il y a une nouvelle version. Les nouveautés se téléchargent
    en quelques secondes dans l'appli ; seul un changement de la partie Android demande un nouvel APK. */
-const UP = { st: null, last: 0, manual: false };
+const UP = { st: null, last: 0, manual: false, need: null };
 function upInfo(){ try{ return JSON.parse(window.AndroidUpdate.info() || "{}"); }catch(e){ return {}; } }
 function checkUpdate(manual){
   if(!window.AndroidUpdate) return;
@@ -928,6 +929,8 @@ function checkUpdate(manual){
 }
 SB.onUpdate = function(e){
   if(!e || typeof e !== "object") return;
+  if(e.t === "avail" && e.v) UP.need = String(e.v);
+  if(e.t === "none") UP.need = null;
   if(e.t === "none"){ if(UP.manual) toast("Tu as déjà la dernière version (" + e.v + ")."); UP.st = null; }
   else if(e.t === "error" && !UP.manual && !(UP.st && (UP.st.t === "progress" || UP.st.t === "avail"))) UP.st = null;
   else if(e.t === "progress") UP.st = Object.assign({}, UP.st, e, { t: "progress" });
@@ -936,6 +939,28 @@ SB.onUpdate = function(e){
   if(e.t === "error") trail("Mise à jour : " + (e.msg || "erreur"));
   renderUpdate();
 };
+// Toutes les mises à jour sont obligatoires : tant qu'une version plus récente existe, on ne joue pas.
+const FORCE_UPDATES = true;
+function cmpV(a, b){ const x = String(a || "0").split("."), y = String(b || "0").split("."); for(let i = 0; i < Math.max(x.length, y.length); i++){ const p = +x[i] || 0, q = +y[i] || 0; if(p !== q) return p < q ? -1 : 1; } return 0; }
+const PLAYING = ["game", "local", "spect"];
+let gateAsked = "";
+// Écran bloquant « Mise à jour obligatoire » (jamais pendant une partie en cours : il s'affiche juste après).
+function updateGate(){
+  let g = document.getElementById("sb-gate");
+  const u = UP.st, salonV = N.nr ? newestV(namedPeers()) : VERSION, behind = cmpV(salonV, VERSION) > 0;
+  const forced = !!(FORCE_UPDATES && UP.need && cmpV(UP.need, VERSION) > 0);
+  const on = (forced || behind) && PLAYING.indexOf(current) < 0;
+  if(!on){ if(g) g.hidden = true; return; }
+  if(behind && !forced && window.AndroidUpdate && gateAsked !== salonV){ gateAsked = salonV; checkUpdate(false); }
+  if(!g){ g = document.createElement("div"); g.id = "sb-gate"; g.className = "gate"; g.setAttribute("role", "dialog"); g.setAttribute("aria-modal", "true"); document.body.append(g); }
+  g.hidden = false;
+  const box = forced ? updateHTML(u || { t: "checking" }, true) :
+    '<div class="h"><span class="eyebrow">Mise à jour obligatoire</span><b>Ce salon joue avec Soirée Box ' + esc(salonV) + '</b><span class="sm">Tu as la ' + esc(VERSION) + ". Mets à jour pour jouer avec eux.</span></div>" +
+    (window.AndroidUpdate ? '<button class="btn acc" type="button" data-retry>Chercher la mise à jour</button>' : '<button class="btn acc" type="button" data-reload>Recharger la page</button>') +
+    (N.nr ? '<button class="link" type="button" data-leave style="align-self:center">Quitter le salon</button>' : "");
+  const html = '<div class="gate-in"><div class="brand-s">Soirée Box</div><div class="upd">' + box + "</div></div>";
+  if(g.dataset.h !== html){ g.dataset.h = html; g.innerHTML = html; bindUpdate(g); }
+}
 function renderUpdate(){
   const el = $("#h-update"), ver = $("#h-ver");
   if(ver){
@@ -943,17 +968,22 @@ function renderUpdate(){
     ver.innerHTML = "Version " + esc(info.version || VERSION) + (window.AndroidUpdate ? ' · <button type="button" data-chk>Vérifier les mises à jour</button>' : "");
     const b = $("[data-chk]", ver); if(b) b.addEventListener("click", () => checkUpdate(true));
   }
+  updateGate();
   if(!el) return;
   const u = UP.st;
-  if(!u){ el.hidden = true; el.innerHTML = ""; return; }
+  if(!u || (FORCE_UPDATES && u.t !== "checking" && u.t !== "error")){ el.hidden = true; el.innerHTML = ""; return; }
+  el.innerHTML = updateHTML(u, false); el.hidden = !el.innerHTML;
+  bindUpdate(el);
+}
+function updateHTML(u, forced){
   let h = "";
   if(u.t === "checking") h = '<div class="h"><b>Recherche de mises à jour…</b></div>';
   else if(u.t === "avail"){
     const notes = A(u.notes).slice(0, 5);
-    h = '<div class="h"><span class="eyebrow">Nouvelle version</span><b>Soirée Box ' + esc(u.v) + ' est disponible</b><span class="sm">Tu as la ' + esc(u.cur || VERSION) + "</span></div>" +
+    h = '<div class="h"><span class="eyebrow">' + (forced ? "Mise à jour obligatoire" : "Nouvelle version") + '</span><b>Soirée Box ' + esc(u.v) + ' est disponible</b><span class="sm">Tu as la ' + esc(u.cur || VERSION) + "</span></div>" +
       (notes.length ? "<ul>" + notes.map(n => "<li>" + esc(clean(n, 160)) + "</li>").join("") + "</ul>" : "") +
       (u.needApk ? '<p class="sm">Cette version change la partie Android : télécharge la nouvelle appli et installe-la par-dessus. Tes réglages et ton historique sont gardés.</p><button class="btn acc" type="button" data-apk>Télécharger la nouvelle appli</button>'
-        : '<button class="btn acc" type="button" data-go>Mettre à jour maintenant</button><button class="link" type="button" data-later style="align-self:center">Plus tard</button>');
+        : '<button class="btn acc" type="button" data-go>Mettre à jour maintenant</button>' + (forced ? "" : '<button class="link" type="button" data-later style="align-self:center">Plus tard</button>'));
   } else if(u.t === "progress"){
     const p = u.total ? Math.round(100 * u.done / u.total) : 0;
     h = '<div class="h"><b>Mise à jour en cours…</b><span class="sm">' + (u.done || 0) + " / " + (u.total || "?") + ' fichiers vérifiés</span></div><div class="pg"><i style="width:' + p + '%"></i></div>';
@@ -962,10 +992,15 @@ function renderUpdate(){
       '<button class="btn acc" type="button" data-restart>Redémarrer maintenant</button>';
   } else if(u.t === "error"){
     h = '<div class="h"><b>Mise à jour impossible</b><span class="sm">' + esc(u.msg || "Vérifie ta connexion internet.") + "</span></div>" +
-      '<button class="btn ghost" type="button" data-retry>Réessayer</button><button class="link" type="button" data-later style="align-self:center">Fermer</button>';
+      '<button class="btn ghost" type="button" data-retry>Réessayer</button>' + (forced ? "" : '<button class="link" type="button" data-later style="align-self:center">Fermer</button>');
   }
-  el.innerHTML = h; el.hidden = !h;
+  if(forced && u.t === "avail") h += '<p class="sm">Il faut la dernière version pour jouer. Ça prend quelques secondes.</p>';
+  return h;
+}
+function bindUpdate(el){
   const on = (sel, fn) => { const b = $(sel, el); if(b) b.addEventListener("click", fn); };
+  on("[data-reload]", () => { try{ location.reload(); }catch(e){} });
+  on("[data-leave]", () => netLeave());
   on("[data-go]", () => { buzz(16); UP.st = { t: "progress", done: 0, total: 0 }; renderUpdate(); try{ window.AndroidUpdate.apply(); }catch(e){} });
   on("[data-apk]", () => { try{ window.AndroidUpdate.openApk(); }catch(e){} toast("Le téléchargement s'ouvre : installe le fichier par-dessus l'appli."); });
   on("[data-restart]", () => { try{ window.AndroidUpdate.restart(); }catch(e){ location.reload(); } });
@@ -989,6 +1024,10 @@ function tallyHTML(t, played){
   return '<div class="tally"><span class="eyebrow">Classement de la soirée' + (played ? " · " + plural(played, "partie") : "") + '</span><ol>' +
     r.slice(0, 5).map(x => '<li' + (x[1] === top ? ' class="top"' : "") + '><span class="nm">' + esc(x[0]) + '</span><span class="w">' + plural(x[1], "victoire") + "</span></li>").join("") + "</ol></div>";
 }
+// Versions dans le salon : chaque téléphone annonce la sienne (presence.v).
+function peerV(p){ return clean(pres(p).v, 12); }
+function newestV(np){ return A(np).reduce((m, p) => (cmpV(peerV(p) || "0", m) > 0 ? peerV(p) : m), VERSION); }
+function lateNames(np){ const top = newestV(np); return A(np).filter(p => cmpV(peerV(p) || "0", top) < 0).map(p => clean(pres(p).name, 16)); }
 function pres(p){ return p && p.presence && typeof p.presence === "object" ? p.presence : {}; }
 function peerById(id){ return N.peers.find(p => p.peer === id); }
 function namedPeers(){ return N.peers.filter(p => clean(pres(p).name, 16)); }
@@ -1041,7 +1080,7 @@ async function netEnter(code, asHost){
       if(N.nr && N.nr.kind === "p2p" && !N.host) setTimeout(() => { if(N.nr && !N.connected) show("lost"); }, 2500);
     }, 2000);
   }));
-  nr.presence({ name, in: null, x: plain(myExtras()) });
+  nr.presence({ name, in: null, x: plain(myExtras()), v: VERSION });
   if(N.host) nr.setGame(N.g);
   persist({ name });
   keepAwake(true);
@@ -1233,7 +1272,7 @@ function renderSalon(g){
   const hostId = N.host ? N.nr.me() : N.nr.hostId();
   $("#sa-count").textContent = plural(np.length, "joueur") + " dans le salon";
   const roster = np.map((p, i) => { const nm = clean(pres(p).name, 16); return '<li' + (p.sameTab ? ' class="me"' : "") + '><span class="av" style="--c:' + AVC[i % AVC.length] + '" aria-hidden="true">' + esc(nm.slice(0, 1).toUpperCase()) + '</span><span class="nm">' + esc(nm) + (p.sameTab ? " · toi" : "") + "</span>" +
-    (p.peer === hostId ? '<span class="pill me">Hôte</span>' : "") + "</li>"; }).join("");
+    (p.peer === hostId ? '<span class="pill me">Hôte</span>' : "") + (cmpV(peerV(p) || "0", newestV(np)) < 0 ? '<span class="pill late">À mettre à jour</span>' : "") + "</li>"; }).join("");
   if($("#sa-roster").innerHTML !== roster) $("#sa-roster").innerHTML = roster;
   const last = $("#sa-last");
   if(g && g.last && g.last.title){
@@ -1279,14 +1318,15 @@ function renderSalon(g){
   const ctx = makeCtx();
   const vals = optValues(def);
   const dyn = optList(def).map(op => (typeof op.values === "function" ? op.values(ctx) : null));
-  const n = np.length, ok = n >= def.min && (!def.max || n <= def.max);
-  const key = JSON.stringify([def.id, vals, dyn, n]);
+  const late = lateNames(np);
+  const n = np.length, ok = n >= def.min && (!def.max || n <= def.max) && !late.length;
+  const key = JSON.stringify([def.id, vals, dyn, n, late]);
   if(panel.dataset.key === key) return;
   panel.dataset.key = key;
   $("#sheet").className = "sheet" + (sheetOpen ? " on" : "") + " acc-" + def.id;
   let h = '<div class="sheet-head"><span class="gl">' + esc(def.glyph || "") + '</span><div><h2>' + esc(def.name) + '</h2><span class="sm">' + (def.max ? def.min + " à " + def.max : def.min + " ou plus") + " joueurs</span></div></div>" +
     '<p class="lead">' + esc(def.tag || "") + "</p>" + rulesHTML(def) + optionsHTML(def, ctx, vals);
-  h += dock('<p class="err" id="sa-err"' + (ok ? " hidden" : "") + ">" + (ok ? "" : (n < def.min ? "Il faut au moins " + def.min + " joueurs dans le salon (" + n + " pour l'instant)." : "Ce jeu se joue à " + def.max + " joueurs maximum.")) + "</p>" +
+  h += dock('<p class="err" id="sa-err"' + (ok ? " hidden" : "") + ">" + (ok ? "" : late.length ? esc(late.join(", ")) + (late.length > 1 ? " doivent" : " doit") + " mettre à jour Soirée Box avant de jouer." : (n < def.min ? "Il faut au moins " + def.min + " joueurs dans le salon (" + n + " pour l'instant)." : "Ce jeu se joue à " + def.max + " joueurs maximum.")) + "</p>" +
     '<button class="btn acc" id="sa-go" type="button"' + (ok ? "" : " disabled") + ">Lancer la partie</button>");
   const st = panel.scrollTop;
   panel.innerHTML = h;
@@ -1304,6 +1344,7 @@ function renderSalon(g){
 }
 function launch(def){
   if(!N.host || !N.g) return;
+  if(lateNames(namedPeers()).length || cmpV(newestV(namedPeers()), VERSION) > 0){ toast("Tout le monde doit avoir la dernière version de Soirée Box."); return; }
   trail("Lancement : " + def.id);
   const np = namedPeers();
   if(np.length < def.min || (def.max && np.length > def.max)) return;
@@ -1383,7 +1424,7 @@ function startLocal(def, names){
 /* =================== Démarrage =================== */
 SB.boot = function(){
   if(window.AndroidUpdate){
-    setTimeout(() => checkUpdate(false), 2500);
+    setTimeout(() => checkUpdate(false), 400);
     document.addEventListener("visibilitychange", () => { if(document.visibilityState === "visible" && Date.now() - UP.last > 3 * 3600 * 1000 && !(UP.st && UP.st.t === "progress")) checkUpdate(false); });
   }
   renderUpdate();

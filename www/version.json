@@ -1,17 +1,16 @@
 {
- "version": "4.2",
- "apk": 27,
+ "version": "4.3",
+ "apk": 28,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Mises à jour directement dans l'appli : plus besoin de retélécharger l'APK",
-  "Action ou vérité et Punchline, avec leurs paquets 18+",
-  "Réseau qui marche entre wifi et 4G, avec reprise d'hôte"
+  "Mises à jour obligatoires : tout le monde joue toujours sur la même version",
+  "Dans un salon, l'hôte voit qui doit mettre à jour avant de lancer une partie"
  ],
  "files": {
   "core.js": {
-   "h": "f0df9c0dd50c917fef82daf1628ada56ae05e3172cd063890a0b6757d0f7f2ad",
-   "s": 89610
+   "h": "1f97df9cfa3d87e8916a08832110e643864ec31d5cc73deb247d1f7aa0057193",
+   "s": 93194
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -174,8 +173,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "75cac55688dddd81c8fbcd6db05e3523bef17b64ada7a12a2b24541784fa32a9",
-   "s": 40195
+   "h": "7d06674ee87965ff15fc6cc3568a9ad8b0b6585d17d54b75d5e569912f5a46d5",
+   "s": 40691
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
