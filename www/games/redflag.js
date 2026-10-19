@@ -5,68 +5,68 @@ const { esc, A, screen, txt, store, persist, dock, buzz } = SB.u;
 
 const FLAGS = [
   "Ton date répond « mdr » à tout","Ton date a quatre chats","Ton date n'a jamais quitté sa ville natale","Ton date like encore les photos de son ex",
-  "Ton date met du ketchup sur les pâtes","Ton date dit « on » quand il parle de lui et sa mère","Ton date a encore son ex en fond d'écran",
+  "Ton date met du ketchup sur les pâtes","Ton date dit « on » quand il parle de lui et de sa mère","Ton date a encore son ex en fond d'écran",
   "Ton date te fait une déclaration au bout de deux jours","Ton date ne boit jamais d'alcool","Ton date est à fond dans l'astrologie","Ton date n'aime pas les animaux",
   "Ton date te présente à ses parents au deuxième rendez-vous","Ton date est toujours en retard","Ton date partage son compte Netflix avec son ex",
   "Ton date poste toute sa vie sur Instagram","Ton date n'a aucun réseau social","Ton date tient un journal intime","Ton date mange la bouche ouverte",
-  "Ton date est encore très proche de son ex","Ton date a le prénom de son ex tatoué","Ton date pleure devant les films Disney","Ton date dort avec un doudou",
-  "Ton date ne s'excuse jamais","Ton date est jaloux de ton chat","Ton date calcule l'addition au centime près","Ton date t'offre des fleurs sans raison",
+  "Ton date part en vacances avec son ex « en toute amitié »","Ton date a le prénom de son ex tatoué","Ton date pleure devant les films Disney","Ton date dort avec un doudou",
+  "Ton date ne s'excuse jamais","Ton date est jaloux de ton chat","Ton date te demande de rembourser le café du premier rendez-vous","Ton date t'offre des fleurs sans raison",
   "Ton date se souvient de tout ce que tu lui racontes","Ton date t'envoie des vocaux de 8 minutes","Ton date vit en colocation à 35 ans","Ton date vit chez ses parents à 30 ans",
-  "Ton date ne parle que de cryptomonnaie","Ton date parle de son ex au premier rendez-vous","Ton date est resté ami avec tous ses ex","Ton date va à la salle à 5 h du matin",
-  "Ton date n'a jamais lu un livre","Ton date dit « je t'aime » en premier","Ton date déteste tes amis","Ton date est adorable avec les serveurs",
+  "Ton date ne parle que de cryptos","Ton date parle de son ex au premier rendez-vous","Ton date est resté ami avec tous ses ex","Ton date va à la salle à 5 h du matin",
+  "Ton date n'a jamais lu un seul livre","Ton date dit « je t'aime » en premier","Ton date déteste tes amis","Ton date est adorable avec les serveurs",
   "Ton date est désagréable avec les serveurs","Ton date ronfle comme un tracteur","Ton date lit tes messages par-dessus ton épaule","Ton date a 100 000 abonnés sur TikTok",
   "Ton date veut six enfants","Ton date ne veut pas d'enfant","Ton date n'a pas de lit, juste un matelas par terre","Ton date joue aux jeux vidéo toute la nuit",
   "Ton date cuisine comme un chef","Ton date tient toujours ses promesses","Ton date te demande ton signe astro avant ton prénom","Ton date dit que son ex était « folle »",
   "Ton date a peur des chiens","Ton date s'excuse auprès des meubles quand il se cogne","Ton date te bloque après chaque dispute","Ton date répond à tes messages en trois secondes",
   "Ton date met trois jours à répondre","Ton date rit à ses propres blagues","Ton date ne sait pas faire cuire des pâtes","Ton date garde tous les tickets de caisse",
   "Ton date appelle sa mère trois fois par jour","Ton date a un plan de carrière sur 20 ans","Ton date change de passion toutes les semaines","Ton date ne quitte jamais ses lunettes de soleil",
-  "Ton date parle en citations de films","Ton date te prépare le petit-déjeuner au lit","Ton date fait des listes pour tout","Ton date n'a jamais d'argent sur lui",
+  "Ton date ne parle qu'en répliques de films","Ton date t'apporte le petit-déjeuner au lit","Ton date fait des listes pour tout","Ton date n'a jamais d'argent sur lui",
   "Ton date te demande l'autorisation avant de t'embrasser","Ton date connaît par cœur toutes les chansons de Disney","Ton date regarde ses mails pendant le dîner",
-  "Ton date est végétarien et te le rappelle à chaque repas","Ton date commente tes stories en moins d'une minute","Ton date veut un chien dès le premier mois",
+  "Ton date est végétarien et te le rappelle à chaque repas","Ton date commente tes stories en moins d'une minute","Ton date veut adopter un chien avec toi dès le premier mois",
   "Ton date applaudit quand l'avion atterrit","Ton date a donné un surnom à sa voiture","Ton date connaît le prénom de tous ses voisins","Ton date ne regarde jamais un film jusqu'au bout",
-  "Ton date lit la fin des livres en premier","Ton date photographie chaque plat au restaurant","Ton date commande toujours exactement la même chose","Ton date mange la pizza avec un couteau et une fourchette",
-  "Ton date fait sonner son réveil dix fois avant de se lever","Ton date ne sait pas nager","Ton date a créé un compte dédié à son animal","Ton date parle à ses plantes",
-  "Ton date garde les étiquettes sur ses vêtements au cas où","Ton date n'a jamais vu la mer","Ton date a déjà choisi le prénom de vos futurs enfants","Ton date veut emménager avec toi au bout d'un mois",
-  "Ton date t'envoie des articles avec ses commentaires surlignés","Ton date parle de lui à la troisième personne","Ton date refuse de partager ses frites","Ton date te laisse toujours la dernière part",
+  "Ton date lit la fin des livres en premier","Ton date photographie chaque plat au restaurant","Ton date commande toujours exactement la même chose","Ton date mange la pizza au couteau et à la fourchette",
+  "Ton date fait sonner son réveil dix fois avant de se lever","Ton date ne sait pas nager","Ton date a créé un compte Instagram pour son chat","Ton date parle à ses plantes",
+  "Ton date garde les étiquettes de ses vêtements, au cas où il faudrait les rendre","Ton date n'a jamais vu la mer","Ton date a déjà choisi le prénom de vos futurs enfants","Ton date veut emménager avec toi au bout d'un mois",
+  "Ton date t'envoie des articles surlignés et annotés","Ton date parle de lui à la troisième personne","Ton date refuse de partager ses frites","Ton date te laisse toujours la dernière part",
   "Ton date fait du karaoké seul dans sa voiture","Ton date collectionne des figurines et interdit qu'on les touche","Ton date paie la salle de sport mais n'y va jamais","Ton date est en procès avec ses voisins",
-  "Ton date prend toujours la défense de son ex","Ton date note chaque restaurant sur 5 en sortant","Ton date t'appelle par ton nom de famille","Ton date fête chaque mois de votre rencontre",
-  "Ton date demande l'avis de sa bande d'amis avant chaque décision","Ton date tient un tableur de toutes ses dépenses","Ton date donne un prénom à chacun de ses objets","Ton date dort en chaussettes en plein été",
+  "Ton date prend toujours la défense de son ex","Ton date note chaque restaurant sur 5 en sortant","Ton date t'appelle par ton nom de famille","Ton date fête chaque mois l'anniversaire de votre rencontre",
+  "Ton date demande l'avis de sa bande d'amis avant chaque décision","Ton date tient un tableur de toutes ses dépenses","Ton date repasse ses jeans et ses chaussettes","Ton date dort en chaussettes en plein été",
   "Ton date n'a d'avis sur rien","Ton date a un avis sur absolument tout","Ton date poste une citation inspirante tous les matins","Ton date te glisse des petits mots dans les poches",
-  "Ton date te demande ton avis avant de commander","Ton date divise l'addition sur une appli devant toi","Ton date fait un escape game chaque week-end","Ton date parle cinq langues mais ne répond à aucun message",
+  "Ton date te demande ton avis avant de commander","Ton date calcule ta part de l'addition sur une appli, devant toi","Ton date fait un escape game chaque week-end","Ton date parle cinq langues mais ne répond à aucun message",
   "Ton date t'interdit de manger dans sa voiture","Ton date veut adopter un serpent","Ton date déteste le fromage","Ton date se lève à 4 h pour méditer",
-  "Ton date garde sa veste au restaurant, prêt à partir","Ton date relit ses messages à voix haute avant de les envoyer"
+  "Ton date garde sa veste sur le dos au restaurant, comme prêt à filer","Ton date relit ses messages à voix haute avant de les envoyer"
 ];
 const ADULTE = [
   "Ton date propose un plan à trois au deuxième rendez-vous","Ton date garde ses chaussettes pendant l'acte","Ton date a gardé les nudes de tous ses ex",
   "Ton date tient un tableur de ses partenaires","Ton date te demande ton nombre de partenaires au premier verre","Ton date simule, et tu le sais",
   "Ton date parle de son ex pendant l'acte","Ton date veut tout filmer","Ton date est abonné à quinze comptes OnlyFans","Ton date a un compte OnlyFans",
-  "Ton date propose un club libertin pour ton anniversaire","Ton date crie le prénom de son ex","Ton date fait l'amour sur l'hymne national",
-  "Ton date dit « merci » après l'amour","Ton date s'endort pendant les préliminaires","Ton date a des menottes dans la boîte à gants","Ton date n'embrasse jamais",
+  "Ton date propose un club libertin pour ton anniversaire","Ton date crie le prénom de son ex","Ton date met La Marseillaise pour faire l'amour",
+  "Ton date dit « merci » après l'amour","Ton date s'endort pendant les préliminaires","Ton date a des menottes dans la boîte à gants","Ton date n'embrasse jamais pendant l'acte",
   "Ton date a couché avec ton meilleur pote avant toi","Ton date fait du dirty talk avec une voix de dessin animé","Ton date veut le faire trois fois par jour",
-  "Ton date ne veut le faire que le samedi soir","Ton date a un fétiche des pieds","Ton date te met une note sur 10 après","Ton date a déjà tourné un porno amateur",
+  "Ton date ne veut le faire que le samedi soir","Ton date est fétichiste des pieds","Ton date te met une note sur 10 après chaque rapport","Ton date a déjà tourné un porno amateur",
   "Ton date est encore sur Tinder « juste pour voir »","Ton date garde une photo de son ex dans son portefeuille","Ton date like les photos de ta mère",
   "Ton date veut un dernier plan cul avec son ex « pour tourner la page »","Ton date fait l'amour avec ses lunettes de soleil","Ton date dort tout nu chez ses parents",
   "Ton date veut faire l'amour dans la voiture de ton père","Ton date a déjà fait un plan à trois avec ses colocs","Ton date te demande un nude dès le premier soir",
-  "Ton date veut écrire votre première fois dans un livre","Ton date a son propre lubrifiant dans son sac de sport",
+  "Ton date veut raconter votre première fois dans un livre","Ton date a toujours du lubrifiant dans son sac de sport",
   "Ton date veut un mot de sécurité même pour aller au cinéma","Ton date fait l'amour avec les infos en fond sonore","Ton date garde son téléphone à la main pendant l'acte",
   "Ton date te demande une note détaillée, par écrit","Ton date tient un calendrier de vos rapports accroché au frigo","Ton date ne veut le faire que dans le noir complet",
   "Ton date rêve d'un miroir au plafond","Ton date parle de sa mère juste après l'amour","Ton date range ses jouets coquins par couleur","Ton date veut inviter ses colocs à regarder",
   "Ton date s'excuse à chaque mouvement","Ton date lance une playlist de quatre heures « au cas où »","Ton date veut le faire dans une cabine d'essayage","Ton date exige un débrief complet le lendemain",
   "Ton date garde ses chaussures au lit","Ton date commente l'acte comme un match de foot","Ton date a des draps à l'effigie d'un dessin animé","Ton date veut te présenter à son ex « pour comparer »",
-  "Ton date est actif sur trois applis de rencontre en même temps","Ton date veut que tu l'appelles « chef » au lit","Ton date s'endort dans la seconde, à chaque fois","Ton date veut toujours le faire juste avant un repas de famille"
+  "Ton date veut un couple libre dès le premier mois","Ton date veut que tu l'appelles « chef » au lit","Ton date s'endort dans la seconde après l'amour, à chaque fois","Ton date veut toujours le faire juste avant un repas de famille"
 ];
 const PERKS = [
-  "est beau ou belle à tomber","est riche à millions","est drôle comme personne","cuisine comme un grand chef","te masse tous les soirs","a une maison avec piscine",
-  "est fou amoureux de toi","t'offre un voyage par mois","est une star de cinéma","s'entend à merveille avec tes parents","adore tes amis","fait le ménage sans qu'on lui demande",
-  "a le même humour que toi","te fait rire aux larmes tous les jours","est le meilleur coup de ta vie","est médecin, pompier et chanteur","sent toujours incroyablement bon",
-  "te prépare des surprises chaque semaine","a un chien adorable","a une voix à tomber",
+  "est d'une beauté renversante","est riche à millions","est drôle comme personne","te cuisine des plats de grand chef tous les soirs","te masse tous les soirs","a une maison avec piscine",
+  "est fou amoureux de toi","t'offre un voyage par mois","est une star de cinéma","s'entend à merveille avec tes parents","adore tes amis","fait le ménage sans qu'on le lui demande",
+  "a le même humour que toi","a des abdos en béton","est le meilleur coup de ta vie","est médecin, pompier et chanteur","sent toujours incroyablement bon",
+  "te prépare des surprises chaque semaine","a un chien adorable","a une voix qui donne des frissons",
   "parle six langues","a son propre bateau","est champion du monde de quelque chose","te fait des crêpes tous les dimanches","joue de la guitare comme personne",
   "t'écrit des poèmes","est toujours de bonne humeur","a un chalet à la montagne","sait tout réparer","a un sourire qui fait fondre tout le monde",
-  "te soutient dans tous tes projets","connaît les meilleures tables de la ville","danse divinement bien","se souvient de tout ce qui compte pour toi"
+  "te soutient dans tous tes projets","connaît les meilleures tables de la ville","danse divinement","se souvient de tout ce qui compte pour toi"
 ];
 function flagsFor(packs){ const sel = A(packs); return (sel.indexOf("classique") >= 0 || !sel.length ? FLAGS : []).concat(sel.indexOf("adulte") >= 0 ? ADULTE : []); }
 const PACKS = [
-  { v: "classique", label: "Classique", desc: "Les petites manies et les vrais défauts", count: FLAGS.length },
+  { v: "classique", label: "Classique", desc: "Petites manies, vrais défauts et belles qualités", count: FLAGS.length },
   { v: "adulte", label: "Adultes", desc: "Sexe, porno, tabous : tout le contenu adulte", count: ADULTE.length, hot: true }
 ];
 const KIND = { r: ["Red flag", "#d93025"], b: ["Beige flag", "#c8a36a"], g: ["Green flag", "#1e8e3e"] };
@@ -74,8 +74,8 @@ const KIND = { r: ["Red flag", "#d93025"], b: ["Beige flag", "#c8a36a"], g: ["Gr
 /* ---------- Rejouabilité : coups de théâtre ---------- */
 const TW_V = [
   { id: "deal", name: "Deal breaker", desc: "Un seul red flag suffit : si quelqu'un vote rouge, c'est rouge, et seuls les rouges marquent." },
-  { id: "double", name: "Double flag", desc: "Deux défauts d'un coup : on juge le combo." },
-  { id: "perk", name: "Perk empoisonné", desc: "Le défaut arrive avec une qualité de rêve. Ça change tout ?" },
+  { id: "double", name: "Double flag", desc: "Deux traits d'un coup : on juge le combo." },
+  { id: "perk", name: "Cadeau empoisonné", desc: "Le flag arrive avec une qualité de rêve. Ça change tout ?" },
   { id: "minor", name: "Minorité gagnante", desc: "Cette fois, ce sont les votes les plus rares qui marquent." },
   { id: "gold", name: "Flag en or", desc: "Points doublés sur cette manche." },
   { id: "blind", name: "Vote à l'aveugle", desc: "On ne saura pas qui a voté quoi, seulement les pourcentages." },
@@ -170,17 +170,17 @@ function awardCard(title, who, sub){ return '<div class="card"><span class="eyeb
 function voteEndHTML(st, nameAt, n, seed, hl){
   return (st.pts[st.top] ? '<div class="card acc"><span class="eyebrow">' + esc(ph("sync", seed)) + '</span><div class="big">' + esc(st.winners.map(nameAt).join(" & ")) + '</div><span class="sm">' + (st.pts[st.top] || 0) + " points</span></div>" : "") +
     awardCard(ph("strict", seed), nameAt(st.strict), (st.red[st.strict] || 0) + " red flags distribués") +
-    awardCard(ph("cool", seed + 1), nameAt(st.cool), (st.green[st.cool] || 0) + " green flags") +
+    awardCard(ph("cool", seed + 1), nameAt(st.cool), (st.green[st.cool] || 0) + " green flags distribués") +
     (st.reb[st.rebel] ? awardCard(ph("rebel", seed), nameAt(st.rebel), st.reb[st.rebel] + " fois dans la minorité") : "") +
     (st.duo && n > 2 ? awardCard(ph("duo", seed + 2), nameAt(st.duo[0]) + " & " + nameAt(st.duo[1]), st.best + " / " + hl + " votes identiques") : "");
 }
 function dateEndHTML(ids, t, full, first, nameOf, seed, max){
   const order = ids.slice().sort((a, b) => (t[b] || 0) - (t[a] || 0));
   const fk = ids.slice().sort((a, b) => (full[b] || 0) - (full[a] || 0))[0], ek = ids.slice().sort((a, b) => (first[b] || 0) - (first[a] || 0))[0];
-  return '<span class="eyebrow">' + esc(ph("desp", seed)) + '</span><div class="who">' + esc(nameOf(order[0])) + "</div><p>" + (t[order[0]] || 0) + " points de red flags encaissés.</p>" +
+  return '<span class="eyebrow">' + esc(ph("desp", seed)) + '</span><div class="who">' + esc(nameOf(order[0])) + "</div><p>" + (t[order[0]] || 0) + " points gagnés à force d'encaisser des red flags.</p>" +
     '<div class="bars">' + order.map(id => '<div class="bar"><div class="lb"><span>' + esc(nameOf(id)) + "</span><span>" + (t[id] || 0) + ' pts</span></div><div class="tr"><div class="fl" style="width:' + Math.min(100, Math.round(100 * (t[id] || 0) / Math.max(1, max))) + '%"></div></div></div>').join("") + "</div>" +
     awardCard(ph("strict", seed), nameOf(order[order.length - 1])) +
-    (full[fk] ? awardCard(ph("full", seed), nameOf(fk), full[fk] + " date" + (full[fk] > 1 ? "s" : "") + " jusqu'au bout") : "") +
+    (full[fk] ? awardCard(ph("full", seed), nameOf(fk), full[fk] + " date" + (full[fk] > 1 ? "s" : "") + " tenu" + (full[fk] > 1 ? "s" : "") + " jusqu'au bout") : "") +
     (first[ek] ? awardCard(ph("first", seed), nameOf(ek), first[ek] + " fuite" + (first[ek] > 1 ? "s" : "") + " dès le premier red flag") : "");
 }
 const CSS = '<style>.rf-card{background:var(--card); border-radius:18px; padding:22px 18px; box-shadow:0 1px 0 var(--line), 0 10px 26px -18px rgba(0,0,0,.45); display:flex; flex-direction:column; gap:10px; border-top:6px solid var(--acc)}' +
@@ -219,7 +219,7 @@ SB.register({
   min: 2, max: 20,
   rules: [
     "Mode « Red ou green ? » : un trait de ton date s'affiche. Chacun vote en secret : red flag, beige flag (bizarre mais ça passe) ou green flag.",
-    "Ceux qui votent comme la majorité marquent un point. À la fin : le plus en phase avec le groupe gagne, avec le plus exigeant, le plus cool, le rebelle et le duo le plus compatible.",
+    "Ceux qui votent comme la majorité marquent un point. À la fin, le joueur le plus en phase avec le groupe gagne ; on découvre aussi le plus exigeant, le plus cool, le rebelle et le duo le plus compatible.",
     "Mode « Tu restes ou tu pars ? » : un date parfait sur le papier, puis des red flags révélés un par un. À chaque fois, tu restes ou tu fuis. Chaque red flag encaissé rapporte un point.",
     "Coups de théâtre : de temps en temps, une manche change de règle (deal breaker, double flag, minorité gagnante, date express, coup de foudre…).",
     "Les flags déjà vus sur ce téléphone reviennent en dernier. Sur un seul téléphone, chacun répond à côté de son prénom, puis on révèle."
@@ -307,7 +307,7 @@ SB.register({
       screen(root, "s" + s.k + "|" + step + inGame, CSS + lab + banner + '<span class="eyebrow">Red flag ' + (step + 1) + " / " + nf + "</span>" + storyHTML(s.perk, flags, step) +
         '<div class="rf-card"><span class="eyebrow">… mais</span><div class="rf-t">' + esc(flags[step]) + "</div></div>" +
         (inGame ? dock((crush ? '<p class="wait">Coup de foudre : personne ne peut partir maintenant.</p><button class="btn ok" type="button" data-d="s">Je reste, évidemment</button>' : '<div class="rf-2"><button class="btn ok" type="button" data-d="s">Je reste</button><button class="btn bad" type="button" data-d="l">Je pars</button></div>') + '<p class="wait" data-wait></p>')
-          : dock('<p class="wait">Tu es déjà parti. Regarde qui tient encore…</p><p class="wait" data-wait></p>')), r => {
+          : dock('<p class="wait">Tu as déjà fui. Regarde qui tient encore…</p><p class="wait" data-wait></p>')), r => {
         r.querySelectorAll("[data-d]").forEach(b => b.addEventListener("click", () => { ctx.send({ d: b.dataset.d, st: step }); r.querySelectorAll("[data-d]").forEach(x => { x.disabled = true; }); b.textContent = b.dataset.d === "s" ? "Tu restes…" : "Tu fuis !"; }));
       });
       const live = stay.filter(id => ctx.here(id)), done = live.filter(id => { const i = ctx.input(id); return i && i.d; }).length;
@@ -315,7 +315,7 @@ SB.register({
     } else if(s.phase === "stepres"){
       const left = A(s.left), last = step >= nf - 1 || !stay.length;
       screen(root, "sr" + s.k + "|" + step + ctx.isHost, CSS + lab + banner + storyHTML(s.perk, flags, step + 1) +
-        (blind ? '<div class="card"><span class="eyebrow">Fuite discrète</span><div class="big">' + (left.length ? left.length + " départ" + (left.length > 1 ? "s" : "") + " en douce" : "Personne ne bouge") + '</div><span class="sm">Les noms tombent à la fin du date.</span></div>'
+        (blind ? '<div class="card"><span class="eyebrow">Fuite discrète</span><div class="big">' + (left.length ? left.length + " départ" + (left.length > 1 ? "s" : "") + " en douce" : "Personne ne bouge") + '</div><span class="sm">Les noms seront révélés à la fin du date.</span></div>'
           : '<div class="card"><span class="eyebrow">' + (left.length ? "Ont pris la fuite" : "Personne ne part") + '</span><div class="big">' + esc(left.map(ctx.name).join(", ") || "Ils tiennent bon…") + "</div>" +
           '<span class="sm">Encore là : ' + esc(stay.map(ctx.name).join(", ") || "plus personne") + "</span></div>") +
         (ctx.isHost ? dock('<button class="btn acc" type="button" data-next>' + (last ? "Fin de la manche" : "Red flag suivant") + "</button>") : dock('<p class="wait">L\'hôte révèle la suite…</p>')), r => {
@@ -369,7 +369,7 @@ SB.register({
       const go = ph2 => {
         if(ph2 === "setup"){
           screen(root, "su" + mode + sel.join() + rounds + twists, CSS + '<div class="field"><span class="eyebrow">Mode</span><div class="seg"><button type="button" data-m="vote" aria-pressed="' + (mode === "vote") + '">Red ou green ?</button><button type="button" data-m="date" aria-pressed="' + (mode === "date") + '">Tu restes ou tu pars ?</button></div></div>' +
-            '<p class="howto">' + (mode === "vote" ? "Un flag s'affiche, chacun touche sa couleur à côté de son prénom, puis on révèle. Voter comme la majorité rapporte un point." : "Un date parfait, puis des red flags. À chaque flag, ceux qui fuient touchent « Je pars ». Chaque flag encaissé rapporte un point.") + "</p>" +
+            '<p class="howto">' + (mode === "vote" ? "Un flag s'affiche, chacun touche sa couleur à côté de son prénom, puis on révèle. Voter comme la majorité rapporte un point." : "Un date parfait, puis des red flags. À chaque flag, ceux qui fuient touchent leur bouton pour passer sur « Je pars ». Chaque flag encaissé rapporte un point.") + "</p>" +
             '<div class="field"><span class="eyebrow">Manches</span><div class="seg">' + [5, 10, 15].map(n => '<button type="button" data-r="' + n + '" aria-pressed="' + (n === rounds) + '">' + n + "</button>").join("") + "</div></div>" +
             '<div class="field"><span class="eyebrow">Paquets</span><div class="packs">' + PACKS.map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-k="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + p.count + "</span></button>").join("") + "</div></div>" +
             '<div class="field"><span class="eyebrow">Rebondissements</span><div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + twists + '"><span class="box">✓</span><span class="tx"><span class="nm">Coups de théâtre</span><span class="ds">Des manches qui changent de règle sans prévenir</span></span></button></div></div>' +
@@ -423,7 +423,7 @@ SB.register({
         } else if(ph2 === "stepres"){
           const last = L.step >= L.flags.length - 1 || !L.stay.length, blind = L.tw === "blind";
           screen(root, "sr" + L.round + "|" + L.step, CSS + lab() + banner() + storyHTML(L.perk, L.flags, L.step + 1) +
-            (blind ? '<div class="card"><span class="eyebrow">Fuite discrète</span><div class="big">' + (L.left.length ? L.left.length + " départ" + (L.left.length > 1 ? "s" : "") + " en douce" : "Personne ne bouge") + '</div><span class="sm">Les noms tombent à la fin du date.</span></div>'
+            (blind ? '<div class="card"><span class="eyebrow">Fuite discrète</span><div class="big">' + (L.left.length ? L.left.length + " départ" + (L.left.length > 1 ? "s" : "") + " en douce" : "Personne ne bouge") + '</div><span class="sm">Les noms seront révélés à la fin du date.</span></div>'
               : '<div class="card"><span class="eyebrow">' + (L.left.length ? "Ont pris la fuite" : "Personne ne part") + '</span><div class="big">' + esc(L.left.map(nameOf).join(", ") || "Ils tiennent bon…") + '</div><span class="sm">Encore là : ' + esc(L.stay.map(nameOf).join(", ") || "plus personne") + "</span></div>") +
             dock('<button class="btn acc" type="button" data-n>' + (last ? "Fin du date" : "Red flag suivant") + "</button>"), r => {
             r.querySelector("[data-n]").addEventListener("click", () => {

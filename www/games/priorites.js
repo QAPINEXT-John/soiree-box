@@ -11,22 +11,22 @@ const CLASSIQUE = [
   "Les réunions Teams","Les influenceurs","La pizza ananas","Le karaoké","Les poneys","Le dentiste","Les ex","Les chiens qui aboient la nuit","Le fromage qui pue",
   "Les bisous baveux","La neige","Les soldes","Le Monopoly","Les chats","Les PowerPoint","Les voisins bruyants","Les anniversaires surprise",
   "Les bébés qui pleurent dans l'avion","Les nains de jardin","Les cactus","Les tubes de l'été","Les montagnes russes","Les bouchons sur le périph",
-  "Les mots de passe oubliés","Le haut-parleur dans le métro","Le pastis","Les escargots","Les zombies","Les dinosaures","Les sacs Ikea","Les capybaras",
+  "Les mots de passe oubliés","Les gens qui mettent le haut-parleur dans le métro","Le pastis","Les escargots","Les zombies","Les dinosaures","Les sacs Ikea","Les capybaras",
   "Les chips au vinaigre","Les dimanches soir","Les doudounes sans manches","Les apéros qui finissent à 6 h","Les blagues de papa","Les moustiques",
   "Les comédies romantiques","Les arnaques par SMS","Les siestes","Le camping sous la pluie",
   "Se lever à 5 h tous les matins","Un mois sans téléphone","Un massage d'une heure","Les huîtres","Chanter seul au karaoké","Un câlin de grand-mère",
   "Gagner 1 000 €","Dormir 12 heures d'affilée","Un saut en parachute","Les araignées","Le métro à l'heure de pointe","Une soirée Netflix sous la couette",
   "Le prénom de ton ex tatoué sur le bras","Le brocoli","Ne plus jamais manger de fromage","Un road trip entre potes","Une heure dans une file d'attente",
   "Un dîner avec ta belle-famille","Un chiot","Le sport à 7 h du matin","Une pizza à 2 h du matin","Un concert au premier rang","Les cours de maths",
-  "Un week-end sans réseaux sociaux","Les cris de mouettes","Une coupe de cheveux ratée","Retrouver 20 € dans une poche","Le ménage de printemps",
-  "Un selfie avec ta star préférée","Les embouteillages","Se faire larguer par SMS","Une bataille de boules de neige","Le pain chaud du matin",
-  "Les bouchons de bouteille qui ne s'ouvrent pas","Un voyage en avion de 12 heures","Une glace en été","Le bruit de la craie sur un tableau",
+  "Un week-end sans réseaux sociaux","Les mouettes qui crient à 6 h du matin","Une coupe de cheveux ratée","Retrouver 20 € dans une poche","Le ménage de printemps",
+  "Un selfie avec ta star préférée","Les aires d'autoroute","Se faire larguer par SMS","Une bataille de boules de neige","Le pain chaud du matin",
+  "Les bocaux impossibles à ouvrir","Un voyage en avion de 12 heures","Une glace en été","Le bruit de la craie sur un tableau",
   "Les fêtes de village","Le chant des grillons","Les bains moussants","Les lasagnes de mamie","Les jeux de société qui finissent en dispute","Les répondeurs automatiques",
   "Les pulls de Noël moches","Les tartines qui tombent côté beurre","Les marchés du dimanche","Les escape games","Les panneaux « peinture fraîche »","Les chaises qui grincent",
   "Les feux de camp","Les coussins péteurs","Les guirlandes lumineuses","Les cours de yoga","Les vide-greniers","Le bruit des couverts sur une assiette","Les parcs aquatiques",
   "Les canapés trop mous","Les crêpes de la Chandeleur","Les orages d'été","Les mouchoirs oubliés dans la machine","Les lunettes de soleil miroir","Les cabanes dans les arbres",
   "Faire quatre bises à tout le monde","Les visios qui coupent","Les escalators en panne","Les goûters d'anniversaire","Les fourmis dans la cuisine","Les parapluies retournés par le vent",
-  "Les marshmallows grillés","Les bandes-annonces qui racontent tout le film","Les cartes postales","Les mots croisés","Les mouettes qui volent les frites",
+  "Les marshmallows grillés","Les bandes-annonces qui racontent tout le film","Les cartes postales","Les mots croisés","Les goélands qui volent les frites",
   "Les bouées géantes en forme d'animal","Les douches froides","Les coups de soleil","Les livres de 900 pages","Les fins de séries décevantes","Les soirées pyjama",
   "Les selfies de groupe ratés","Les chewing-gums collés sous les tables","Le pop-corn au cinéma","Les tickets de caisse d'un mètre","Les vocaux écoutés en accéléré",
   "Les visites de musées","Les déménagements","Les plats trop salés","Les chats qui font tomber des objets","Les bonnets à pompon","Les après-midi au bord d'un lac",
@@ -35,16 +35,16 @@ const CLASSIQUE = [
   "Danser seul dans sa cuisine","Un petit-déjeuner au lit","Se perdre dans une ville inconnue","Un tour en montgolfière"
 ];
 const ADULTE = [
-  "Un plan à trois","Les préliminaires","Le sexe au réveil","Les menottes","Un strip-tease","Un nude envoyé au mauvais groupe","Le porno","Un plan cul régulier",
+  "Un plan à trois","Les préliminaires","Le sexe au réveil","Les menottes","Un strip-tease","Un nude envoyé dans le mauvais groupe","Le porno","Un plan cul régulier",
   "Coucher le premier soir","Le sexe dans la douche","Les applis de rencontre","Un club libertin","Une nuit avec ton crush","Le dirty talk","Les sex toys",
-  "Le sexe en public","Se faire surprendre par ses parents","Les suçons","Une fessée","Le walk of shame","Un ex qui écrit à 3 h du matin","Une gueule de bois",
-  "Un black-out total","Ton propre enterrement","Ton testament","Être réincarné en moustique","Mourir de rire","Une partouze","La lingerie","Le sexting",
-  "Un plan d'un soir raté","Simuler","Un rendez-vous Tinder catastrophique","Faire l'amour dans une voiture","La levrette","Un massage qui dérape",
+  "Le sexe en public","Se faire surprendre au lit par ses parents","Les suçons","Une fessée","Le walk of shame","Un ex qui écrit à 3 h du matin","Une gueule de bois",
+  "Un black-out total","Ton propre enterrement","Ton testament","Être réincarné en moustique","Mourir de rire","Une partouze","Les porte-jarretelles","Le sexting",
+  "Un plan d'un soir raté","Simuler","Un rencard Tinder catastrophique","Faire l'amour dans une voiture","La levrette","Un massage qui dérape",
   "Embrasser un inconnu en soirée","Un jeu de rôle coquin","Le missionnaire","Se réveiller à côté d'un inconnu",
   "Les rendez-vous à l'aveugle","Un bisou sous le gui","Un slow à un mariage","Le premier message après un rencard","Les photos de profil trompeuses","Un massage aux huiles",
   "Les draps en satin","Le jacuzzi à deux","Un week-end en amoureux","Une déclaration d'amour en public","Un ex qui like une vieille photo","La lingerie en dentelle",
-  "Les jeux à boire qui dérapent","Le strip-poker","Les bisous dans le cou","Le réveil après une nuit blanche","Les mots doux au téléphone","Se faire draguer au supermarché",
-  "Les sextos pleins de fautes d'orthographe","Le premier rendez-vous chez les parents","Les miroirs au plafond"
+  "Les jeux à boire qui dérapent","Le strip-poker","Les bisous dans le cou","Le petit-déj après une nuit torride","Les mots doux au téléphone","Se faire draguer au supermarché",
+  "Les sextos pleins de fautes d'orthographe","La première rencontre avec les beaux-parents","Les miroirs au plafond"
 ];
 const PACKS = [
   { v: "classique", label: "Tout et n'importe quoi", desc: "Objets, gens, galères, petits plaisirs", list: CLASSIQUE },
@@ -113,7 +113,7 @@ function orderPicker(root, items, onSubmit, submitLabel){
       buzz(6); draw();
     }));
     go.disabled = order.length !== n;
-    go.textContent = order.length === n ? submitLabel : "Touche les " + n + " dans l'ordre (" + order.length + " / " + n + ")";
+    go.textContent = order.length === n ? submitLabel : "Touche les " + n + " trucs dans l'ordre (" + order.length + " / " + n + ")";
     if(reset) reset.hidden = !order.length;
   };
   go.addEventListener("click", () => { if(order.length === n){ go.disabled = true; onSubmit(order.join("")); } });
@@ -121,8 +121,8 @@ function orderPicker(root, items, onSubmit, submitLabel){
   draw();
 }
 function scaleHTML(tw, n){
-  const a = "1 · Ce que tu préfères", b = n + " · Ce que tu détestes";
-  return '<div class="pr-scale"><span>' + (tw === "rev" ? "1 · Ce que tu détestes" : a) + "</span><span>" + (tw === "rev" ? n + " · Ce que tu préfères" : b) + "</span></div>";
+  const a = "1 · Le préféré", b = n + " · Le plus détesté";
+  return '<div class="pr-scale"><span>' + (tw === "rev" ? "1 · Le plus détesté" : a) + "</span><span>" + (tw === "rev" ? n + " · Le préféré" : b) + "</span></div>";
 }
 function pickerHTML(lead, tw, n){
   return CSS + lead + scaleHTML(tw, n) + '<div class="pr-list" data-picker></div>' +
@@ -147,8 +147,8 @@ SB.register({
     "À chaque manche, un joueur reçoit 5 trucs au hasard : la raclette, les pigeons, un saut en parachute…",
     "Il les classe en secret, de ce qu'il préfère (1) à ce qu'il déteste le plus (5).",
     "Pendant ce temps, les autres devinent son classement sur leur téléphone.",
-    "1 point par place devinée, +3 pour un sans-faute. Celui qui classe marque la moyenne des bonnes réponses : il faut être prévisible !",
-    "Coups de théâtre : classement à l'envers, manche à six, les extrêmes, invité surprise, complicité, points doublés. Les trucs déjà vus reviennent en dernier."
+    "1 point par place bien devinée, +3 pour un sans-faute. Celui qui classe marque la moyenne des bonnes réponses : il a intérêt à être prévisible !",
+    "Coups de théâtre : classement à l'envers, manche à six, les extrêmes, invité surprise, complicité, points doublés. Les trucs déjà vus ne reviennent qu'en dernier."
   ],
   options: [
     { id: "packs", label: "Paquets", type: "multi", def: ["classique"], values: PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, count: p.list.length })) },
@@ -197,7 +197,7 @@ SB.register({
         const live = ctx.ids.filter(id => ctx.here(id));
         screen(root, "w" + s.k, CSS + lab + '<div class="pass" style="min-height:24vh"><span class="eyebrow">' + (isR ? "Ton classement est enregistré" : "Ta prédiction est enregistrée") + '</span><div class="who">Suspense…</div><p>On attend les autres.</p></div>' +
           '<div class="field"><span class="eyebrow">Prêts</span><div class="chips" data-chips></div></div>' +
-          (ctx.isHost ? dock('<button class="link warn" type="button" data-skip hidden style="align-self:center">' + esc(rn) + " est parti, passer la manche</button>") : ""), r => {
+          (ctx.isHost ? dock('<button class="link warn" type="button" data-skip hidden style="align-self:center">' + esc(rn) + " est parti : passer la manche</button>") : ""), r => {
           const sk = r.querySelector("[data-skip]"); if(sk) sk.addEventListener("click", () => ctx.act(nextRound));
         });
         const chips = live.map(id => { const i = ctx.input(id), ok = !!(i && i.o); return '<span class="chip' + (ok ? " ok" : "") + '">' + (ok ? "✓ " : "") + esc(ctx.name(id)) + (id === s.ranker ? " (classe)" : "") + "</span>"; }).join("");
@@ -206,7 +206,7 @@ SB.register({
       } else {
         const dir = tw === "rev" ? "du plus détesté au préféré" : "du préféré au plus détesté";
         screen(root, "p" + s.k + isR, pickerHTML(lab + (isR ? '<p class="big">À toi de classer !</p><p class="sm">Touche les ' + n + " trucs dans l'ordre, " + dir + ". Les autres essaient de deviner.</p>"
-          : '<p class="big">Comment ' + esc(rn) + " les classe ?</p><p class=\"sm\">Touche les " + n + " trucs dans l'ordre où, selon toi, " + esc(rn) + " les classe (" + dir + ").</p>"), tw, n), r => {
+          : '<p class="big">Devine le classement de ' + esc(rn) + " !</p><p class=\"sm\">Touche les " + n + " trucs dans l'ordre où " + esc(rn) + " les classe selon toi (" + dir + ").</p>"), tw, n), r => {
           orderPicker(r, items, o => ctx.send({ o }), isR ? "Valider mon classement" : "Valider ma prédiction");
         });
       }

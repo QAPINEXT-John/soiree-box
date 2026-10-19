@@ -4,58 +4,58 @@
 const { esc, A, shuffle, screen, txt, store, persist, dock, clean, armTap, pick } = SB.u;
 
 const SOFT = [
-  "Ton pire date en 5 mots","Le métier que tu aurais rêvé de faire","Ce que tu ne dirais jamais à ta mère","Ta pire honte au collège",
-  "Le truc le plus cher que tu as acheté sur un coup de tête","Ce que tu ferais avec un million demain matin","Ton plaisir coupable","Le pire cadeau que tu as reçu",
-  "Ta phobie la plus bizarre","Le mensonge que tu racontes le plus souvent","Ta pire coupe de cheveux","Ce que tu as pensé de {p} la première fois",
+  "Ton pire date en 5 mots","Le métier dont tu as toujours rêvé","Ce que tu ne dirais jamais à ta mère","Ta pire honte au collège",
+  "Le truc le plus cher que tu as acheté sur un coup de tête","Ce que tu ferais si tu gagnais un million demain matin","Ton plaisir coupable","Le pire cadeau que tu as reçu",
+  "Ta phobie la plus bizarre","Le mensonge que tu racontes le plus souvent","Ta pire coupe de cheveux","Ta première impression de {p}",
   "Un secret sur {p} que tu pourrais révéler","Le surnom parfait pour {p}","Ce que {p} fera dans 10 ans","La chanson que tu chantes sous la douche",
-  "Ta dernière recherche Google gênante","Le pire job que tu as fait","Ton talent caché","La célébrité que tu détestes sans raison","Le film qui t'a fait pleurer",
-  "Ta pire cuite en une phrase","Ce que tu volerais dans un musée","Ta dernière grosse colère","L'excuse la plus nulle que tu as donnée pour annuler",
-  "Les 3 trucs que tu emportes sur une île déserte","Le plat que tu ne peux pas avaler","Le pire conseil qu'on t'a donné","Le titre de ton autobiographie",
-  "Ton rêve le plus bizarre","Ta plus grosse bêtise d'enfant","Ce que tu fais quand tu es seul chez toi","La règle que tu briserais si personne ne regardait",
+  "Ta dernière recherche Google gênante","Le pire job que tu as fait","Ton talent caché","La célébrité que tu détestes sans raison","Le film qui t'a le plus fait pleurer",
+  "Ta pire cuite en une phrase","Ce que tu volerais dans un musée","Ta dernière grosse colère","L'excuse la plus nulle que tu as donnée pour annuler un plan",
+  "Les 3 trucs que tu emporterais sur une île déserte","Le plat que tu ne peux pas avaler","Le pire conseil qu'on t'a donné","Le titre de ton autobiographie",
+  "Ton rêve le plus bizarre","Ta plus grosse bêtise d'enfant","Ce que tu fais quand tu es seul chez toi","La règle que tu enfreindrais si personne ne regardait",
   "Ce qui te rend jaloux","Le pire prénom que tu pourrais donner à un enfant","La phrase que tu dis tout le temps","Ton plus gros fail en public",
-  "Ce que tu as déjà fait pour éviter quelqu'un","Le message que tu regrettes d'avoir envoyé","Ce que tu dirais au toi d'il y a 10 ans","Ta théorie du complot préférée",
+  "Ce que tu as déjà fait pour éviter quelqu'un","Le message que tu regrettes d'avoir envoyé","Ce que tu dirais à toi-même il y a 10 ans","Ta théorie du complot préférée",
   "Le pire endroit où tu t'es endormi","Ce que tu caches dans ta chambre","Ta dernière dispute pour un truc débile","Le personnage de fiction dont tu étais amoureux",
   "La pire chose que tu as mangée","L'appli que tu ouvres le plus, et pourquoi","Un truc que tu n'as jamais avoué à {p}","Ce qui t'agace le plus chez les gens",
-  "Ta pire tenue de soirée","Ce que tu ferais si tu étais invisible une journée","Le pire surnom qu'on t'a donné","Ce que tu changerais chez {p}",
+  "Ta pire tenue de soirée","Ce que tu ferais si tu étais invisible pendant une journée","Le pire surnom qu'on t'a donné","Ce que tu changerais chez {p}",
   "La pire chose que tu as dite à un prof","Ton premier crush en 3 mots","Ce que tu fais en douce au travail ou en cours",
   "Complète : « Je ne l'ai jamais dit à personne, mais… »","Complète : « Ma plus grande fierté inutile, c'est… »","Complète : « Si j'étais un plat, je serais… »",
   "Complète : « Le jour où j'ai eu le plus honte, c'est quand… »","Complète : « Mon pire défaut, selon ma famille, c'est… »","Complète : « Dans une autre vie, j'étais sûrement… »",
-  "Avoue : un truc que tu fais encore comme un enfant","Avoue : la dernière fois que tu as menti à quelqu'un ici","Avoue : ce que tu as vraiment pensé de cette soirée en arrivant",
+  "Avoue : un truc de gamin que tu fais encore","Avoue : la dernière fois que tu as menti à quelqu'un ici","Avoue : ce que tu as vraiment pensé de cette soirée en arrivant",
   "Avoue : le truc que tu as cassé sans jamais le dire","Avoue : une série que tu regardes en cachette",
   "Prédis : ce que {p} fera demain matin","Prédis : le prochain gros achat de {p}","Prédis : la phrase que {p} dira avant la fin de la soirée",
-  "Prédis : qui ici se mariera en premier, et pourquoi","Prédis : le métier de {p} dans une autre vie",
+  "Prédis : qui ici se mariera en premier, et pourquoi","Prédis : la prochaine lubie de {p}",
   "Écris comme {p} : son message pour annuler une soirée","Écris comme {p} : sa bio sur une appli de rencontre","Écris comme {p} : son discours de remerciement après un prix",
   "Écris comme {p} : son avis sur la pizza à l'ananas","Écris comme {p} : sa réaction en gagnant au loto",
-  "Le pire conseil que tu pourrais donner à {p}","Ton excuse pour arriver en retard, version extrême","La pire idée de start-up possible",
-  "Ce que tu ferais si tu dirigeais le pays pendant une journée","Le slogan de ta vie","Ton super-pouvoir le plus inutile","Ce que tu crierais en gagnant une médaille d'or",
+  "Le pire conseil que tu pourrais donner à {p}","Ton excuse la plus extrême pour justifier un retard","La pire idée de start-up possible",
+  "Ce que tu ferais si tu dirigeais le pays pendant une journée","Le slogan de ta vie","Le super-pouvoir inutile que tu voudrais avoir","Ce que tu crierais en gagnant une médaille d'or",
   "Le nom de ton futur animal de compagnie","Un mot pour décrire {p}, et pas le plus gentil","Ta tactique pour quitter une soirée sans dire au revoir","Le pire endroit pour une demande en mariage"
 ];
 const HOT = [
-  "Ton fantasme le plus inavouable","Le pire endroit où tu l'as fait","Ton surnom au lit","Ta pire expérience sexuelle en 5 mots","Ce que tu as déjà fait pour séduire quelqu'un",
+  "Ton fantasme le plus inavouable","Le pire endroit où tu l'as fait","Ton surnom au lit","Ta pire expérience sexuelle en 5 mots","Le premier truc que tu regardes chez quelqu'un",
   "Le pire message coquin que tu as envoyé","La célébrité avec qui tu passerais une nuit","Ce que tu penses vraiment de la vie sexuelle de {p}","La personne ici avec qui tu pourrais finir la nuit",
-  "Ton pire plan d'un soir","Le mot le plus gênant que tu as dit pendant l'acte","Ta technique de drague infaillible","Ton pire fiasco au lit","Ce que tu fais sur une appli de rencontre à 3 h du matin",
+  "Ton pire plan d'un soir","Le mot le plus gênant que tu as dit pendant l'acte","Ta technique de drague infaillible","Le bruit le plus gênant que tu as fait au lit","Ce que tu fais sur une appli de rencontre à 3 h du matin",
   "Le truc le plus bizarre qui t'excite","La pire excuse pour ne pas rappeler quelqu'un","Ton plus gros mensonge à un partenaire","Ta catégorie préférée sur un site X",
-  "Le jouet que tu aimerais essayer","Ce que tu as déjà fait dans une voiture","La pire chose que tu as faite à un ex","Ce que {p} cache dans sa table de nuit",
+  "Le sextoy que tu aimerais essayer","Ce que tu as déjà fait dans une voiture","La pire chose que tu as faite à un ex","Ce que {p} cache dans sa table de nuit",
   "Le pire moment où tu t'es fait surprendre","Ton record en une nuit","La phrase qui te fait craquer","Ce que tu ferais si tu te réveillais dans le corps de {p}",
-  "Le lieu public où tu rêves de le faire","Le pire nude que tu as reçu","Ton plan cul le plus honteux en 3 mots","Ce que tu as déjà simulé","Ton plus gros tabou",
-  "La blague la plus noire que tu oses raconter","Ce que tu veux qu'on fasse à ton enterrement","Le pire truc que tu as dit à un enterrement","Le truc le plus illégal que tu as fait",
-  "Ce que tu regardes en navigation privée","Le pire endroit où tu as embrassé quelqu'un","Ta position préférée, décrite comme une recette de cuisine","Ce que {p} fait sûrement au lit",
+  "Le lieu public où tu rêves de le faire","Le pire nude que tu as reçu","La personne la plus improbable avec qui tu as couché, en 3 mots","Ce que tu as déjà simulé","Ton plus gros tabou",
+  "La blague la plus noire que tu oses raconter","Ce que tu voudrais qu'on fasse à ton enterrement","Le pire truc que tu as dit à un enterrement","Le truc le plus illégal que tu as fait",
+  "Ce que tu regardes en navigation privée","Le pire endroit où tu as embrassé quelqu'un","Ta position préférée, décrite comme une recette de cuisine","La première phrase de {p} au réveil, après une nuit torride",
   "La pire chose que tu as faite pour coucher avec quelqu'un",
   "Complète : « Au lit, je suis plutôt… »","Complète : « Mon pire rencard s'est fini par… »","Complète : « Ce qui me fait craquer chez quelqu'un, c'est… »",
   "Avoue : le dernier message coquin que tu as reçu, en 5 mots","Avoue : le contact que tu ne devrais plus avoir dans ton téléphone","Avoue : ton fantasme le plus banal",
   "Avoue : le truc le plus fou que tu as fait pour un crush","Prédis : le rencard idéal de {p}","Prédis : la phrase de drague préférée de {p}",
   "Écris comme {p} : son message de rupture","Écris comme {p} : son premier message sur une appli de rencontre","Écris comme {p} : son avis sur sa dernière nuit",
   "La pire musique pour une nuit romantique","Ton pire bisou en 5 mots","La chose la plus gênante que tu as dite à un rencard","Ce que tu ferais avec la personne à ta gauche sur une île déserte",
-  "Le surnom le plus ridicule qu'on t'a donné au lit","Ce que tu caches dans ton téléphone","La pire excuse pour filer le matin","Ton plus gros râteau en une phrase",
+  "Le surnom le plus ridicule que tu as donné à quelqu'un au lit","Ce que tu caches dans ton téléphone","La pire excuse pour filer le matin","Ton plus gros râteau en une phrase",
   "Le pire endroit où tu as reçu un message coquin","Ce que tu as fait en soirée et nié le lendemain","La pire chose à crier pendant l'acte","Ce que tu demanderais au génie de la lampe, version 18+"
 ];
 // Fausses réponses du coup de théâtre « L'imposteur » : assez vagues pour coller à presque toutes les questions.
 const FAKE = [
-  "Je préfère ne pas en parler","Une histoire avec un canard","Un karaoké qui a mal tourné","Ça s'est passé dans un camping","Franchement ? Rien de tout ça",
-  "Ma grand-mère, sans hésiter","Un truc avec beaucoup trop de fromage","Trois mots : plus jamais ça","C'était en vacances, il faisait trop chaud","Le chat du voisin",
+  "Je préfère ne pas en parler","Une histoire avec une licorne gonflable","Un karaoké qui a mal tourné","Ça s'est passé dans un camping","Franchement ? Rien de tout ça",
+  "Mon ex, sans hésiter","Un truc avec beaucoup trop de fromage","Trois mots : plus jamais ça","C'était en vacances, il faisait trop chaud","Le voisin du dessus",
   "Une raclette à 4 h du matin","Un costume de pirate","Au fond d'un tiroir","Avec beaucoup trop de paillettes","Un message vocal de sept minutes",
-  "Dans le noir complet","Je l'ai fait pour un pari","Un vieux sweat à capuche","Ma mère était là, évidemment","Une trottinette et beaucoup de confiance",
-  "J'avais quinze ans, laissez-moi tranquille","Le réveil n'a pas sonné","Une danse improvisée sur une table","Des chaussettes dépareillées","Une erreur de groupe de discussion",
+  "Dans le noir complet","Je l'ai fait pour un pari","Un vieux sweat à capuche","Mon coloc était là, évidemment","Une trottinette et beaucoup de confiance",
+  "C'était il y a longtemps, laissez-moi tranquille","Le réveil n'a pas sonné","Une danse improvisée sur une table","Des chaussettes dépareillées","Une erreur de groupe de discussion",
   "Je ne regrette absolument rien","Un plat surgelé et une bougie","Tout le monde s'en souvient sauf moi","Un mardi soir, sans raison","Le GPS m'a lâché"
 ];
 const FAKE_HOT = ["Dans un ascenseur, évidemment","Avec des menottes en peluche","Le lendemain, j'ai changé de numéro","Une histoire de massage","Dans la voiture de mes parents","Je n'ai jamais rappelé","Sous la douche, en chantant"];
@@ -77,7 +77,7 @@ const TW = [
   { id: "fake", name: "L'imposteur", desc: "Le jeu glisse une fausse réponse. La démasquer rapporte 1 point." },
   { id: "x2", name: "Points doublés", desc: "Tous les points de cette question comptent double." },
   { id: "disg", name: "Déguisement", desc: "Réponds comme le ferait le joueur indiqué. Chaque joueur berné rapporte 2 points." },
-  { id: "perfect", name: "Crime parfait", desc: "Si personne ne trouve ta réponse, tu prends 3 points bonus." },
+  { id: "perfect", name: "Crime parfait", desc: "Si personne ne trouve ta réponse, tu gagnes 3 points bonus." },
   { id: "lone", name: "Flair solitaire", desc: "Seul à trouver l'auteur ? 3 points au lieu d'un." }
 ];
 function pickTw(on, round, last){ return on && round > 1 ? SB.u.twist(TW, { last, rate: .4 }) : null; }
@@ -98,7 +98,7 @@ const FL = {
   win: ["Vainqueur", "Le cerveau de la soirée", "Imbattable", "Le plus fin limier"],
   det: ["Meilleur détective", "Œil de lynx", "Rien ne lui échappe"],
   fool: ["Le plus imprévisible", "Maître du bluff", "Insaisissable"],
-  fnd: ["Le livre ouvert", "Trop facile à lire", "Démasqué à chaque fois"],
+  fnd: ["Le livre ouvert", "Trop facile à lire", "Cartes sur table"],
   bot: ["Chasseur d'imposteurs", "Détecteur de mensonges", "Pas dupe une seconde"]
 };
 function fl(list, seed, k){ return list[((seed || 0) + k) % list.length]; }
@@ -153,10 +153,10 @@ const DEF = {
   min: 3, max: 12,
   rules: [
     "Une question s'affiche. Chacun écrit sa réponse en secret sur son téléphone.",
-    "Les réponses apparaissent une par une, sans le nom. Tout le monde vote pour l'auteur, l'auteur aussi pour brouiller les pistes.",
+    "Les réponses apparaissent une par une, sans le nom. Tout le monde vote pour désigner l'auteur, y compris l'auteur lui-même, pour brouiller les pistes.",
     "1 point si tu trouves l'auteur. L'auteur gagne 1 point par joueur qu'il a berné.",
     "Coups de théâtre : cinq mots maximum, imposteur glissé par le jeu, déguisement, crime parfait, points doublés…",
-    "Questions variées (complète, avoue, prédis, écris comme…), sans redites d'une soirée à l'autre. À la fin, le podium et des trophées."
+    "Questions variées (complète, avoue, prédis, écris comme…), sans redites d'une soirée à l'autre. À la fin : podium et trophées."
   ],
   options: [
     { id: "rounds", label: "Questions", type: "seg", def: 3, values: [{ v: 3, label: "3" }, { v: 5, label: "5" }, { v: 8, label: "8" }] },
@@ -184,7 +184,7 @@ const DEF = {
     const lab = '<span class="eyebrow">Question ' + s.round + " / " + s.rounds + "</span>" + SB.u.twistHTML(T);
     if(s.phase === "write"){
       const mine = ctx.mine(), sent = !!(mine && clip(mine.a, tw)), dg = (s.disg || {})[me];
-      screen(root, "w" + s.k + sent, CSS + lab + '<div class="card acc"><div class="big">' + esc(q) + "</div>" + (s.p === me && /\{p\}/.test(s.q) ? '<span class="sm">Oui, c\'est toi : réponds sur toi-même !</span>' : "") + "</div>" +
+      screen(root, "w" + s.k + sent, CSS + lab + '<div class="card acc"><div class="big">' + esc(q) + "</div>" + (s.p === me && /\{p\}/.test(s.q) ? '<span class="sm">Oui, la question parle de toi : réponds quand même !</span>' : "") + "</div>" +
         (dg ? '<p class="note-box">Déguisement : réponds comme le ferait <b>' + esc(nameOf(dg)) + "</b>.</p>" : "") +
         (sent ? '<div class="sent"><span class="t">' + esc(clip(mine.a, tw)) + '</span><button class="link" type="button" data-edit>Modifier</button></div>'
           : '<textarea class="txt qd-in" maxlength="140" placeholder="' + (tw === "short" ? "5 mots maximum…" : "Ta réponse, en secret…") + '" aria-label="Ta réponse"></textarea>' + (tw === "short" ? '<p class="sm" data-wc>0 / 5 mots</p>' : "")) +
@@ -228,7 +228,7 @@ const DEF = {
         if(isBot) note = '<p class="sm">Fausse réponse glissée par le jeu. ' + (right.length ? "Bien vu !" : "Tout le monde s'est fait avoir.") + "</p>";
         else if(wrong.length) note = '<p class="sm">' + esc(nameOf(a.id)) + " a berné " + wrong.length + " joueur" + (wrong.length > 1 ? "s" : "") + " : " + esc(wrong.map(v => nameOf(v) + " (" + nameOf(votes[v]) + ")").join(", ")) + "</p>";
         if(tw === "perfect" && !isBot && !right.length && voters.length >= 2) note += '<p class="note-box">Crime parfait ! ' + esc(nameOf(a.id)) + " prend 3 points bonus.</p>";
-        if(tw === "lone" && right.length === 1 && !isBot) note += '<p class="note-box">Flair solitaire : ' + esc(nameOf(right[0])) + " est seul à trouver, +3 !</p>";
+        if(tw === "lone" && right.length === 1 && !isBot) note += '<p class="note-box">Flair solitaire : ' + esc(nameOf(right[0])) + " est le seul à avoir trouvé : +3 !</p>";
         const gk = Object.keys(gain).filter(id => gain[id]);
         screen(root, "r" + s.k + ctx.isHost, CSS + head + '<span class="eyebrow">C\'était</span><div class="who">' + esc(nameOf(a.id)) + "</div>" +
           '<div class="field"><span class="eyebrow">Ont trouvé</span><div class="qd-ok">' + (right.length ? right.map(v => '<span class="chip ok">' + esc(nameOf(v)) + "</span>").join("") : '<span class="sm">Personne !</span>') + "</div></div>" + note +
