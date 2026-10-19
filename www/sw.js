@@ -1,6 +1,6 @@
 // Service worker de Soirée Box : met l'appli en cache pour qu'elle s'ouvre même sans réseau.
 // Change CACHE à chaque mise à jour, et ajoute ici le fichier de chaque nouveau jeu.
-const CACHE = "soireebox-4.9.5";
+const CACHE = "soireebox-4.10";
 const FILES = [
   "./",
   "core.js",
@@ -44,7 +44,8 @@ const FILES = [
   "icons/icon-512.png",
   "icons/maskable-512.png",
   "index.html",
-  "manifest.webmanifest"
+  "manifest.webmanifest",
+  "qrcode.js"
 ];
 
 self.addEventListener("install", event => {

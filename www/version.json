@@ -1,16 +1,16 @@
 {
- "version": "4.9.5",
- "apk": 31,
+ "version": "4.10",
+ "apk": 32,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Test de pureté : graphique sur 5 axes (Sexe, Drogues, Alcool, Hygiène, Morale)",
-  "Deux nouveaux thèmes de questions : Drogues & substances, Hygiène & crasse"
+  "QR code dans le salon : on le scanne avec l'appareil photo pour rejoindre",
+  "Sur Android, le QR code ouvre directement l'appli dans le salon (nouvelle appli à installer une fois)"
  ],
  "files": {
   "core.js": {
-   "h": "735aa40c5414859f89e57b5b5a3a8c736c5ed667bea88e6e11f58d588b365ceb",
-   "s": 106425
+   "h": "1f8a509ad0b373dce1989acf62edcf25fa559692dc685c7201b957e32c3021fc",
+   "s": 111076
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -177,12 +177,16 @@
    "s": 25520
   },
   "index.html": {
-   "h": "4763da7383d9f2373d00d2a4350ca7d3fc046fb2aceee320357ebc0a8625bd00",
-   "s": 41648
+   "h": "86d9125f27ca2b29d4d1e432327ab8cabbc1deceea5f969e2f87da4b640aab53",
+   "s": 42953
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
    "s": 705
+  },
+  "qrcode.js": {
+   "h": "18ae399f81182bc9de916e9c77b195df20cc58d6f2d55a62b085a299f1bf1780",
+   "s": 56694
   }
  }
 }

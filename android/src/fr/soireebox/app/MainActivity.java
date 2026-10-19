@@ -95,8 +95,26 @@ public class MainActivity extends Activity {
         });
 
         setContentView(web);
-        if (state != null) web.restoreState(state);
-        else web.loadUrl("https://" + ORIGIN_HOST + "/index.html");
+        String code = inviteCode(getIntent());
+        if (state != null && code == null) web.restoreState(state);
+        else web.loadUrl("https://" + ORIGIN_HOST + "/index.html" + (code != null ? "#" + code : ""));
+    }
+
+    /** Code de salon d'un lien d'invitation soireebox://join/ABCD (null sinon). */
+    static String inviteCode(Intent i) {
+        if (i == null || i.getData() == null) return null;
+        Uri u = i.getData();
+        if (!"soireebox".equals(u.getScheme()) || !"join".equals(u.getHost())) return null;
+        String c = u.getPath() == null ? "" : u.getPath().replace("/", "").toUpperCase(java.util.Locale.ROOT);
+        return c.matches("[A-Z]{4}") ? c : null;
+    }
+
+    @Override
+    protected void onNewIntent(Intent i) {
+        super.onNewIntent(i);
+        setIntent(i);
+        String code = inviteCode(i);
+        if (code != null && web != null) web.evaluateJavascript("window.SB && SB.openInvite && SB.openInvite('" + code + "')", null);
     }
 
     private static String mime(String p) {

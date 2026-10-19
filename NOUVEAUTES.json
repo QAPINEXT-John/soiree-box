@@ -1,4 +1,8 @@
 {
+  "4.10": [
+    "QR code dans le salon : on le scanne avec l'appareil photo pour rejoindre",
+    "Sur Android, le QR code ouvre directement l'appli dans le salon (nouvelle appli à installer une fois)"
+  ],
   "4.9.5": [
     "Test de pureté : graphique sur 5 axes (Sexe, Drogues, Alcool, Hygiène, Morale)",
     "Deux nouveaux thèmes de questions : Drogues & substances, Hygiène & crasse"

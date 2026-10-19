@@ -107,6 +107,12 @@ button{font:inherit; color:inherit; cursor:pointer}
 .sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:10px}
 .filters{display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; margin-inline:-2px; padding:2px}
 .filters::-webkit-scrollbar{display:none}
+.qrbox{display:flex; align-items:center; gap:14px; width:100%; border:1.5px solid var(--line); background:var(--card); border-radius:18px; padding:10px 14px; color:var(--ink); text-align:left}
+.qrbox svg{flex:none; width:96px; height:96px; border-radius:8px; background:#fff}
+.qrbox .t{display:flex; flex-direction:column; gap:3px}.qrbox .t b{font-size:16px}.qrbox .t span{font-size:13px; color:var(--muted)}
+.qrfull{position:fixed; inset:0; z-index:60; background:rgba(10,8,14,.92); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:24px; color:#fff; text-align:center}
+.qrfull svg{width:min(78vw,340px); height:auto; border-radius:14px; background:#fff}.qrfull .c{font-family:var(--f-disp); font-weight:800; font-size:44px; letter-spacing:.12em}
+.invite{display:flex; flex-direction:column; gap:8px; background:var(--card); border:1.5px solid var(--line); border-radius:18px; padding:14px}.invite p{margin:0; font-size:14px; color:var(--muted)}.invite .btn{min-height:48px; font-size:16px; display:flex; align-items:center; justify-content:center; text-decoration:none}
 .langrow{display:flex; justify-content:flex-end; margin:-4px 0 -2px}.langsw{display:flex; align-items:center; gap:2px; padding:3px; border-radius:99px; background:var(--card); border:1.5px solid var(--line)}.langsw svg{margin:0 4px 0 6px; color:var(--muted)}.langsw button{border:0; background:transparent; color:var(--ink); border-radius:99px; min-width:44px; min-height:34px; padding:0 10px; font-weight:800; font-size:14px; letter-spacing:.02em}.langsw button[aria-pressed="true"]{background:var(--ink); color:var(--bg)}
 .tile.wip{border-style:dashed; opacity:.85}.wipb{color:var(--acc); font-weight:800}
 .filters button{flex:none; min-height:40px; padding:0 14px; border:2px solid var(--line); border-radius:99px; background:transparent; color:var(--ink); font-weight:700; font-size:14px}
@@ -355,6 +361,7 @@ button,.tile,.opt,.pack,.seg button,.ab button,.pad button{touch-action:manipula
       <p class="tag">Un salon, un code, et toute la bande joue, chacun sur son téléphone.</p>
     </div>
     <div class="upd" id="h-update" hidden></div>
+    <div class="invite" id="h-invite" hidden></div>
     <div class="ticket">
       <label class="lbl" for="h-name">Ton prénom
         <input class="txt" id="h-name" maxlength="16" autocomplete="given-name" autocapitalize="words" enterkeyhint="done" placeholder="Léa">
@@ -389,6 +396,7 @@ button,.tile,.opt,.pack,.seg button,.ab button,.pad button{touch-action:manipula
       <div class="sep" aria-hidden="true"></div>
       <button class="share" id="sa-share" type="button" aria-label="Partager l'invitation"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3m0 0L7 8m5-5l5 5M5 13v6a2 2 0 002 2h10a2 2 0 002-2v-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
+    <button class="qrbox" id="sa-qr" type="button" hidden aria-label="QR code du salon"></button>
     <input class="txt" id="sa-link" readonly hidden aria-label="Invitation">
     <div class="field">
       <div class="sec-h"><h2 class="h2" id="sa-count"></h2></div>
@@ -472,6 +480,7 @@ button,.tile,.opt,.pack,.seg button,.ab button,.pad button{touch-action:manipula
 <script src="firebase-auth-compat.js"></script>
 <script src="firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
+<script src="qrcode.js"></script>
 <script src="core.js"></script>
 <!-- Les jeux : ajoute une ligne ici pour chaque nouveau jeu (voir AJOUTER-UN-JEU.md) -->
 <script src="games/note10.js"></script>

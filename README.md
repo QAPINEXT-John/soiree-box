@@ -124,3 +124,7 @@ Voir **AJOUTER-UN-JEU.md**. En résumé, tu copies `www/games/_modele.js`, tu é
 ## Langues
 
 L'appli existe en français et en anglais (boutons FR / EN en haut de l'accueil, gardé sur le téléphone ; par défaut la langue du téléphone). Dans le code : `tr("texte français", "English text")`. En réseau, le contenu des parties suit la langue de l'hôte (`ctx.s.lg`), l'interface celle de chaque téléphone.
+
+## QR code d'invitation
+
+Le salon affiche un QR code (lien `https://qapinext-john.github.io/soiree-box/#CODE`). Scanné avec l'appareil photo, il ouvre le site directement sur le salon. Sur Android, le site propose « Ouvrir dans l'appli » (lien `soireebox://join/CODE`, géré par l'APK à partir du versionCode 32) ou d'installer l'APK. Générateur de QR : `www/qrcode.js` (Kazuhiko Arase, licence MIT).
