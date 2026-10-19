@@ -223,7 +223,7 @@ const TWISTS = [
   { id: "mot", name: "Un seul mot", desc: "Chaque indice tient en un seul mot, pas un de plus." },
   { id: "double", name: "Double ou rien", desc: "Pile : 6 points. Sinon : rien du tout." },
   { id: "large", name: "Tolérance large", desc: "À 3 près, ça rapporte encore 1 point." },
-  { id: "aveugle", name: "Devineur à l'aveugle", desc: "Le devineur ne voit pas la catégorie, seulement les indices." },
+  { id: "aveugle", name: "Devineur à l'aveugle", desc: "Les devineurs ne voient pas la catégorie, seulement les indices." },
   { id: "extreme", name: "Note extrême", desc: "La note secrète est forcément 1, 2, 9 ou 10." },
   { id: "milieu", name: "Ventre mou", desc: "La note secrète est forcément entre 4 et 7." },
   { id: "chrono", name: "Chrono", desc: "40 secondes pour donner les indices, pas une de plus." }

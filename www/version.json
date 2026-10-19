@@ -1,15 +1,15 @@
 {
- "version": "4.4",
- "apk": 28,
+ "version": "4.5",
+ "apk": 29,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Classement de la soirée réparé : affichage propre, ex aequo au même rang",
-  "Les écrans ne glissent plus sur le côté"
+  "Note sur 10 : tout le monde devine à chaque manche, chacun marque ses points",
+  "Test de pureté : nouveau thème Hardcore 18+ (67 questions sans filtre)"
  ],
  "files": {
   "core.js": {
-   "h": "184cfa6d48e390ac4690a999f7d3f52917c691a2f0ced875f7b986bcc051a99f",
+   "h": "c6218f9b38221ee647822617cca0146fb23ebb5d9aab56955ab7c990dc1eaed7",
    "s": 93322
   },
   "firebase-app-compat.js": {
@@ -113,8 +113,8 @@
    "s": 31554
   },
   "games/note10.js": {
-   "h": "49cf7218b78bbfc27f3814a1e9559c08623d3a99b19a163e92e611a8152da432",
-   "s": 69081
+   "h": "d6c5b098a99987acfb69b18b1cee1a3fd772af74c100de1ca61b9b05d8e7535d",
+   "s": 92314
   },
   "games/priorites.js": {
    "h": "4ddc3fc28ab108dbfa9374960bf3ac68dddc7cdfbc010c223ee78d20344488d8",
@@ -125,8 +125,8 @@
    "s": 73112
   },
   "games/purete.js": {
-   "h": "531e13963837d31b1bd696c2546df2fb859528e09dad9f0f4f1139b78853e82a",
-   "s": 32374
+   "h": "938ff1e40122ac5a07dc84069825e64b1dbe7fcbd43e287749634dbf181aa724",
+   "s": 35840
   },
   "games/quiadit.js": {
    "h": "b0674479e6dc5c7d510e15a735fff0f0fa9fab31a583a2a71525d73429177bdc",
