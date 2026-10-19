@@ -5,51 +5,51 @@ const { esc, A, shuffle, screen, txt, store, persist, pick } = SB.u;
 
 const SOFT = [
   ["Pouvoir voler","Être invisible"],["Ne plus jamais manger de fromage","Ne plus jamais manger de chocolat"],["Vivre sans internet","Vivre sans eau chaude"],
-  ["Parler toutes les langues","Jouer de tous les instruments"],["Avoir 10 ans de plus","Avoir 10 ans de moins"],["Vivre à la mer","Vivre à la montagne"],
-  ["Lire dans les pensées","Voir le futur"],["Ne plus jamais voyager","Ne plus jamais regarder de séries"],["Être célèbre","Être riche en secret"],
-  ["Toujours avoir trop chaud","Toujours avoir trop froid"],["Dire toujours la vérité","Mentir tout le temps"],["Manger épicé à chaque repas","Manger sans sel à chaque repas"],
-  ["Être coincé dans un ascenseur avec ton ex","Être coincé dans un ascenseur avec ton patron"],["Ne plus avoir de téléphone","Ne plus avoir d'ordinateur"],
+  ["Parler toutes les langues","Jouer de tous les instruments"],["Avoir 10 ans de plus","Avoir 10 ans de moins"],["Vivre au bord de la mer","Vivre à la montagne"],
+  ["Lire dans les pensées","Voir le futur"],["Ne plus jamais voyager","Ne plus jamais regarder de séries"],["Être célèbre mais fauché","Être riche mais inconnu"],
+  ["Toujours avoir trop chaud","Toujours avoir trop froid"],["Toujours dire la vérité","Toujours mentir"],["Manger très épicé à chaque repas","Manger sans sel à chaque repas"],
+  ["Rester coincé dans un ascenseur avec ton ex","Rester coincé dans un ascenseur avec ton patron"],["Ne plus avoir de téléphone","Ne plus avoir d'ordinateur"],
   ["Vivre au Moyen Âge","Vivre en l'an 3000"],["Gagner au loto","Trouver l'amour de ta vie"],["Être drôle","Être brillant"],
-  ["Avoir les cheveux bleus à vie","Être chauve à vie"],["Chanter dès que tu parles","Danser dès que tu marches"],["Faire le tour du monde seul","Passer un an chez toi avec tes potes"],
-  ["Parler aux animaux","Comprendre les bébés"],["Avoir un dragon","Être un dragon"],["Un bouton pause pour ta vie","Un bouton retour arrière"],
+  ["Avoir les cheveux bleus à vie","Être chauve à vie"],["Chanter au lieu de parler","Danser au lieu de marcher"],["Faire le tour du monde en solo","Passer un an enfermé chez toi avec tes potes"],
+  ["Parler aux animaux","Comprendre les bébés"],["Avoir un dragon","Être un dragon"],["Avoir un bouton pause sur ta vie","Avoir un bouton retour en arrière"],
   ["Être le meilleur d'une équipe nulle","Être le plus nul d'une équipe de champions"],["Ne boire que de l'eau","Ne boire que du soda"],
-  ["Connaître la date de ta mort","Connaître la cause de ta mort"],["Te téléporter","Remonter le temps"],["Vivre sans musique","Vivre sans films"],
-  ["Que tout le monde entende tes pensées une heure","Lire ton historique à voix haute"],["Un an sans réseaux sociaux","Un an sans sortir le soir"],
-  ["Être un génie incompris","Être un idiot adoré"],["Avoir un majordome","Avoir un chef cuisinier"],["Ne jamais attendre dans une file","Ne jamais être dans les bouchons"],
-  ["Rire à chaque fois que tu es triste","Pleurer à chaque fois que tu ris"],["Revivre ton enfance","Découvrir ta vie dans 20 ans"],
-  ["Savoir cuisiner comme un chef","Savoir danser comme un pro"],["Vivre dans un château hanté","Vivre dans une cabane au fond des bois"],["Avoir des yeux dans le dos","Avoir des oreilles de chauve-souris"],
-  ["Ne manger que des pâtes pendant un an","Ne manger que de la soupe pendant un an"],["Être coincé un week-end dans un supermarché","Être coincé un week-end dans un parc d'attractions"],
-  ["Avoir un rire de dauphin","Avoir un éternuement de trompette"],["Retrouver tous les objets que tu as perdus","Retrouver tous les messages que tu as effacés"],
+  ["Connaître la date de ta mort","Connaître la cause de ta mort"],["Pouvoir te téléporter","Pouvoir remonter le temps"],["Vivre sans musique","Vivre sans films"],
+  ["Que tout le monde entende tes pensées pendant une heure","Lire ton historique de recherche à voix haute"],["Passer un an sans réseaux sociaux","Passer un an sans sortir le soir"],
+  ["Être un génie incompris","Être un idiot adoré"],["Avoir un majordome","Avoir un chef cuisinier à domicile"],["Ne plus jamais faire la queue","Ne plus jamais être coincé dans les bouchons"],
+  ["Éclater de rire chaque fois que tu es triste","Fondre en larmes chaque fois que tu ris"],["Revivre ton enfance","Découvrir à quoi ressemblera ta vie dans 20 ans"],
+  ["Savoir cuisiner comme un chef","Savoir danser comme un pro"],["Vivre dans un château hanté","Vivre dans une cabane au fond des bois"],["Avoir des yeux dans le dos","Avoir l'ouïe d'une chauve-souris"],
+  ["Ne manger que des pâtes pendant un an","Ne manger que de la soupe pendant un an"],["Rester enfermé tout un week-end dans un supermarché","Rester enfermé tout un week-end dans un parc d'attractions"],
+  ["Rire comme un dauphin","Éternuer comme une trompette"],["Retrouver tous les objets que tu as perdus","Retrouver tous les messages que tu as effacés"],
   ["Que ta vie soit une comédie musicale","Que ta vie soit un film muet"],["Ne plus jamais avoir de courbatures","Ne plus jamais avoir le hoquet"],
-  ["Être le meilleur ami d'un dragon","Être le meilleur ami d'un fantôme"],["Habiter dans un aquarium géant","Habiter dans une cabane perchée"],
-  ["Toujours dire ce que tu penses","Ne jamais pouvoir donner ton avis"],["Gagner chaque dispute","Gagner à chaque jeu de société"],
-  ["Avoir un sosie qui fait des bêtises","Avoir un jumeau maléfique"],["Voyager dans l'espace","Explorer le fond des océans"],
-  ["Pouvoir parler à toi enfant","Pouvoir parler à toi à 80 ans"],["Avoir un super-pouvoir inutile","Avoir un super-pouvoir dangereux pour toi"],
-  ["Que ta voix soit doublée façon film d'action","Que chacun de tes pas fasse un bruit de canard"],["Être payé pour dormir","Être payé pour manger"],
-  ["Vivre sans réveil","Vivre sans calendrier"],["Ne jamais rater un bus","Ne jamais rater une blague"],["Que ta maison soit une piscine","Que ta maison soit un toboggan géant"],
-  ["Connaître la fin de toutes les séries","Ne jamais pouvoir voir la fin d'une série"],["Changer de prénom chaque année","Changer de couleur de cheveux chaque mois"]
+  ["Être le meilleur ami d'un dragon","Être le meilleur ami d'un fantôme"],["Habiter dans un aquarium géant","Habiter dans une cabane dans les arbres"],
+  ["Toujours dire ce que tu penses","Ne jamais pouvoir donner ton avis"],["Gagner toutes tes disputes","Gagner à tous les jeux de société"],
+  ["Avoir un sosie qui fait des bêtises en ton nom","Avoir un jumeau maléfique"],["Voyager dans l'espace","Explorer le fond des océans"],
+  ["Pouvoir parler à l'enfant que tu étais","Pouvoir parler à toi-même à 80 ans"],["Avoir un super-pouvoir inutile","Avoir un super-pouvoir qui te met en danger"],
+  ["Avoir la voix off d'une bande-annonce de film d'action","Faire coin-coin à chacun de tes pas"],["Être payé pour dormir","Être payé pour manger"],
+  ["Vivre sans réveil","Vivre sans calendrier"],["Ne plus jamais rater ton bus","Réussir toutes tes blagues"],["Avoir une piscine dans ton salon","Avoir un toboggan géant à la place de l'escalier"],
+  ["Connaître à l'avance la fin de toutes les séries","Ne jamais pouvoir voir la fin d'une série"],["Changer de prénom chaque année","Changer de couleur de cheveux chaque mois"]
 ];
 const HOT = [
-  ["Que ta mère lise tes messages","Que ton patron voie ton historique"],["Être surpris en pleine action par tes parents","Surprendre tes parents en pleine action"],
-  ["Faire l'amour uniquement dans le noir","Uniquement en pleine lumière"],["Un plan d'un soir incroyable","Une relation sage et longue"],
-  ["Ne plus jamais embrasser","Ne plus jamais faire l'amour"],["Quelqu'un de très beau mais ennuyeux","Quelqu'un de banal mais hilarant"],
-  ["Que tous tes ex viennent à ton mariage","Qu'aucun de tes amis ne vienne"],["Lire les textos coquins de ton meilleur pote","Que tes potes lisent les tiens"],
-  ["Un dîner dans un grand restaurant","Une nuit torride sous une tente"],["Envoyer une photo osée sur le groupe famille","Recevoir celle d'un collègue"],
+  ["Que ta mère lise tes messages","Que ton patron voie ton historique"],["Te faire surprendre en pleine action par tes parents","Surprendre tes parents en pleine action"],
+  ["Faire l'amour uniquement dans le noir","Faire l'amour uniquement en pleine lumière"],["Vivre un plan d'un soir incroyable","Vivre une longue relation bien sage"],
+  ["Ne plus jamais embrasser","Ne plus jamais faire l'amour"],["Sortir avec quelqu'un de très beau mais ennuyeux","Sortir avec quelqu'un de banal mais hilarant"],
+  ["Que tous tes ex viennent à ton mariage","Qu'aucun de tes amis ne vienne à ton mariage"],["Lire les textos coquins de ton meilleur pote","Que tes potes lisent tes textos coquins"],
+  ["T'offrir un dîner dans un grand restaurant","Passer une nuit torride à la belle étoile"],["Envoyer par erreur une photo osée sur le groupe famille","Recevoir par erreur une photo osée d'un collègue"],
   ["Embrasser la personne à ta droite","Raconter ta pire première fois"],["Faire un strip-tease devant tes potes","Faire une déclaration d'amour en public"],
-  ["Avoir des voisins de chambre bruyants","Être les voisins bruyants"],["Trouver un sex toy chez tes parents","Que tes parents trouvent le tien"],
-  ["Quelqu'un qui parle trop au lit","Quelqu'un qui ne dit pas un mot"],["Tester un plan à trois","Tester un jeu de rôle"],
-  ["Rompre par texto","Te faire larguer devant tout le monde"],["Que ton historique soit projeté au repas de famille","Que ta galerie photo le soit"],
+  ["Entendre tes voisins faire l'amour toute la nuit","Que tes voisins t'entendent toute la nuit"],["Trouver un sex toy chez tes parents","Que tes parents trouvent le tien"],
+  ["Coucher avec quelqu'un qui parle trop au lit","Coucher avec quelqu'un qui ne dit pas un mot"],["Tester un plan à trois","Tester un jeu de rôle"],
+  ["Te faire larguer par texto","Te faire larguer devant tout le monde"],["Que ton historique soit projeté au repas de famille","Que ta galerie photo y soit projetée"],
   ["Faire l'amour dans un avion","Faire l'amour dans un ascenseur"],["Ne plus pouvoir mentir au lit","Ne plus pouvoir parler au lit"],
-  ["Draguer en ne parlant qu'en alexandrins","Draguer en ne parlant qu'en émojis"],["Sortir avec ton ex pendant un mois","Sortir avec l'ex de ton meilleur pote"],
-  ["Un premier rendez-vous chez tes parents","Un premier rendez-vous avec ton ex à la table d'à côté"],["Avoir un crush secret toute ta vie","Que tout le monde connaisse tes crushs"],
-  ["Embrasser ton crush devant tout le monde","Lui écrire une lettre anonyme"],["Un rendez-vous surprise organisé par tes potes","Un rendez-vous organisé par tes parents"],
-  ["Que ton crush lise tes messages à son sujet","Que ton ex lise ton journal intime"],["Un bisou qui ne s'arrête jamais","Un câlin de huit heures"],
-  ["Draguer avec des répliques de films","Draguer avec des anecdotes sur les escargots"],["Te faire larguer par lettre recommandée","Te faire larguer en chanson"],
-  ["Que ton rencard arrive avec sa mère","Que ton rencard arrive avec son ex"],["Que tes potes choisissent ton prochain rencard","Qu'un algorithme le choisisse"],
-  ["Avouer ton crush à la personne concernée","L'avouer à tout le groupe sauf à elle"],["Une nuit dans un hôtel de luxe avec un inconnu","Une nuit sous une tente avec ton ex"]
+  ["Draguer en ne parlant qu'en alexandrins","Draguer en ne parlant qu'en émojis"],["Ressortir avec ton ex pendant un mois","Sortir avec l'ex de ton meilleur pote"],
+  ["Avoir ton premier rencard chez tes parents","Avoir ton premier rencard avec ton ex assis à la table d'à côté"],["Avoir un crush secret toute ta vie","Que tout le monde connaisse tes crushs"],
+  ["Embrasser ton crush devant tout le monde","Écrire une lettre d'amour anonyme à ton crush"],["Aller à un rencard arrangé par tes potes","Aller à un rencard arrangé par tes parents"],
+  ["Que ton crush lise tes messages à son sujet","Que ton ex lise ton journal intime"],["Embrasser quelqu'un pendant trois heures non-stop","Faire un câlin de huit heures sans pause"],
+  ["Draguer uniquement avec des répliques de films","Draguer uniquement avec des anecdotes sur les escargots"],["Te faire larguer par lettre recommandée","Te faire larguer en chanson"],
+  ["Que ton rencard arrive avec sa mère","Que ton rencard arrive avec son ex"],["Laisser ton ex choisir ton prochain rencard","Laisser un algorithme choisir ton prochain rencard"],
+  ["Avouer ton crush à la personne concernée","L'avouer à tout le monde sauf à la personne concernée"],["Passer une nuit dans un hôtel de luxe avec un inconnu","Passer une nuit sous une tente avec ton ex"]
 ];
-const TRASH = [["Que tes parents voient ta sextape", "Voir la sextape de tes parents"], ["Ne plus jamais avoir d'orgasme", "Avoir un orgasme à chaque éternuement"], ["Faire l'amour devant tes potes", "Regarder tes potes faire l'amour"], ["Un plan à trois avec deux inconnus", "Un plan à trois avec deux personnes de ce groupe"], ["Que ton historique X soit public", "Que tes nudes soient publiés"], ["Coucher avec ton boss", "Coucher avec ton pire ennemi"], ["Faire l'amour une fois par an, mais incroyable", "Tous les jours, mais médiocre"], ["Tourner un porno amateur", "Être figurant dans un vrai porno"], ["Ne plus jamais regarder de porno", "Ne plus jamais coucher avec quelqu'un"], ["Que ton partenaire crie le prénom de ton ex", "Crier toi-même le prénom de ton ex"], ["Un sex toy qui parle", "Un sex toy qui chante"], ["Être surpris en pleine action par ta mère", "Être surpris par ton patron"], ["Faire l'amour dans un cimetière", "Faire l'amour dans une église"], ["Coucher avec une célébrité que tu détestes", "Recoucher avec ton premier amour, 30 ans plus tard"], ["Ne faire l'amour qu'en costume de mascotte", "Ne faire l'amour qu'en écoutant l'hymne national"], ["Un plan cul différent chaque semaine", "Une seule personne pour toute ta vie"], ["Un partenaire fan de tes pieds", "Un partenaire fan de tes aisselles"], ["Montrer tes nudes à tes potes", "Voir les nudes de tous tes potes"], ["Faire un strip-tease à un mariage", "Faire un strip-tease à un enterrement"], ["Ton prénom tatoué sur les fesses de ton ex", "Le prénom de ton ex tatoué sur les tiennes"], ["Un partenaire qui fait des bruits d'animaux", "Un partenaire qui commente tout en direct"], ["Que ta sextape devienne un mème", "Que ton historique devienne un podcast"], ["Faire l'amour sur un lit à eau", "Faire l'amour dans un hamac"], ["Coucher avec ton sosie", "Coucher avec le sosie de ton ex"], ["Ne plus jamais faire de préliminaires", "Ne faire que des préliminaires"], ["Que tes parents tombent sur ta boîte à jouets", "Tomber sur celle de tes parents"], ["Une nuit avec quelqu'un qui pleure à la fin", "Avec quelqu'un qui applaudit à la fin"], ["Tous tes ex dans le même groupe de discussion", "Tous tes plans d'un soir à ton anniversaire"], ["Faire l'amour sur une musique d'ascenseur", "Sur des bruitages de dessin animé"], ["Un strip-poker avec tes collègues", "Un strip-poker avec ta belle-famille"]];
-const NOIR = [["Mourir dans 10 ans en connaissant la date", "Mourir n'importe quand, sans prévenir"], ["Être enterré", "Être incinéré et mis dans un sablier"], ["Un enterrement qui tourne en fête", "Un enterrement où personne ne vient"], ["Hanter ton ex", "Hanter ton patron"], ["Mourir de rire", "Mourir d'ennui"], ["Finir mangé par des requins", "Finir mangé par tes chats"], ["Connaître la date de ta mort", "Connaître celle de tous tes potes"], ["Vivre éternellement seul", "Mourir demain entouré de tes proches"], ["Que ton testament soit lu en direct sur TikTok", "Que ton historique le soit"], ["Être le dernier humain sur Terre", "Être le premier à mourir pendant l'apocalypse"], ["Être réincarné en moustique", "Être réincarné en pigeon parisien"], ["Un enterrement en karaoké", "Un enterrement en drive"], ["Mourir en héros ridicule", "Vivre centenaire et oublié"], ["Ton épitaphe écrite par ton ex", "Ton éloge funèbre fait par ton patron"], ["Être enterré avec ton téléphone", "Être enterré avec ta liste de rancunes"], ["Revenir en fantôme poli", "Revenir en zombie affectueux"], ["Que ton enterrement soit un défilé de mode", "Qu'il soit un spectacle de magie"], ["Savoir comment chaque personne ici va mourir", "Que tout le monde sache comment tu vas mourir"], ["Hériter d'une maison hantée", "Hériter des dettes d'un inconnu"], ["Être cryogénisé pendant 500 ans", "Être réincarné dans 500 ans en animal au hasard"]];
+const TRASH = [["Que tes parents tombent sur ta sextape", "Que tes collègues tombent sur ta sextape"], ["Ne plus jamais avoir d'orgasme", "Avoir un orgasme à chaque éternuement"], ["Faire l'amour devant tes potes", "Regarder tes potes faire l'amour"], ["Un plan à trois avec deux inconnus", "Un plan à trois avec deux personnes de ce groupe"], ["Que ton historique porno devienne public", "Que tes nudes fuitent sur internet"], ["Coucher avec ton boss", "Coucher avec ton pire ennemi"], ["Faire l'amour une fois par an, mais divinement", "Faire l'amour tous les jours, mais très moyennement"], ["Tourner un porno amateur", "Être figurant dans un vrai porno"], ["Ne plus jamais regarder de porno", "Ne plus jamais coucher avec quelqu'un"], ["Que ton partenaire crie le prénom de son ex au lit", "Crier toi-même le prénom de ton ex au lit"], ["Avoir un sex toy qui parle", "Avoir un sex toy qui chante"], ["Décrocher par erreur un appel visio de ta mère en plein acte", "Décrocher par erreur un appel visio de ton patron en plein acte"], ["Faire l'amour dans un cimetière", "Faire l'amour dans une église"], ["Coucher avec une célébrité que tu détestes", "Recoucher avec ton premier amour, 30 ans plus tard"], ["Ne faire l'amour qu'en costume de mascotte", "Ne faire l'amour qu'en écoutant l'hymne national"], ["Avoir un plan cul différent chaque semaine", "Ne coucher qu'avec une seule personne de toute ta vie"], ["Sortir avec quelqu'un qui fantasme sur tes pieds", "Sortir avec quelqu'un qui fantasme sur tes aisselles"], ["Montrer tes nudes à tes potes", "Voir les nudes de tous tes potes"], ["Faire un strip-tease à un mariage", "Faire un strip-tease à un enterrement"], ["Que ton ex ait ton prénom tatoué sur les fesses", "Avoir le prénom de ton ex tatoué sur les fesses"], ["Tomber sur un partenaire qui imite des cris d'animaux au lit", "Tomber sur un partenaire qui commente tout en direct"], ["Que ta sextape devienne un mème", "Que ton historique de recherche soit lu dans un podcast"], ["Faire l'amour sur un lit à eau", "Faire l'amour dans un hamac"], ["Coucher avec ton sosie", "Coucher avec le sosie de ton ex"], ["Ne plus jamais faire de préliminaires", "Ne faire que des préliminaires"], ["Que ta boîte à sex toys s'ouvre en plein repas de famille", "Que ta boîte à sex toys s'ouvre au contrôle de sécurité de l'aéroport"], ["Passer la nuit avec quelqu'un qui pleure à la fin", "Passer la nuit avec quelqu'un qui applaudit à la fin"], ["Être ajouté à un groupe de discussion avec tous tes ex", "Voir débarquer tous tes plans d'un soir à ton anniversaire"], ["Faire l'amour sur une musique d'ascenseur", "Faire l'amour sur des bruitages de dessin animé"], ["Jouer au strip-poker avec tes collègues", "Jouer au strip-poker avec ta belle-famille"]];
+const NOIR = [["Mourir dans 10 ans pile, en le sachant", "Mourir n'importe quand, sans prévenir"], ["Être enterré", "Être incinéré et finir dans un sablier"], ["Avoir un enterrement qui tourne à la fête", "Avoir un enterrement où personne ne vient"], ["Hanter ton ex", "Hanter ton patron"], ["Mourir de rire", "Mourir d'ennui"], ["Finir dévoré par des requins", "Finir dévoré par tes chats"], ["Connaître la date de la mort de tous tes potes", "Que tous tes potes connaissent la date de la tienne"], ["Vivre éternellement seul", "Mourir demain entouré de tes proches"], ["Que ton testament soit lu en direct sur TikTok", "Que ton historique de navigation soit lu à ton enterrement"], ["Être le dernier humain sur Terre", "Être le premier à mourir pendant l'apocalypse"], ["Être réincarné en moustique", "Être réincarné en pigeon parisien"], ["Avoir un enterrement karaoké", "Avoir un enterrement en drive"], ["Mourir en héros, mais de façon ridicule", "Vivre jusqu'à 100 ans et tomber dans l'oubli"], ["Que ton épitaphe soit écrite par ton ex", "Que ton éloge funèbre soit prononcé par ton patron"], ["Être enterré avec ton téléphone", "Être enterré avec la liste de tes rancunes"], ["Revenir en fantôme très poli", "Revenir en zombie très câlin"], ["Que ton enterrement soit un défilé de mode", "Que ton enterrement soit un spectacle de magie"], ["Savoir comment chaque personne ici va mourir", "Que tout le monde ici sache comment tu vas mourir"], ["Hériter d'une maison hantée", "Hériter des dettes d'un inconnu"], ["Être cryogénisé pendant 500 ans", "Te réincarner dans 500 ans en un animal tiré au sort"]];
 const PACKS = [
   { v: "soft", label: "Classique", desc: "Pour tout le monde", list: SOFT },
   { v: "adulte", label: "Adultes", desc: "Sexe, porno, tabous, humour noir : tout le contenu adulte", list: HOT.concat(TRASH, NOIR), hot: true }
@@ -87,11 +87,11 @@ const TWL = [
   { id: "chrono", name: "Chrono 5 secondes", desc: "Vous avez 5 secondes pour lever la main. Pas de main levée, pas d'avis !" },
   { id: "devil", name: "Avocat du diable", desc: "Le premier à lever la main défend le camp opposé pendant 30 secondes." },
   { id: "rare", name: "La minorité décide", desc: "Le camp le moins nombreux choisit un petit gage pour l'autre camp." },
-  { id: "swap", name: "Retournement", desc: "La majorité a une minute pour convaincre quelqu'un de changer de camp." },
-  { id: "blind", name: "Dos à dos", desc: "Tout le monde ferme les yeux pour voter, et on les rouvre ensemble." }
+  { id: "swap", name: "Retournement", desc: "La majorité a une minute pour convaincre quelqu'un d'en face de changer de camp." },
+  { id: "blind", name: "Les yeux fermés", desc: "Tout le monde ferme les yeux pour voter, et on les rouvre ensemble." }
 ];
 const FL = {
-  duo: ["Les plus d'accord", "Les âmes sœurs", "Le même cerveau"],
+  duo: ["Les plus d'accord", "Les âmes sœurs", "Un cerveau pour deux"],
   anti: ["Les moins d'accord", "Chien et chat", "Jamais du même avis"],
   rebel: ["Le plus à contre-courant", "L'esprit rebelle", "Seul contre tous"],
   dither: ["Le plus indécis", "La girouette", "Change d'avis comme de chemise"],
@@ -123,7 +123,7 @@ SB.register({
   rules: [
     "Deux options s'affichent. Chacun choisit en secret celle qu'il préfère.",
     "Quand tout le monde a voté, on voit qui a choisi quoi.",
-    "Justifiez vos choix, surtout si vous êtes seul de votre camp.",
+    "Justifiez vos choix, surtout si vous êtes seul dans votre camp.",
     "Coups de théâtre : pronostic, télépathie, chrono, prime au courage… Ce sont eux qui rapportent des points.",
     "À la fin : le duo le plus d'accord, le plus à contre-courant, le plus indécis et le meilleur score."
   ],
@@ -193,7 +193,7 @@ SB.register({
       let extra = "";
       if(gk.length) extra += '<div class="field"><span class="eyebrow">Points de la manche</span><div class="chips">' + gk.map(id => '<span class="chip ok">' + esc(ctx.name(id)) + " +" + got[id] + "</span>").join("") + "</div></div>";
       else if(tw === "predict" || tw === "tele" || tw === "rare" || tw === "maj") extra += '<p class="sm">Personne ne marque sur ce coup-là.</p>';
-      if(s.dev) extra += '<p class="note-box">' + esc(ctx.name(s.dev)) + " défend le camp opposé au sien pendant 30 secondes. Convaincs-nous !</p>";
+      if(s.dev) extra += '<p class="note-box">' + esc(ctx.name(s.dev)) + " défend le camp opposé au sien pendant 30 secondes. On écoute !</p>";
       screen(root, "r" + s.k + ctx.isHost, lab + '<span class="eyebrow">' + esc(head) + "</span>" + resHTML(p, a, b, ctx.name) + extra +
         SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>' + (s.round >= s.rounds ? "Voir le bilan" : "Question suivante") + "</button>" : '<p class="wait">L\'hôte passe à la suite…</p>'), r => {
         const bt = r.querySelector("[data-next]");
