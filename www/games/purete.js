@@ -251,7 +251,7 @@ function score(ans, tw){
   return Math.max(0, Math.min(100, Math.round(100 * (1 - bad / Math.max(1, W)))));
 }
 /* ---------- Profil par thème : graphique radar en fin de test ---------- */
-const SHORT = { soiree: tr("Soirées", "Parties"), sexe: tr("Sexe", "Sex"), interdit: tr("Interdit", "Off-limits"), coeur: tr("Cœur", "Love"), boulot: tr("Boulot", "Work"), voyage: tr("Voyages", "Travel"), honte: tr("Gênant", "Cringe"), hardcore: "Hardcore" };
+const SHORT = { soiree: tr("Fêtard", "Party animal"), sexe: tr("Coquin", "Naughty"), interdit: tr("Hors-la-loi", "Outlaw"), coeur: tr("Cœur d'artichaut", "Heartbreaker"), boulot: tr("Tire-au-flanc", "Slacker"), voyage: tr("Baroudeur", "Globetrotter"), honte: tr("Malaisant", "Cringe"), hardcore: tr("Sans limites", "No limits") };
 const PAL = ["var(--acc)", "#4fd1bf", "#ffb020", "#8b7bff", "#5bc0ff", "#9be15d", "#ff8a4c", "#ff6b8a"];
 // Thèmes présents dans le test (dans l'ordre des thèmes) et % de « oui » de chaque réponse.
 function themesOf(qi, lg){ const all = ALL(lg), seen = {}; A(qi).forEach(i => { const x = all[i]; if(x) seen[x.pack] = 1; }); return PACKS.map(p => p.v).filter(v => seen[v]); }
@@ -262,7 +262,7 @@ function profile(qi, ans, lg){
 }
 const pcOf = st => v => (st[v] && st[v][1] ? Math.round(100 * st[v][0] / st[v][1]) : 0);
 function radarSVG(themes, series){
-  const n = themes.length, cx = 170, cy = 150, R = 100, ang = i => -Math.PI / 2 + i * 2 * Math.PI / n;
+  const n = themes.length, cx = 200, cy = 150, R = 96, ang = i => -Math.PI / 2 + i * 2 * Math.PI / n;
   const pt = (i, r) => [cx + r * Math.cos(ang(i)), cy + r * Math.sin(ang(i))].map(x => x.toFixed(1));
   let g = "";
   [25, 50, 75, 100].forEach(k => { g += '<polygon points="' + themes.map((_, i) => pt(i, R * k / 100).join(",")).join(" ") + '" style="fill:none;stroke:var(--line);stroke-width:1"/>'; });
@@ -277,7 +277,7 @@ function radarSVG(themes, series){
     const e = pt(i, R + 16), c = Math.cos(ang(i)), anc = Math.abs(c) < .2 ? "middle" : c > 0 ? "start" : "end", dy = Math.sin(ang(i)) > .5 ? 10 : Math.sin(ang(i)) < -.5 ? -2 : 4;
     g += '<text x="' + e[0] + '" y="' + (+e[1] + dy) + '" text-anchor="' + anc + '" style="fill:var(--ink);font-size:12px;font-weight:700">' + esc(SHORT[v] || v) + "</text>";
   });
-  return '<svg class="pu-radar" viewBox="0 0 340 300" role="img" aria-label="' + esc(tr("Profil par thème", "Profile by theme")) + '">' + g + "</svg>";
+  return '<svg class="pu-radar" viewBox="0 0 400 300" role="img" aria-label="' + esc(tr("Profil par thème", "Profile by theme")) + '">' + g + "</svg>";
 }
 function barsHTML(themes, sr){ return '<ul class="pu-bars">' + themes.map(v => '<li><span>' + esc(SHORT[v] || v) + '</span><span class="pu-bar"><i style="width:' + sr.pc(v) + '%;background:' + sr.c + '"></i></span><b>' + pct(sr.pc(v)) + "</b></li>").join("") + "</ul>"; }
 // Bloc complet : radar (3 thèmes ou plus) ou barres, chiffres du joueur mis en avant, légende si plusieurs joueurs.
@@ -292,36 +292,31 @@ function profileHTML(qi, lg, series, mineIdx, title){
     themes.map(v => "<li>" + esc(SHORT[v] || v) + " <b>" + pct(m.pc(v)) + "</b></li>").join("") + "</ul>";
   return h + "</div>";
 }
-/* Plusieurs joueurs : on choisit qui comparer (3 profils max à la fois, sinon le graphique devient illisible).
-   Par défaut : toi + le profil moyen du groupe (ou tout le monde si on n'est que 3). */
-const MAXCMP = 3;
+/* Plusieurs joueurs : un seul profil affiché à la fois (lisible même à 20), on touche un prénom pour changer.
+   Par défaut : ton profil (ou celui du groupe si tu regardes sans jouer). */
 function compareHTML(qi, lg, rows, meId, title){
   const themes = themesOf(qi, lg); if(!themes.length || !rows.length) return "";
+  const tot = st => { const t = Object.keys(st).reduce((a, k) => [a[0] + st[k][0], a[1] + st[k][1]], [0, 0]); return Math.round(100 * t[0] / Math.max(1, t[1])); };
   const sr = seriesOf(rows, qi, lg), avg = avgSeries(rows, qi, lg);
-  const all = sr.map(x => ({ n: x.name, id: x.id, v: themes.map(t => x.pc(t)) })).concat([{ n: avg.name, id: "_avg", v: themes.map(t => avg.pc(t)), g: 1 }]);
-  const mi = sr.findIndex(x => x.id === meId);
-  let sel = sr.length <= MAXCMP ? sr.map((_, i) => i) : (mi >= 0 ? [mi, all.length - 1] : [0, all.length - 1]);
-  const m = mi >= 0 ? sr[mi] : null;
-  const tot = m ? Object.keys(m.st).reduce((a, k) => [a[0] + m.st[k][0], a[1] + m.st[k][1]], [0, 0]) : null;
-  return '<div class="field pu-prof" data-prof="' + esc(JSON.stringify({ t: themes, a: all, s: sel, m: mi })) + '"><span class="eyebrow">' + esc(title || tr("Profils par thème", "Profiles by theme")) + "</span>" +
-    '<div class="pu-plot"></div>' +
-    (all.length - 1 > MAXCMP ? '<p class="sm" style="margin:0">' + tr("Touche les prénoms pour comparer (3 max).", "Tap names to compare (3 max).") + "</p>" : "") +
-    '<div class="pu-cmp">' + all.map((x, i) => '<button type="button" data-pi="' + i + '"' + (x.g ? ' class="g"' : "") + "><i></i>" + esc(x.n) + "</button>").join("") + "</div>" +
-    (tot ? '<ul class="pu-stats"><li>' + tr("Toi · réponses positives", "You · “yes” answers") + " <b>" + pct(Math.round(100 * tot[0] / Math.max(1, tot[1]))) + "</b></li>" + themes.map(v => "<li>" + esc(SHORT[v] || v) + " <b>" + pct(m.pc(v)) + "</b></li>").join("") + "</ul>" : "") + "</div>";
+  const all = sr.map(x => ({ n: x.name, v: themes.map(t => x.pc(t)), p: tot(x.st), me: x.id != null && x.id === meId })).concat([{ n: avg.name, v: themes.map(t => avg.pc(t)), p: tot(avg.st), g: 1 }]);
+  const mi = all.findIndex(x => x.me), sel = mi >= 0 ? mi : all.length - 1;
+  return '<div class="field pu-prof" data-prof="' + esc(JSON.stringify({ t: themes, a: all, s: sel })) + '"><span class="eyebrow">' + esc(title || tr("Profils par thème", "Profiles by theme")) + "</span>" +
+    '<div class="pu-who"></div><div class="pu-plot"></div>' +
+    '<p class="sm" style="margin:0;text-align:center">' + tr("Touche un prénom pour voir son profil.", "Tap a name to see their profile.") + "</p>" +
+    '<div class="pu-cmp">' + all.map((x, i) => '<button type="button" data-pi="' + i + '"' + (x.g ? ' class="g"' : "") + ">" + esc(x.me ? tr("Toi", "You") : x.n) + "</button>").join("") + "</div>" +
+    '<ul class="pu-stats"></ul></div>';
 }
 function bindProfile(r){
   r.querySelectorAll("[data-prof]").forEach(box => {
     let d; try{ d = JSON.parse(box.dataset.prof); }catch(e){ return; }
     const draw = () => {
-      const ser = d.s.map((i, k) => ({ name: d.a[i].n, c: PAL[k % PAL.length], pc: t => d.a[i].v[d.t.indexOf(t)] || 0 }));
-      box.querySelector(".pu-plot").innerHTML = d.t.length >= 3 ? radarSVG(d.t, ser) : ser.map(x => (ser.length > 1 ? '<b class="sm">' + esc(x.name) + "</b>" : "") + barsHTML(d.t, x)).join("");
-      box.querySelectorAll("[data-pi]").forEach(b => { const k = d.s.indexOf(+b.dataset.pi); b.setAttribute("aria-pressed", k >= 0); b.querySelector("i").style.background = k >= 0 ? PAL[k % PAL.length] : "transparent"; });
+      const x = d.a[d.s] || d.a[0], ser = [{ name: x.n, c: "var(--acc)", pc: t => x.v[d.t.indexOf(t)] || 0 }];
+      box.querySelector(".pu-who").textContent = x.me ? tr("Ton profil", "Your profile") : x.g ? tr("Profil moyen du groupe", "Group average") : tr("Profil de ", "Profile: ") + x.n;
+      box.querySelector(".pu-plot").innerHTML = d.t.length >= 3 ? radarSVG(d.t, ser) : barsHTML(d.t, ser[0]);
+      box.querySelector(".pu-stats").innerHTML = "<li>" + tr("Réponses positives", "“Yes” answers") + " <b>" + pct(x.p) + "</b></li>" + d.t.map((t, i) => "<li>" + esc(SHORT[t] || t) + " <b>" + pct(x.v[i] || 0) + "</b></li>").join("");
+      box.querySelectorAll("[data-pi]").forEach(b => b.setAttribute("aria-pressed", +b.dataset.pi === d.s));
     };
-    box.querySelectorAll("[data-pi]").forEach(b => b.addEventListener("click", () => {
-      const i = +b.dataset.pi, k = d.s.indexOf(i);
-      if(k >= 0){ if(d.s.length > 1) d.s.splice(k, 1); } else { d.s.push(i); if(d.s.length > MAXCMP){ const o = d.s.findIndex(x => x !== d.m); d.s.splice(o < 0 ? 0 : o, 1); } }
-      draw();
-    }));
+    box.querySelectorAll("[data-pi]").forEach(b => b.addEventListener("click", () => { d.s = +b.dataset.pi; buzz(6); draw(); }));
     draw();
   });
 }
@@ -354,6 +349,7 @@ const CSS = '<style>.pu-q{font-size:28px; font-weight:800; line-height:1.2; over
   '.pu-prof{background:var(--card); border:1.5px solid var(--line); border-radius:18px; padding:12px}.pu-radar{width:100%; max-width:380px; height:auto; display:block; margin:0 auto; overflow:visible}' +
   '.pu-leg{display:flex; flex-wrap:wrap; gap:6px 12px; justify-content:center; font-size:13px; font-weight:700}.pu-leg i{display:inline-block; width:10px; height:10px; border-radius:99px; margin-right:5px; vertical-align:-1px}' +
   '.pu-stats{list-style:none; margin:4px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:6px}.pu-stats li{background:var(--soft); border-radius:99px; padding:5px 11px; font-size:13px; color:var(--muted)}.pu-stats b{color:var(--ink); margin-left:3px}' +
+  '.pu-who{text-align:center; font-weight:800; font-size:17px}' +
   '.pu-cmp{display:flex; flex-wrap:wrap; gap:6px; justify-content:center}.pu-cmp button{display:inline-flex; align-items:center; gap:6px; min-height:34px; padding:0 12px; border-radius:99px; border:1.5px solid var(--line); background:transparent; color:var(--muted); font-weight:700; font-size:13px}' +
   '.pu-cmp button[aria-pressed="true"]{color:var(--ink); border-color:var(--ink)}.pu-cmp button.g{font-style:italic}.pu-cmp i{width:10px; height:10px; border-radius:99px; border:1.5px solid var(--line)}' +
   '.pu-bars{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px}.pu-bars li{display:grid; grid-template-columns:80px 1fr 48px; gap:10px; align-items:center; font-weight:700; font-size:14px}.pu-bars b{text-align:right}</style>';

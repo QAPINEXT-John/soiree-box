@@ -1,4 +1,8 @@
 {
+  "4.9.4": [
+    "Test de pureté : un profil à la fois sur le graphique, on touche un prénom pour changer",
+    "Nouveaux noms de catégories : Fêtard, Coquin, Hors-la-loi, Cœur d'artichaut, Tire-au-flanc, Baroudeur, Malaisant, Sans limites"
+  ],
   "4.9.3": [
     "Test de pureté : on choisit qui comparer sur le graphique (3 profils max), lisible même à 20"
   ],

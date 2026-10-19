@@ -1,14 +1,15 @@
 {
- "version": "4.9.3",
+ "version": "4.9.4",
  "apk": 31,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Test de pureté : on choisit qui comparer sur le graphique (3 profils max), lisible même à 20"
+  "Test de pureté : un profil à la fois sur le graphique, on touche un prénom pour changer",
+  "Nouveaux noms de catégories : Fêtard, Coquin, Hors-la-loi, Cœur d'artichaut, Tire-au-flanc, Baroudeur, Malaisant, Sans limites"
  ],
  "files": {
   "core.js": {
-   "h": "c9d88f44da00bcafea83f18aa1f9f5d1ee6ac48b7d710986896129c845bb767f",
+   "h": "fb61a13098846640174f95e9a782c0630523bf25270be25b9094bff47ad61ce2",
    "s": 106425
   },
   "firebase-app-compat.js": {
@@ -128,8 +129,8 @@
    "s": 112723
   },
   "games/purete.js": {
-   "h": "9bc2e3e165630067d5fb50e4314f4ac197b8944cf073aa4f746b7e82ad2e246a",
-   "s": 64014
+   "h": "31695b60b705cd05d0349f667db8ac96c1f88c233fdb1896f92ce9de048cf75b",
+   "s": 63867
   },
   "games/quiadit.js": {
    "h": "9b1bdf3534785f9d9a15452da34f75636addc57805ad87c7b82c9a2f0863fdab",
