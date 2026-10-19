@@ -1,11 +1,14 @@
 package fr.soireebox.app;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
+import android.webkit.ValueCallback;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -19,6 +22,8 @@ import java.io.InputStream;
 public class MainActivity extends Activity {
     static final String ORIGIN_HOST = "localhost";
     private WebView web;
+    private ValueCallback<Uri[]> pick;
+    private static final int PICK = 41;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -34,7 +39,7 @@ public class MainActivity extends Activity {
         s.setDatabaseEnabled(true);
         s.setMediaPlaybackRequiresUserGesture(true);
         s.setAllowFileAccess(false);
-        s.setAllowContentAccess(false);
+        s.setAllowContentAccess(true); // photos choisies dans la galerie (Photo roulette)
         s.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         s.setTextZoom(100);
 
@@ -69,6 +74,22 @@ public class MainActivity extends Activity {
             }
         });
 
+        // Choix de photos dans la galerie (<input type="file">), une ou plusieurs à la fois.
+        web.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onShowFileChooser(WebView v, ValueCallback<Uri[]> cb, FileChooserParams p) {
+                if (pick != null) pick.onReceiveValue(null);
+                pick = cb;
+                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("image/*");
+                i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, p != null && p.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE);
+                try { startActivityForResult(Intent.createChooser(i, "Choisir des photos"), PICK); }
+                catch (Exception e) { pick = null; cb.onReceiveValue(null); }
+                return true;
+            }
+        });
+
         setContentView(web);
         if (state != null) web.restoreState(state);
         else web.loadUrl("https://" + ORIGIN_HOST + "/index.html");
@@ -89,6 +110,10 @@ public class MainActivity extends Activity {
 
     /** Ouvre la feuille de partage d'Android (WhatsApp, SMS, Snap…). */
     private class ShareBridge {
+        /** Présent à partir de la version 4.6 de l'appli : le choix de photos fonctionne. */
+        @JavascriptInterface
+        public boolean photos() { return true; }
+
         @JavascriptInterface
         public void share(final String text) {
             runOnUiThread(new Runnable() {
@@ -100,6 +125,22 @@ public class MainActivity extends Activity {
                 }
             });
         }
+    }
+
+    @Override
+    protected void onActivityResult(int req, int res, Intent data) {
+        if (req != PICK) { super.onActivityResult(req, res, data); return; }
+        if (pick == null) return;
+        Uri[] r = null;
+        if (res == RESULT_OK && data != null) {
+            ClipData c = data.getClipData();
+            if (c != null && c.getItemCount() > 0) {
+                r = new Uri[c.getItemCount()];
+                for (int k = 0; k < r.length; k++) r[k] = c.getItemAt(k).getUri();
+            } else if (data.getData() != null) r = new Uri[] { data.getData() };
+        }
+        pick.onReceiveValue(r);
+        pick = null;
     }
 
     @Override

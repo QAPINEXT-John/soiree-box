@@ -1,16 +1,16 @@
 {
- "version": "4.5",
- "apk": 29,
+ "version": "4.6",
+ "apk": 30,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Note sur 10 : tout le monde devine à chaque manche, chacun marque ses points",
-  "Test de pureté : nouveau thème Hardcore 18+ (67 questions sans filtre)"
+  "Nouveau jeu : Photo roulette, en réseau ou sur un seul téléphone",
+  "Sur Android, installe la nouvelle appli une fois pour pouvoir choisir tes photos"
  ],
  "files": {
   "core.js": {
-   "h": "c6218f9b38221ee647822617cca0146fb23ebb5d9aab56955ab7c990dc1eaed7",
-   "s": 93322
+   "h": "64d0d27080a29210b9d73622959198334be0a05e0aef0a1b9345b097c73e7e1c",
+   "s": 95634
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -116,6 +116,10 @@
    "h": "d6c5b098a99987acfb69b18b1cee1a3fd772af74c100de1ca61b9b05d8e7535d",
    "s": 92314
   },
+  "games/photoroulette.js": {
+   "h": "499f7695feed181cf924a1fa262336d0d7fbf639d40372735ee39bf40625c08c",
+   "s": 30646
+  },
   "games/priorites.js": {
    "h": "4ddc3fc28ab108dbfa9374960bf3ac68dddc7cdfbc010c223ee78d20344488d8",
    "s": 29316
@@ -173,8 +177,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "485effff0fa5590f1b2ea9e296c47c0a01ffa896defb6136abd56cc8ca22e438",
-   "s": 40888
+   "h": "6d4f8fa04151f8a3775eab523539acfbe3229dcf92deee9fa65f1ab53d70a05c",
+   "s": 40935
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",

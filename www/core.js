@@ -373,6 +373,21 @@ async function relayRoom(code, asHost){
   let bus = null, host = false, ep = 0, hid = null, hostSeen = Date.now(), gone = false, hb = null;
   let self = {}, game = null, priv = {}, list = [], snap = [], offset = 0, n = 0;
   let roster = new Map(), gT = null, pT = null, cT = null, tick = Date.now(), liveSeen = false, lastC = 0;
+  // Pièces jointes (photos) : découpées en morceaux, jamais retenues par les serveurs, assemblées à l'arrivée.
+  const bh = listeners(), bparts = {}, bdone = {};
+  function gotBlob(t, o){
+    const id = String(o.id || ""), i = +o.i, of = +o.of, d = o.d, now = Date.now();
+    if(typeof o.f !== "string" || t !== "b/" + o.f || o.f === me) return;
+    if(!/^[a-z0-9]{4,40}$/i.test(id) || !(of >= 1 && of <= 40) || !(i >= 0 && i < of) || i !== Math.floor(i) || typeof d !== "string" || d.length > 20000) return;
+    if(bdone[id] && now - bdone[id] < 2500) return;
+    Object.keys(bparts).forEach(k => { if(now - bparts[k].at > 60000) delete bparts[k]; });
+    Object.keys(bdone).forEach(k => { if(now - bdone[k] > 60000) delete bdone[k]; });
+    let p = bparts[id];
+    if(!p){ if(Object.keys(bparts).length >= 8) return; p = bparts[id] = { of, got: [], n: 0, at: now }; }
+    if(p.of !== of || p.got[i] != null) return;
+    p.got[i] = d; p.n++;
+    if(p.n === of){ delete bparts[id]; bdone[id] = now; bh.fire(id, p.got.join(""), o.f); }
+  }
   const better = (e, h) => e > ep || (e === ep && (!hid || h < hid));
   function build(){
     let arr;
@@ -398,6 +413,7 @@ async function relayRoom(code, asHost){
   function changed(){ emit(); pubG(); }
   function demote(){ host = false; bus.forget(); roster = new Map(); hostSeen = Date.now(); hh.fire(false, null); pubC(); }
   function onMsg(t, o, ret){
+    if(t.indexOf("b/") === 0){ if(!ret) gotBlob(t, o); return; }
     if(typeof o.f !== "string" || typeof o.n !== "number") return;
     const top = t.indexOf("c/") === 0 ? "c" : t, dk = o.f + "|" + top;
     if(o.n <= (seen[dk] || 0)) return; seen[dk] = o.n;
@@ -468,6 +484,13 @@ async function relayRoom(code, asHost){
     peers: () => snap,
     game: () => (host ? game : (game ? fix(game) : null)),
     setGame(g){ if(!host) return; game = plain(g); changed(); },
+    blob(id, data){
+      const of = Math.ceil(data.length / 16000) || 1;
+      if(of > 40) return false;
+      for(let i = 0; i < of; i++) bus.pub("b/" + me, { t: "b", f: me, id, i, of, d: data.slice(i * 16000, (i + 1) * 16000) }, false);
+      return true;
+    },
+    onBlob(h){ return bh.add(h); },
     priv: () => (host ? priv : fix(priv) || {}),
     setPriv(o){ if(!host) return; priv = plain(o || {}); pubP(); },
     now: () => Date.now() + (host ? 0 : offset),
@@ -741,7 +764,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.5";
+const VERSION = "4.6";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -863,7 +886,7 @@ function openBug(type){
 SB.bug = openBug;
 
 /* Familles de jeux pour les filtres de l'accueil et du salon */
-const CATS = { note10: "votes", quiplus: "votes", tupref: "votes", redflag: "votes", purete: "votes", quiadit: "votes", priorites: "votes",
+const CATS = { note10: "votes", photoroulette: "votes", quiplus: "votes", tupref: "votes", redflag: "votes", purete: "votes", quiadit: "votes", priorites: "votes",
   undercover: "bluff", killer: "bluff", loupgarou: "bluff", menteurs: "bluff", motsint: "cartes", defis: "cartes", dernierecarte: "cartes", punchline: "votes", actionverite: "cartes" };
 const FILTERS = [["all", "Tous"], ["votes", "Votes"], ["bluff", "Bluff"], ["cartes", "Cartes"], ["hot", "18+"]];
 const FSEL = { home: "all", salon: "all" };
@@ -1071,6 +1094,7 @@ async function netEnter(code, asHost){
   if(N.host) N.g = freshSalon();
   N.unsubs.push(nr.onHostChange((h, g) => becomeHost(h, g)));
   N.unsubs.push(nr.onPeers(() => { N.peers = nr.peers(); scheduleRender(); }));
+  if(typeof nr.onBlob === "function") N.unsubs.push(nr.onBlob(blobGot));
   trail("Salon " + code + " · " + (N.host ? "hôte" : "joueur") + " · " + (nr.diag ? nr.diag() : nr.kind));
   N.unsubs.push(nr.onConnection(c => {
     trail(c ? "Réseau connecté" : "Réseau coupé");
@@ -1090,6 +1114,7 @@ async function netEnter(code, asHost){
   render();
 }
 async function netLeave(){
+  BLOBS.clear();
   N.unsubs.forEach(u => { try{ u(); }catch(e){} }); N.unsubs = [];
   clearTimeout(N.lostTimer); N.lostTimer = null;
   if(N.nr){ try{ await N.nr.leave(); }catch(e){} }
@@ -1114,6 +1139,14 @@ function hostSetG(patch){
   scheduleRender();
 }
 
+/* ---------- Photos partagées pendant une partie (mémoire seulement, effacées à la fin) ---------- */
+const BLOBS = new Map();
+function blobGot(id, data){
+  if(typeof data !== "string" || !/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(data)) return;
+  BLOBS.delete(id); BLOBS.set(id, data);
+  while(BLOBS.size > 30) BLOBS.delete(BLOBS.keys().next().value);
+  scheduleRender();
+}
 /* ---------- Contexte passé aux jeux ---------- */
 let pending = null, pendingEnd = null, inHost = false;
 function makeCtx(){
@@ -1141,6 +1174,12 @@ function makeCtx(){
     set(patch){ if(!N.host) return; pending = Object.assign(pending || {}, patch); },
     end(summary){ if(!N.host) return; pendingEnd = summary || { title: "" }; },
     priv: () => (N.nr ? N.nr.priv() : {}),
+    blob: {
+      ok: !!(N.nr && typeof N.nr.blob === "function"),
+      put(id, data){ if(!N.nr || typeof N.nr.blob !== "function" || typeof data !== "string") return false; blobGot(id, data); return N.nr.blob(id, data); },
+      get: id => BLOBS.get(id) || null,
+      clear(){ BLOBS.clear(); }
+    },
     setPriv(o){ if(N.host && N.nr) N.nr.setPriv(o); },
     now: () => (N.nr ? N.nr.now() : Date.now()),
     act(fn){ runHost(fn); },
@@ -1182,6 +1221,7 @@ function renderOffline(){
 let lastPhase = "";
 function render(){
   if(!N.nr) return;
+  if(BLOBS.size){ const gb = G(); if(!gb || gb.phase !== "game") BLOBS.clear(); }
   if(current === "page"){
     const g0 = G(), d0 = g0 && g0.phase === "game" ? SB.byId[g0.game] : null;
     if(N.host && d0 && typeof d0.host === "function") runHost(ctx => d0.host(ctx));
