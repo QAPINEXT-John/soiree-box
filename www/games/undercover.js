@@ -1,7 +1,7 @@
 /* Undercover — tout le monde a le même mot, sauf les intrus. Démasquez-les. */
 (function(){
 "use strict";
-const { esc, clean, A, shuffle, screen, txt } = SB.u;
+const { esc, clean, A, shuffle, screen, txt, tr } = SB.u;
 
 // Paires de mots proches : [mot A, mot B]. L'un va aux civils, l'autre aux intrus (au hasard).
 const PAIRS = [
@@ -47,11 +47,56 @@ const HARD_PAIRS = [
   ["Fossoyeur","Embaumeur"],["Pierre tombale","Épitaphe"],["Crémation","Inhumation"],["Chaise électrique","Guillotine"],
   ["Barman","Videur"],["Rendez-vous galant","Speed dating"]
 ];
+// English word pairs (same structure: normal + 18+).
+const PAIRS_EN = [
+  ["Coffee","Tea"],["Beach","Swimming pool"],["Pizza","Tacos"],["Netflix","YouTube"],["Plane","Train"],["Bike","Scooter"],
+  ["Guitar","Piano"],["Skiing","Snowboarding"],["Bagel","Donut"],["Instagram","TikTok"],["Wedding","Birthday party"],["Lion","Tiger"],
+  ["Beer","Wine"],["Harry Potter","The Lord of the Rings"],["Basketball","Volleyball"],["Mountain","Forest"],["Dentist","Doctor"],["Sushi","Ramen"],
+  ["Rain","Snow"],["Sneakers","Flip-flops"],["Elevator","Escalator"],["Prison","School"],["Zoo","Circus"],["Chocolate","Caramel"],
+  ["Ocean","Lake"],["Police officer","Firefighter"],["Fork","Spoon"],["Moon","Sun"],["Disneyland","Universal Studios"],["Mario","Sonic"],
+  ["Rap","Rock"],["Camping","Hotel"],["Batman","Spider-Man"],["New York","London"],["Clown","Magician"],["Vampire","Zombie"],
+  ["Pancake","Waffle"],["Bowling","Darts"],["Ketchup","Mayo"],["Boat","Submarine"],["Glasses","Contact lenses"],["Shower","Bath"],
+  ["Ghost","Witch"],["Unicorn","Dragon"],["Teacher","Principal"],["Cinema","Theater"],["Apple","Pear"],["Alarm clock","Watch"],
+  ["PlayStation","Xbox"],["Mojito","Margarita"],["Cat","Rabbit"],["Bakery","Candy store"],["Tattoo","Piercing"],["Karaoke","Nightclub"],
+  ["Teddy bear","Pillow"],["Pirate","Viking"],["Volcano","Geyser"],["Motorcycle","Moped"],["Burger","Hot dog"],["Facebook","LinkedIn"],
+  ["Christmas","Halloween"],["Bee","Wasp"],["Shark","Dolphin"],["Pajamas","Bathrobe"],["Lawyer","Judge"],["Kite","Hot-air balloon"],
+  ["Rock climbing","Hiking"],["Cheese","Butter"],["Honey","Jam"],["Cushion","Mattress"],["Comb","Hairbrush"],["Curtains","Blinds"],
+  ["Owl","Bat"],["Frog","Toad"],["Crow","Pigeon"],["Wolf","Fox"],["Horse","Donkey"],["Rocket","Satellite"],
+  ["Planet","Star"],["Castle","Palace"],["Church","Cathedral"],["Museum","Art gallery"],["Farmers market","Supermarket"],["Taxi","Ambulance"],
+  ["Helicopter","Drone"],["Kayak","Canoe"],["Swimming","Scuba diving"],["Tennis","Badminton"],["Judo","Karate"],["Chess","Checkers"],
+  ["Jigsaw puzzle","Crossword"],["Violin","Cello"],["Trumpet","Saxophone"],["Drums","Tambourine"],["Opera","Musical"],["Novel","Comic book"],
+  ["Newspaper","Magazine"],["Radio","Podcast"],["Painting","Sculpture"],["Pencil","Pen"],["Planner","Calendar"],["Suitcase","Backpack"],
+  ["Scarf","Beanie"],["Gloves","Mittens"],["Shirt","T-shirt"],["Skirt","Dress"],["Ring","Bracelet"],["Perfume","Deodorant"],
+  ["Shampoo","Shower gel"],["Toothbrush","Dental floss"],["Oven","Microwave"],["Fridge","Freezer"],["Saucepan","Frying pan"],["Knife","Scissors"],
+  ["Salad","Soup"],["Rice","Pasta"],["Omelette","Fried egg"],["French fries","Potato chips"],["Soda","Fruit juice"],["Champagne","Cider"],
+  ["Fondue","Hot pot"],["Quiche","Pie"],["Cookie","Brownie"],["Cupcake","Muffin"],["Strawberry","Raspberry"],["Lemon","Orange"],
+  ["Watermelon","Cantaloupe"],["Carrot","Parsnip"],["Garlic","Onion"],["Summer","Spring"],["Thunderstorm","Hurricane"],["Fog","Cloud"],
+  ["Desert","Savanna"],["Cave","Tunnel"],["River","Waterfall"],["Baker","Butcher"],["Hairdresser","Barber"],["Nurse","Pharmacist"],
+  ["Chef","Waiter"],["Detective","Spy"],["Knight","Samurai"],["Mummy","Skeleton"],["Mermaid","Fairy"],["Ogre","Giant"],
+  ["Alien","Monster"],["Picnic","Barbecue"],["Concert","Festival"],["Pyramid","Temple"],["Swing","Slide"],["Trampoline","Bouncy castle"],
+  ["Hammock","Deck chair"],["Candle","Lamp"],["Key","Padlock"],["Safe","Piggy bank"],["Telescope","Binoculars"],["Compass","Map"],
+  ["Whistle","Car horn"],["Email","Letter"]
+];
+const HARD_PAIRS_EN = [
+  ["Condom","The pill"],["Handcuffs","Blindfold"],["Booty call","Ex"],["Striptease","Lap dance"],
+  ["Vibrator","Lube"],["Kama Sutra","Fifty Shades of Grey"],["Swingers club","Strip club"],["Nudes","Sexting"],
+  ["Lingerie","Boxers"],["Tinder","Grindr"],["Threesome","Orgy"],["Spanking","Paddle"],
+  ["Foreplay","Cuddling"],["Porn","Erotic movie"],["Hangover","Blackout"],["Hickey","Bite mark"],
+  ["Walk of shame","Afterparty"],["Coffin","Urn"],["Cemetery","Morgue"],["Will","Inheritance"],
+  ["Funeral","Wake"],["Undertaker","Coroner"],["Serial killer","Hitman"],["Hell","Purgatory"],
+  ["Hot tub","Sauna"],["Body shot","Jello shot"],["Sugar daddy","Gigolo"],["Cheating","Jealousy"],
+  ["Strip poker","Truth or dare"],["Corset","Garter belt"],["Massage","Caress"],["One-night stand","Open relationship"],
+  ["Love hotel","Motel"],["Whip","Riding crop"],["Massage oil","Scented candle"],["Latex","Leather"],
+  ["Gravedigger","Embalmer"],["Tombstone","Epitaph"],["Cremation","Burial"],["Electric chair","Guillotine"],
+  ["Bartender","Bouncer"],["First date","Speed dating"]
+];
+const DECK = { fr: { n: PAIRS, h: HARD_PAIRS }, en: { n: PAIRS_EN, h: HARD_PAIRS_EN } };
+const deck = lg => DECK[lg === "en" ? "en" : "fr"];
 function count(ids, roles, r){ return ids.filter(id => roles[id] === r).length; }
-function roleLabel(r){ return r === "u" ? "un intrus" : r === "w" ? "Mister White" : "un civil"; }
-function roleName(r){ return r === "u" ? "Intrus" : r === "w" ? "Mister White" : "Civil"; }
+function roleLabel(r){ return r === "u" ? tr("un intrus", "an Undercover") : r === "w" ? "Mister White" : tr("un civil", "a Civilian"); }
+function roleName(r){ return r === "u" ? tr("Intrus", "Undercover") : r === "w" ? "Mister White" : tr("Civil", "Civilian"); }
 // Comparaison souple pour la proposition de Mister White : sans accents, sans casse, sans ponctuation.
-function norm(t){ return String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/^(?:(?:le|la|les|un|une|des)\s+|l')/, "").replace(/[^a-z0-9]/g, ""); }
+function norm(t){ return String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/^(?:(?:le|la|les|un|une|des|the|an|a)\s+|l')/, "").replace(/[^a-z0-9]/g, ""); }
 // Distribution : nombre d'intrus, Mister White en option. Au moins deux civils de plus que d'imposteurs.
 function cast(n, imp, white){
   const cap = Math.max(1, Math.floor((n - 1) / 2));
@@ -59,8 +104,8 @@ function cast(n, imp, white){
   if(white) return { imp: Math.max(0, Math.min(imp, cap - 1)), white: 1 };
   return { imp: Math.max(1, Math.min(imp, cap)), white: 0 };
 }
-function pickPair(hard){
-  const pool = hard ? PAIRS.concat(HARD_PAIRS) : PAIRS;
+function pickPair(hard, lg){
+  const D = deck(lg), pool = hard ? D.n.concat(D.h) : D.n;
   const pair = SB.u.fresh("undercover:pairs", pool).pop();
   SB.u.saw("undercover:pairs", [pair]);
   const flip = Math.random() < .5;
@@ -76,28 +121,29 @@ function firstNotWhite(order, roles){
 /* ---------- Coups de théâtre : un tour d'indices sur trois environ ---------- */
 const LETTERS = "BCDFGLMPRST";
 const TWISTS = [
-  { id: "lettre", name: "Lettre imposée", desc: "Chaque indice doit commencer par la lettre indiquée." },
-  { id: "deux", name: "Deux mots", desc: "Chaque indice fait exactement deux mots." },
-  { id: "verbe", name: "Que des verbes", desc: "Chaque indice est un verbe à l'infinitif." },
-  { id: "emotion", name: "Thème : émotions", desc: "Chaque indice est une émotion ou une sensation." },
-  { id: "lieu", name: "Thème : lieux", desc: "Chaque indice est un lieu." },
-  { id: "immunite", name: "Immunité", desc: "Le premier à parler ne peut pas être éliminé à ce tour." },
-  { id: "double", name: "Voix double", desc: "Le vote du premier à parler compte double." },
-  { id: "mortsubite", name: "Mort subite", desc: "Pas d'égalité : le sort départage les ex aequo.", ok: o => !o.local },
-  { id: "decouvert", name: "Vote à découvert", desc: "Tout le monde verra qui a voté pour qui.", ok: o => !o.local },
-  { id: "aveugle", name: "Indices à l'aveugle", desc: "On ne voit les indices des autres qu'au moment du vote.", ok: o => !o.local }
+  { id: "lettre", name: tr("Lettre imposée", "Forced letter"), desc: tr("Chaque indice doit commencer par la lettre indiquée.", "Every clue must start with the given letter.") },
+  { id: "deux", name: tr("Deux mots", "Two words"), desc: tr("Chaque indice fait exactement deux mots.", "Every clue is exactly two words.") },
+  { id: "verbe", name: tr("Que des verbes", "Verbs only"), desc: tr("Chaque indice est un verbe à l'infinitif.", "Every clue is a single verb.") },
+  { id: "emotion", name: tr("Thème : émotions", "Theme: feelings"), desc: tr("Chaque indice est une émotion ou une sensation.", "Every clue is an emotion or a feeling.") },
+  { id: "lieu", name: tr("Thème : lieux", "Theme: places"), desc: tr("Chaque indice est un lieu.", "Every clue is a place.") },
+  { id: "immunite", name: tr("Immunité", "Immunity"), desc: tr("Le premier à parler ne peut pas être éliminé à ce tour.", "The first player to speak can't be voted out this round.") },
+  { id: "double", name: tr("Voix double", "Double vote"), desc: tr("Le vote du premier à parler compte double.", "The first speaker's vote counts twice.") },
+  { id: "mortsubite", name: tr("Mort subite", "Sudden death"), desc: tr("Pas d'égalité : le sort départage les ex aequo.", "No ties: fate picks between the tied players."), ok: o => !o.local },
+  { id: "decouvert", name: tr("Vote à découvert", "Open vote"), desc: tr("Tout le monde verra qui a voté pour qui.", "Everyone will see who voted for whom."), ok: o => !o.local },
+  { id: "aveugle", name: tr("Indices à l'aveugle", "Blind clues"), desc: tr("On ne voit les indices des autres qu'au moment du vote.", "You only see the other clues when it's time to vote."), ok: o => !o.local }
 ];
 const TW = id => SB.u.byTwist(TWISTS, id);
 function rollTwist(on, last, local){ const t = on ? SB.u.twist(TWISTS, { rate: .38, last, local }) : null; return t ? t.id : ""; }
 function twBanner(tw, tp){
   const t = TW(tw); if(!t) return "";
-  return SB.u.twistHTML(tw === "lettre" ? { name: t.name + " : " + tp, desc: "Chaque indice commence par la lettre " + tp + "." } : t);
+  return SB.u.twistHTML(tw === "lettre" ? { name: tr(t.name + " : " + tp, t.name + ": " + tp), desc: tr("Chaque indice commence par la lettre " + tp + ".", "Every clue starts with the letter " + tp + ".") } : t);
 }
-function clueErr(t, tw, tp){
+// lg : langue des mots de la partie (celle de l'hôte) pour vérifier les verbes.
+function clueErr(t, tw, tp, lg){
   const w = t.trim().split(/\s+/);
-  if(tw === "lettre" && norm(t).charAt(0) !== String(tp || "").toLowerCase()) return "Coup de théâtre : ton indice doit commencer par la lettre " + tp + ".";
-  if(tw === "deux" && w.length !== 2) return "Coup de théâtre : ton indice doit faire exactement deux mots.";
-  if(tw === "verbe" && (w.length !== 1 || !/(er|ir|re)$/.test(norm(t)))) return "Coup de théâtre : il faut un seul verbe à l'infinitif (manger, partir, prendre…).";
+  if(tw === "lettre" && norm(t).charAt(0) !== String(tp || "").toLowerCase()) return tr("Coup de théâtre : ton indice doit commencer par la lettre " + tp + ".", "Plot twist: your clue must start with the letter " + tp + ".");
+  if(tw === "deux" && w.length !== 2) return tr("Coup de théâtre : ton indice doit faire exactement deux mots.", "Plot twist: your clue must be exactly two words.");
+  if(tw === "verbe" && (w.length !== 1 || (lg !== "en" && !/(er|ir|re)$/.test(norm(t))))) return tr("Coup de théâtre : il faut un seul verbe à l'infinitif (manger, partir, prendre…).", "Plot twist: give a single verb (eat, run, dance…).");
   return "";
 }
 
@@ -110,43 +156,50 @@ function awards(ids, roles, vh, outAt, last, name){
   const hit = {}, got = {};
   A(vh).map(A).forEach(v => { if(!bad(v[1]) && bad(v[2])) hit[v[1]] = (hit[v[1]] || 0) + 1; if(!bad(v[2])) got[v[2]] = (got[v[2]] || 0) + 1; });
   const h = Object.keys(hit).sort((a, b) => hit[b] - hit[a])[0];
-  if(h) out.push([vary(["Flair de limier", "Œil de lynx", "Détecteur de mensonges", "Inspecteur en chef"], seed), name(h), SB.u.plural(hit[h], "vote") + " contre les imposteurs"]);
+  if(h) out.push([vary(tr(["Flair de limier", "Œil de lynx", "Détecteur de mensonges", "Inspecteur en chef"], ["Bloodhound", "Eagle Eye", "Human Lie Detector", "Chief Inspector"]), seed), name(h), tr(SB.u.plural(hit[h], "vote") + " contre les imposteurs", SB.u.plural2(hit[h], "", "", "vote") + " against the impostors")]);
   const g = Object.keys(got).sort((a, b) => got[b] - got[a])[0];
-  if(g && got[g] >= 2) out.push([vary(["Tête de suspect", "Coupable idéal", "Paratonnerre", "Bouc émissaire"], seed + 1), name(g), SB.u.plural(got[g], "vote") + " reçus sans être coupable"]);
+  if(g && got[g] >= 2) out.push([vary(tr(["Tête de suspect", "Coupable idéal", "Paratonnerre", "Bouc émissaire"], ["Usual Suspect", "Perfect Fall Guy", "Lightning Rod", "Scapegoat"]), seed + 1), name(g), tr(SB.u.plural(got[g], "vote") + " reçus sans être coupable", "took " + SB.u.plural2(got[g], "", "", "vote") + " while innocent")]);
   const b = ids.filter(bad).map(id => [id, outAt[id] || last + 1]).sort((x, y) => y[1] - x[1])[0];
-  if(b && b[1] >= 2) out.push([vary(["Caméléon", "Agent dormant", "Maître du bluff", "Visage de marbre"], seed + 2), name(b[0]), outAt[b[0]] ? "a tenu " + SB.u.plural(b[1] - 1, "tour") + " avant d'être démasqué" : "jamais démasqué"]);
+  if(b && b[1] >= 2) out.push([vary(tr(["Caméléon", "Agent dormant", "Maître du bluff", "Visage de marbre"], ["Chameleon", "Sleeper Agent", "Master of Bluff", "Poker Face"]), seed + 2), name(b[0]), outAt[b[0]] ? tr("a tenu " + SB.u.plural(b[1] - 1, "tour") + " avant d'être démasqué", "lasted " + SB.u.plural2(b[1] - 1, "", "", "round") + " before getting caught") : tr("jamais démasqué", "never caught")]);
   return out;
 }
-function awardsHTML(a){ return a.length ? '<div class="field"><span class="eyebrow">Trophées</span><ul class="list">' + a.map(x => '<li><span class="t" style="font-size:19px">' + esc(x[0]) + '</span><span class="by">' + esc(x[1]) + " · " + esc(x[2]) + "</span></li>").join("") + "</ul></div>" : ""; }
-function winTitle(w){ return w === "c" ? "Victoire des civils" : w === "w" ? "Mister White a deviné !" : "Victoire des imposteurs"; }
+function awardsHTML(a){ return a.length ? '<div class="field"><span class="eyebrow">' + tr("Trophées", "Awards") + '</span><ul class="list">' + a.map(x => '<li><span class="t" style="font-size:19px">' + esc(x[0]) + '</span><span class="by">' + esc(x[1]) + " · " + esc(x[2]) + "</span></li>").join("") + "</ul></div>" : ""; }
+function winTitle(w){ return w === "c" ? tr("Victoire des civils", "The Civilians win") : w === "w" ? tr("Mister White a deviné !", "Mister White guessed it!") : tr("Victoire des imposteurs", "The impostors win"); }
 function winners(ids, roles, w){ return ids.filter(id => w === "c" ? roles[id] === "c" : w === "w" ? roles[id] === "w" : roles[id] !== "c"); }
 function packBtn(attr, on, name, desc, hot){ return '<button type="button" class="pack' + (hot ? " hot" : "") + '" ' + attr + ' aria-pressed="' + on + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(name) + (hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(desc) + "</span></span></button>"; }
 
 SB.register({
-  id: "undercover", name: "Undercover", glyph: "Intrus", pitch: "Un mot secret pour tous… sauf pour les intrus.", hot: true,
+  id: "undercover", name: "Undercover", glyph: tr("Intrus", "Spy"), pitch: tr("Un mot secret pour tous… sauf pour les intrus.", "One secret word for everyone… except the Undercovers."), hot: true,
   accent: { light: "#8f9bff", dark: "#8f9bff" },
-  tag: "Tout le monde a le même mot, sauf les intrus. Démasquez-les avant qu'ils gagnent.",
+  tag: tr("Tout le monde a le même mot, sauf les intrus. Démasquez-les avant qu'ils gagnent.", "Everyone has the same word, except the Undercovers. Unmask them before they win."),
   min: 3, max: 16,
-  rules: [
+  rules: tr([
     "Chacun reçoit un mot secret. Les intrus ont un mot proche mais différent, et ne savent pas qu'ils le sont.",
     "Chacun son tour, donnez un indice en un seul mot en rapport avec votre mot secret, sans le prononcer.",
     "Votez ensuite pour éliminer le joueur qui vous semble le plus suspect.",
     "Les civils gagnent s'ils éliminent tous les intrus. Les intrus gagnent s'ils sont aussi nombreux que les civils.",
     "Variante Mister White : un joueur n'a aucun mot. S'il est éliminé, il peut encore gagner seul en devinant le mot des civils.",
     "Coups de théâtre : certains tours imposent une contrainte (lettre, thème, deux mots, immunité, voix double…)."
-  ],
+  ], [
+    "Everyone gets a secret word. The Undercovers get a similar but different word, and don't know they're Undercover.",
+    "Take turns giving a one-word clue about your secret word, without saying it.",
+    "Then vote to eliminate the player who seems the most suspicious.",
+    "The Civilians win if they eliminate every Undercover. The Undercovers win once they're as many as the Civilians.",
+    "Mister White variant: one player gets no word at all. If eliminated, they can still win alone by guessing the Civilians' word.",
+    "Plot twists: some rounds add a constraint (letter, theme, two words, immunity, double vote…)."
+  ]),
   options: [
-    { id: "imp", label: "Nombre d'intrus", type: "seg", def: 0, values: [{ v: 0, label: "Auto" }, { v: 1, label: "1" }, { v: 2, label: "2" }, { v: 3, label: "3" }] },
-    { id: "white", label: "Variante", type: "toggle", text: "Mister White", desc: "Un joueur sans mot qui peut gagner en devinant celui des civils", def: false },
-    { id: "twists", label: "Coups de théâtre", type: "toggle", text: "Coups de théâtre", desc: "Environ un tour sur trois, une contrainte s'ajoute", def: true },
-    { id: "hard", label: "Mots", type: "toggle", text: "Ajouter le contenu 18+", desc: "Sexe, porno, tabous, humour noir : tout le contenu adulte", hot: true, def: false }
+    { id: "imp", label: tr("Nombre d'intrus", "Undercovers"), type: "seg", def: 0, values: [{ v: 0, label: "Auto" }, { v: 1, label: "1" }, { v: 2, label: "2" }, { v: 3, label: "3" }] },
+    { id: "white", label: tr("Variante", "Variant"), type: "toggle", text: "Mister White", desc: tr("Un joueur sans mot qui peut gagner en devinant celui des civils", "A player with no word who can win by guessing the Civilians' word"), def: false },
+    { id: "twists", label: tr("Coups de théâtre", "Plot twists"), type: "toggle", text: tr("Coups de théâtre", "Plot twists"), desc: tr("Environ un tour sur trois, une contrainte s'ajoute", "About one round in three adds a constraint"), def: true },
+    { id: "hard", label: tr("Mots", "Words"), type: "toggle", text: tr("Ajouter le contenu 18+", "Add 18+ content"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content"), hot: true, def: false }
   ],
   start(ctx, o){
-    const ids = ctx.ids, n = ids.length, cs = cast(n, o.imp, !!o.white);
-    const { civ, und } = pickPair(o.hard);
+    const ids = ctx.ids, n = ids.length, cs = cast(n, o.imp, !!o.white), lg = SB.lang();
+    const { civ, und } = pickPair(o.hard, lg);
     const sh = shuffle(ids), imps = sh.slice(0, cs.imp), wh = cs.white ? sh[cs.imp] : "", roles = {}, words = {};
     ids.forEach(id => { const r = id === wh ? "w" : imps.indexOf(id) >= 0 ? "u" : "c"; roles[id] = r; words[id] = r === "w" ? "" : r === "u" ? und : civ; });
-    return { phase: "reveal", roles, words, civ, und, alive: ids.slice(), order: [], turn: 0, clues: [], round: 1, out: "", tie: false, tally: {}, winner: "", tw: "", tp: "", vl: [], vh: [], outAt: {}, wg: "" };
+    return { phase: "reveal", lg, roles, words, civ, und, alive: ids.slice(), order: [], turn: 0, clues: [], round: 1, out: "", tie: false, tally: {}, winner: "", tw: "", tp: "", vl: [], vh: [], outAt: {}, wg: "" };
   },
   host(ctx){
     const s = ctx.s, alive = A(s.alive), roles = s.roles || {};
@@ -187,35 +240,36 @@ SB.register({
   render(ctx, root){
     const s = ctx.s, me = ctx.me, roles = s.roles || {}, words = s.words || {}, alive = A(s.alive);
     const isAlive = alive.indexOf(me) >= 0, myWord = words[me] || "", amW = roles[me] === "w";
-    const lab = '<span class="eyebrow">Tour ' + s.round + " · " + SB.u.plural(alive.length, "joueur") + " en jeu</span>" + (s.phase === "clues" || s.phase === "vote" ? twBanner(s.tw, s.tp) : "");
-    const reminder = isAlive ? '<details><summary>Revoir mon mot</summary><p class="huge" style="margin-top:6px">' + (amW ? "Aucun mot" : esc(myWord)) + "</p>" + (amW ? '<p class="sm">Tu es Mister White : bluffe.</p>' : "") + "</details>" : '<p class="note-box">Tu es éliminé : regarde la suite sans rien dévoiler.</p>';
-    const cluesHTML = hide => { const cl = A(s.clues).map(A); if(hide) return '<li><span class="by">Indices à l\'aveugle : ils seront révélés au moment du vote. ' + SB.u.plural(cl.length, "indice") + " donné" + (cl.length > 1 ? "s" : "") + ".</span></li>"; return cl.length ? cl.map(c => '<li><span class="t">' + esc(c[1]) + '</span><span class="by">' + esc(ctx.name(c[0])) + "</span></li>").join("") : '<li><span class="by">Pas encore d\'indice.</span></li>'; };
+    const lab = '<span class="eyebrow">' + tr("Tour " + s.round + " · " + SB.u.plural(alive.length, "joueur") + " en jeu", "Round " + s.round + " · " + SB.u.plural2(alive.length, "", "", "player") + " left") + "</span>" + (s.phase === "clues" || s.phase === "vote" ? twBanner(s.tw, s.tp) : "");
+    const reminder = isAlive ? '<details><summary>' + tr("Revoir mon mot", "Show my word again") + '</summary><p class="huge" style="margin-top:6px">' + (amW ? tr("Aucun mot", "No word") : esc(myWord)) + "</p>" + (amW ? '<p class="sm">' + tr("Tu es Mister White : bluffe.", "You're Mister White: bluff!") + "</p>" : "") + "</details>" : '<p class="note-box">' + tr("Tu es éliminé : regarde la suite sans rien dévoiler.", "You're out: keep watching without giving anything away.") + "</p>";
+    const cluesHTML = hide => { const cl = A(s.clues).map(A); if(hide) return '<li><span class="by">' + tr("Indices à l'aveugle : ils seront révélés au moment du vote. " + SB.u.plural(cl.length, "indice") + " donné" + (cl.length > 1 ? "s" : "") + ".", "Blind clues: they'll be revealed at vote time. " + SB.u.plural2(cl.length, "", "", "clue") + " given.") + "</span></li>"; return cl.length ? cl.map(c => '<li><span class="t">' + esc(c[1]) + '</span><span class="by">' + esc(ctx.name(c[0])) + "</span></li>").join("") : '<li><span class="by">' + tr("Pas encore d'indice.", "No clues yet.") + "</span></li>"; };
     if(s.phase === "reveal"){
-      screen(root, "rv" + s.k, lab + '<div class="card acc"><span class="eyebrow">' + (amW ? "Ton rôle" : "Ton mot secret") + '</span><div data-w hidden>' + (amW ? '<p class="huge">Mister White</p><p class="sm">Tu n\'as pas de mot. Écoute les indices et bluffe. Si on t\'élimine, devine le mot des civils pour gagner.</p>' : '<p class="huge">' + esc(myWord) + "</p>") + '</div><p class="sm" data-hint>Cache ton écran, puis touche le bouton.</p>' +
-        '<button class="btn ghost" type="button" data-show>Voir mon mot</button></div><p class="howto">Personne ne sait s\'il est un intrus. Retiens ton mot, puis confirme.</p>' +
-        '<div class="field"><span class="eyebrow">Prêts</span><div class="chips" data-chips></div></div>' + SB.u.dock('<button class="btn acc" type="button" data-ok>J\'ai retenu mon mot</button>'), r => {
+      screen(root, "rv" + s.k, lab + '<div class="card acc"><span class="eyebrow">' + (amW ? tr("Ton rôle", "Your role") : tr("Ton mot secret", "Your secret word")) + '</span><div data-w hidden>' + (amW ? '<p class="huge">Mister White</p><p class="sm">' + tr("Tu n'as pas de mot. Écoute les indices et bluffe. Si on t'élimine, devine le mot des civils pour gagner.", "You have no word. Listen to the clues and bluff. If you get voted out, guess the Civilians' word to win.") + "</p>" : '<p class="huge">' + esc(myWord) + "</p>") + '</div><p class="sm" data-hint>' + tr("Cache ton écran, puis touche le bouton.", "Hide your screen, then tap the button.") + "</p>" +
+        '<button class="btn ghost" type="button" data-show>' + tr("Voir mon mot", "Show my word") + '</button></div><p class="howto">' + tr("Personne ne sait s'il est un intrus. Retiens ton mot, puis confirme.", "Nobody knows if they're Undercover. Memorize your word, then confirm.") + "</p>" +
+        '<div class="field"><span class="eyebrow">' + tr("Prêts", "Ready") + '</span><div class="chips" data-chips></div></div>' + SB.u.dock('<button class="btn acc" type="button" data-ok>' + tr("J'ai retenu mon mot", "Got my word") + "</button>"), r => {
         const w = r.querySelector("[data-w]"), b = r.querySelector("[data-show]");
-        b.addEventListener("click", () => { w.hidden = !w.hidden; b.textContent = w.hidden ? "Voir mon mot" : "Cacher mon mot"; r.querySelector("[data-hint]").hidden = !w.hidden; });
+        b.addEventListener("click", () => { w.hidden = !w.hidden; b.textContent = w.hidden ? tr("Voir mon mot", "Show my word") : tr("Cacher mon mot", "Hide my word"); r.querySelector("[data-hint]").hidden = !w.hidden; });
         r.querySelector("[data-ok]").addEventListener("click", () => ctx.send({ ok: 1 }));
       });
       const mine = ctx.mine(), okBtn = root.querySelector("[data-ok]");
-      okBtn.disabled = !!(mine && mine.ok); okBtn.textContent = mine && mine.ok ? "C'est noté, on attend les autres" : "J'ai retenu mon mot";
+      okBtn.disabled = !!(mine && mine.ok); okBtn.textContent = mine && mine.ok ? tr("C'est noté, on attend les autres", "Got it, waiting for the others") : tr("J'ai retenu mon mot", "Got my word");
       const chips = alive.map(id => { const i = ctx.input(id), ok = !!(i && i.ok); return '<span class="chip' + (ok ? " ok" : "") + '">' + (ok ? "✓ " : "") + esc(ctx.name(id)) + "</span>"; }).join("");
       const ch = root.querySelector("[data-chips]"); if(ch.innerHTML !== chips) ch.innerHTML = chips;
     } else if(s.phase === "clues"){
       const order = A(s.order), cur = order[s.turn] || "", myTurn = cur === me;
-      const ask = s.tw === "deux" ? "un indice de deux mots" : s.tw === "verbe" ? "un verbe à l'infinitif" : s.tw === "emotion" ? "une émotion ou une sensation" : s.tw === "lieu" ? "un lieu" : s.tw === "lettre" ? "un indice en un mot commençant par " + esc(s.tp) : "un indice en un seul mot";
-      screen(root, "cl" + s.k + "|" + s.turn + "|" + myTurn, lab + reminder + '<div class="field"><span class="eyebrow">Indices du tour</span><ul class="list" data-clues></ul></div>' +
-        SB.u.dock(myTurn ? '<div class="card acc"><span class="eyebrow">À toi</span><p>Donne ' + ask + " en rapport avec ton mot, sans le dire.</p><div class=\"row\"><input class=\"txt\" id=\"uc-in\" maxlength=\"30\" autocomplete=\"off\" placeholder=\"Ton indice\"><button class=\"btn acc\" type=\"button\" data-send style=\"flex:none\">Envoyer</button></div><p class=\"err\" data-err hidden></p></div>"
-          : '<p class="wait">' + esc(ctx.name(cur)) + " cherche son indice…</p>"), r => {
+      const ask = tr(s.tw === "deux" ? "un indice de deux mots" : s.tw === "verbe" ? "un verbe à l'infinitif" : s.tw === "emotion" ? "une émotion ou une sensation" : s.tw === "lieu" ? "un lieu" : s.tw === "lettre" ? "un indice en un mot commençant par " + esc(s.tp) : "un indice en un seul mot",
+        s.tw === "deux" ? "a two-word clue" : s.tw === "verbe" ? "a single verb" : s.tw === "emotion" ? "an emotion or a feeling" : s.tw === "lieu" ? "a place" : s.tw === "lettre" ? "a one-word clue starting with " + esc(s.tp) : "a one-word clue");
+      screen(root, "cl" + s.k + "|" + s.turn + "|" + myTurn, lab + reminder + '<div class="field"><span class="eyebrow">' + tr("Indices du tour", "This round's clues") + '</span><ul class="list" data-clues></ul></div>' +
+        SB.u.dock(myTurn ? '<div class="card acc"><span class="eyebrow">' + tr("À toi", "Your turn") + "</span><p>" + tr("Donne " + ask + " en rapport avec ton mot, sans le dire.", "Give " + ask + " about your word, without saying it.") + "</p><div class=\"row\"><input class=\"txt\" id=\"uc-in\" maxlength=\"30\" autocomplete=\"off\" placeholder=\"" + tr("Ton indice", "Your clue") + "\"><button class=\"btn acc\" type=\"button\" data-send style=\"flex:none\">" + tr("Envoyer", "Send") + "</button></div><p class=\"err\" data-err hidden></p></div>"
+          : '<p class="wait">' + tr(esc(ctx.name(cur)) + " cherche son indice…", esc(ctx.name(cur)) + " is thinking of a clue…") + "</p>"), r => {
         const b = r.querySelector("[data-send]");
         if(b){
           const inp = r.querySelector("#uc-in"), err = r.querySelector("[data-err]");
           const go = () => {
             const t = clean(inp.value, 30);
-            if(!t){ err.textContent = "Écris un indice avant d'envoyer."; err.hidden = false; return; }
-            if(myWord && norm(t) === norm(myWord)){ err.textContent = "Tu ne peux pas donner ton propre mot."; err.hidden = false; return; }
-            const e = clueErr(t, s.tw, s.tp); if(e){ err.textContent = e; err.hidden = false; return; }
+            if(!t){ err.textContent = tr("Écris un indice avant d'envoyer.", "Type a clue before sending."); err.hidden = false; return; }
+            if(myWord && norm(t) === norm(myWord)){ err.textContent = tr("Tu ne peux pas donner ton propre mot.", "You can't give your own word."); err.hidden = false; return; }
+            const e = clueErr(t, s.tw, s.tp, s.lg); if(e){ err.textContent = e; err.hidden = false; return; }
             err.hidden = true; b.disabled = true; ctx.send({ t });
           };
           b.addEventListener("click", go); inp.addEventListener("keydown", e => { if(e.key === "Enter") go(); });
@@ -224,30 +278,30 @@ SB.register({
       const ul = root.querySelector("[data-clues]"), h = cluesHTML(s.tw === "aveugle"); if(ul.innerHTML !== h) ul.innerHTML = h;
     } else if(s.phase === "vote"){
       const imm = s.tw === "immunite" ? A(s.order)[0] : "";
-      screen(root, "vo" + s.k, lab + reminder + '<div class="field"><span class="eyebrow">Indices du tour</span><ul class="list">' + cluesHTML(false) + "</ul></div>" +
-        (isAlive ? '<div class="field"><span class="eyebrow">Qui est l\'intrus ?</span><div class="choices">' + alive.filter(id => id !== me).map(id => '<button type="button" class="opt" data-v="' + esc(id) + '"' + (id === imm ? " disabled" : "") + ">" + esc(ctx.name(id)) + (id === imm ? " · immunisé" : "") + "</button>").join("") + '</div></div>' : "") +
-        SB.u.dock((isAlive ? '<button class="btn acc" type="button" data-vote disabled>Voter</button>' : "") + '<p class="wait" data-wait></p>'), r => {
+      screen(root, "vo" + s.k, lab + reminder + '<div class="field"><span class="eyebrow">' + tr("Indices du tour", "This round's clues") + '</span><ul class="list">' + cluesHTML(false) + "</ul></div>" +
+        (isAlive ? '<div class="field"><span class="eyebrow">' + tr("Qui est l'intrus ?", "Who's the Undercover?") + '</span><div class="choices">' + alive.filter(id => id !== me).map(id => '<button type="button" class="opt" data-v="' + esc(id) + '"' + (id === imm ? " disabled" : "") + ">" + esc(ctx.name(id)) + (id === imm ? tr(" · immunisé", " · immune") : "") + "</button>").join("") + '</div></div>' : "") +
+        SB.u.dock((isAlive ? '<button class="btn acc" type="button" data-vote disabled>' + tr("Voter", "Vote") + "</button>" : "") + '<p class="wait" data-wait></p>'), r => {
         let pickV = "";
         r.querySelectorAll("[data-v]").forEach(b => b.addEventListener("click", () => { pickV = b.dataset.v; r.querySelectorAll("[data-v]").forEach(x => x.setAttribute("aria-pressed", x.dataset.v === pickV)); r.querySelector("[data-vote]").disabled = false; }));
         const vb = r.querySelector("[data-vote]");
-        if(vb) vb.addEventListener("click", () => { if(!pickV) return; ctx.send({ v: pickV }); vb.disabled = true; vb.textContent = "Vote envoyé"; r.querySelectorAll("[data-v]").forEach(x => { x.disabled = true; }); });
+        if(vb) vb.addEventListener("click", () => { if(!pickV) return; ctx.send({ v: pickV }); vb.disabled = true; vb.textContent = tr("Vote envoyé", "Vote sent"); r.querySelectorAll("[data-v]").forEach(x => { x.disabled = true; }); });
       });
       const live = alive.filter(id => ctx.here(id)), done = live.filter(id => { const i = ctx.input(id); return i && i.v; }).length;
       txt(root, "[data-wait]", done + " / " + live.length + " votes");
     } else if(s.phase === "wguess"){
       const isW = s.out === me;
-      screen(root, "wg" + s.k + isW, '<span class="eyebrow">Éliminé</span><div class="who">' + esc(ctx.name(s.out)) + '</div><p style="font-size:18px">' + esc(ctx.name(s.out)) + " était <b>Mister White</b>. Dernière chance : s'il devine le mot des civils, il gagne seul.</p>" +
-        (isW ? '<div class="card acc"><span class="eyebrow">Ta proposition</span><div class="row"><input class="txt" id="uc-wg" maxlength="30" autocomplete="off" placeholder="Le mot des civils"><button class="btn acc" type="button" data-wg style="flex:none">Tenter</button></div></div>' : SB.u.dock('<p class="wait">' + esc(ctx.name(s.out)) + " cherche le mot…</p>")), r => {
+      screen(root, "wg" + s.k + isW, '<span class="eyebrow">' + tr("Éliminé", "Voted out") + '</span><div class="who">' + esc(ctx.name(s.out)) + '</div><p style="font-size:18px">' + tr(esc(ctx.name(s.out)) + " était <b>Mister White</b>. Dernière chance : s'il devine le mot des civils, il gagne seul.", esc(ctx.name(s.out)) + " was <b>Mister White</b>. Last chance: if they guess the Civilians' word, they win alone.") + "</p>" +
+        (isW ? '<div class="card acc"><span class="eyebrow">' + tr("Ta proposition", "Your guess") + '</span><div class="row"><input class="txt" id="uc-wg" maxlength="30" autocomplete="off" placeholder="' + tr("Le mot des civils", "The Civilians' word") + '"><button class="btn acc" type="button" data-wg style="flex:none">' + tr("Tenter", "Guess") + "</button></div></div>" : SB.u.dock('<p class="wait">' + tr(esc(ctx.name(s.out)) + " cherche le mot…", esc(ctx.name(s.out)) + " is trying to guess the word…") + "</p>")), r => {
         const b = r.querySelector("[data-wg]");
         if(b){ const inp = r.querySelector("#uc-wg"); const go = () => { const g = clean(inp.value, 30); if(!g) return; b.disabled = true; ctx.send({ g }); }; b.addEventListener("click", go); inp.addEventListener("keydown", e => { if(e.key === "Enter") go(); }); }
       });
     } else if(s.phase === "out"){
       const t = s.tally || {}, rows = Object.keys(t).sort((a, b) => t[b] - t[a]);
-      const head = s.tie ? '<div class="verdict">Égalité</div><p style="font-size:17px">Personne n\'est éliminé ce tour-ci. On repart pour un tour d\'indices.</p>'
-        : '<span class="eyebrow">Éliminé</span><div class="who">' + esc(ctx.name(s.out)) + '</div><p style="font-size:18px">' + esc(ctx.name(s.out)) + " était <b>" + roleLabel(roles[s.out]) + "</b>." + (roles[s.out] === "w" ? (s.wg ? " Sa proposition, « " + esc(s.wg) + " », est fausse." : " Il n'a rien proposé.") : " Son mot : « " + esc(words[s.out]) + " ».") + "</p>";
-      const open = s.tw === "decouvert" ? '<div class="field"><span class="eyebrow">Vote à découvert</span><ul class="list">' + A(s.vl).map(A).map(v => '<li><span class="t" style="font-size:17px">' + esc(ctx.name(v[0])) + " → " + esc(ctx.name(v[1])) + "</span></li>").join("") + "</ul></div>" : "";
+      const head = s.tie ? '<div class="verdict">' + tr("Égalité", "Tie") + '</div><p style="font-size:17px">' + tr("Personne n'est éliminé ce tour-ci. On repart pour un tour d'indices.", "Nobody is out this round. On to another round of clues.") + "</p>"
+        : '<span class="eyebrow">' + tr("Éliminé", "Voted out") + '</span><div class="who">' + esc(ctx.name(s.out)) + '</div><p style="font-size:18px">' + tr(esc(ctx.name(s.out)) + " était <b>", esc(ctx.name(s.out)) + " was <b>") + roleLabel(roles[s.out]) + "</b>." + (roles[s.out] === "w" ? (s.wg ? tr(" Sa proposition, « " + esc(s.wg) + " », est fausse.", " Their guess, “" + esc(s.wg) + "”, is wrong.") : tr(" Il n'a rien proposé.", " They didn't make a guess.")) : tr(" Son mot : « " + esc(words[s.out]) + " ».", " Their word: “" + esc(words[s.out]) + "”.")) + "</p>";
+      const open = s.tw === "decouvert" ? '<div class="field"><span class="eyebrow">' + tr("Vote à découvert", "Open vote") + '</span><ul class="list">' + A(s.vl).map(A).map(v => '<li><span class="t" style="font-size:17px">' + esc(ctx.name(v[0])) + " → " + esc(ctx.name(v[1])) + "</span></li>").join("") + "</ul></div>" : "";
       screen(root, "out" + s.k + ctx.isHost + s.tie + s.out, head + '<div class="field"><span class="eyebrow">Votes</span><div class="bars">' + rows.map(id => '<div class="bar"><div class="lb"><span>' + esc(ctx.name(id)) + "</span><span>" + t[id] + '</span></div><div class="tr"><div class="fl" style="width:' + Math.round(100 * t[id] / Math.max(1, alive.length + (s.tie ? 0 : 1))) + '%"></div></div></div>').join("") + "</div></div>" + open +
-        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>Continuer</button>' : '<p class="wait">L\'hôte lance la suite…</p>'), r => {
+        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>' + tr("Continuer", "Continue") + "</button>" : '<p class="wait">' + tr("L'hôte lance la suite…", "Waiting for the host…") + "</p>"), r => {
         const b = r.querySelector("[data-next]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const st = c.s, al = A(st.alive), ro = st.roles || {};
@@ -263,16 +317,16 @@ SB.register({
       });
     } else if(s.phase === "end"){
       const aw = awards(ctx.ids, roles, s.vh, s.outAt || {}, s.round, ctx.name);
-      screen(root, "end" + ctx.isHost, '<span class="eyebrow">Fin de la partie</span><div class="verdict">' + winTitle(s.winner) + "</div>" + (s.winner === "w" ? '<p style="font-size:17px">' + esc(ctx.name(s.out)) + " a trouvé « " + esc(s.civ) + " ».</p>" : "") +
-        '<div class="card"><div class="scale"><span>Mot des civils</span><span>Mot des intrus</span></div><div class="scale" style="color:var(--ink); font-size:22px; font-weight:800"><span>' + esc(s.civ) + "</span><span>" + esc(s.und) + "</span></div></div>" +
+      screen(root, "end" + ctx.isHost, '<span class="eyebrow">' + tr("Fin de la partie", "Game over") + '</span><div class="verdict">' + winTitle(s.winner) + "</div>" + (s.winner === "w" ? '<p style="font-size:17px">' + tr(esc(ctx.name(s.out)) + " a trouvé « " + esc(s.civ) + " ».", esc(ctx.name(s.out)) + " found “" + esc(s.civ) + "”.") + "</p>" : "") +
+        '<div class="card"><div class="scale"><span>' + tr("Mot des civils", "Civilians' word") + "</span><span>" + tr("Mot des intrus", "Undercover word") + '</span></div><div class="scale" style="color:var(--ink); font-size:22px; font-weight:800"><span>' + esc(s.civ) + "</span><span>" + esc(s.und) + "</span></div></div>" +
         awardsHTML(aw) +
-        '<ul class="list">' + ctx.ids.map(id => '<li><span class="t">' + esc(ctx.name(id)) + '</span><span class="by">' + roleName(roles[id]) + (alive.indexOf(id) >= 0 ? " · encore en jeu" : " · éliminé") + "</span></li>").join("") + "</ul>" +
-        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>Retour au salon</button>' : '<p class="wait">L\'hôte va vous ramener au salon.</p>'), r => {
+        '<ul class="list">' + ctx.ids.map(id => '<li><span class="t">' + esc(ctx.name(id)) + '</span><span class="by">' + roleName(roles[id]) + (alive.indexOf(id) >= 0 ? tr(" · encore en jeu", " · still in") : tr(" · éliminé", " · out")) + "</span></li>").join("") + "</ul>" +
+        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the lobby") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the lobby.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const ro = c.s.roles || {}, bads = c.ids.filter(id => ro[id] !== "c").map(id => c.name(id) + (ro[id] === "w" ? " (Mister White)" : ""));
           const aw2 = awards(c.ids, ro, c.s.vh, c.s.outAt || {}, c.s.round, c.name);
-          c.end({ title: winTitle(c.s.winner), lines: ["Imposteurs : " + bads.join(", "), "Civils : « " + c.s.civ + " » · Intrus : « " + c.s.und + " »"].concat(aw2.map(a => a[0] + " : " + a[1])), win: winners(c.ids, ro, c.s.winner) });
+          c.end({ title: winTitle(c.s.winner), lines: tr(["Imposteurs : " + bads.join(", "), "Civils : « " + c.s.civ + " » · Intrus : « " + c.s.und + " »"].concat(aw2.map(a => a[0] + " : " + a[1])), ["Impostors: " + bads.join(", "), "Civilians: “" + c.s.civ + "” · Undercover: “" + c.s.und + "”"].concat(aw2.map(a => a[0] + ": " + a[1]))), win: winners(c.ids, ro, c.s.winner) });
         }));
       });
     }
@@ -286,7 +340,7 @@ SB.register({
       let L;
       function deal(){
         const st = SB.u.store(), cs = cast(n, 0, !!st.ucWhite);
-        const { civ, und } = pickPair(!!st.ucHard);
+        const { civ, und } = pickPair(!!st.ucHard, SB.lang());
         const sh = shuffle(names.map((_, i) => i)), imps = sh.slice(0, cs.imp), wh = cs.white ? sh[cs.imp] : -1;
         L = { phase: "deal", i: 0, seen: false, civ, und, roles: names.map((_, i) => i === wh ? "w" : imps.indexOf(i) >= 0 ? "u" : "c"), alive: names.map((_, i) => i), out: -1, round: 1, winner: "", tw: "", tp: "", first: -1, outAt: {}, wg: "", twOn: st.ucTw !== false };
       }
@@ -305,10 +359,10 @@ SB.register({
       const go = () => {
         if(L.phase === "setup"){
           const st = SB.u.store(), hard = !!st.ucHard, white = !!st.ucWhite, tw = st.ucTw !== false;
-          screen(root, "setup" + hard + white + tw, '<p class="howto">Le téléphone passe de main en main : chacun découvre son mot en secret. Les intrus ne savent pas qu\'ils le sont.</p>' +
-            '<div class="packs">' + packBtn("data-w", white, "Mister White", "Un joueur sans mot qui peut gagner en devinant celui des civils") + packBtn("data-t", tw, "Coups de théâtre", "Environ un tour sur trois, une contrainte s'ajoute") +
-            packBtn("data-h", hard, "Ajouter le contenu 18+", "Sexe, porno, tabous, humour noir : tout le contenu adulte", true) + "</div>" +
-            '<div class="dock"><button class="btn acc" type="button" data-go>Distribuer les mots</button></div>', r => {
+          screen(root, "setup" + hard + white + tw, '<p class="howto">' + tr("Le téléphone passe de main en main : chacun découvre son mot en secret. Les intrus ne savent pas qu'ils le sont.", "Pass the phone around: everyone sees their word in secret. The Undercovers don't know they're Undercover.") + "</p>" +
+            '<div class="packs">' + packBtn("data-w", white, "Mister White", tr("Un joueur sans mot qui peut gagner en devinant celui des civils", "A player with no word who can win by guessing the Civilians' word")) + packBtn("data-t", tw, tr("Coups de théâtre", "Plot twists"), tr("Environ un tour sur trois, une contrainte s'ajoute", "About one round in three adds a constraint")) +
+            packBtn("data-h", hard, tr("Ajouter le contenu 18+", "Add 18+ content"), tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content"), true) + "</div>" +
+            '<div class="dock"><button class="btn acc" type="button" data-go>' + tr("Distribuer les mots", "Deal the words") + "</button></div>", r => {
             r.querySelector("[data-h]").addEventListener("click", () => { SB.u.persist({ ucHard: !hard }); go(); });
             r.querySelector("[data-w]").addEventListener("click", () => { SB.u.persist({ ucWhite: !white }); go(); });
             r.querySelector("[data-t]").addEventListener("click", () => { SB.u.persist({ ucTw: !tw }); go(); });
@@ -317,41 +371,42 @@ SB.register({
         } else if(L.phase === "deal"){
           const nm = names[L.i], isW = L.roles[L.i] === "w";
           if(!L.seen){
-            screen(root, "d" + L.i, '<span class="eyebrow">Distribution · ' + (L.i + 1) + " / " + n + '</span><div class="pass"><span class="eyebrow">Passe le téléphone à</span><div class="who">' + esc(nm) + "</div><p>Seul " + esc(nm) + " doit voir l'écran.</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>Voir mon mot</button></div>", r => {
+            screen(root, "d" + L.i, '<span class="eyebrow">' + tr("Distribution · ", "Dealing · ") + (L.i + 1) + " / " + n + '</span><div class="pass"><span class="eyebrow">' + tr("Passe le téléphone à", "Pass the phone to") + '</span><div class="who">' + esc(nm) + "</div><p>" + tr("Seul " + esc(nm) + " doit voir l'écran.", "Only " + esc(nm) + " should see the screen.") + "</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>" + tr("Voir mon mot", "Show my word") + "</button></div>", r => {
               r.querySelector("[data-n]").addEventListener("click", () => { L.seen = true; go(); });
             });
           } else {
-            screen(root, "s" + L.i, '<span class="eyebrow">' + esc(nm) + '</span><div class="card acc"><span class="eyebrow">' + (isW ? "Ton rôle" : "Ton mot secret") + '</span><p class="huge">' + (isW ? "Mister White" : esc(L.roles[L.i] === "u" ? L.und : L.civ)) + "</p>" + (isW ? '<p class="sm">Tu n\'as pas de mot. Bluffe ! Si on t\'élimine, devine le mot des civils pour gagner.</p>' : "") + '</div><p class="howto">Retiens-le, puis cache l\'écran.</p><div class="dock"><button class="btn acc" type="button" data-n>C\'est retenu, cacher</button></div>', r => {
+            screen(root, "s" + L.i, '<span class="eyebrow">' + esc(nm) + '</span><div class="card acc"><span class="eyebrow">' + (isW ? tr("Ton rôle", "Your role") : tr("Ton mot secret", "Your secret word")) + '</span><p class="huge">' + (isW ? "Mister White" : esc(L.roles[L.i] === "u" ? L.und : L.civ)) + "</p>" + (isW ? '<p class="sm">' + tr("Tu n'as pas de mot. Bluffe ! Si on t'élimine, devine le mot des civils pour gagner.", "You have no word. Bluff! If you get voted out, guess the Civilians' word to win.") + "</p>" : "") + '</div><p class="howto">' + tr("Retiens-le, puis cache l'écran.", "Memorize it, then hide the screen.") + '</p><div class="dock"><button class="btn acc" type="button" data-n>' + tr("C'est retenu, cacher", "Got it, hide") + "</button></div>", r => {
               r.querySelector("[data-n]").addEventListener("click", () => { L.seen = false; L.i++; if(L.i >= n) talk(); go(); });
             });
           }
         } else if(L.phase === "talk"){
           const how = L.tw === "deux" ? "un indice de deux mots" : L.tw === "verbe" ? "un verbe à l'infinitif" : L.tw === "emotion" ? "une émotion" : L.tw === "lieu" ? "un lieu" : L.tw === "lettre" ? "un indice commençant par " + esc(L.tp) : "un indice en un mot";
-          screen(root, "t" + L.round, '<span class="eyebrow">Tour ' + L.round + "</span>" + twBanner(L.tw, L.tp) + '<div class="pass"><span class="eyebrow">À vous de jouer</span><div class="who">Indices !</div><p>Chacun son tour, dites ' + how + " en rapport avec votre mot, sans le dire. C'est <b>" + esc(names[L.first]) + "</b> qui commence. Ensuite, votez à voix haute." + (L.tw === "double" ? " Le vote de " + esc(names[L.first]) + " compte double." : "") + "</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>On a voté</button></div>", r => {
+          const howEn = L.tw === "deux" ? "a two-word clue" : L.tw === "verbe" ? "a single verb" : L.tw === "emotion" ? "an emotion" : L.tw === "lieu" ? "a place" : L.tw === "lettre" ? "a clue starting with " + esc(L.tp) : "a one-word clue";
+          screen(root, "t" + L.round, '<span class="eyebrow">' + tr("Tour ", "Round ") + L.round + "</span>" + twBanner(L.tw, L.tp) + '<div class="pass"><span class="eyebrow">' + tr("À vous de jouer", "Your turn, everyone") + '</span><div class="who">' + tr("Indices !", "Clues!") + "</div><p>" + tr("Chacun son tour, dites " + how + " en rapport avec votre mot, sans le dire. C'est <b>" + esc(names[L.first]) + "</b> qui commence. Ensuite, votez à voix haute." + (L.tw === "double" ? " Le vote de " + esc(names[L.first]) + " compte double." : ""), "Take turns giving " + howEn + " about your word, without saying it. <b>" + esc(names[L.first]) + "</b> goes first. Then vote out loud." + (L.tw === "double" ? " " + esc(names[L.first]) + "'s vote counts twice." : "")) + "</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>" + tr("On a voté", "We've voted") + "</button></div>", r => {
             r.querySelector("[data-n]").addEventListener("click", () => { L.phase = "elim"; go(); });
           });
         } else if(L.phase === "elim"){
           const imm = L.tw === "immunite" ? L.first : -1;
-          screen(root, "e" + L.round, '<span class="eyebrow">Tour ' + L.round + '</span><p class="big">Qui a été éliminé ?</p><div class="choices">' + L.alive.map(i => '<button type="button" class="opt" data-i="' + i + '"' + (i === imm ? " disabled" : "") + ">" + esc(names[i]) + (i === imm ? " · immunisé" : "") + "</button>").join("") + '</div><button class="link" type="button" data-tie style="align-self:center">Égalité, personne ne sort</button>', r => {
+          screen(root, "e" + L.round, '<span class="eyebrow">' + tr("Tour ", "Round ") + L.round + '</span><p class="big">' + tr("Qui a été éliminé ?", "Who got voted out?") + '</p><div class="choices">' + L.alive.map(i => '<button type="button" class="opt" data-i="' + i + '"' + (i === imm ? " disabled" : "") + ">" + esc(names[i]) + (i === imm ? tr(" · immunisé", " · immune") : "") + "</button>").join("") + '</div><button class="link" type="button" data-tie style="align-self:center">' + tr("Égalité, personne ne sort", "Tie, nobody's out") + "</button>", r => {
             r.querySelectorAll("[data-i]").forEach(b => b.addEventListener("click", () => { L.out = +b.dataset.i; L.alive = L.alive.filter(i => i !== L.out); L.outAt[L.out] = L.round; L.wg = ""; L.phase = L.roles[L.out] === "w" ? "wpass" : "out"; go(); }));
             r.querySelector("[data-tie]").addEventListener("click", () => { L.round++; L.tw = rollTwist(L.twOn, L.tw, true); L.tp = L.tw === "lettre" ? SB.u.pick(LETTERS.split("")) : ""; talk(); go(); });
           });
         } else if(L.phase === "wpass"){
-          screen(root, "wp" + L.round, '<span class="eyebrow">Éliminé</span><div class="who">' + esc(names[L.out]) + '</div><p style="font-size:18px">' + esc(names[L.out]) + " était <b>Mister White</b>. Donnez-lui le téléphone : s'il devine le mot des civils, il gagne seul.</p>" +
-            '<div class="card acc"><span class="eyebrow">Ta proposition</span><div class="row"><input class="txt" id="uc-wg" maxlength="30" autocomplete="off" placeholder="Le mot des civils"><button class="btn acc" type="button" data-wg style="flex:none">Tenter</button></div></div>', r => {
+          screen(root, "wp" + L.round, '<span class="eyebrow">' + tr("Éliminé", "Voted out") + '</span><div class="who">' + esc(names[L.out]) + '</div><p style="font-size:18px">' + tr(esc(names[L.out]) + " était <b>Mister White</b>. Donnez-lui le téléphone : s'il devine le mot des civils, il gagne seul.", esc(names[L.out]) + " was <b>Mister White</b>. Hand them the phone: if they guess the Civilians' word, they win alone.") + "</p>" +
+            '<div class="card acc"><span class="eyebrow">' + tr("Ta proposition", "Your guess") + '</span><div class="row"><input class="txt" id="uc-wg" maxlength="30" autocomplete="off" placeholder="' + tr("Le mot des civils", "The Civilians' word") + '"><button class="btn acc" type="button" data-wg style="flex:none">' + tr("Tenter", "Guess") + "</button></div></div>", r => {
             const inp = r.querySelector("#uc-wg");
             const go2 = () => { const g = clean(inp.value, 30); if(!g) return; L.wg = g; if(norm(g) && norm(g) === norm(L.civ)){ L.winner = "w"; L.phase = "end"; api.win([names[L.out]]); } else L.phase = "out"; go(); };
             r.querySelector("[data-wg]").addEventListener("click", go2); inp.addEventListener("keydown", e => { if(e.key === "Enter") go2(); });
           });
         } else if(L.phase === "out"){
           const r0 = L.roles[L.out];
-          screen(root, "o" + L.round, '<span class="eyebrow">Éliminé</span><div class="who">' + esc(names[L.out]) + '</div><p style="font-size:18px">' + esc(names[L.out]) + " était <b>" + roleLabel(r0) + "</b>." + (r0 === "w" ? " Sa proposition, « " + esc(L.wg) + " », est fausse." : "") + "</p><div class=\"grow\"></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>Continuer</button></div>", r => {
+          screen(root, "o" + L.round, '<span class="eyebrow">' + tr("Éliminé", "Voted out") + '</span><div class="who">' + esc(names[L.out]) + '</div><p style="font-size:18px">' + tr(esc(names[L.out]) + " était <b>", esc(names[L.out]) + " was <b>") + roleLabel(r0) + "</b>." + (r0 === "w" ? tr(" Sa proposition, « " + esc(L.wg) + " », est fausse.", " Their guess, “" + esc(L.wg) + "”, is wrong.") : "") + "</p><div class=\"grow\"></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>" + tr("Continuer", "Continue") + "</button></div>", r => {
             r.querySelector("[data-n]").addEventListener("click", () => { after(); go(); });
           });
         } else if(L.phase === "end"){
           const aw = awards(names.map((_, i) => i), L.roles, [], L.outAt, L.round, i => names[i]);
-          screen(root, "end", '<span class="eyebrow">Fin de la partie</span><div class="verdict">' + winTitle(L.winner) + '</div><div class="card"><div class="scale"><span>Mot des civils</span><span>Mot des intrus</span></div><div class="scale" style="color:var(--ink); font-size:22px; font-weight:800"><span>' + esc(L.civ) + "</span><span>" + esc(L.und) + "</span></div></div>" + awardsHTML(aw) + '<ul class="list">' +
-            names.map((nm, i) => '<li><span class="t">' + esc(nm) + '</span><span class="by">' + roleName(L.roles[i]) + "</span></li>").join("") + '</ul><div class="dock"><button class="btn acc" type="button" data-a>Rejouer</button><button class="btn ghost" type="button" data-q>Choisir un autre jeu</button></div>', r => {
+          screen(root, "end", '<span class="eyebrow">' + tr("Fin de la partie", "Game over") + '</span><div class="verdict">' + winTitle(L.winner) + '</div><div class="card"><div class="scale"><span>' + tr("Mot des civils", "Civilians' word") + "</span><span>" + tr("Mot des intrus", "Undercover word") + '</span></div><div class="scale" style="color:var(--ink); font-size:22px; font-weight:800"><span>' + esc(L.civ) + "</span><span>" + esc(L.und) + "</span></div></div>" + awardsHTML(aw) + '<ul class="list">' +
+            names.map((nm, i) => '<li><span class="t">' + esc(nm) + '</span><span class="by">' + roleName(L.roles[i]) + "</span></li>").join("") + '</ul><div class="dock"><button class="btn acc" type="button" data-a>' + tr("Rejouer", "Play again") + '</button><button class="btn ghost" type="button" data-q>' + tr("Choisir un autre jeu", "Pick another game") + "</button></div>", r => {
             r.querySelector("[data-a]").addEventListener("click", () => api.again());
             r.querySelector("[data-q]").addEventListener("click", api.exit);
           });

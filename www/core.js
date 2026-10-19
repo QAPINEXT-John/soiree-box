@@ -55,8 +55,23 @@ function tr(fr, en){ return LANG === "en" && en != null ? en : fr; }
 SB.lang = () => LANG;
 SB.tr = tr;
 SB.setLang = function(l){ if((l === "fr" || l === "en") && l !== LANG){ persist({ lang: l }); location.reload(); } };
-// Dictionnaire des textes fixes de index.html (rempli plus bas, avec les autres textes de l'interface).
-const EN_HTML = {};
+// Dictionnaire des textes fixes de index.html (texte exact, sans espaces autour → anglais).
+const EN_HTML = {
+  "Un salon, un code, et toute la bande joue, chacun sur son téléphone.": "One room, one code, and the whole crew plays, each on their own phone.",
+  "Ton prénom": "Your name", "Léa": "Alex", "Créer un salon": "Create a room", "Code du salon": "Room code", "Rejoindre": "Join",
+  "Jouer sur un seul téléphone": "Play on one phone", "On se le passe, ou on joue contre des robots": "Pass it around, or play against bots",
+  "Les jeux": "Games", "Un bug, un souci ?": "Bug or problem?", "Signale-le": "Report it",
+  "Salon": "Room", "Hors ligne…": "Offline…", "Signaler un bug": "Report a bug", "Quitter": "Leave",
+  "Code à partager": "Code to share", "Partager l'invitation": "Share the invite", "Invitation": "Invite", "Choisis un jeu": "Pick a game",
+  "Partie en cours": "Game in progress",
+  "Tu es arrivé en cours de partie. Tu pourras jouer à la prochaine, quand l'hôte la lancera depuis le salon.": "You joined mid-game. You can play the next one when the host starts it from the room.",
+  "Salon fermé": "Room closed", "L'hôte est parti": "The host left",
+  "La personne qui a créé le salon a fermé l'appli. Crée un nouveau salon pour continuer.": "The person who created the room closed the app. Create a new room to keep playing.",
+  "Retour à l'accueil": "Back to home", "Sur ce téléphone": "On this phone", "Accueil": "Home", "Un seul téléphone": "One phone",
+  "Choisis un jeu. Le téléphone passe de main en main, ou tu joues contre des robots.": "Pick a game. Pass the phone around, or play against bots.",
+  "Retour": "Back", "+ Ajouter un joueur": "+ Add a player", "C'est parti": "Let's go", "Terminé": "Done",
+  "Lancer un jeu": "Start a game", "Fermer": "Close"
+};
 function i18nDom(root){
   if(LANG !== "en") return;
   const w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT), nodes = [];
@@ -106,13 +121,13 @@ function byTwist(list, id){ return id ? A(list).find(t => t.id === id) || null :
 const BOLT = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M13.5 2 4 14h6.5L9 22l11-13h-7z"/></svg>';
 function twistHTML(t, label){
   if(!t) return "";
-  return '<div class="twist" role="note"><span class="tw-k">' + BOLT + esc(label || "Coup de théâtre") + '</span><b>' + esc(t.name) + "</b>" + (t.desc ? '<span class="sm">' + esc(t.desc) + "</span>" : "") + "</div>";
+  return '<div class="twist" role="note"><span class="tw-k">' + BOLT + esc(label || tr("Coup de théâtre", "Plot twist")) + '</span><b>' + esc(t.name) + "</b>" + (t.desc ? '<span class="sm">' + esc(t.desc) + "</span>" : "") + "</div>";
 }
 function armTap(btn, action, armedText){
   const base = btn.textContent; let t = null;
   btn.addEventListener("click", () => {
     if(btn.dataset.armed){ clearTimeout(t); delete btn.dataset.armed; btn.textContent = base; action(); return; }
-    btn.dataset.armed = "1"; btn.textContent = armedText || "Touche encore pour confirmer";
+    btn.dataset.armed = "1"; btn.textContent = armedText || tr("Touche encore pour confirmer", "Tap again to confirm");
     t = setTimeout(() => { delete btn.dataset.armed; btn.textContent = base; }, 3000);
   });
 }
@@ -769,8 +784,8 @@ SB.back = function(){
   if(current === "page"){ SB.closePage(); return true; }
   if(current === "lplayers"){ openLocalList(); return true; }
   if(current === "llist"){ goHome(); return true; }
-  if(current === "local") return armedBack("Appuie encore sur retour pour quitter la partie", openLocalList);
-  if(current === "salon" || current === "game" || current === "spect") return armedBack("Appuie encore sur retour pour quitter le salon", netLeave);
+  if(current === "local") return armedBack(tr("Appuie encore sur retour pour quitter la partie", "Press back again to quit the game"), openLocalList);
+  if(current === "salon" || current === "game" || current === "spect") return armedBack(tr("Appuie encore sur retour pour quitter le salon", "Press back again to leave the room"), netLeave);
   if(current === "lost"){ netLeave(); return true; }
   return false;
 };
@@ -825,12 +840,12 @@ function bugNudge(){
   BL.nudged = Date.now();
   let b = document.getElementById("bug-nudge");
   if(!b){ b = document.createElement("button"); b.id = "bug-nudge"; b.type = "button"; b.className = "bug-nudge"; document.body.append(b); b.addEventListener("click", () => { b.classList.remove("on"); openBug("plante"); }); }
-  b.innerHTML = BUGICON + "<span>Un souci ? <u>Signaler le bug</u></span>";
+  b.innerHTML = BUGICON + tr("<span>Un souci ? <u>Signaler le bug</u></span>", "<span>Something wrong? <u>Report the bug</u></span>");
   requestAnimationFrame(() => b.classList.add("on"));
   clearTimeout(b._t); b._t = setTimeout(() => b.classList.remove("on"), 7000);
 }
 const BUGICON = '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="13" rx="5"/><path d="M9.5 7a2.5 2.5 0 015 0M12 11v9M7 12H3m4 5l-3 2m3-9L4 8m13 4h4m-4 5l3 2m-3-9l3-2"/></g></svg>';
-const BUGTYPES = [["plante", "Plantage / blocage"], ["reseau", "Réseau"], ["jeu", "Règles du jeu"], ["affichage", "Affichage"], ["autre", "Autre"]];
+const BUGTYPES = [["plante", tr("Plantage / blocage", "Crash / freeze")], ["reseau", tr("Réseau", "Network")], ["jeu", tr("Règles du jeu", "Game rules")], ["affichage", tr("Affichage", "Display")], ["autre", tr("Autre", "Other")]];
 function platform(){
   if(window.AndroidShare) return "appli Android";
   try{ if(matchMedia("(display-mode: standalone)").matches || navigator.standalone) return "appli installée (web)"; }catch(e){}
@@ -867,17 +882,17 @@ function openBug(type){
   try{ draft = JSON.parse(localStorage.getItem(BUGDRAFT) || "{}") || {}; }catch(e){}
   const st = { type: type || draft.type || "plante", id: rid().slice(0, 5).toUpperCase() };
   const diag = bugDiag();
-  SB.page("Signaler un bug", root => {
+  SB.page(tr("Signaler un bug", "Report a bug"), root => {
     root.innerHTML =
-      '<p class="lead">Dis-nous ce qui cloche. Le rapport contient aussi les infos techniques utiles (version, écran, jeu, erreurs) pour corriger plus vite.</p>' +
-      '<div class="field"><span class="eyebrow">Type de problème</span><div class="filters" id="bg-type">' +
+      '<p class="lead">' + tr("Dis-nous ce qui cloche. Le rapport contient aussi les infos techniques utiles (version, écran, jeu, erreurs) pour corriger plus vite.", "Tell us what went wrong. The report also includes useful technical info (version, screen, game, errors) so it can be fixed faster.") + '</p>' +
+      '<div class="field"><span class="eyebrow">' + tr("Type de problème", "Type of problem") + '</span><div class="filters" id="bg-type">' +
         BUGTYPES.map(t => '<button type="button" data-t="' + t[0] + '" aria-pressed="' + (st.type === t[0]) + '">' + esc(t[1]) + "</button>").join("") + "</div></div>" +
-      '<label class="lbl" for="bg-what">Ce qui s\'est passé<textarea class="txt area" id="bg-what" rows="4" maxlength="1500" placeholder="Ex : dans Dernière carte, j\'ai posé un +2 et plus personne ne pouvait jouer."></textarea></label>' +
-      '<label class="lbl" for="bg-how">Comment reproduire le problème (si tu sais)<textarea class="txt area" id="bg-how" rows="3" maxlength="800" placeholder="Ex : 3 joueurs, cumul activé, j\'étais l\'hôte en 4G."></textarea></label>' +
-      '<label class="chk"><input type="checkbox" id="bg-tech" checked><span>Joindre les infos techniques</span></label>' +
-      '<details class="bg-det"><summary>Voir les infos techniques</summary><pre class="bg-pre">' + esc(diag) + "</pre></details>" +
-      '<p class="sm">Le rapport s\'ouvre dans ton appli mail, prêt à envoyer à ' + esc(BUG_MAIL) + ". Tu peux aussi le partager ou le copier.</p>" +
-      dock('<p class="err" id="bg-err" hidden></p><button class="btn acc" id="bg-mail" type="button">Envoyer par mail</button><div class="row2"><button class="btn ghost" id="bg-share" type="button">Partager</button><button class="btn ghost" id="bg-copy" type="button">Copier</button></div>');
+      '<label class="lbl" for="bg-what">' + tr("Ce qui s'est passé", "What happened") + '<textarea class="txt area" id="bg-what" rows="4" maxlength="1500" placeholder="' + esc(tr("Ex : dans Dernière carte, j'ai posé un +2 et plus personne ne pouvait jouer.", "E.g. in Last Card, I played a +2 and then nobody could play.")) + '"></textarea></label>' +
+      '<label class="lbl" for="bg-how">' + tr("Comment reproduire le problème (si tu sais)", "How to reproduce it (if you know)") + '<textarea class="txt area" id="bg-how" rows="3" maxlength="800" placeholder="' + esc(tr("Ex : 3 joueurs, cumul activé, j'étais l'hôte en 4G.", "E.g. 3 players, stacking on, I was the host on mobile data.")) + '"></textarea></label>' +
+      '<label class="chk"><input type="checkbox" id="bg-tech" checked><span>' + tr("Joindre les infos techniques", "Attach technical info") + '</span></label>' +
+      '<details class="bg-det"><summary>' + tr("Voir les infos techniques", "Show technical info") + '</summary><pre class="bg-pre">' + esc(diag) + "</pre></details>" +
+      '<p class="sm">' + tr("Le rapport s'ouvre dans ton appli mail, prêt à envoyer à " + esc(BUG_MAIL) + ". Tu peux aussi le partager ou le copier.", "The report opens in your mail app, ready to send to " + esc(BUG_MAIL) + ". You can also share or copy it.") + "</p>" +
+      dock('<p class="err" id="bg-err" hidden></p><button class="btn acc" id="bg-mail" type="button">' + tr("Envoyer par mail", "Send by email") + '</button><div class="row2"><button class="btn ghost" id="bg-share" type="button">' + tr("Partager", "Share") + '</button><button class="btn ghost" id="bg-copy" type="button">' + tr("Copier", "Copy") + '</button></div>');
     const what = $("#bg-what", root), how = $("#bg-how", root), tech = $("#bg-tech", root), err = $("#bg-err", root);
     what.value = draft.what || ""; how.value = draft.how || "";
     const save = () => { try{ localStorage.setItem(BUGDRAFT, JSON.stringify({ type: st.type, what: what.value, how: how.value })); }catch(e){} };
@@ -888,11 +903,11 @@ function openBug(type){
     }));
     const label = () => (BUGTYPES.find(t => t[0] === st.type) || BUGTYPES[4])[1];
     const subject = () => "[Soirée Box " + VERSION + "] Bug #" + st.id + " · " + label() + (L.def && !N.nr ? " · " + L.def.name : N.nr && G() && G().phase === "game" && SB.byId[G().game] ? " · " + SB.byId[G().game].name : "");
-    const body = () => "Rapport de bug #" + st.id + "\nType : " + label() + "\n\nCe qui s'est passé :\n" + clean(what.value, 1500) +
-      (clean(how.value, 800) ? "\n\nPour le reproduire :\n" + clean(how.value, 800) : "") +
-      (tech.checked ? "\n\n— Infos techniques —\n" + diag : "") + "\n";
+    const body = () => tr("Rapport de bug #" + st.id + "\nType : " + label() + "\n\nCe qui s'est passé :\n", "Bug report #" + st.id + "\nType: " + label() + "\n\nWhat happened:\n") + clean(what.value, 1500) +
+      (clean(how.value, 800) ? tr("\n\nPour le reproduire :\n", "\n\nHow to reproduce:\n") + clean(how.value, 800) : "") +
+      (tech.checked ? tr("\n\n— Infos techniques —\n", "\n\n— Technical info —\n") + diag : "") + "\n";
     const ok = () => {
-      if(clean(what.value, 1500).length < 5){ err.textContent = "Décris le problème en quelques mots."; err.hidden = false; buzz([20, 60, 20]); what.focus(); return false; }
+      if(clean(what.value, 1500).length < 5){ err.textContent = tr("Décris le problème en quelques mots.", "Describe the problem in a few words."); err.hidden = false; buzz([20, 60, 20]); what.focus(); return false; }
       return true;
     };
     const done = msg => {
@@ -906,10 +921,10 @@ function openBug(type){
       const a = document.createElement("a");
       a.href = "mailto:" + BUG_MAIL + "?subject=" + encodeURIComponent(subject()) + "&body=" + encodeURIComponent(b);
       a.rel = "noopener"; document.body.append(a); a.click(); a.remove();
-      done("Ton appli mail s'ouvre avec le rapport. Merci !");
+      done(tr("Ton appli mail s'ouvre avec le rapport. Merci !", "Your mail app is opening with the report. Thanks!"));
     });
-    $("#bg-share", root).addEventListener("click", () => { if(!ok()) return; shareText(subject() + "\n\n" + body(), "", null, m => done(m === "Copié" ? "Rapport copié. Merci !" : "Merci pour le rapport !")); });
-    $("#bg-copy", root).addEventListener("click", () => { if(!ok()) return; copyText(subject() + "\n\n" + body(), () => done("Rapport copié : colle-le où tu veux. Merci !"), () => toast("Impossible de copier ici.")); });
+    $("#bg-share", root).addEventListener("click", () => { if(!ok()) return; shareText(subject() + "\n\n" + body(), "", null, m => done(m === "Copié" ? tr("Rapport copié. Merci !", "Report copied. Thanks!") : tr("Merci pour le rapport !", "Thanks for the report!"))); });
+    $("#bg-copy", root).addEventListener("click", () => { if(!ok()) return; copyText(subject() + "\n\n" + body(), () => done(tr("Rapport copié : colle-le où tu veux. Merci !", "Report copied: paste it wherever you like. Thanks!")), () => toast(tr("Impossible de copier ici.", "Can't copy here."))); });
   });
 }
 SB.bug = openBug;
@@ -917,7 +932,7 @@ SB.bug = openBug;
 /* Familles de jeux pour les filtres de l'accueil et du salon */
 const CATS = { note10: "votes", photoroulette: "wip", quiplus: "votes", tupref: "votes", redflag: "votes", purete: "votes", quiadit: "votes", priorites: "votes",
   undercover: "bluff", killer: "bluff", loupgarou: "bluff", menteurs: "bluff", motsint: "cartes", defis: "cartes", dernierecarte: "cartes", punchline: "votes", actionverite: "cartes" };
-const FILTERS = [["all", "Tous"], ["votes", "Votes"], ["bluff", "Bluff"], ["cartes", "Cartes"], ["hot", "18+"], ["wip", "En travaux"]];
+const FILTERS = [["all", tr("Tous", "All")], ["votes", tr("Votes", "Voting")], ["bluff", "Bluff"], ["cartes", tr("Cartes", "Cards")], ["hot", "18+"], ["wip", tr("En travaux", "Beta")]];
 // Jeux « en travaux » : jouables pour les tester, mais rangés à part, seulement dans leur filtre.
 const isWip = d => CATS[d.id] === "wip";
 const FSEL = { home: "all", salon: "all" };
@@ -930,22 +945,26 @@ function bindFilter(box, which, redraw){
   $$("[data-f]", box).forEach(b => b.addEventListener("click", () => { FSEL[which] = b.dataset.f; buzz(6); bindFilter(box, which, redraw); redraw(); }));
 }
 const CHECK = '<svg class="ck" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+// « 2–8 joueurs », « 3+ joueurs »
+function rangeTxt(d){ const r = d.max ? d.min + "–" + d.max : d.min + "+"; return tr(r + " joueurs", r + " players"); }
+// « 2 à 8 joueurs », « 3 joueurs ou plus »
+function rangeLong(d){ return d.max ? tr(d.min + " à " + d.max + " joueurs", d.min + " to " + d.max + " players") : tr(d.min + " joueurs ou plus", d.min + " or more players"); }
 function tileHTML(def, opts){
   opts = opts || {};
-  const range = (def.max ? def.min + "–" + def.max : def.min + "+") + " joueurs";
+  const range = rangeTxt(def);
   const meta = esc(range) + (def.hot ? " · 18+" : "") + (def.local && def.local.players && def.local.players.min === 1 ? " · solo" : "");
   return '<button type="button" class="tile acc-' + esc(def.id) + (isWip(def) ? " wip" : "") + '" data-id="' + esc(def.id) + '"' + (opts.disabled ? " disabled" : "") + (opts.pressed ? ' aria-pressed="true"' : "") + '>' +
-    '<span class="gl">' + esc(def.glyph || def.name.slice(0, 2)) + '</span><span class="nm">' + esc(def.name) + '</span><span class="ds">' + esc(def.pitch || def.tag || "") + '</span><span class="meta">' + (isWip(def) ? '<b class="wipb">En travaux</b> · ' : "") + (opts.metaHTML || meta) + "</span>" + CHECK + "</button>";
+    '<span class="gl">' + esc(def.glyph || def.name.slice(0, 2)) + '</span><span class="nm">' + esc(def.name) + '</span><span class="ds">' + esc(def.pitch || def.tag || "") + '</span><span class="meta">' + (isWip(def) ? '<b class="wipb">' + tr("En travaux", "Beta") + '</b> · ' : "") + (opts.metaHTML || meta) + "</span>" + CHECK + "</button>";
 }
 function rulesHTML(def){
   const r = A(def.rules);
-  return r.length ? '<details><summary>Règles</summary><ol>' + r.map(x => "<li>" + esc(x) + "</li>").join("") + '</ol></details>' : "";
+  return r.length ? '<details><summary>' + tr("Règles", "Rules") + '</summary><ol>' + r.map(x => "<li>" + esc(x) + "</li>").join("") + '</ol></details>' : "";
 }
 function openRules(def){
   SB.page(def.name, root => {
     accent(def.id);
     root.innerHTML = '<div class="card acc"><span class="gl hand huge">' + esc(def.glyph || "") + '</span><p class="lead">' + esc(def.tag || "") + '</p><span class="sm">' +
-      (def.max ? def.min + " à " + def.max + " joueurs" : def.min + " joueurs ou plus") + (def.local ? " · aussi sur un seul téléphone" : "") + '</span></div>' +
+      esc(rangeLong(def)) + (def.local ? tr(" · aussi sur un seul téléphone", " · also on a single phone") : "") + '</span></div>' +
       '<ol class="howto" style="margin:0; padding-left:30px; display:flex; flex-direction:column; gap:6px">' + A(def.rules).map(x => "<li>" + esc(x) + "</li>").join("") + "</ol>";
   }, () => accent(""));
 }
@@ -961,10 +980,10 @@ function renderHome(){
   $("#h-join").disabled = !netReady || N.joining;
   void nm;
   const info = $("#h-netinfo");
-  if(netLoading){ info.textContent = "Connexion au mode réseau…"; info.hidden = false; }
-  else if(!netReady){ info.textContent = window.claude ? "Le mode réseau n'est pas disponible ici. Ouvre la page depuis claude.ai en étant connecté, ou joue sur un seul téléphone." : "Le mode réseau n'a pas pu démarrer. Vérifie ta connexion internet puis relance l'appli, ou joue sur un seul téléphone."; info.hidden = false; }
+  if(netLoading){ info.textContent = tr("Connexion au mode réseau…", "Connecting to online mode…"); info.hidden = false; }
+  else if(!netReady){ info.textContent = window.claude ? tr("Le mode réseau n'est pas disponible ici. Ouvre la page depuis claude.ai en étant connecté, ou joue sur un seul téléphone.", "Online mode isn't available here. Open the page from claude.ai while signed in, or play on one phone.") : tr("Le mode réseau n'a pas pu démarrer. Vérifie ta connexion internet puis relance l'appli, ou joue sur un seul téléphone.", "Online mode couldn't start. Check your internet connection and restart the app, or play on one phone."); info.hidden = false; }
   else if(N.joining){ info.hidden = false; }
-  else if(hashCode){ info.textContent = "Tu es invité dans le salon " + hashCode + ". Entre ton prénom, puis touche « Rejoindre »."; info.hidden = false; }
+  else if(hashCode){ info.textContent = tr("Tu es invité dans le salon " + hashCode + ". Entre ton prénom, puis touche « Rejoindre ».", "You're invited to room " + hashCode + ". Enter your name, then tap “Join”."); info.hidden = false; }
   else if(!$("#h-err").hidden){ info.hidden = true; }
   else info.hidden = true;
 }
@@ -985,7 +1004,7 @@ SB.onUpdate = function(e){
   if(!e || typeof e !== "object") return;
   if(e.t === "avail" && e.v) UP.need = String(e.v);
   if(e.t === "none") UP.need = null;
-  if(e.t === "none"){ if(UP.manual) toast("Tu as déjà la dernière version (" + e.v + ")."); UP.st = null; }
+  if(e.t === "none"){ if(UP.manual) toast(tr("Tu as déjà la dernière version (" + e.v + ").", "You already have the latest version (" + e.v + ").")); UP.st = null; }
   else if(e.t === "error" && !UP.manual && !(UP.st && (UP.st.t === "progress" || UP.st.t === "avail"))) UP.st = null;
   else if(e.t === "progress") UP.st = Object.assign({}, UP.st, e, { t: "progress" });
   else UP.st = Object.assign({}, e.t === "error" && UP.st ? { prev: UP.st.prev || UP.st } : {}, e);
@@ -1009,9 +1028,9 @@ function updateGate(){
   if(!g){ g = document.createElement("div"); g.id = "sb-gate"; g.className = "gate"; g.setAttribute("role", "dialog"); g.setAttribute("aria-modal", "true"); document.body.append(g); }
   g.hidden = false;
   const box = forced ? updateHTML(u || { t: "checking" }, true) :
-    '<div class="h"><span class="eyebrow">Mise à jour obligatoire</span><b>Ce salon joue avec Soirée Box ' + esc(salonV) + '</b><span class="sm">Tu as la version ' + esc(VERSION) + ". Mets à jour pour jouer avec les autres.</span></div>" +
-    (window.AndroidUpdate ? '<button class="btn acc" type="button" data-retry>Chercher la mise à jour</button>' : '<button class="btn acc" type="button" data-reload>Recharger la page</button>') +
-    (N.nr ? '<button class="link" type="button" data-leave style="align-self:center">Quitter le salon</button>' : "");
+    '<div class="h"><span class="eyebrow">' + tr("Mise à jour obligatoire", "Update required") + '</span><b>' + tr("Ce salon joue avec Soirée Box " + esc(salonV), "This room is playing on Soirée Box " + esc(salonV)) + '</b><span class="sm">' + tr("Tu as la version " + esc(VERSION) + ". Mets à jour pour jouer avec les autres.", "You have version " + esc(VERSION) + ". Update to play with the others.") + "</span></div>" +
+    (window.AndroidUpdate ? '<button class="btn acc" type="button" data-retry>' + tr("Chercher la mise à jour", "Check for the update") + '</button>' : '<button class="btn acc" type="button" data-reload>' + tr("Recharger la page", "Reload the page") + '</button>') +
+    (N.nr ? '<button class="link" type="button" data-leave style="align-self:center">' + tr("Quitter le salon", "Leave the room") + '</button>' : "");
   const html = '<div class="gate-in"><div class="brand-s">Soirée Box</div><div class="upd">' + box + "</div></div>";
   if(g.dataset.h !== html){ g.dataset.h = html; g.innerHTML = html; bindUpdate(g); }
 }
@@ -1019,7 +1038,7 @@ function renderUpdate(){
   const el = $("#h-update"), ver = $("#h-ver");
   if(ver){
     const info = window.AndroidUpdate ? upInfo() : {};
-    ver.innerHTML = "Version " + esc(info.version || VERSION) + (window.AndroidUpdate ? ' · <button type="button" data-chk>Vérifier les mises à jour</button>' : "");
+    ver.innerHTML = "Version " + esc(info.version || VERSION) + (window.AndroidUpdate ? ' · <button type="button" data-chk>' + tr("Vérifier les mises à jour", "Check for updates") + '</button>' : "");
     const b = $("[data-chk]", ver); if(b) b.addEventListener("click", () => checkUpdate(true));
   }
   updateGate();
@@ -1031,24 +1050,24 @@ function renderUpdate(){
 }
 function updateHTML(u, forced){
   let h = "";
-  if(u.t === "checking") h = '<div class="h"><b>Recherche de mises à jour…</b></div>';
+  if(u.t === "checking") h = '<div class="h"><b>' + tr("Recherche de mises à jour…", "Checking for updates…") + '</b></div>';
   else if(u.t === "avail"){
     const notes = A(u.notes).slice(0, 5);
-    h = '<div class="h"><span class="eyebrow">' + (forced ? "Mise à jour obligatoire" : "Nouvelle version") + '</span><b>Soirée Box ' + esc(u.v) + ' est disponible</b><span class="sm">Ta version : ' + esc(u.cur || VERSION) + "</span></div>" +
+    h = '<div class="h"><span class="eyebrow">' + (forced ? tr("Mise à jour obligatoire", "Update required") : tr("Nouvelle version", "New version")) + '</span><b>' + tr("Soirée Box " + esc(u.v) + " est disponible", "Soirée Box " + esc(u.v) + " is available") + '</b><span class="sm">' + tr("Ta version : ", "Your version: ") + esc(u.cur || VERSION) + "</span></div>" +
       (notes.length ? "<ul>" + notes.map(n => "<li>" + esc(clean(n, 160)) + "</li>").join("") + "</ul>" : "") +
-      (u.needApk ? '<p class="sm">Cette version modifie l\'appli Android elle-même : télécharge la nouvelle appli et installe-la par-dessus l\'ancienne. Tes réglages et ton historique sont conservés.</p><button class="btn acc" type="button" data-apk>Télécharger la nouvelle appli</button>'
-        : '<button class="btn acc" type="button" data-go>Mettre à jour maintenant</button>' + (forced ? "" : '<button class="link" type="button" data-later style="align-self:center">Plus tard</button>'));
+      (u.needApk ? '<p class="sm">' + tr("Cette version modifie l'appli Android elle-même : télécharge la nouvelle appli et installe-la par-dessus l'ancienne. Tes réglages et ton historique sont conservés.", "This version changes the Android app itself: download the new app and install it over the old one. Your settings and history are kept.") + '</p><button class="btn acc" type="button" data-apk>' + tr("Télécharger la nouvelle appli", "Download the new app") + '</button>'
+        : '<button class="btn acc" type="button" data-go>' + tr("Mettre à jour maintenant", "Update now") + '</button>' + (forced ? "" : '<button class="link" type="button" data-later style="align-self:center">' + tr("Plus tard", "Later") + '</button>'));
   } else if(u.t === "progress"){
     const p = u.total ? Math.round(100 * u.done / u.total) : 0;
-    h = '<div class="h"><b>Mise à jour en cours…</b><span class="sm">' + (u.done || 0) + " / " + (u.total || "?") + ' fichiers vérifiés</span></div><div class="pg"><i style="width:' + p + '%"></i></div>';
+    h = '<div class="h"><b>' + tr("Mise à jour en cours…", "Updating…") + '</b><span class="sm">' + (u.done || 0) + " / " + (u.total || "?") + tr(" fichiers vérifiés", " files checked") + '</span></div><div class="pg"><i style="width:' + p + '%"></i></div>';
   } else if(u.t === "ready"){
-    h = '<div class="h"><span class="eyebrow">C\'est prêt</span><b>Version ' + esc(u.v) + " installée</b><span class=\"sm\">Redémarre pour en profiter.</span></div>" +
-      '<button class="btn acc" type="button" data-restart>Redémarrer maintenant</button>';
+    h = '<div class="h"><span class="eyebrow">' + tr("C'est prêt", "All set") + '</span><b>' + tr("Version " + esc(u.v) + " installée", "Version " + esc(u.v) + " installed") + '</b><span class="sm">' + tr("Redémarre pour en profiter.", "Restart to use it.") + "</span></div>" +
+      '<button class="btn acc" type="button" data-restart>' + tr("Redémarrer maintenant", "Restart now") + '</button>';
   } else if(u.t === "error"){
-    h = '<div class="h"><b>Mise à jour impossible</b><span class="sm">' + esc(u.msg || "Vérifie ta connexion internet.") + "</span></div>" +
-      '<button class="btn ghost" type="button" data-retry>Réessayer</button>' + (forced ? "" : '<button class="link" type="button" data-later style="align-self:center">Fermer</button>');
+    h = '<div class="h"><b>' + tr("Mise à jour impossible", "Update failed") + '</b><span class="sm">' + esc(u.msg || tr("Vérifie ta connexion internet.", "Check your internet connection.")) + "</span></div>" +
+      '<button class="btn ghost" type="button" data-retry>' + tr("Réessayer", "Try again") + '</button>' + (forced ? "" : '<button class="link" type="button" data-later style="align-self:center">' + tr("Fermer", "Close") + '</button>');
   }
-  if(forced && u.t === "avail") h += '<p class="sm">Il faut la dernière version pour jouer. Ça prend quelques secondes.</p>';
+  if(forced && u.t === "avail") h += '<p class="sm">' + tr("Il faut la dernière version pour jouer. Ça prend quelques secondes.", "You need the latest version to play. It only takes a few seconds.") + '</p>';
   return h;
 }
 function bindUpdate(el){
@@ -1056,7 +1075,7 @@ function bindUpdate(el){
   on("[data-reload]", () => { try{ location.reload(); }catch(e){} });
   on("[data-leave]", () => netLeave());
   on("[data-go]", () => { buzz(16); UP.st = { t: "progress", done: 0, total: 0 }; renderUpdate(); try{ window.AndroidUpdate.apply(); }catch(e){} });
-  on("[data-apk]", () => { try{ window.AndroidUpdate.openApk(); }catch(e){} toast("Le téléchargement démarre : installe ensuite le fichier par-dessus l'appli."); });
+  on("[data-apk]", () => { try{ window.AndroidUpdate.openApk(); }catch(e){} toast(tr("Le téléchargement démarre : installe ensuite le fichier par-dessus l'appli.", "Download starting: then install the file over the app.")); });
   on("[data-restart]", () => { try{ window.AndroidUpdate.restart(); }catch(e){ location.reload(); } });
   on("[data-retry]", () => checkUpdate(true));
   on("[data-later]", () => { UP.st = null; renderUpdate(); });
@@ -1076,8 +1095,8 @@ function tallyHTML(t, played){
   if(!r.length) return "";
   const top = r[0][1];
   let rank = 0, prev = -1;
-  return '<div class="sbt"><span class="eyebrow">Classement de la soirée' + (played ? " · " + plural(played, "partie") : "") + '</span><ol>' +
-    r.slice(0, 6).map((x, i) => { if(x[1] !== prev){ rank = i + 1; prev = x[1]; } return '<li' + (x[1] === top ? ' class="first"' : "") + '><span class="rk">' + rank + '</span><span class="nm">' + esc(x[0]) + '</span><span class="w">' + plural(x[1], "victoire") + "</span></li>"; }).join("") + "</ol></div>";
+  return '<div class="sbt"><span class="eyebrow">' + tr("Classement de la soirée", "Tonight's leaderboard") + (played ? " · " + plural2(played, "partie", "parties", "game") : "") + '</span><ol>' +
+    r.slice(0, 6).map((x, i) => { if(x[1] !== prev){ rank = i + 1; prev = x[1]; } return '<li' + (x[1] === top ? ' class="first"' : "") + '><span class="rk">' + rank + '</span><span class="nm">' + esc(x[0]) + '</span><span class="w">' + plural2(x[1], "victoire", "victoires", "win") + "</span></li>"; }).join("") + "</ol></div>";
 }
 // Versions dans le salon : chaque téléphone annonce la sienne (presence.v).
 function peerV(p){ return clean(pres(p).v, 12); }
@@ -1096,10 +1115,10 @@ async function netEnter(code, asHost){
   if(N.joining) return;
   const name = clean($("#h-name").value, 16);
   if(!netReady) return;
-  if(!name){ homeErr("Entre ton prénom pour que les autres te reconnaissent."); buzz([20, 60, 20]); $("#h-name").focus(); return; }
-  if(!/^[A-Z]{4}$/.test(code)){ homeErr("Le code du salon doit faire 4 lettres."); buzz([20, 60, 20]); $("#h-code").focus(); return; }
+  if(!name){ homeErr(tr("Entre ton prénom pour que les autres te reconnaissent.", "Enter your name so the others know who you are.")); buzz([20, 60, 20]); $("#h-name").focus(); return; }
+  if(!/^[A-Z]{4}$/.test(code)){ homeErr(tr("Le code du salon doit faire 4 lettres.", "The room code must be 4 letters.")); buzz([20, 60, 20]); $("#h-code").focus(); return; }
   homeErr(""); N.joining = true;
-  $("#h-netinfo").textContent = asHost ? "Ouverture du salon…" : "Connexion au salon " + code + "…";
+  $("#h-netinfo").textContent = asHost ? tr("Ouverture du salon…", "Opening the room…") : tr("Connexion au salon " + code + "…", "Joining room " + code + "…");
   renderHome();
   let nr;
   try{
@@ -1111,13 +1130,13 @@ async function netEnter(code, asHost){
     } else nr = FB_ON ? await fbJoin(code) : ROOM ? await roomJoin(code) : await relayRoom(code, false);
   }catch(e){
     N.joining = false; renderHome();
-    homeErr(e && e.code === "not_found" ? "Aucun salon ouvert avec le code " + code + ". Vérifie le code, et vérifie que l'hôte a toujours l'appli ouverte." :
-      e && e.code === "full" ? "Ce salon est complet." :
-      e && e.code === "auth_off" ? "Firebase refuse la connexion : active la connexion anonyme dans la console Firebase (voir le guide)." :
-      e && e.code === "room_denied" ? "Le mode réseau n'est pas autorisé pour ton compte sur cette page." :
-      e && e.code === "rules" ? "La base Firebase refuse l'accès : colle les règles du fichier database.rules.json dans la console (voir le guide)." :
-      e && e.code === "network" ? "Impossible de joindre les serveurs de jeu. Vérifie ta connexion internet (wifi ou données mobiles) et réessaie." :
-      "Connexion impossible. Vérifie ta connexion internet et réessaie.");
+    homeErr(e && e.code === "not_found" ? tr("Aucun salon ouvert avec le code " + code + ". Vérifie le code, et vérifie que l'hôte a toujours l'appli ouverte.", "No open room with code " + code + ". Check the code, and make sure the host still has the app open.") :
+      e && e.code === "full" ? tr("Ce salon est complet.", "This room is full.") :
+      e && e.code === "auth_off" ? tr("Firebase refuse la connexion : active la connexion anonyme dans la console Firebase (voir le guide).", "Firebase refused the connection: enable anonymous sign-in in the Firebase console (see the guide).") :
+      e && e.code === "room_denied" ? tr("Le mode réseau n'est pas autorisé pour ton compte sur cette page.", "Online mode isn't allowed for your account on this page.") :
+      e && e.code === "rules" ? tr("La base Firebase refuse l'accès : colle les règles du fichier database.rules.json dans la console (voir le guide).", "The Firebase database refused access: paste the rules from database.rules.json into the console (see the guide).") :
+      e && e.code === "network" ? tr("Impossible de joindre les serveurs de jeu. Vérifie ta connexion internet (wifi ou données mobiles) et réessaie.", "Can't reach the game servers. Check your internet connection (Wi-Fi or mobile data) and try again.") :
+      tr("Connexion impossible. Vérifie ta connexion internet et réessaie.", "Couldn't connect. Check your internet connection and try again."));
     return;
   }
   N.joining = false; hashCode = null;
@@ -1184,14 +1203,14 @@ function makeCtx(){
   const g = G() || {};
   const s = g.s && typeof g.s === "object" ? g.s : {};
   const me = N.nr ? N.nr.me() : "";
-  const list = A(g.players).map(r => A(r)).map(r => ({ id: String(r[0]), name: clean(r[1], 16) || "Joueur" }));
+  const list = A(g.players).map(r => A(r)).map(r => ({ id: String(r[0]), name: clean(r[1], 16) || tr("Joueur", "Player") }));
   const ctx = {
     me, isHost: N.host, g, s, opts: g.opts || {},
     players: list, ids: list.map(p => p.id),
     playing: list.some(p => p.id === me),
     peers: namedPeers().map(p => ({ id: p.peer, name: clean(pres(p).name, 16), presence: pres(p), me: !!p.sameTab })),
     here: id => !!peerById(id),
-    name(id){ const p = list.find(x => x.id === id); if(p) return p.name; const q = peerById(id); return q ? clean(pres(q).name, 16) || "Joueur" : "Joueur"; },
+    name(id){ const p = list.find(x => x.id === id); if(p) return p.name; const q = peerById(id); return q ? clean(pres(q).name, 16) || tr("Joueur", "Player") : tr("Joueur", "Player"); },
     presence: id => pres(peerById(id)),
     input(id){ const i = pres(peerById(id)).in; return i && typeof i === "object" && i.k === s.k ? fix(i) : null; },
     mine(){ return ctx.input(me); },
@@ -1247,7 +1266,7 @@ function scheduleRender(){ if(rq) return; rq = true; setTimeout(() => { rq = fal
 function renderOffline(){
   const hid = N.nr ? N.nr.hostId() : null;
   const hostGone = !!(N.nr && (N.nr.kind === "fb" || N.nr.kind === "relay") && hid && !N.host && N.peers.length > 1 && !peerById(hid));
-  $$("[data-offline]").forEach(e => { e.hidden = N.connected && !hostGone; e.textContent = !N.connected ? "Hors ligne…" : "Changement d'hôte…"; });
+  $$("[data-offline]").forEach(e => { e.hidden = N.connected && !hostGone; e.textContent = !N.connected ? tr("Hors ligne…", "Offline…") : tr("Changement d'hôte…", "Switching host…"); });
 }
 let lastPhase = "";
 function render(){
@@ -1282,9 +1301,9 @@ function render(){
     const exKey = g.gid + (N.host ? "h" : "p");
     if(ex.dataset.key !== exKey){
       ex.dataset.key = exKey;
-      ex.innerHTML = '<button class="link warn" type="button">' + (N.host ? "Arrêter" : "Quitter") + "</button>";
-      armTap(ex.firstChild, N.host ? () => runHost(c => c.end({ title: def.name, lines: ["Partie arrêtée par l'hôte."] })) : netLeave,
-        N.host ? "Touche encore pour revenir au salon" : "Touche encore pour quitter");
+      ex.innerHTML = '<button class="link warn" type="button">' + (N.host ? tr("Arrêter", "Stop") : tr("Quitter", "Leave")) + "</button>";
+      armTap(ex.firstChild, N.host ? () => runHost(c => c.end({ title: def.name, lines: [tr("Partie arrêtée par l'hôte.", "Game stopped by the host.")] })) : netLeave,
+        N.host ? tr("Touche encore pour revenir au salon", "Tap again to go back to the room") : tr("Touche encore pour quitter", "Tap again to leave"));
     }
     try{ def.render(ctx, root); }catch(e){ console.error(e); }
     return;
@@ -1326,13 +1345,13 @@ function salonDock(g, np){
   const key = JSON.stringify([!!g, N.host, def ? def.id : "", np.length]);
   if(d.dataset.key === key) return;
   d.dataset.key = key;
-  if(!g){ d.innerHTML = '<p class="wait">Connexion à l\'hôte…</p>'; return; }
+  if(!g){ d.innerHTML = '<p class="wait">' + tr("Connexion à l'hôte…", "Connecting to the host…") + '</p>'; return; }
   if(N.host){
-    d.innerHTML = def ? '<button class="btn acc acc-' + esc(def.id) + '" type="button" data-open>Lancer ' + esc(def.name) + '</button>' : '<p class="wait">Touche un jeu pour le choisir.</p>';
+    d.innerHTML = def ? '<button class="btn acc acc-' + esc(def.id) + '" type="button" data-open>' + tr("Lancer " + esc(def.name), "Play " + esc(def.name)) + '</button>' : '<p class="wait">' + tr("Touche un jeu pour le choisir.", "Tap a game to pick it.") + '</p>';
     const b = $("[data-open]", d); if(b) b.addEventListener("click", () => { $("#sa-panel").dataset.key = ""; openSheet(); renderSalon(G()); });
   } else {
-    d.innerHTML = def ? '<div class="pick acc-' + esc(def.id) + '"><span class="gl">' + esc(def.glyph || "") + '</span><span class="tx"><span class="eyebrow">L\'hôte a choisi</span><b>' + esc(def.name) + '</b></span><button class="link" type="button" data-rules>Règles</button></div><p class="wait">L\'hôte règle les options et lance la partie…</p>'
-      : '<p class="wait">L\'hôte choisit le jeu…</p>';
+    d.innerHTML = def ? '<div class="pick acc-' + esc(def.id) + '"><span class="gl">' + esc(def.glyph || "") + '</span><span class="tx"><span class="eyebrow">' + tr("L'hôte a choisi", "The host picked") + '</span><b>' + esc(def.name) + '</b></span><button class="link" type="button" data-rules>' + tr("Règles", "Rules") + '</button></div><p class="wait">' + tr("L'hôte règle les options et lance la partie…", "The host is setting the options and starting the game…") + '</p>'
+      : '<p class="wait">' + tr("L'hôte choisit le jeu…", "The host is picking the game…") + '</p>';
     const r = $("[data-rules]", d); if(r) r.addEventListener("click", () => openRules(def));
   }
 }
@@ -1342,18 +1361,18 @@ function renderSalon(g){
   $("#sa-code").textContent = N.code;
   const np = namedPeers();
   const hostId = N.host ? N.nr.me() : N.nr.hostId();
-  $("#sa-count").textContent = plural(np.length, "joueur") + " dans le salon";
-  const roster = np.map((p, i) => { const nm = clean(pres(p).name, 16); return '<li' + (p.sameTab ? ' class="me"' : "") + '><span class="av" style="--c:' + AVC[i % AVC.length] + '" aria-hidden="true">' + esc(nm.slice(0, 1).toUpperCase()) + '</span><span class="nm">' + esc(nm) + (p.sameTab ? " · toi" : "") + "</span>" +
-    (p.peer === hostId ? '<span class="pill me">Hôte</span>' : "") + (cmpV(peerV(p) || "0", newestV(np)) < 0 ? '<span class="pill late">À mettre à jour</span>' : "") + "</li>"; }).join("");
+  $("#sa-count").textContent = tr(plural(np.length, "joueur") + " dans le salon", plural2(np.length, "joueur", "joueurs", "player") + " in the room");
+  const roster = np.map((p, i) => { const nm = clean(pres(p).name, 16); return '<li' + (p.sameTab ? ' class="me"' : "") + '><span class="av" style="--c:' + AVC[i % AVC.length] + '" aria-hidden="true">' + esc(nm.slice(0, 1).toUpperCase()) + '</span><span class="nm">' + esc(nm) + (p.sameTab ? tr(" · toi", " · you") : "") + "</span>" +
+    (p.peer === hostId ? '<span class="pill me">' + tr("Hôte", "Host") + '</span>' : "") + (cmpV(peerV(p) || "0", newestV(np)) < 0 ? '<span class="pill late">' + tr("À mettre à jour", "Needs update") + '</span>' : "") + "</li>"; }).join("");
   if($("#sa-roster").innerHTML !== roster) $("#sa-roster").innerHTML = roster;
   const last = $("#sa-last");
   if(g && g.last && g.last.title){
     last.hidden = false;
     const d = SB.byId[g.last.game];
     const n = np.length, canRe = N.host && d && n >= d.min && (!d.max || n <= d.max);
-    const lh = '<span class="eyebrow">Dernière partie' + (d ? " · " + esc(d.name) : "") + "</span><b>" + esc(clean(g.last.title, 120)) + "</b>" + A(g.last.lines).slice(0, 6).map(l => '<span class="sm">' + esc(clean(l, 160)) + "</span>").join("") +
+    const lh = '<span class="eyebrow">' + tr("Dernière partie", "Last game") + (d ? " · " + esc(d.name) : "") + "</span><b>" + esc(clean(g.last.title, 120)) + "</b>" + A(g.last.lines).slice(0, 6).map(l => '<span class="sm">' + esc(clean(l, 160)) + "</span>").join("") +
       tallyHTML(g.tally, g.played) +
-      (canRe ? '<button class="btn acc acc-' + esc(d.id) + ' again" type="button" data-revanche>Revanche · ' + esc(d.name) + "</button>" : "");
+      (canRe ? '<button class="btn acc acc-' + esc(d.id) + ' again" type="button" data-revanche>' + tr("Revanche · ", "Rematch · ") + esc(d.name) + "</button>" : "");
     if(last.innerHTML !== lh){
       last.innerHTML = lh;
       const rb = $("[data-revanche]", last);
@@ -1370,7 +1389,7 @@ function renderSalon(g){
     tiles.dataset.key = tKey;
     tiles.innerHTML = SB.games.filter(d => inFilter(d, FSEL.salon) || d.id === sel).map(d => {
       const n = np.length, ok = n >= d.min && (!d.max || n <= d.max);
-      const range = (d.max ? d.min + "–" + d.max : d.min + "+") + " joueurs";
+      const range = rangeTxt(d);
       const meta = (ok ? esc(range) : '<span class="bad">' + esc(range) + "</span>") + (d.hot ? " · 18+" : "");
       return tileHTML(d, { pressed: d.id === sel, metaHTML: meta });
     }).join("");
@@ -1380,7 +1399,7 @@ function renderSalon(g){
       if(N.g && N.g.phase === "salon"){ $("#sa-panel").dataset.key = ""; hostSetG({ sel: b.dataset.id }); renderSalon(G()); openSheet(); }
     }));
   }
-  $("#sa-pick").textContent = N.host ? "Choisis un jeu" : "Les jeux";
+  $("#sa-pick").textContent = N.host ? tr("Choisis un jeu", "Pick a game") : tr("Les jeux", "Games");
   salonDock(g, np);
   if(!N.host){ closeSheet(); return; }
 
@@ -1396,10 +1415,10 @@ function renderSalon(g){
   if(panel.dataset.key === key) return;
   panel.dataset.key = key;
   $("#sheet").className = "sheet" + (sheetOpen ? " on" : "") + " acc-" + def.id;
-  let h = '<div class="sheet-head"><span class="gl">' + esc(def.glyph || "") + '</span><div><h2>' + esc(def.name) + '</h2><span class="sm">' + (def.max ? def.min + " à " + def.max + " joueurs" : def.min + " joueurs ou plus") + "</span></div></div>" +
+  let h = '<div class="sheet-head"><span class="gl">' + esc(def.glyph || "") + '</span><div><h2>' + esc(def.name) + '</h2><span class="sm">' + esc(rangeLong(def)) + "</span></div></div>" +
     '<p class="lead">' + esc(def.tag || "") + "</p>" + rulesHTML(def) + optionsHTML(def, ctx, vals);
-  h += dock('<p class="err" id="sa-err"' + (ok ? " hidden" : "") + ">" + (ok ? "" : late.length ? esc(late.join(", ")) + (late.length > 1 ? " doivent" : " doit") + " mettre à jour Soirée Box avant de jouer." : (n < def.min ? "Il faut au moins " + def.min + " joueurs dans le salon (" + n + " pour l'instant)." : "Ce jeu se joue à " + def.max + " joueurs maximum.")) + "</p>" +
-    '<button class="btn acc" id="sa-go" type="button"' + (ok ? "" : " disabled") + ">Lancer la partie</button>");
+  h += dock('<p class="err" id="sa-err"' + (ok ? " hidden" : "") + ">" + (ok ? "" : late.length ? tr(esc(late.join(", ")) + (late.length > 1 ? " doivent" : " doit") + " mettre à jour Soirée Box avant de jouer.", esc(late.join(", ")) + (late.length > 1 ? " need" : " needs") + " to update Soirée Box before playing.") : (n < def.min ? tr("Il faut au moins " + def.min + " joueurs dans le salon (" + n + " pour l'instant).", "You need at least " + def.min + " players in the room (" + n + " so far).") : tr("Ce jeu se joue à " + def.max + " joueurs maximum.", "This game is for " + def.max + " players max."))) + "</p>" +
+    '<button class="btn acc" id="sa-go" type="button"' + (ok ? "" : " disabled") + ">" + tr("Lancer la partie", "Start the game") + "</button>");
   const st = panel.scrollTop;
   panel.innerHTML = h;
   panel.scrollTop = st;
@@ -1416,7 +1435,7 @@ function renderSalon(g){
 }
 function launch(def){
   if(!N.host || !N.g) return;
-  if(lateNames(namedPeers()).length || cmpV(newestV(namedPeers()), VERSION) > 0){ toast("Tout le monde doit avoir la dernière version de Soirée Box."); return; }
+  if(lateNames(namedPeers()).length || cmpV(newestV(namedPeers()), VERSION) > 0){ toast(tr("Tout le monde doit avoir la dernière version de Soirée Box.", "Everyone needs the latest version of Soirée Box.")); return; }
   trail("Lancement : " + def.id);
   const np = namedPeers();
   if(np.length < def.min || (def.max && np.length > def.max)) return;
@@ -1425,7 +1444,7 @@ function launch(def){
   N.g = Object.assign({}, N.g, { phase: "game", game: def.id, gid: rid(), players: np.map(p => [p.peer, clean(pres(p).name, 16)]), opts: plain(opts), s: { k: rid() }, last: null });
   let s0;
   try{ s0 = def.start(makeCtx(), opts) || {}; }
-  catch(e){ N.g = prev; const err = $("#sa-err"); if(err){ err.textContent = e.message || "Impossible de lancer ce jeu."; err.hidden = false; } return; }
+  catch(e){ N.g = prev; const err = $("#sa-err"); if(err){ err.textContent = e.message || tr("Impossible de lancer ce jeu.", "Can't start this game."); err.hidden = false; } return; }
   N.g.s = plain(Object.assign({ k: rid() }, s0));
   closeSheet(); buzz(30);
   hostSetG({});
@@ -1438,7 +1457,7 @@ function openLocalList(){
   const t = $("#ll-tiles");
   t.innerHTML = SB.games.filter(d => d.local).sort((a, b) => isWip(a) - isWip(b)).map(d => {
     const lp = d.local.players;
-    const meta = (lp ? (lp.min === 1 ? "Seul ou jusqu'à " + lp.max + " · robots" : (lp.max ? lp.min + "–" + lp.max : lp.min + "+") + " joueurs") : "Tout le groupe") + (d.hot ? " · 18+" : "");
+    const meta = (lp ? (lp.min === 1 ? tr("Seul ou jusqu'à " + lp.max + " · robots", "Solo or up to " + lp.max + " · bots") : rangeTxt(lp)) : tr("Tout le groupe", "Whole group")) + (d.hot ? " · 18+" : "");
     return tileHTML(d, { metaHTML: meta });
   }).join("");
   $$(".tile", t).forEach(b => b.addEventListener("click", () => { const d = SB.byId[b.dataset.id]; if(d.local.players) openLocalPlayers(d); else startLocal(d, []); }));
@@ -1456,7 +1475,7 @@ function openLocalPlayers(def){
   while(LP.names.length < lp.min) LP.names.push("");
   accent(def.id);
   $("#lp-title").textContent = def.name;
-  $("#lp-range").textContent = "Joueurs (" + (lp.max ? lp.min + " à " + lp.max : lp.min + " minimum") + ")";
+  $("#lp-range").textContent = lp.max ? tr("Joueurs (" + lp.min + " à " + lp.max + ")", "Players (" + lp.min + " to " + lp.max + ")") : tr("Joueurs (" + lp.min + " minimum)", "Players (" + lp.min + " minimum)");
   $("#lp-err").hidden = true;
   renderLocalPlayers();
   show("lplayers");
@@ -1466,10 +1485,10 @@ function renderLocalPlayers(){
   box.innerHTML = "";
   LP.names.forEach((nm, i) => {
     const row = document.createElement("div"); row.className = "prow";
-    const inp = document.createElement("input"); inp.className = "txt"; inp.id = "lp-" + i; inp.value = nm; inp.maxLength = 16; inp.placeholder = "Joueur " + (i + 1); inp.autocomplete = "off";
-    inp.setAttribute("aria-label", "Nom du joueur " + (i + 1));
+    const inp = document.createElement("input"); inp.className = "txt"; inp.id = "lp-" + i; inp.value = nm; inp.maxLength = 16; inp.placeholder = tr("Joueur ", "Player ") + (i + 1); inp.autocomplete = "off";
+    inp.setAttribute("aria-label", tr("Nom du joueur ", "Player name ") + (i + 1));
     inp.addEventListener("input", () => { LP.names[i] = inp.value; persist({ localNames: LP.names }); });
-    const x = document.createElement("button"); x.type = "button"; x.className = "x"; x.textContent = "×"; x.setAttribute("aria-label", "Retirer ce joueur");
+    const x = document.createElement("button"); x.type = "button"; x.className = "x"; x.textContent = "×"; x.setAttribute("aria-label", tr("Retirer ce joueur", "Remove this player"));
     x.disabled = LP.names.length <= lp.min; if(x.disabled) x.style.opacity = .35;
     x.addEventListener("click", () => { LP.names.splice(i, 1); persist({ localNames: LP.names }); renderLocalPlayers(); });
     row.append(inp, x); box.append(row);
@@ -1482,8 +1501,8 @@ function startLocal(def, names){
   accent(def.id); keepAwake(true);
   $("#lc-title").textContent = def.name; $("#lc-gl").textContent = def.glyph || "";
   const ex = $("#lc-exit");
-  ex.innerHTML = '<button class="link warn" type="button">Quitter</button>';
-  armTap(ex.firstChild, () => api.exit(), "Touche encore pour quitter");
+  ex.innerHTML = '<button class="link warn" type="button">' + tr("Quitter", "Quit") + '</button>';
+  armTap(ex.firstChild, () => api.exit(), tr("Touche encore pour quitter", "Tap again to quit"));
   const root = $("#local-root"); root.innerHTML = ""; root.dataset.key = "";
   show("local");
   let won = false;
@@ -1532,7 +1551,7 @@ SB.boot = function(){
   $("#h-create").addEventListener("click", () => netEnter(makeCode(), true));
   $("#h-join").addEventListener("click", () => netEnter(clean(cd.value, 4).toUpperCase(), false));
   $("#h-local").addEventListener("click", openLocalList);
-  $("#h-count").textContent = plural(SB.games.filter(d => !isWip(d)).length, "jeu", "jeux");
+  $("#h-count").textContent = plural2(SB.games.filter(d => !isWip(d)).length, "jeu", "jeux", "game");
   const ht = $("#h-tiles");
   const drawHome = () => {
     ht.innerHTML = SB.games.filter(d => inFilter(d, FSEL.home)).map(d => tileHTML(d)).join("");
@@ -1541,12 +1560,12 @@ SB.boot = function(){
   bindFilter($("#h-filter"), "home", drawHome);
   drawHome();
 
-  armTap($("#sa-quit"), netLeave, "Touche encore pour quitter");
-  armTap($("#sp-quit"), netLeave, "Touche encore pour quitter");
+  armTap($("#sa-quit"), netLeave, tr("Touche encore pour quitter", "Tap again to leave"));
+  armTap($("#sp-quit"), netLeave, tr("Touche encore pour quitter", "Tap again to leave"));
   $("#lo-home").addEventListener("click", netLeave);
   $("#sa-share").addEventListener("click", () => {
     const url = SHARE_BASE ? SHARE_BASE + "#" + N.code : "";
-    shareText("Rejoins mon salon Soirée Box ! Code : " + N.code, url, $("#sa-link"), msg => toast(msg === "Copié" ? "Invitation copiée" : "Invitation partagée"));
+    shareText(tr("Rejoins mon salon Soirée Box ! Code : " + N.code, "Join my Soirée Box room! Code: " + N.code), url, $("#sa-link"), msg => toast(msg === "Copié" ? tr("Invitation copiée", "Invite copied") : tr("Invitation partagée", "Invite shared")));
   });
   $("#ll-back").addEventListener("click", goHome);
   $$("[data-bug]").forEach(b => {
@@ -1557,10 +1576,10 @@ SB.boot = function(){
   $("#lp-add").addEventListener("click", () => { LP.names.push(""); renderLocalPlayers(); const ins = $$("#lp-list input"); ins[ins.length - 1].focus(); });
   $("#lp-go").addEventListener("click", () => {
     const lp = LP.def.local.players, names = LP.names.map(s => clean(s, 16)).filter(Boolean), err = $("#lp-err");
-    if(names.length < lp.min){ err.textContent = "Il faut au moins " + lp.min + " joueurs avec un prénom."; err.hidden = false; return; }
-    if(lp.max && names.length > lp.max){ err.textContent = "Ce jeu se joue à " + lp.max + " joueurs maximum."; err.hidden = false; return; }
+    if(names.length < lp.min){ err.textContent = tr("Il faut au moins " + lp.min + " joueurs avec un prénom.", "You need at least " + lp.min + " players with a name."); err.hidden = false; return; }
+    if(lp.max && names.length > lp.max){ err.textContent = tr("Ce jeu se joue à " + lp.max + " joueurs maximum.", "This game is for " + lp.max + " players max."); err.hidden = false; return; }
     const dup = names.find((n, i) => names.findIndex(x => x.toLowerCase() === n.toLowerCase()) !== i);
-    if(dup){ err.textContent = "Deux joueurs s'appellent « " + dup + " ». Donne-leur des prénoms différents."; err.hidden = false; return; }
+    if(dup){ err.textContent = tr("Deux joueurs s'appellent « " + dup + " ». Donne-leur des prénoms différents.", "Two players are called “" + dup + "”. Give them different names."); err.hidden = false; return; }
     err.hidden = true; startLocal(LP.def, names);
   });
   $("#pg-done").addEventListener("click", () => SB.closePage());

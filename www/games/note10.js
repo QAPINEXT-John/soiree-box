@@ -1,7 +1,7 @@
 /* Note sur 10 — faire deviner une note secrète de 1 à 10 avec des exemples. */
 (function(){
 "use strict";
-const { esc, clean, A, store, persist, screen, txt, pick } = SB.u;
+const { esc, clean, A, store, persist, screen, txt, pick, tr } = SB.u;
 
 const CATS = [
   ["Un film","Navet","Chef-d'œuvre"],["Un plat","Immangeable","Le repas de ma vie"],
@@ -197,14 +197,215 @@ const NOIR = [["Ta dernière phrase avant de mourir", "Banale", "Légendaire"], 
   ["Ce que tu lègues à ton pire ennemi", "Rien", "Tes dettes"],["La pire façon de quitter un groupe d'amis", "Discrète", "Mise en scène de ta mort"],["Le pire fantôme à avoir chez soi", "Discret", "Ton ex"],["Ce que fait ton chat le jour de ton enterrement", "Il te pleure", "Il dort sur le cercueil"],["La pire musique d'attente du paradis", "Supportable", "Interminable"],["Le message de ton répondeur après ta mort", "Sobre", "Hilarant"],["La pire manière de rater sa propre fête surprise", "En retard", "Crise cardiaque"],["La pire chose à graver sur une urne", "Sobre", "Indécent"],["Le pire cadeau d'adieu à un collègue", "Banal", "Un cercueil en kit"],["Ce que tu fais si tu apprends que tu es immortel", "Je profite", "Je m'ennuie à mourir"],["Le pire endroit pour disperser des cendres", "Un jardin", "Devant un ventilateur"],["Ce que disait ton horoscope le jour de ta mort", "Rassurant", "Il avait prévenu"],["Ta stratégie dans un film catastrophe", "Premier à mourir", "Seul survivant"],["Ta dernière volonté la plus absurde", "Raisonnable", "Impossible"],["Le pire sujet de discours à une veillée funèbre", "Touchant", "Règlement de comptes"],["Ce que tu emportes dans l'au-delà", "Un souvenir", "Le Wi-Fi"],["Ce que tu fais si la Mort se trompe d'adresse", "Je la renvoie", "Je lui donne l'adresse du voisin"]
 ];
 
-const PACKS = [
-  { v: "classique", label: "Classique", desc: "Pour tout le monde", cats: CATS },
-  { v: "geek", label: "Pop culture & geek", desc: "Jeux vidéo, séries, internet", cats: GEEK },
-  { v: "absurde", label: "Situations absurdes", desc: "Des situations folles, des réponses à inventer", cats: ABSURDE },
-  { v: "adulte", label: "Adultes", desc: "Sexe, porno, tabous, humour noir : tout le contenu adulte", cats: HARD.concat(TABOU, TRASH, NOIR), hot: true },
-  { v: "perso", label: "Catégories perso", desc: "Les tiennes, et en réseau celles des joueurs du salon", cats: null }
+/* ---------- English decks: [category, what 1 means, what 10 means] ---------- */
+const CATS_EN = [
+  ["A movie","Total flop","Masterpiece"],["A dish","Inedible","Meal of my life"],
+  ["A vacation destination","Not in a million years","Absolute dream"],["A superpower","Useless","Unbeatable"],
+  ["An animal","Harmless","Terrifying"],["A job","Mind-numbing","Fascinating"],
+  ["A song for a wedding","Empty dance floor","Everyone's dancing"],["A TV show","Quit after episode one","Watched it three times"],
+  ["A video game","Uninstalled","Hundreds of hours"],["A baby name","Cruel","Beautiful"],
+  ["A birthday present","Forced smile","Tears of joy"],["An excuse for being late","Nobody buys it","Bulletproof"],
+  ["A smell","Unbearable","Heavenly"],["A first-date spot","Disaster","Perfect"],
+  ["Something to bring to a desert island","Useless","Vital"],["A drink","Undrinkable","Delicious"],
+  ["A sport","Snooze-fest","Spectacular"],["A household chore","Almost fun","Nightmare"],
+  ["A phobia","Understandable","Ridiculous"],["An invention","Gimmick","Changed the world"],
+  ["A fictional character","Unbearable","Legend"],["A dessert","I'll pass","Thirds, please"],
+  ["A city to live in","Never","Moving tomorrow"],["A way to get around","Painful","Pure joy"],
+  ["An app on your phone","Deleted","Can't live without it"],["A TV program","Embarrassing","Cult classic"],
+  ["A school subject","Torture","My favorite"],["Something scary at night","Not scared","Never sleeping again"],
+  ["A celebrity","Never heard of them","Everyone knows them"],["A season or kind of weather","Depressing","Ideal"],
+  ["A habit","Healthy","Toxic"],["A breakfast food","Weird","Essential"],
+  ["A sound","Soothing","Unbearable"],["A color to paint your bedroom","Never","Love it"],
+  ["A cartoon","Flop","Cult classic"],["A word in the English language","Ugly","Gorgeous"],
+  ["A Sunday activity","Chore","Bliss"],["An awkward situation","Slightly awkward","Let me disappear"],
+  ["A kitchen utensil","Useless","Essential"],["A brand","Dated","Iconic"],
+  ["A cheese","Bland","Powerful"],["A monster or creature","Cute","Nightmare fuel"],
+  ["A hidden talent","Meh","Impressive"],["An energy drink or soda","Gross","Perfect"],
+  ["A period in history","Not for anything","Sign me up"],["A place to party","Dead vibe","Legendary night"],
+  ["A spice or condiment","Mild","It burns"],["An outfit for a job interview","Instant rejection","Hired on the spot"],
+  ["A lie","Innocent","Unforgivable"],["A pet","Low-maintenance","Out of control"],
+  ["A musical instrument","Unbearable","Mesmerizing"],["A horror movie","Funny","Traumatizing"],
+  ["A band name","Ridiculous","Brilliant"],["A way to lose a video game","Ordinary","Humiliating"],
+  ["A way to be woken up","Gently","Brutally"],["A dinner-table topic","Totally safe","Guaranteed fight"],
+  ["A birthday cake","Failed","Work of art"],["A school cafeteria meal","Tray untouched","Seconds, please"],
+  ["A look","Classic","Over the top"],["A hiding spot","Found in 2 seconds","Never found"],
+  ["A noise from the neighbors","Bearable","I'm moving out"],["A small pleasure in life","Nice","Paradise"],["An annoying habit","Cute","Instant breakup"],["A gift from a coworker","Forgettable","Keeping it forever"],["A frozen meal","Sad","Better than takeout"],["A reason to cancel plans","Fair enough","Shameful"],["A place for a nap","Uncomfortable","Like a cloud"],["A playground game","Boring","Legendary"],["A skill to learn","Pointless","Life-changing"],["A hot drink","Undrinkable","Pure comfort"],["A fruit","Disappointing","Perfect"],["A vegetable","Left on the plate","I'll have more"],["A childhood memory","Fuzzy","Unforgettable"],["A holiday","Chore","Can't wait"],["A lost item","Oh well","Tragedy"],["A rainy-day activity","Depressing","Awesome"],["A sauce","Bland","I'd drink it"],["A car trip","Endless","Dream road trip"],["A haircut","Hair disaster","Iconic"],["A sound of nature","Unsettling","Soothing"],["A room in the house","Gloomy","My safe place"],["An emoji","Useless","Use it constantly"],["A way to say goodbye","Ice cold","Heartwarming"],["An ice cream flavor","Weird","My favorite"],["A day of the week","Worst day","Best day"],["A craft hobby","Boring","My passion"],["A quality in a friend","Optional","Essential"],["A roommate flaw","Forgivable","Deal-breaker"],["A card game","Snooze-fest","Addictive"],["A pastry","Dry","Divine"],["A picnic spot","Grim","Idyllic"],["A vacation souvenir","Tacky","Priceless"],["A family tradition","Tedious","Sacred"],["A cooking smell","Nauseating","Irresistible"]
 ];
-function norm(c){ c = A(c); if(c.length !== 3) return null; const x = [clean(c[0], 90), clean(c[1], 24) || "Le pire", clean(c[2], 24) || "Le meilleur"]; return x[0] ? x : null; }
+const GEEK_EN = [
+  ["A video game boss","Easy","Rage quit"],["A superhero","Lame","Coolest ever"],
+  ["A movie villain","Ridiculous","Terrifying"],["A meme","Cringe","Iconic"],
+  ["An anime or manga","Dropped it","Masterpiece"],["A series finale","Botched","Perfect"],
+  ["A spoiler","No big deal","Unforgivable"],["A game console","Flop","Legendary"],
+  ["A YouTuber or streamer","Unbearable","Awesome"],["A remake or reboot","Pointless","Better than the original"],
+  ["A video game soundtrack","Forgettable","Legendary"],["A movie franchise","One movie too many","Flawless"],
+  ["A magic power","Gimmick","Overpowered"],["A weapon in a game","Useless","Broken OP"],
+  ["A video game character","Annoying","Iconic"],["An app update","Disaster","Revolution"],
+  ["A social network","Toxic","Can't live without it"],["A TikTok trend","Cringe","Viral"],
+  ["A board game","Boring","Perfect game night"],["A comic book","Unreadable","Cult classic"],
+  ["An easter egg","Impossible to find","Everyone knows it"],["A video game glitch","Barely noticeable","Legendary"],
+  ["An online username","Cringe","Legendary"],["A password","Hacked in 2 seconds","Fort Knox"],["A tech gadget","Useless","Game changer"],["A video game ending","Disappointing","I cried"],["A side character","Forgettable","Deserves a spin-off"],["A movie robot","Scrap metal","Iconic"],["A sci-fi planet","Hostile","Moving there"],["A video to watch at 2 a.m.","Fell asleep","Can't look away"],["A spell from Harry Potter","Useless","Deadly"],["An online tutorial","Incomprehensible","Saved my life"],["A notification","Annoying","Great news"],["A mobile game","Uninstalled","Total addiction"],["A cosplay costume","Fail","Mind-blowing"],
+  ["A Pokémon","Useless","First pick, always"],["A Star Wars character","Annoying","Legend"]
+];
+const ABSURDE_EN = [
+  ["You wake up with a superpower, but it's lame. What is it?","Totally useless","Actually handy"],
+  ["Santa mixed up the sacks. What's under your tree?","Disaster","Best Christmas ever"],
+  ["A genie grants your wish but gets it all wrong. What happens?","Disaster","Lucky break"],
+  ["You must survive a week on an island with one thing from your pockets. What is it?","Dead on day one","King of the island"],
+  ["Aliens want to see the best of humanity. What do you show them?","They leave offended","They sign a peace deal"],
+  ["Your revolutionary new app. What does it do?","Total flop","Tech unicorn"],
+  ["Your pet starts talking. Its first sentence?","Chilling","Adorable"],
+  ["Your last meal before the end of the world","Sad","Perfect"],
+  ["You're stuck in an elevator for six hours. With who?","Nightmare","Best time of my life"],
+  ["The new ice cream flavor nobody asked for","Inedible","I want to try it"],
+  ["Your new career if computers vanished tomorrow","Struggle","Dream career"],
+  ["You go back five centuries with your phone. What do you do?","Burned as a witch","Emperor of the world"],
+  ["Your campaign slogan to become mayor","Zero votes","Landslide win"],
+  ["Your signature dish on a cooking show","Eliminated","Michelin star"],
+  ["Your garage band's name","Ridiculous","Legendary"],
+  ["A new Olympic event","Nobody watches","Record ratings"],
+  ["You're invisible, but only when nobody's looking. What's it good for?","Nothing","Genius move"],
+  ["Your last message before a one-way trip to Mars","Boring","Legendary"],
+  ["The mascot of the next Olympics","Fail","Iconic"],
+  ["What you bring back from a gift shop in hell","Junk","So stylish"],
+  ["Your excuse when the cops find you in pajamas at the zoo at 4 a.m.","Nobody buys it","They apologize"],
+  ["Next Christmas's must-have toy","Flop","Sold out everywhere"],
+  ["What the ghost haunting your apartment does","Harmless","I'm moving out"],
+  ["You win a free one-year subscription. To what?","Useless","Jackpot"],
+  ["The first law you pass once in power","Pointless","Revolution"],
+  ["What you find in the pocket of a thrift-store coat","Nothing interesting","Life-changing"],
+  ["You're a movie villain. Your evil plan?","Pathetic","Terrifying"],
+  ["Your survival strategy in a zombie apocalypse","Dead in the first scene","Last one standing"],
+  ["What your toothbrush would say about you if it could talk","It quits","It adores you"],
+  ["A job that will exist in 2100","Absurd","Essential"],
+  ["You get cloned. What does your clone do first?","Betrays me","Does all my chores"],
+  ["What you put in a time capsule to open in 50 years","Useless","Historic treasure"],
+  ["The title of your autobiography","Nobody buys it","Bestseller"],
+  ["The everyday object you'd use against a burglar","Useless","Lethal"],
+  ["You become head of your building. Your first decision?","Riot","Statue in your honor"],
+  ["What you say to a resurrected dinosaur so it won't eat you","It eats you","It becomes your friend"],
+  ["The worst superpower for a first date","It's fine","Date ruined"],
+  ["Your restaurant menu for aliens","Diplomatic incident","They want the recipe"],
+  ["What a secret agent keeps at the bottom of their bag","Boring","Full arsenal"],
+  ["You invent a national holiday. What do people do?","Nobody shows up","Best day of the year"],
+  ["You wake up in your cat's body. First move?","Nap","Household domination"],["A weird law passed tomorrow morning","Harmless","National chaos"],["Your voice turns into a sports commentator's. How's daily life?","Annoying","Awesome"],["A museum about your life. Its centerpiece?","Embarrassing","Masterpiece"],["You can talk to only one kind of object. Which one?","Useless","Essential"],["The combat sport your family invented","Harmless","Banned"],["The assembly instructions for your personality","Crystal clear","Incomprehensible"],["Your bedroom becomes an escape room. The final puzzle?","Obvious","Nobody gets out"],["What pigeons really think of humans","They love us","They're plotting"],["Your dream theme park. The star ride?","Boring","Legendary"],["You replace a sports team's mascot. Your costume?","Ridiculous","Cult classic"],["A new color was just discovered. Its name?","Ugly","Sublime"],["The clouds spell out a message for you. What does it say?","Boring","Life-changing"],["Your fridge's noises at night. What do they mean?","Nothing","It's plotting"],["You open a restaurant with just one dish. Which one?","Bankrupt","Line around the block"],["A reality show starring you","Canceled","Record ratings"],["Your superhero has a ridiculous weakness. What is it?","Embarrassing","Fatal"],["Your bowling team's battle cry","Timid","Terrifying"],["You find a magic item at a yard sale. What is it?","Useless","All-powerful"],["The first line of the manual for becoming an adult","Reassuring","Terrifying"],["Your ideal day if gravity disappeared","Ordinary","Epic"]
+];
+const HARD_EN = [
+  ["Your mom reads the last text you sent. What does it say?","She smiles","She calls a priest"],
+  ["What you yell waking up at a stranger's place after a party","Zen","Total panic"],
+  ["The worst opening line for a wedding speech","Clumsy","Divorced by dessert"],
+  ["What you find going through your buddy's phone","Nothing major","Calling a lawyer"],
+  ["Your excuse for puking on the host's couch","Believable","Nobody buys it"],
+  ["What you tell your boss when you show up to work drunk","Smooth","Fired on the spot"],
+  ["The worst name for a nightclub","It works","Shut down by the city"],
+  ["What's in your bag the morning after a party","Normal","Someone call someone"],
+  ["What you'd do for 24 hours with zero consequences","Well-behaved","Illegal everywhere"],
+  ["What the psychic predicts for your 40th","Reassuring","Nightmare"],
+  ["The worst thing to say at a funeral","Awkward","Escorted out"],
+  ["What you do when your friends leave and you're home alone","Normal","Nobody can know"],
+  ["What's at the back of a college student's fridge","Still edible","It's moving"],
+  ["What your ex tells their friends about you","Kind","Defamation"],
+  ["A four-minute voice note from your aunt. What's it about?","Mundane","Family drama"],
+  ["The worst gift for your mother-in-law","Awkward","Written out of the will"],
+  ["What you tell the ticket inspector when you didn't pay","Believable","Night in a cell"],
+  ["The most shameful thing you've done drunk","Cute","Banned for life"],
+  ["The worst tattoo to get on your forehead","It works","Life ruined"],
+  ["What your grandma finds on your Instagram","She likes it","You're out of the will"],
+  ["What you yell stepping on a Lego at 3 a.m.","Polite","Whole building hears"],
+  ["The worst place to really need the bathroom","No big deal","Social death"],
+  ["A rumor to start about the strictest teacher","Harmless","They quit the school"],
+  ["The note you leave on the fridge for the roommate who steals your food","Passive-aggressive","Declaration of war"],
+  ["What you hear through the hotel room wall","Nothing special","Calling the front desk"],
+  ["Why you're late, the version you give your boss","Believable","Lie of the year"],
+  ["Your hidden party talent","Useful","Concerning"],
+  ["What you'd do if you were invisible for a day","Well-behaved","Life in prison"],
+  ["What you say when caught crying at a commercial","Owning it","Huge lie"],
+  ["Your reaction when the Wi-Fi drops mid ranked match","Zen","Violence"],
+  ["The worst thing to shout in a library","Awkward","Building evacuated"],
+  ["The sketchiest vacation souvenir for your friends","Junk","Legendary"],
+  ["The worst place to get dumped","It's fine","Public trauma"],
+  ["What shows up in the mail that you never ordered","Disappointing","Call the bomb squad"],
+  ["What your buddy does when he's had too much","Cute","Keep an eye on him"],
+  ["The worst name to give your kid","Original","They'll sue you"],
+  ["What you say running into the person who ghosted you","Polite","Public scene"],
+  ["What you write in a wedding guest book after six drinks","Touching","Deeply awkward"],
+  ["The worst icebreaker on a first date","Awkward","They run away"],
+  ["The first thing you do if you win the lottery","Sensible","Totally insane"],
+  ["What you tell the cab driver at 5 a.m.","Polite","Drops you at the police station"],["Your last online purchase at 3 a.m.","Reasonable","Can't own it"],["The worst text to send by mistake to the family group chat","Harmless","Christmas canceled"],["What you do when the delivery guy rings and you're not ready","I handle it","I play dead"],["The worst excuse for not paying a friend back","Believable","Friendship over"],["What your manager sees on your screen","A spreadsheet","Resignation letter"],["The worst thing to forget when leaving on vacation","No big deal","Trip ruined"],["The first thing you do after a breakup","Healthy","Worrying"],["The worst moment to fall asleep","In front of the TV","Mid-meeting"],["Your reaction when someone wakes you from a nap","Sweet","Danger"],["What you tell your hairdresser","Small talk","Your whole life"],["The worst thing to say to a date when the bill comes","Awkward","They run for it"],["The worst thing you've done on a dare","Nothing","Legendary"],["The worst place to throw up at a party","The toilet","In someone's bag"],["What you do when you spot your ex at a café","I wave","I move cities"],["The text sent to the wrong person","Harmless","Nuclear disaster"],["The worst costume for an office party","It works","Called in by HR"],["The worst dish to serve your in-laws","Flop","Hospitalized"],["What you make up to leave a lame party","Believable","Nobody buys it"],["What you do in the elevator when you're alone","Nothing","Private concert"]
+];
+const TABOU_EN = [
+  ["A place at your parents' house to have sex","It's fine","Sacrilege"],
+  ["The name of a sex shop","Classy","Closed within a week"],
+  ["What you tell your parents when they walk in on you mid-act","Believable","New identity"],
+  ["Your opening line on a dating app","Blocked instantly","Instant match"],
+  ["What's in your neighbor's nightstand","Ordinary","I'm moving"],
+  ["Your porn star stage name","Ridiculous","Legendary"],
+  ["The title of the movie of your sex life","Embarrassing","Masterpiece"],
+  ["What you whisper in someone's ear to seduce them","Mood killer","Irresistible"],
+  ["A fantasy you'd only admit at this table","Tame","Unspeakable"],
+  ["What your ex would say about you in bed","Snooze-fest","Still talks about it"],
+  ["Your reaction when your partner can't perform","Reassuring","Hurtful"],
+  ["The text you send your ex at 2 a.m.","Innocent","Clearly not innocent"],
+  ["A role-play to suggest to your partner","Tame","Way too far"],
+  ["What you do when you wake up next to your boss","I handle it","I quit by text"],
+  ["The weirdest thing that turns you on","Normal","Very, very weird"],
+  ["A celebrity for a threesome","Meh","Sign me up"],
+  ["What you confess to your partner after three drinks","Cute","Breakup"],
+  ["The least sexy outfit for a hookup","It works","Ultimate mood killer"],
+  ["The name you should never shout in bed","Forgivable","It's over"],
+  ["What your partner says on finding your browser history","Laughs it off","Packs their bags"],
+  ["A sex toy someone should invent","Pointless","Revolutionary"],
+  ["What you suggest to spice up a bored couple","Tame","Very daring"],
+  ["What you've never dared to ask for in bed","Harmless","Total taboo"],
+  ["The worst line to end a first date","Clumsy","Never heard from again"],
+  ["What your neighbors heard last night","Nothing special","They called the cops"],
+  ["The worst moment to pull out a condom","Awkward","Scandal"],
+  ["What you say when a coworker finds your dating profile","Owning it","Huge lie"],
+  ["The question you whisper to your doctor","Ordinary","They call a colleague"],
+  ["What's in your phone's hidden folder","Nothing major","Quarantined"],
+  ["The worst thing to say mid-act","Awkward","We stop everything"],
+  ["What you'd do for a million dollars","Easy","Zero dignity left"],
+  ["A family secret nobody must know","Harmless","Inheritance canceled"],
+  ["What you really think during family dinner","Polite","Open war"],
+  ["The most inappropriate thought at a funeral","Mild","I'm going to hell"],
+  ["The worst place you've peed","Normal","Illegal"],
+  ["The biggest lie you told an ex","White lie","Monumental"],
+  ["Your revenge on a cheating ex","Classy","Breaking news"],
+  ["Your technique for sneaking out after a one-night stand","Graceful","Out the window"],
+  ["What you search for in incognito mode","Normal","I'm on a list"],
+  ["The riskiest place to get frisky","Chill","Arrested"],
+  ["Cupid used the wrong arrow. Who do you fall for?","Disaster","Jackpot"],
+  ["An anonymous sex-shop package arrives at your place. What's inside?","Ordinary","Never opening a package again"],
+  ["A naughty genie grants you one wish in bed. What is it?","Tame","Unspeakable"],
+  ["Your mom joins the same dating app as you. Her bio?","Cute","Traumatizing"],
+  ["The first line of a sex toy's manual","Technical","Steamy"],
+  ["Your partner plans a surprise sexy weekend. Where?","Mood killer","Unforgettable"],
+  ["Your mattress starts talking. What does it say?","Nothing to report","It's seen too much"],
+  ["The name of the position you just invented","Ridiculous","Straight into the Kama Sutra"],
+  ["The goodbye text from your last one-night stand","Polite","Brutal"],
+  ["The worst place for a first kiss","Cute","Public scandal"],["The lie you put in your dating bio","Small stretch","Fake profile"],["Your lamest pick-up technique","Just clumsy","Legendarily bad"],["What you do if your date looks like your ex","I stay","I bolt"],["What you'd never admit to your in-laws","Harmless","Family rift"],["The worst thing to find in your date's bathroom","Nothing","I leave without a word"],["The ridiculous pet name you give your partner","Cute","Unbearable"],["What you do on a video call when your camera's off","Nothing","Unspeakable"],["The worst way to break up","Tactfully","By Post-it"],["The worst thing to say waking up after a first night together","Awkward","Instant escape"],["What your keyboard suggests when you type “I”","Innocent","Damning"],["What you do if you run into your old teacher at a club","I say hi","I dance with them"],["Your worst rejection","Kind","Public humiliation"],["The worst declaration of love","Clumsy","Restraining order"],["What you hide under your bed","Socks","Nobody can know"],["Your most embarrassing crush","Normal","Taking it to my grave"],["The worst place to get caught making out","It's fine","Viral online"],["The love note you leave on the pillow","Sweet","Steamy"],["The worst Valentine's gift","Basic","Breakup"],["What you do to make your ex jealous","Subtle","Pathetic"],["The worst answer to “what are you thinking about?”","Nothing","Total buzzkill"],["The naughty dare you suggest at a party","Tame","Nobody dares"],["What your partner will never know","Nothing major","It'd end badly"],["The outfit you wear to seduce","Classic","Lethal weapon"],["The worst song for a romantic mood","It works","Total mood killer"]
+];
+const TRASH_EN = [["The porn parody title of your favorite movie","Lame","Genre masterpiece"],["What your incognito history says about you","Nothing major","You need help"],["A porn site category","Classic","Didn't know that existed"],["The worst place for a hookup","It works","Criminal record"],["Your noise when you climax","Discreet","Neighbors call the cops"],["What you yell at the big moment","Normal","Unspeakable"],["A position you'll never dare try","Easy","Need a physio"],["The worst sex toy for the office Secret Santa","Awkward","Fired"],["What you tell your hookup leaving at dawn","Classy","Total jerk"],["Your most unspeakable fantasy","Tame","Illegal in 40 countries"],["The name of your future smart sex toy","Ridiculous","Bestseller"],["A place you did it, or dreamed of doing it","Ordinary","Public indecency"],["What killed the mood mid-act","Nothing","Trauma"],["The worst thing to find under a date's bed","A sock","Calling an exorcist"],["Your foreplay technique","Rushed","Legendary"],["A dirty talk fail","Awkward","Everyone loses it"],["The lamest porn plot","Boring","Adult Oscar winner"],["What you do with whipped cream","Dessert","Never clean again"],["Your record for lasting in bed","Thirty seconds","Marathon"],["An unexpected prop during sex","A candle","Firefighters called"],["The worst match on a hookup app","Meh","Breaking news"],["What you'll never confess to your doctor","Ordinary","Falls off their chair"],["A surprising fetish","Feet","I don't even get it"],["Your worst condom story","It broke","9-month souvenir"],["What your ex says about your performance","Glowing","Humiliating"],["The most unlikely group hookup","Three buddies","The whole building"],["A nude gone wrong","Blurry","Sent to family"],["What's on your naughty wish list","Handcuffs","A full dungeon"],["The worst excuse after a performance fail","I'm tired","I love you too much"],["The nickname for your private parts","Cute","Legendary"],["A party that might end in an orgy","No chance","Called it"],["What you discovered watching porn","Nothing","My calling"],["The most embarrassing sex of your life","Just bad","Ambulance"],["Your performance in bed, rated by your last partner","Refund, please","Standing ovation"],["The most unlikely lube","Olive oil","Don't want to know"],["A spot at work for a quickie","The supply closet","The boss's office"],["How far you've traveled for a hookup","A bus ride","A long-haul flight"],["The worst line after sex","Thanks","You can go now"],["The thing you flat-out refuse in bed","Maybe someday","Never in my life"],["Your condom brand's slogan","Fail","Iconic"],
+  ["The worst noise during sex","Subtle","Giggle fit"],["Your code phrase for “let's go home and have sex”","Discreet","Everyone got it"],["What you do when the bed creaks too much","Slow down","End up on the floor"],["The worst interruption during a cuddle","The cat","The in-laws"],["The most ridiculous position","Classic","Needs a manual"],["What you bought at the sex shop by mistake","Something basic","No idea what it is"],["The worst place to take a nude","In the bathroom","At the office"],["Your sex playlist","Romantic","A cartoon theme song"],["The worst role-play costume","Nurse","Stadium mascot"],["What you do right after sex","Cuddle","Play video games"],["What you type in a porn site's search bar","Classic","Worries me"],["The worst object to replace a sex toy","Creative","ER visit"],["Your excuse for the hickey on your neck","Believable","Nobody buys it"],["The worst moment for your phone to ring","During a cuddle","Mid-act"],["The worst thing to say during a striptease","Awkward","Show's over"],["Your most direct pick-up line","Subtle","Illegal"],["What's in a couple's suitcase for a dirty weekend","Pajamas","A whole store"],["The least practical safe word","Easy","Unpronounceable"],["The worst thing to say while undressing","Awkward","Getting dressed again"],["The most cliché fantasy","Original","Seen it a thousand times"]
+];
+const NOIR_EN = [["Your last words before dying","Ordinary","Legendary"],["What you write in your will","Standard","Revenge from the grave"],["The song to play at your funeral","Sad","Everyone dances"],["A ridiculous way to die","Dumb","Darwin Award"],["What you do when the doctor says you have a week left","Dignified","Empty my bank account"],["Your epitaph","Simple","Iconic"],["The worst gift for someone on their deathbed","Awkward","Cynical"],["What you'd do as a ghost","Gentle haunting","Pure terror"],["The worst joke to make at a funeral","Clumsy","Kicked out of the cemetery"],["Your spot in hell","Basement","VIP with the devil"],["What you do with your inheritance","Sensible","Blown in one night"],["The pet that would eat you after you die","Loyal to the end","Without hesitation"],["A reason to skip a funeral","Valid","Monstrous"],["What Death says when it comes for you","Polite","Mocks you"],["The worst place to die","Peaceful","Ridiculous"],["What they'll find on your computer after you die","Nothing","Posthumous scandal"],["The worst way to announce a death","Clumsy","With a meme"],["Your plan to survive the end of the world","Dead within a week","Lord of the ruins"],["What you slip into your worst enemy's coffin","A flower","A pointed little note"],["Bad news to share at Christmas dinner","Awkward","Dessert ruined"],["The worst name for a funeral home","Tasteful","Scandal"],["What you tell the devil to negotiate for your soul","Weak","He owes you money"],["A movie serial killer's hobby","Ordinary","Chilling"],["What you do if you wake up in your coffin","Panic","Take a nap"],["Your family's reaction to your death","Devastated","Relieved"],["The worst souvenir from a cemetery","A flower","A shinbone"],["Your reincarnation","Mosquito","Rich person's cat"],["What you post when you learn the end is near","Dignified","Settling scores"],["The worst last meal","Bland","Cafeteria food"],["What the priest would say at your funeral if he really knew you","Glowing","Crosses himself three times"],["The worst way to find out you're adopted","Gently","At the reading of the will"],["The worst moment for a laughing fit","No big deal","During the minute of silence"],["What you'd do as the last human on Earth","Cry","Finally, peace"],["The worst job in a horror movie","Extra","Haunted-house babysitter"],
+  ["What you leave to your worst enemy","Nothing","Your debts"],["The worst way to leave a friend group","Quietly","Fake your own death"],["The worst ghost to have at home","Quiet","Your ex"],["What your cat does on the day of your funeral","Mourns you","Naps on the coffin"],["The worst hold music in heaven","Bearable","Endless"],["Your voicemail greeting after you die","Simple","Hilarious"],["The worst way to miss your own surprise party","Running late","Heart attack"],["The worst thing to engrave on an urn","Simple","Indecent"],["The worst farewell gift for a coworker","Basic","A flat-pack coffin"],["What you do if you learn you're immortal","Enjoy it","Bored to death"],["The worst place to scatter ashes","A garden","In front of a fan"],["What your horoscope said on the day you died","Reassuring","It warned you"],["Your strategy in a disaster movie","First to die","Sole survivor"],["Your most absurd last wish","Reasonable","Impossible"],["The worst topic for a eulogy","Touching","Settling scores"],["What you take with you to the afterlife","A memory","The Wi-Fi"],["What you do if Death gets the wrong address","Send it away","Give it the neighbor's"]
+];
+
+// Contenu par langue (mêmes paquets) : en réseau, c'est la langue de l'hôte (s.lg) qui compte.
+const DECK = {
+  fr: { classique: CATS, geek: GEEK, absurde: ABSURDE, adulte: HARD.concat(TABOU, TRASH, NOIR) },
+  en: { classique: CATS_EN, geek: GEEK_EN, absurde: ABSURDE_EN, adulte: HARD_EN.concat(TABOU_EN, TRASH_EN, NOIR_EN) }
+};
+const deckOf = lg => DECK[lg === "en" ? "en" : "fr"];
+const catsOf = (p, lg) => deckOf(lg)[p.v] || [];
+const PACKS = [
+  { v: "classique", label: tr("Classique", "Classic"), desc: tr("Pour tout le monde", "For everyone") },
+  { v: "geek", label: "Pop culture & geek", desc: tr("Jeux vidéo, séries, internet", "Video games, TV shows, the internet") },
+  { v: "absurde", label: tr("Situations absurdes", "Absurd situations"), desc: tr("Des situations folles, des réponses à inventer", "Wild scenarios, answers you make up") },
+  { v: "adulte", label: tr("Adultes", "Adults"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content"), hot: true },
+  { v: "perso", label: tr("Catégories perso", "Custom categories"), desc: tr("Les tiennes, et en réseau celles des joueurs du salon", "Yours, plus everyone's in the room when playing online") }
+];
+function norm(c){ c = A(c); if(c.length !== 3) return null; const x = [clean(c[0], 90), clean(c[1], 24) || tr("Le pire", "The worst"), clean(c[2], 24) || tr("Le meilleur", "The best")]; return x[0] ? x : null; }
 function myCustom(){ return A(store().n10custom).map(norm).filter(Boolean); }
 function sharedCustom(peers){
   const seen = new Set(), out = [];
@@ -213,20 +414,20 @@ function sharedCustom(peers){
   A(peers).forEach(p => { const x = p.presence && p.presence.x; if(x && x.note10) A(x.note10).forEach(add); });
   return out;
 }
-function buildPool(packs, peers){
+function buildPool(packs, peers, lg){
   const sel = A(packs);
-  return PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(p => (p.v === "perso" ? sharedCustom(peers) : p.cats).map(c => c.slice()));
+  return PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(p => (p.v === "perso" ? sharedCustom(peers) : catsOf(p, lg)).map(c => c.slice()));
 }
 /* ---------- Coups de théâtre : une manche sur trois environ, une règle change ---------- */
 const TWISTS = [
-  { id: "inv", name: "Note inversée", desc: "Cette manche, l'échelle est retournée : les bornes du 1 et du 10 échangent leur place." },
-  { id: "mot", name: "Un seul mot", desc: "Chaque indice tient en un seul mot, pas un de plus." },
-  { id: "double", name: "Double ou rien", desc: "Pile : 6 points. Sinon : rien du tout." },
-  { id: "large", name: "Tolérance large", desc: "À 3 près, ça rapporte encore 1 point." },
-  { id: "aveugle", name: "Devineur à l'aveugle", desc: "Les devineurs ne voient pas la catégorie, seulement les indices." },
-  { id: "extreme", name: "Note extrême", desc: "La note secrète est forcément 1, 2, 9 ou 10." },
-  { id: "milieu", name: "Ventre mou", desc: "La note secrète est forcément entre 4 et 7." },
-  { id: "chrono", name: "Chrono", desc: "40 secondes pour donner les indices, pas une de plus." }
+  { id: "inv", name: tr("Note inversée", "Flipped scale"), desc: tr("Cette manche, l'échelle est retournée : les bornes du 1 et du 10 échangent leur place.", "This round, the scale is upside down: the 1 and 10 labels swap places.") },
+  { id: "mot", name: tr("Un seul mot", "One word only"), desc: tr("Chaque indice tient en un seul mot, pas un de plus.", "Every clue is a single word, not one more.") },
+  { id: "double", name: tr("Double ou rien", "Double or nothing"), desc: tr("Pile : 6 points. Sinon : rien du tout.", "Spot on: 6 points. Otherwise: nothing at all.") },
+  { id: "large", name: tr("Tolérance large", "Wide margin"), desc: tr("À 3 près, ça rapporte encore 1 point.", "Off by 3 still scores 1 point.") },
+  { id: "aveugle", name: tr("Devineur à l'aveugle", "Blind guess"), desc: tr("Les devineurs ne voient pas la catégorie, seulement les indices.", "Guessers don't see the category, only the clues.") },
+  { id: "extreme", name: tr("Note extrême", "Extreme number"), desc: tr("La note secrète est forcément 1, 2, 9 ou 10.", "The secret number is always 1, 2, 9 or 10.") },
+  { id: "milieu", name: tr("Ventre mou", "Middle of the road"), desc: tr("La note secrète est forcément entre 4 et 7.", "The secret number is always between 4 and 7.") },
+  { id: "chrono", name: tr("Chrono", "Against the clock"), desc: tr("40 secondes pour donner les indices, pas une de plus.", "40 seconds to give the clues, not one more.") }
 ];
 const CHRONO = 40;
 const TW = id => SB.u.byTwist(TWISTS, id);
@@ -240,13 +441,13 @@ function points(n, g, tw){
 }
 // Note inversée : on échange les deux bouts de l'échelle.
 function view(c, tw){ c = A(c); return tw === "inv" ? [c[0], c[2], c[1]] : c; }
-const VERDICTS = { 6: ["Jackpot !", "Double ou rien… et c'est double."], 3: ["Pile !", "Vous êtes sur la même longueur d'onde."], 2: ["Presque !", "À un point près. Très belle lecture."], 1: ["Pas loin", "Pas pile, mais ça compte quand même."], 0: ["Raté", "Les indices n'ont pas parlé à tout le monde."] };
+const VERDICTS = { 6: [tr("Jackpot !", "Jackpot!"), tr("Double ou rien… et c'est double.", "Double or nothing… and it's double.")], 3: [tr("Pile !", "Spot on!"), tr("Vous êtes sur la même longueur d'onde.", "You're on the same wavelength.")], 2: [tr("Presque !", "So close!"), tr("À un point près. Très belle lecture.", "Off by one. Great read.")], 1: [tr("Pas loin", "Not far"), tr("Pas pile, mais ça compte quand même.", "Not spot on, but it still counts.")], 0: [tr("Raté", "Missed"), tr("Les indices n'ont pas parlé à tout le monde.", "The clues didn't click for everyone.")] };
 function mention(pct){
-  if(pct >= .9) return ["Félicitations du jury", "Vous partagez visiblement un seul cerveau."];
-  if(pct >= .7) return ["Très bien", "Vous vous comprenez à demi-mot. Belle équipe."];
-  if(pct >= .5) return ["Assez bien", "Des éclairs de génie et quelques malentendus."];
-  if(pct >= .3) return ["Peut mieux faire", "Avez-vous déjà discuté ensemble ?"];
-  return ["Bavardages", "Vous ne parlez pas encore la même langue. Revanche ?"];
+  if(pct >= .9) return [tr("Félicitations du jury", "Top of the class"), tr("Vous partagez visiblement un seul cerveau.", "You clearly share a single brain.")];
+  if(pct >= .7) return [tr("Très bien", "Very good"), tr("Vous vous comprenez à demi-mot. Belle équipe.", "You barely need words. Great team.")];
+  if(pct >= .5) return [tr("Assez bien", "Good"), tr("Des éclairs de génie et quelques malentendus.", "Flashes of genius and a few mix-ups.")];
+  if(pct >= .3) return [tr("Peut mieux faire", "Could do better"), tr("Avez-vous déjà discuté ensemble ?", "Have you ever actually talked?")];
+  return [tr("Bavardages", "Talks too much in class"), tr("Vous ne parlez pas encore la même langue. Revanche ?", "You're not speaking the same language yet. Rematch?")];
 }
 // Trophées de fin de partie, tirés de l'historique. Le titre change d'une partie à l'autre.
 function vary(list, seed){ return list[Math.abs(seed) % list.length]; }
@@ -255,17 +456,17 @@ function awards(hist, tous){
   const gp = {}, gn = {};
   h.forEach(x => { gp[x[5]] = (gp[x[5]] || 0) + (+x[4] || 0); gn[x[5]] = (gn[x[5]] || 0) + 1; });
   const gk = Object.keys(gp).sort((a, b) => gp[b] - gp[a] || gn[a] - gn[b]);
-  if(gk.length && gp[gk[0]] > 0) out.push([vary(["Liseur de pensées", "Télépathe officiel", "Radar humain", "Antenne parabolique"], seed), gk[0], SB.u.plural(gp[gk[0]], "point") + " en devinant"]);
+  if(gk.length && gp[gk[0]] > 0) out.push([vary(tr(["Liseur de pensées", "Télépathe officiel", "Radar humain", "Antenne parabolique"], ["Mind reader", "Official telepath", "Human radar", "Satellite dish"]), seed), gk[0], SB.u.plural2(gp[gk[0]], "point", null, "point") + tr(" en devinant", " from guessing")]);
   const miss = h.filter(x => +x[3] > 0).sort((a, b) => Math.abs(b[2] - b[3]) - Math.abs(a[2] - a[3]))[0];
-  if(miss && Math.abs(miss[2] - miss[3]) >= 3) out.push([vary(["Boussole cassée", "Complètement à l'ouest", "Lecture très créative", "Antenne débranchée"], seed + 1), miss[5], "a dit " + miss[3] + " pour un " + miss[2]]);
+  if(miss && Math.abs(miss[2] - miss[3]) >= 3) out.push([vary(tr(["Boussole cassée", "Complètement à l'ouest", "Lecture très créative", "Antenne débranchée"], ["Broken compass", "Totally lost", "Very creative reading", "Antenna unplugged"]), seed + 1), miss[5], tr("a dit " + miss[3] + " pour un " + miss[2], "said " + miss[3] + " when it was " + miss[2])]);
   const cp = {}, cn = {};
   h.forEach(x => A(x[7]).forEach(n => { cp[n] = (cp[n] || 0) + (+x[4] || 0); cn[n] = (cn[n] || 0) + 1; }));
   const ck = Object.keys(cp).filter(n => cn[n] >= 2).map(n => [n, cp[n] / cn[n]]).sort((a, b) => b[1] - a[1]);
-  if(ck.length > 1 && ck[0][1] > ck[ck.length - 1][1]) out.push([vary(["Indice en or", "Boussole du groupe", "Traducteur officiel", "Phare dans la nuit"], seed + 2), ck[0][0], String(Math.round(ck[0][1] * 10) / 10).replace(".", ",") + (tous ? " pt en moyenne par devineur" : " pt par indice en moyenne")]);
+  if(ck.length > 1 && ck[0][1] > ck[ck.length - 1][1]){ const av = Math.round(ck[0][1] * 10) / 10; out.push([vary(tr(["Indice en or", "Boussole du groupe", "Traducteur officiel", "Phare dans la nuit"], ["Golden clue", "The group's compass", "Official translator", "Lighthouse in the dark"]), seed + 2), ck[0][0], tr(String(av).replace(".", ",") + (tous ? " pt en moyenne par devineur" : " pt par indice en moyenne"), av + (av === 1 ? " pt" : " pts") + (tous ? " per guesser on average" : " per clue on average"))]); }
   return out;
 }
-function awardsHTML(a){ return a.length ? '<div class="field"><span class="eyebrow">Trophées</span><ul class="list">' + a.map(x => '<li><span class="t" style="font-size:19px">' + esc(x[0]) + '</span><span class="by">' + esc(x[1]) + " · " + esc(x[2]) + "</span></li>").join("") + "</ul></div>" : ""; }
-const TW_TOGGLE = on => '<div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + on + '"><span class="box">✓</span><span class="tx"><span class="nm">Coups de théâtre</span><span class="ds">Une manche sur trois environ, une règle change</span></span></button></div>';
+function awardsHTML(a){ return a.length ? '<div class="field"><span class="eyebrow">' + tr("Trophées", "Awards") + '</span><ul class="list">' + a.map(x => '<li><span class="t" style="font-size:19px">' + esc(x[0]) + '</span><span class="by">' + esc(x[1]) + " · " + esc(x[2]) + "</span></li>").join("") + "</ul></div>" : ""; }
+const TW_TOGGLE = on => '<div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + on + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Plot twists") + '</span><span class="ds">' + tr("Une manche sur trois environ, une règle change", "About one round in three, a rule changes") + "</span></span></button></div>";
 const CSS = '<style>.n10-grade{position:relative; align-self:center; width:220px; height:150px; max-width:100%; display:grid; place-items:center; color:var(--acc)}' +
   '.n10-grade svg{position:absolute; inset:0; width:100%; height:100%; overflow:visible}' +
   '.n10-grade path{fill:none; stroke:var(--acc); stroke-width:4; stroke-linecap:round; stroke-dasharray:640; animation:n10draw .7s ease-out}' +
@@ -281,19 +482,21 @@ const CSS = '<style>.n10-grade{position:relative; align-self:center; width:220px
   '.n10-res li.ind{opacity:.85; border-top:1px dashed var(--line, var(--soft))}</style>';
 const GRADE = '<svg viewBox="0 0 220 150" aria-hidden="true"><path d="M48 34 C 92 6, 190 12, 203 62 C 215 112, 120 142, 58 128 C 10 117, 6 70, 36 44 C 52 30, 80 22, 104 20"/></svg>';
 function catCard(c, eyebrow, extra){
-  return '<div class="card"><span class="eyebrow">' + esc(eyebrow || "Catégorie") + '</span><div class="big">' + esc(c[0]) + '</div><div class="scale"><span>1 · ' + esc(c[1]) + '</span><span>10 · ' + esc(c[2]) + "</span></div>" + (extra || "") + "</div>";
+  return '<div class="card"><span class="eyebrow">' + esc(eyebrow || tr("Catégorie", "Category")) + '</span><div class="big">' + esc(c[0]) + '</div><div class="scale"><span>1 · ' + esc(c[1]) + '</span><span>10 · ' + esc(c[2]) + "</span></div>" + (extra || "") + "</div>";
 }
 function gradeHTML(note){ return '<div class="n10-grade">' + GRADE + '<div class="num">' + note + "<small>/10</small></div></div>"; }
-function padHTML(){ let h = '<div class="pad" data-pad>'; for(let n = 1; n <= 10; n++) h += '<button type="button" data-n="' + n + '" aria-label="Note ' + n + '">' + n + "</button>"; return h + "</div>"; }
+function padHTML(){ let h = '<div class="pad" data-pad>'; for(let n = 1; n <= 10; n++) h += '<button type="button" data-n="' + n + '" aria-label="' + tr("Note ", "Number ") + n + '">' + n + "</button>"; return h + "</div>"; }
 function rulerHTML(note, guess){ let h = '<div class="n10-ruler">'; for(let n = 1; n <= 10; n++) h += '<div class="' + (n === note ? "is-note " : "") + (n === guess ? "is-guess" : "") + '">' + n + "</div>"; return h + "</div>"; }
-function legendHTML(name){ return '<div class="n10-legend"><span><i class="ln"></i>Note secrète</span><span><i class="lg"></i>Proposition de ' + esc(name) + "</span></div>"; }
+function legendHTML(name){ return '<div class="n10-legend"><span><i class="ln"></i>' + tr("Note secrète", "Secret number") + '</span><span><i class="lg"></i>' + tr("Proposition de " + esc(name), esc(name) + "'s guess") + "</span></div>"; }
+// Libellé « changer de catégorie » (réseau et téléphone unique).
+function rrLabel(rr){ return rr > 0 ? tr("Changer de catégorie (" + rr + " restant" + (rr > 1 ? "s" : "") + ")", "Change category (" + rr + " left)") : tr("Plus de changement de catégorie", "No category changes left"); }
 function histTable(rows){
-  return '<div class="tablewrap"><table><thead><tr><th>Manche</th><th>Devineur</th><th style="text-align:center">Note</th><th style="text-align:center">Dit</th><th style="text-align:center">Pts</th></tr></thead><tbody>' +
+  return '<div class="tablewrap"><table><thead><tr><th>' + tr("Manche", "Round") + "</th><th>" + tr("Devineur", "Guesser") + '</th><th style="text-align:center">' + tr("Note", "Number") + '</th><th style="text-align:center">' + tr("Dit", "Said") + '</th><th style="text-align:center">Pts</th></tr></thead><tbody>' +
     rows.map(h => '<tr><td>' + esc(h[0]) + '<div class="sm">' + esc(h[1]) + (TW(h[6]) ? " · " + esc(TW(h[6]).name) : "") + "</div></td><td>" + esc(h[5]) + '</td><td style="text-align:center" class="hand"><b>' + esc(h[2]) + '</b></td><td style="text-align:center" class="hand">' + esc(h[3] || "—") + '</td><td style="text-align:center">+' + esc(h[4]) + "</td></tr>").join("") + "</tbody></table></div>";
 }
 function reportHTML(score, max){
   const [m, a] = mention(score / max);
-  return '<span class="eyebrow">Bulletin de complicité</span><div class="report"><span class="n">' + score + '</span><span class="o">/' + max + '</span></div><b>Mention : ' + esc(m) + '</b><p class="appre">« ' + esc(a) + " »</p>";
+  return '<span class="eyebrow">' + tr("Bulletin de complicité", "Team chemistry report card") + '</span><div class="report"><span class="n">' + score + '</span><span class="o">/' + max + "</span></div><b>" + tr("Mention : ", "Grade: ") + esc(m) + '</b><p class="appre">' + tr("« " + esc(a) + " »", "“" + esc(a) + "”") + "</p>";
 }
 
 /* ---------- Éditeur de catégories perso (page annexe) ---------- */

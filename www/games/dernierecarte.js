@@ -2,13 +2,17 @@
    et n'oublie pas de crier « Dernière ! » quand il te reste une carte. En réseau, ou sur un téléphone contre des robots. */
 (function(){
 "use strict";
-const { esc, A, shuffle, screen, store, persist, dock, buzz } = SB.u;
+const { esc, A, shuffle, screen, store, persist, dock, buzz, tr } = SB.u;
+// Textes du moteur (journal de la partie) : dans la langue de la partie (E.lg = langue de l'hôte, ou du téléphone en solo).
+const L = (E, fr, en) => E && E.lg === "en" ? en : fr;
 
 /* ---------- Cartes ----------
    Une carte = couleur + valeur : "r7", "gS" (passe), "bR" (inversion), "yD" (+2), "wW" (joker), "wF" (+4). */
 const COLS = ["r", "y", "g", "b"];
-const CNAME = { r: "rouge", y: "jaune", g: "vert", b: "bleu" };
+const CN_FR = { r: "rouge", y: "jaune", g: "vert", b: "bleu" }, CN_EN = { r: "red", y: "yellow", g: "green", b: "blue" };
+const CNAME = tr(CN_FR, CN_EN); // langue du téléphone (interface)
 const CNAME_F = { r: "rouge", y: "jaune", g: "verte", b: "bleue" }; // accord avec « Inversion »
+const cname = (E, k) => L(E, CN_FR, CN_EN)[k]; // langue de la partie (journal)
 const CHEX = { r: "#e0393e", y: "#f2a900", g: "#22964a", b: "#1f6fd6" };
 const col = c => c[0], val = c => c.slice(1), wild = c => c[0] === "w";
 function newDeck(){
@@ -18,10 +22,15 @@ function newDeck(){
   return shuffle(d);
 }
 function glyph(c){ const v = val(c); return v === "S" ? "⊘" : v === "R" ? "⇄" : v === "D" ? "+2" : v === "F" ? "+4" : v === "W" ? "★" : v; }
-function label(c){
+// lg : "fr" / "en" (journal de la partie) ; sans lg, langue du téléphone.
+function label(c, lg){
   const v = val(c);
+  if((lg || SB.lang()) === "en"){
+    const e = v === "S" ? "Skip" : v === "R" ? "Reverse" : v === "D" ? "+2" : v === "F" ? "Wild +4" : v === "W" ? "Wild" : v;
+    return wild(c) ? e : CN_EN[col(c)] + " " + e;
+  }
   const n = v === "S" ? "Passe-tour" : v === "R" ? "Inversion" : v === "D" ? "+2" : v === "F" ? "+4" : v === "W" ? "Joker" : v;
-  return wild(c) ? n : n + " " + (v === "R" ? CNAME_F : CNAME)[col(c)];
+  return wild(c) ? n : n + " " + (v === "R" ? CNAME_F : CN_FR)[col(c)];
 }
 function points(c){ const v = val(c); return /^\d$/.test(v) ? +v : wild(c) ? 50 : 20; }
 function order(cards){
@@ -59,7 +68,7 @@ function newRound(E){
   while(!/^\d$/.test(val(c))){ E.draw.unshift(c); c = E.draw.pop(); }
   E.top = c; E.color = col(c);
   E.turn = E.order[(E.round - 1) % E.order.length]; E.dir = 1; E.pend = 0; E.drew = false;
-  E.phase = "play"; E.winner = ""; E.gain = 0; E.log = "Manche " + E.round + " : c'est parti !";
+  E.phase = "play"; E.winner = ""; E.gain = 0; E.log = L(E, "Manche " + E.round + " : c'est parti !", "Round " + E.round + ": let's go!");
   E.tc = 0; E.stuck = 0; E.evAt = 5 + rnd(4); E.evt = -99; E.ban = ""; E.banTo = 0; E.dbl = false; E.dblTo = 0; E.extra = "";
   E.st = E.st || {}; E.aw = [];
 }
@@ -81,25 +90,25 @@ function jumpable(E, id){ return (E.hands[id] || []).map((c, i) => canJump(E, id
 
 /* ---------- Coups de théâtre (au milieu d'une manche, environ tous les 8 tours) ---------- */
 const EVENTS = [
-  { id: "pluie", name: "Pluie de cartes", ok: o => o.E.draw.length + o.E.disc.length >= o.E.order.length + 2 },
-  { id: "sens", name: "Demi-tour", ok: o => o.E.order.length > 2 },
-  { id: "voisin", name: "Mains échangées" },
-  { id: "interdit", name: "Couleur interdite" },
-  { id: "double", name: "Double tour" },
-  { id: "x2", name: "Pénalités doublées" },
-  { id: "pouce", name: "Coup de pouce", ok: o => o.E.order.some(id => o.E.hands[id].length >= 5) }
+  { id: "pluie", name: tr("Pluie de cartes", "Card shower"), ok: o => o.E.draw.length + o.E.disc.length >= o.E.order.length + 2 },
+  { id: "sens", name: tr("Demi-tour", "U-turn"), ok: o => o.E.order.length > 2 },
+  { id: "voisin", name: tr("Mains échangées", "Hand swap") },
+  { id: "interdit", name: tr("Couleur interdite", "Banned colour") },
+  { id: "double", name: tr("Double tour", "Double turn") },
+  { id: "x2", name: tr("Pénalités doublées", "Double penalties") },
+  { id: "pouce", name: tr("Coup de pouce", "Helping hand"), ok: o => o.E.order.some(id => o.E.hands[id].length >= 5) }
 ];
 const pickTwist = (list, o) => (SB.u.twist ? SB.u.twist(list, o) : null);
 function evInfo(E, nameOf){
   const n = dur(E);
   switch(E.ev){
-    case "pluie": return { name: "Pluie de cartes", desc: "Tout le monde pioche une carte." };
-    case "sens": return { name: "Demi-tour", desc: "Le sens du jeu s'inverse." };
-    case "voisin": return { name: "Mains échangées", desc: "Chacun passe sa main à son voisin, dans le sens du jeu." };
-    case "interdit": return { name: "Couleur interdite", desc: "Pendant " + n + " tours, interdit de jouer du " + CNAME[E.evx] + ", même en le choisissant avec un joker." };
-    case "double": return { name: "Double tour", desc: nameOf(E.evx) + " joue deux fois de suite." };
-    case "x2": return { name: "Pénalités doublées", desc: "Pendant " + n + " tours, les +2 font piocher 4 et les +4 font piocher 8." };
-    case "pouce": return { name: "Coup de pouce", desc: nameOf(E.evx) + " croule sous les cartes : 2 d'entre elles partent à la défausse." };
+    case "pluie": return { name: tr("Pluie de cartes", "Card shower"), desc: tr("Tout le monde pioche une carte.", "Everyone draws a card.") };
+    case "sens": return { name: tr("Demi-tour", "U-turn"), desc: tr("Le sens du jeu s'inverse.", "The direction of play reverses.") };
+    case "voisin": return { name: tr("Mains échangées", "Hand swap"), desc: tr("Chacun passe sa main à son voisin, dans le sens du jeu.", "Everyone passes their hand to the next player, in the direction of play.") };
+    case "interdit": return { name: tr("Couleur interdite", "Banned colour"), desc: tr("Pendant " + n + " tours, interdit de jouer du " + CNAME[E.evx] + ", même en le choisissant avec un joker.", "For " + n + " turns, no " + CNAME[E.evx] + " allowed, not even by choosing it with a Wild.") };
+    case "double": return { name: tr("Double tour", "Double turn"), desc: tr(nameOf(E.evx) + " joue deux fois de suite.", nameOf(E.evx) + " plays twice in a row.") };
+    case "x2": return { name: tr("Pénalités doublées", "Double penalties"), desc: tr("Pendant " + n + " tours, les +2 font piocher 4 et les +4 font piocher 8.", "For " + n + " turns, +2s make you draw 4 and +4s make you draw 8.") };
+    case "pouce": return { name: tr("Coup de pouce", "Helping hand"), desc: tr(nameOf(E.evx) + " croule sous les cartes : 2 d'entre elles partent à la défausse.", nameOf(E.evx) + " is drowning in cards: 2 of them go to the discard pile.") };
   }
   return null;
 }
@@ -134,7 +143,7 @@ function tick(E){
 }
 /* Fin d'une action : on passe la main (sauf double tour), puis on regarde si un coup de théâtre tombe. */
 function advance(E, steps, nameOf){
-  if(E.extra && E.extra === E.turn && !E.pend){ E.extra = ""; E.log += " · " + nameOf(E.turn) + " rejoue (double tour)"; }
+  if(E.extra && E.extra === E.turn && !E.pend){ E.extra = ""; E.log += L(E, " · " + nameOf(E.turn) + " rejoue (double tour)", " · " + nameOf(E.turn) + " goes again (double turn)"); }
   else E.turn = nextOf(E, steps);
   E.tc = (E.tc || 0) + 1;
   tick(E);
@@ -142,12 +151,12 @@ function advance(E, steps, nameOf){
 
 /* ---------- Trophées de fin de partie ---------- */
 const AWARDS = {
-  pl: { t: ["Mitraillette à cartes", "Distributeur automatique", "Le bras le plus rapide"], d: v => v + " cartes posées", min: 3 },
-  dr: { t: ["Aspirateur à cartes", "Collectionneur malgré lui", "Éventail géant"], d: v => v + " cartes piochées", min: 4 },
-  pen: { t: ["Cible préférée des +4", "Punching-ball de la table", "Victime désignée"], d: v => v + " cartes de pénalité", min: 2 },
-  ct: { t: ["Œil de lynx", "Gendarme de la table", "Radar à « Dernière ! »"], d: v => v + " oubli" + (v > 1 ? "s" : "") + " attrapé" + (v > 1 ? "s" : ""), min: 1 },
-  jp: { t: ["Intercepteur", "Voleur de tour", "Sniper de la défausse"], d: v => v + " interception" + (v > 1 ? "s" : ""), min: 1 },
-  sw: { t: ["Roi du troc", "Pickpocket", "As de l'échange"], d: v => v + " main" + (v > 1 ? "s" : "") + " échangée" + (v > 1 ? "s" : ""), min: 1 }
+  pl: { t: tr(["Mitraillette à cartes", "Distributeur automatique", "Le bras le plus rapide"], ["Card machine gun", "Vending machine", "Fastest arm in the room"]), d: v => tr(v + " cartes posées", v + (v === 1 ? " card played" : " cards played")), min: 3 },
+  dr: { t: tr(["Aspirateur à cartes", "Collectionneur malgré lui", "Éventail géant"], ["Card vacuum", "Reluctant collector", "Giant fan of cards"]), d: v => tr(v + " cartes piochées", v + (v === 1 ? " card drawn" : " cards drawn")), min: 4 },
+  pen: { t: tr(["Cible préférée des +4", "Punching-ball de la table", "Victime désignée"], ["Favourite +4 target", "The table's punching bag", "Designated victim"]), d: v => tr(v + " cartes de pénalité", v + (v === 1 ? " penalty card" : " penalty cards")), min: 2 },
+  ct: { t: tr(["Œil de lynx", "Gendarme de la table", "Radar à « Dernière ! »"], ["Eagle eye", "Table cop", "“Last card!” radar"]), d: v => tr(v + " oubli" + (v > 1 ? "s" : "") + " attrapé" + (v > 1 ? "s" : ""), v + (v === 1 ? " slip caught" : " slips caught")), min: 1 },
+  jp: { t: tr(["Intercepteur", "Voleur de tour", "Sniper de la défausse"], ["Interceptor", "Turn thief", "Discard pile sniper"]), d: v => tr(v + " interception" + (v > 1 ? "s" : ""), v + (v === 1 ? " jump-in" : " jump-ins")), min: 1 },
+  sw: { t: tr(["Roi du troc", "Pickpocket", "As de l'échange"], ["King of trading", "Pickpocket", "Swap master"]), d: v => tr(v + " main" + (v > 1 ? "s" : "") + " échangée" + (v > 1 ? "s" : ""), v + (v === 1 ? " hand swapped" : " hands swapped")), min: 1 }
 };
 function awards(E){
   const S = E.st || {}, out = [];
@@ -165,7 +174,7 @@ function roundEnd(E, w, nameOf){
   E.score[w] = (E.score[w] || 0) + pts;
   E.winner = w; E.gain = pts; E.extra = ""; E.ban = ""; E.dbl = false;
   E.phase = E.round >= E.rounds ? "end" : "roundend";
-  E.log = nameOf(w) + " pose sa dernière carte et gagne " + pts + " points !";
+  E.log = L(E, nameOf(w) + " pose sa dernière carte et gagne " + pts + " points !", nameOf(w) + " plays their last card and scores " + pts + (pts === 1 ? " point!" : " points!"));
   if(E.phase === "end") E.aw = awards(E);
 }
 /* Sept-zéro : 7 = on échange sa main avec un adversaire ; 0 = toutes les mains tournent. */
@@ -176,8 +185,8 @@ function sevenZero(E, id, v, to, nameOf){
     const t = E.order.indexOf(to) >= 0 && to !== id ? to : bestSwap(E, id);
     const a = E.hands[id]; E.hands[id] = E.hands[t]; E.hands[t] = a;
     grace(E, [id, t]); stat(E, id, "sw"); E.sw = (E.sw || 0) + 1;
-    E.log += " · échange sa main avec " + nameOf(t);
-  } else { rotate(E); grace(E, E.order); E.sw = (E.sw || 0) + 1; E.log += " · toutes les mains tournent"; }
+    E.log += L(E, " · échange sa main avec " + nameOf(t), " · swaps hands with " + nameOf(t));
+  } else { rotate(E); grace(E, E.order); E.sw = (E.sw || 0) + 1; E.log += L(E, " · toutes les mains tournent", " · all hands rotate"); }
 }
 function apply(E, id, i, chosen, nameOf, to, jump){
   const h = E.hands[id], c = h[i];
@@ -188,13 +197,14 @@ function apply(E, id, i, chosen, nameOf, to, jump){
   E.drew = false;
   const v = val(c), n = E.order.length;
   let steps = 1;
-  E.log = nameOf(id) + (jump ? " intercepte avec " : " joue ") + (val(c) === "R" ? "une " : "un ") + label(c) + (wild(c) ? " et choisit le " + CNAME[E.color] : "");
-  if(v === "S"){ steps = 2; E.log += " · " + nameOf(nextOf(E, 1)) + " passe son tour"; }
-  if(v === "R"){ E.dir *= -1; steps = n === 2 ? 2 : 1; E.log += n === 2 ? " · et rejoue" : " · le sens change"; }
+  E.log = L(E, nameOf(id) + (jump ? " intercepte avec " : " joue ") + (val(c) === "R" ? "une " : "un ") + label(c, "fr") + (wild(c) ? " et choisit le " + cname(E, E.color) : ""),
+    nameOf(id) + (jump ? " jumps in with a " : " plays a ") + label(c, "en") + (wild(c) ? " and picks " + cname(E, E.color) : ""));
+  if(v === "S"){ steps = 2; E.log += L(E, " · " + nameOf(nextOf(E, 1)) + " passe son tour", " · " + nameOf(nextOf(E, 1)) + " is skipped"); }
+  if(v === "R"){ E.dir *= -1; steps = n === 2 ? 2 : 1; E.log += n === 2 ? L(E, " · et rejoue", " · and goes again") : L(E, " · le sens change", " · direction reverses"); }
   if(v === "D" || v === "F"){
     const k = (v === "D" ? 2 : 4) * (E.dbl ? 2 : 1);
-    if(E.stack){ E.pend += k; E.log += " · " + nameOf(nextOf(E, 1)) + " doit encaisser " + E.pend + " ou renchérir"; }
-    else { const vic = nextOf(E, 1); give(E, vic, k, true); steps = 2; E.log += " · " + nameOf(vic) + " pioche " + k + " cartes et passe son tour"; }
+    if(E.stack){ E.pend += k; E.log += L(E, " · " + nameOf(nextOf(E, 1)) + " doit encaisser " + E.pend + " ou renchérir", " · " + nameOf(nextOf(E, 1)) + " must take " + E.pend + " or stack on top"); }
+    else { const vic = nextOf(E, 1); give(E, vic, k, true); steps = 2; E.log += L(E, " · " + nameOf(vic) + " pioche " + k + " cartes et passe son tour", " · " + nameOf(vic) + " draws " + k + " cards and is skipped"); }
   }
   if(!h.length){ roundEnd(E, id, nameOf); return true; }
   if(E.sz && (v === "7" || v === "0")) sevenZero(E, id, v, to, nameOf);
@@ -216,7 +226,7 @@ function doDraw(E, id, nameOf){
   if(E.phase !== "play" || E.turn !== id) return false;
   if(E.pend > 0){
     const k = E.pend; give(E, id, k, true); E.pend = 0; E.drew = false;
-    E.log = nameOf(id) + " encaisse " + k + " cartes"; advance(E, 1, nameOf); return true;
+    E.log = L(E, nameOf(id) + " encaisse " + k + " cartes", nameOf(id) + " takes " + k + " cards"); advance(E, 1, nameOf); return true;
   }
   if(E.drew) return false;
   let c = draw1(E), got = 0;
@@ -225,31 +235,31 @@ function doDraw(E, id, nameOf){
     E.stuck = (E.stuck || 0) + 1;
     if(E.stuck >= E.order.length){
       const w = E.order.slice().sort((a, b) => E.hands[a].reduce((t, x) => t + points(x), 0) - E.hands[b].reduce((t, x) => t + points(x), 0))[0];
-      roundEnd(E, w, nameOf); E.log = "Table bloquée : " + nameOf(w) + " a la main la plus légère et gagne " + E.gain + " points.";
+      roundEnd(E, w, nameOf); E.log = L(E, "Table bloquée : " + nameOf(w) + " a la main la plus légère et gagne " + E.gain + " points.", "Deadlock: " + nameOf(w) + " has the lightest hand and scores " + E.gain + (E.gain === 1 ? " point." : " points."));
       return true;
     }
-    E.log = nameOf(id) + " passe (pioche vide)"; advance(E, 1, nameOf); return true;
+    E.log = L(E, nameOf(id) + " passe (pioche vide)", nameOf(id) + " passes (draw pile empty)"); advance(E, 1, nameOf); return true;
   }
   // Pioche jusqu'à pouvoir jouer (règle maison) : on continue tant que la carte ne va pas, 8 cartes au plus.
   for(;;){ E.hands[id].push(c); got++; if(!E.dp || canPlay(E, c) || got >= 8) break; const nx = draw1(E); if(!nx) break; c = nx; }
   E.called[id] = false;
   E.dc = (E.dc || 0) + 1; E.dby = id; E.dn = got; stat(E, id, "dr", got);
-  const what = got > 1 ? " pioche " + got + " cartes" : " pioche";
-  if(canPlay(E, c)){ E.drew = true; E.log = nameOf(id) + what + (got > 1 ? "… et peut jouer la dernière" : "… et peut la jouer"); }
-  else { E.drew = false; E.log = nameOf(id) + what + " et passe"; advance(E, 1, nameOf); }
+  const what = got > 1 ? L(E, " pioche " + got + " cartes", " draws " + got + " cards") : L(E, " pioche", " draws");
+  if(canPlay(E, c)){ E.drew = true; E.log = nameOf(id) + what + (got > 1 ? L(E, "… et peut jouer la dernière", "… and can play the last one") : L(E, "… et peut la jouer", "… and can play it")); }
+  else { E.drew = false; E.log = nameOf(id) + what + L(E, " et passe", " and passes"); advance(E, 1, nameOf); }
   return true;
 }
 function doPass(E, id, nameOf){
   if(E.phase !== "play" || E.turn !== id || !E.drew) return false;
-  E.drew = false; E.log = nameOf(id) + " garde sa carte et passe"; advance(E, 1, nameOf); return true;
+  E.drew = false; E.log = L(E, nameOf(id) + " garde sa carte et passe", nameOf(id) + " keeps the card and passes"); advance(E, 1, nameOf); return true;
 }
 function doCall(E, id, nameOf){
   if(E.phase !== "play" || (E.hands[id] || []).length > 2 || E.called[id]) return false;
-  E.called[id] = true; E.log = nameOf(id) + " crie « Dernière ! »"; return true;
+  E.called[id] = true; E.log = L(E, nameOf(id) + " crie « Dernière ! »", nameOf(id) + " calls “Last card!”"); return true;
 }
 function doCatch(E, by, who, nameOf){
   if(E.phase !== "play" || by === who || (E.hands[who] || []).length !== 1 || E.called[who]) return false;
-  give(E, who, 2, true); stat(E, by, "ct"); E.log = nameOf(by) + " prend " + nameOf(who) + " en flagrant délit : oubli de « Dernière ! », +2 cartes"; return true;
+  give(E, who, 2, true); stat(E, by, "ct"); E.log = L(E, nameOf(by) + " prend " + nameOf(who) + " en flagrant délit : oubli de « Dernière ! », +2 cartes", nameOf(by) + " catches " + nameOf(who) + " red-handed: forgot to call “Last card!”, +2 cards"); return true;
 }
 function catchable(E, id){ return E.phase === "play" && (E.hands[id] || []).length === 1 && !E.called[id]; }
 
@@ -309,22 +319,22 @@ function tableHTML(E, me, nameOf, ui){
   let h = CSS + '<div class="dc-opp">' + others.map(id => {
     const n = (E.hands[id] || []).length;
     return '<span class="dc-o' + (E.turn === id ? " on" : "") + '" data-o="' + esc(id) + '">' + esc(nameOf(id)) + ' <span class="n">' + n + "</span>" +
-      (n === 1 && E.called[id] ? '<span class="last">Dernière !</span>' : "") +
-      (catchable(E, id) && me !== "" ? '<button type="button" data-catch="' + esc(id) + '">Contre !</button>' : "") + "</span>";
+      (n === 1 && E.called[id] ? '<span class="last">' + tr("Dernière !", "Last card!") + "</span>" : "") +
+      (catchable(E, id) && me !== "" ? '<button type="button" data-catch="' + esc(id) + '">' + tr("Contre !", "Catch!") + "</button>" : "") + "</span>";
   }).join("") + "</div>";
   const evOn = evActive(E), mods = [];
   if(evOn) h += '<div class="dc-ev">' + SB.u.twistHTML(evInfo(E, nameOf)) + "</div>";
-  if(E.ban) mods.push('<span class="dc-mod" style="--c:' + CHEX[E.ban] + '"><i></i>' + CNAME[E.ban][0].toUpperCase() + CNAME[E.ban].slice(1) + " interdit</span>");
-  if(E.dbl) mods.push('<span class="dc-mod">Pénalités ×2</span>');
-  if(E.extra) mods.push('<span class="dc-mod">Double tour : ' + esc(nameOf(E.extra)) + "</span>");
+  if(E.ban) mods.push('<span class="dc-mod" style="--c:' + CHEX[E.ban] + '"><i></i>' + CNAME[E.ban][0].toUpperCase() + CNAME[E.ban].slice(1) + tr(" interdit", " banned") + "</span>");
+  if(E.dbl) mods.push('<span class="dc-mod">' + tr("Pénalités ×2", "Penalties ×2") + "</span>");
+  if(E.extra) mods.push('<span class="dc-mod">' + tr("Double tour : ", "Double turn: ") + esc(nameOf(E.extra)) + "</span>");
   if(mods.length && !evOn) h += '<div class="dc-mods">' + mods.join("") + "</div>";
-  h += '<div class="dc-turn">' + (E.phase !== "play" ? "" : myTurn ? "À toi !" : "Au tour de " + esc(nameOf(E.turn))) + " " + (E.dir === 1 ? "↻" : "↺") + "</div>";
+  h += '<div class="dc-turn">' + (E.phase !== "play" ? "" : myTurn ? tr("À toi !", "Your turn!") : tr("Au tour de " + esc(nameOf(E.turn)), esc(nameOf(E.turn)) + "'s turn")) + " " + (E.dir === 1 ? "↻" : "↺") + "</div>";
   h += '<div class="dc-table"><span class="dc-top" style="--tc:' + CHEX[E.color] + '">' + cardHTML(E.top, "big", " disabled") + "</span>" +
-    '<button type="button" class="dc-back" data-draw' + (myTurn && !E.drew ? "" : " disabled") + "><b>" + (E.pend > 0 ? "+" + E.pend : "Pioche") + "</b>" + (E.left != null ? E.left : E.draw.length) + " cartes</button></div>";
-  h += '<p class="dc-log">' + esc(E.log || "") + (E.pend > 0 ? ' <span class="dc-pend">+' + E.pend + " en attente</span>" : "") + "</p>";
+    '<button type="button" class="dc-back" data-draw' + (myTurn && !E.drew ? "" : " disabled") + "><b>" + (E.pend > 0 ? "+" + E.pend : tr("Pioche", "Draw")) + "</b>" + (E.left != null ? E.left : E.draw.length) + tr(" cartes", " cards") + "</button></div>";
+  h += '<p class="dc-log">' + esc(E.log || "") + (E.pend > 0 ? ' <span class="dc-pend">+' + E.pend + tr(" en attente", " pending") + "</span>" : "") + "</p>";
   if(me){
     const mine = E.hands[me] || [], ok = myTurn ? playable(E, me) : jumpable(E, me);
-    h += '<span class="eyebrow">Ta main · ' + mine.length + " carte" + (mine.length > 1 ? "s" : "") + (ui.sel == null && ok.some(Boolean) ? (myTurn ? " · touche une carte pour la choisir" : " · interception possible !") : "") + '</span><div class="dc-hand">' +
+    h += '<span class="eyebrow">' + tr("Ta main · " + mine.length + " carte" + (mine.length > 1 ? "s" : ""), "Your hand · " + mine.length + (mine.length === 1 ? " card" : " cards")) + (ui.sel == null && ok.some(Boolean) ? (myTurn ? tr(" · touche une carte pour la choisir", " · tap a card to pick it") : tr(" · interception possible !", " · you can jump in!")) : "") + '</span><div class="dc-hand">' +
       order(mine).map(x => ui.gone != null ? cardHTML(x.c, "idle" + (ui.gone === x.i ? " gone" : ""), ' data-c="' + x.i + '" disabled') :
         cardHTML(x.c, (ok[x.i] ? "ok" : !myTurn ? "idle" : "") + (ui.sel === x.i ? " sel" : ""), ' data-c="' + x.i + '"' + (myTurn && !ok[x.i] ? " disabled" : "") + (ui.sel === x.i ? ' aria-pressed="true"' : ""))).join("") + "</div>";
   }
@@ -334,21 +344,21 @@ function tableHTML(E, me, nameOf, ui){
 function dockHTML(E, me, ui, nameOf){
   if(!me || E.phase !== "play") return "";
   const mine = E.hands[me] || [], myTurn = E.turn === me, b = [], out = [];
-  if(mine.length <= 2 && !E.called[me]) b.push('<button class="btn dc-call" type="button" data-call>Dernière !</button>');
+  if(mine.length <= 2 && !E.called[me]) b.push('<button class="btn dc-call" type="button" data-call>' + tr("Dernière !", "Last card!") + "</button>");
   const c = ui.sel != null && (myTurn ? playable(E, me)[ui.sel] : canJump(E, me, ui.sel)) ? mine[ui.sel] : null;
   if(c){
     if(b.length) out.push(b.pop());
     if(wild(c)){
-      out.push('<span class="eyebrow" style="text-align:center">Choisis la couleur pour poser ton ' + esc(label(c)) + '</span><div class="dc-pick">' + COLS.map(k => '<button type="button" data-col="' + k + '" style="background:' + CHEX[k] + (k === "y" ? "; color:#1d1405" : "") + '"' + (k === E.ban ? " disabled" : "") + ">" + CNAME[k][0].toUpperCase() + CNAME[k].slice(1) + "</button>").join("") + "</div>");
+      out.push('<span class="eyebrow" style="text-align:center">' + tr("Choisis la couleur pour poser ton ", "Pick a colour to play your ") + esc(label(c)) + '</span><div class="dc-pick">' + COLS.map(k => '<button type="button" data-col="' + k + '" style="background:' + CHEX[k] + (k === "y" ? "; color:#1d1405" : "") + '"' + (k === E.ban ? " disabled" : "") + ">" + CNAME[k][0].toUpperCase() + CNAME[k].slice(1) + "</button>").join("") + "</div>");
     } else if(needsTarget(E, me, ui.sel)){
-      out.push('<span class="eyebrow" style="text-align:center">' + (myTurn ? "" : "Interception · ") + "Sept : avec qui échanges-tu ta main ?</span><div class=\"dc-to\">" + E.order.filter(x => x !== me).map(x => '<button type="button" data-to="' + esc(x) + '">' + esc(nameOf(x)) + "<small>" + E.hands[x].length + " carte" + (E.hands[x].length > 1 ? "s" : "") + "</small></button>").join("") + "</div>");
-    } else out.push('<button class="btn acc" type="button" data-ok style="min-height:62px">' + (myTurn ? "Poser " : "Intercepter : ") + esc(label(c)) + (E.sz && val(c) === "0" && mine.length > 1 ? " · les mains tournent" : "") + "</button>");
-    out.push('<button class="link" type="button" data-cancel style="align-self:center">Choisir une autre carte</button>');
+      out.push('<span class="eyebrow" style="text-align:center">' + (myTurn ? "" : tr("Interception · ", "Jump-in · ")) + tr("Sept : avec qui échanges-tu ta main ?", "Seven: who do you swap hands with?") + '</span><div class="dc-to">' + E.order.filter(x => x !== me).map(x => '<button type="button" data-to="' + esc(x) + '">' + esc(nameOf(x)) + "<small>" + tr(E.hands[x].length + " carte" + (E.hands[x].length > 1 ? "s" : ""), E.hands[x].length + (E.hands[x].length === 1 ? " card" : " cards")) + "</small></button>").join("") + "</div>");
+    } else out.push('<button class="btn acc" type="button" data-ok style="min-height:62px">' + (myTurn ? tr("Poser ", "Play ") : tr("Intercepter : ", "Jump in: ")) + esc(label(c)) + (E.sz && val(c) === "0" && mine.length > 1 ? tr(" · les mains tournent", " · hands rotate") : "") + "</button>");
+    out.push('<button class="link" type="button" data-cancel style="align-self:center">' + tr("Choisir une autre carte", "Pick another card") + "</button>");
     return dock(out.join(""));
   }
   if(myTurn){
-    if(E.pend > 0) b.push('<button class="btn acc" type="button" data-draw>Encaisser +' + E.pend + "</button>");
-    else if(E.drew) b.push('<button class="btn ghost" type="button" data-pass>Garder et passer</button>');
+    if(E.pend > 0) b.push('<button class="btn acc" type="button" data-draw>' + tr("Encaisser +", "Take +") + E.pend + "</button>");
+    else if(E.drew) b.push('<button class="btn ghost" type="button" data-pass>' + tr("Garder et passer", "Keep it and pass") + "</button>");
   }
   return b.length ? dock(b.length > 1 ? '<div class="row">' + b.join("") + "</div>" : b[0]) : "";
 }
@@ -363,12 +373,12 @@ function paint(root, key, html, bind){
   if(bind) bind(root);
 }
 function scoresHTML(E, nameOf){
-  return '<ul class="dc-sc">' + E.order.slice().sort((a, b) => (E.score[b] || 0) - (E.score[a] || 0)).map(id => "<li><span>" + esc(nameOf(id)) + "</span><span>" + (E.score[id] || 0) + " pts</span></li>").join("") + "</ul>";
+  return '<ul class="dc-sc">' + E.order.slice().sort((a, b) => (E.score[b] || 0) - (E.score[a] || 0)).map(id => "<li><span>" + esc(nameOf(id)) + "</span><span>" + (E.score[id] || 0) + tr(" pts", " pts") + "</span></li>").join("") + "</ul>";
 }
 function bestOf(E){ return E.order.slice().sort((a, b) => (E.score[b] || 0) - (E.score[a] || 0))[0]; }
 function awardsHTML(E, nameOf){
   const L = awardLines(E, nameOf);
-  return L.length ? '<div class="field"><span class="eyebrow">Trophées</span><ul class="dc-aw">' + L.map(x => "<li><b>" + esc(x[0]) + " · " + esc(x[1]) + "</b><span>" + esc(x[2]) + "</span></li>").join("") + "</ul></div>" : "";
+  return L.length ? '<div class="field"><span class="eyebrow">' + tr("Trophées", "Awards") + '</span><ul class="dc-aw">' + L.map(x => "<li><b>" + esc(x[0]) + " · " + esc(x[1]) + "</b><span>" + esc(x[2]) + "</span></li>").join("") + "</ul></div>" : "";
 }
 /* Le bandeau du coup de théâtre apparaît avec un petit choc et une notification. */
 const EVX = { key: "", n: 0 };
@@ -482,11 +492,11 @@ function animate(root, E, me, key){
 let LTOK = 0;
 
 const DEF = {
-  id: "dernierecarte", name: "Dernière carte", glyph: "+4 !", pitch: "Même couleur ou même chiffre, et crie « Dernière ! ».", hot: false,
+  id: "dernierecarte", name: tr("Dernière carte", "Last Card"), glyph: "+4 !", pitch: tr("Même couleur ou même chiffre, et crie « Dernière ! ».", "Match the colour or the number, and shout “Last card!”."), hot: false,
   accent: { light: "#ff8a4c", dark: "#ff8a4c" },
-  tag: "Même couleur ou même valeur, des +2, des +4, des inversions… Et n'oublie pas de crier « Dernière ! » quand il ne te reste plus qu'une carte.",
+  tag: tr("Même couleur ou même valeur, des +2, des +4, des inversions… Et n'oublie pas de crier « Dernière ! » quand il ne te reste plus qu'une carte.", "Match the colour or the value, with +2s, +4s, Reverses… And don't forget to shout “Last card!” when you're down to one card."),
   min: 2, max: 10,
-  rules: [
+  rules: tr([
     "Chacun reçoit 7 cartes. À ton tour, pose une carte de la même couleur ou de la même valeur que celle du dessus.",
     "Passe-tour : le suivant saute son tour. Inversion : le sens change. +2 et +4 : le suivant pioche. Joker et +4 : tu choisis la couleur.",
     "Pas de carte jouable ? Pioche. Si la carte piochée va, tu peux la poser tout de suite.",
@@ -495,17 +505,26 @@ const DEF = {
     "Le premier qui n'a plus de cartes gagne la manche et marque la valeur des cartes restées dans la main des autres.",
     "Règles maison au choix : Sept-zéro (7 = tu échanges ta main avec qui tu veux, 0 = toutes les mains tournent), Interception (pose hors de ton tour une carte identique à celle du dessus), Pioche jusqu'à pouvoir jouer (on continue de piocher tant que la carte ne va pas).",
     "Coups de théâtre : de temps en temps, un événement chamboule la partie (couleur interdite, pluie de cartes, mains échangées, double tour…)."
-  ],
+  ], [
+    "Everyone gets 7 cards. On your turn, play a card that matches the colour or the value of the top card.",
+    "Skip: the next player misses their turn. Reverse: the direction changes. +2 and +4: the next player draws. Wild and +4: you pick the colour.",
+    "No playable card? Draw. If the card you drew fits, you can play it right away.",
+    "With stacking, you can bounce a +2 back with a +2 or a +4, and a +4 with a +4. Whoever can't (or won't) stack takes the whole total.",
+    "When you have 2 cards left, tap “Last card!” before playing your second-to-last. If you end up with one card without calling it, anyone can tap “Catch!”: you draw 2 cards.",
+    "The first player with no cards left wins the round and scores the value of the cards left in everyone else's hands.",
+    "Optional house rules: Seven-Zero (7 = swap hands with anyone you like, 0 = all hands rotate), Jump-in (play out of turn a card identical to the top card), Draw until you can play (keep drawing until you get a card that fits).",
+    "Twists: every now and then, an event shakes up the game (banned colour, card shower, hand swap, double turn…)."
+  ]),
   options: [
-    { id: "rounds", label: "Manches", type: "seg", def: 1, values: [{ v: 1, label: "1" }, { v: 3, label: "3" }, { v: 5, label: "5" }] },
-    { id: "stack", label: "Cumul", type: "toggle", text: "Cumul des +2 et +4", desc: "On peut renvoyer la pénalité au suivant", def: true },
-    { id: "sz", label: "Sept-zéro", type: "toggle", text: "Sept-zéro", desc: "7 : échange ta main avec qui tu veux. 0 : toutes les mains tournent", def: false },
-    { id: "jump", label: "Interception", type: "toggle", text: "Interception", desc: "Pose hors de ton tour une carte identique à celle du dessus", def: false },
-    { id: "dp", label: "Pioche", type: "toggle", text: "Pioche jusqu'à pouvoir jouer", desc: "On pioche jusqu'à tomber sur une carte jouable", def: false },
-    { id: "twists", label: "Coups de théâtre", type: "toggle", text: "Coups de théâtre", desc: "Des événements surprises en pleine manche", def: true }
+    { id: "rounds", label: tr("Manches", "Rounds"), type: "seg", def: 1, values: [{ v: 1, label: "1" }, { v: 3, label: "3" }, { v: 5, label: "5" }] },
+    { id: "stack", label: tr("Cumul", "Stacking"), type: "toggle", text: tr("Cumul des +2 et +4", "Stack +2s and +4s"), desc: tr("On peut renvoyer la pénalité au suivant", "Pass the penalty on to the next player"), def: true },
+    { id: "sz", label: tr("Sept-zéro", "Seven-Zero"), type: "toggle", text: tr("Sept-zéro", "Seven-Zero"), desc: tr("7 : échange ta main avec qui tu veux. 0 : toutes les mains tournent", "7: swap hands with anyone you like. 0: all hands rotate"), def: false },
+    { id: "jump", label: tr("Interception", "Jump-in"), type: "toggle", text: tr("Interception", "Jump-in"), desc: tr("Pose hors de ton tour une carte identique à celle du dessus", "Play out of turn a card identical to the top card"), def: false },
+    { id: "dp", label: tr("Pioche", "Drawing"), type: "toggle", text: tr("Pioche jusqu'à pouvoir jouer", "Draw until you can play"), desc: tr("On pioche jusqu'à tomber sur une carte jouable", "Keep drawing until you get a playable card"), def: false },
+    { id: "twists", label: tr("Coups de théâtre", "Twists"), type: "toggle", text: tr("Coups de théâtre", "Twists"), desc: tr("Des événements surprises en pleine manche", "Surprise events mid-round"), def: true }
   ],
   start(ctx, o){
-    const E = { order: shuffle(ctx.ids), stack: o.stack !== false, sz: !!o.sz, jump: !!o.jump, dp: !!o.dp, tw: o.twists !== false, round: 1, rounds: o.rounds || 1, score: {}, seen: {}, st: {} };
+    const E = { lg: SB.lang(), order: shuffle(ctx.ids), stack: o.stack !== false, sz: !!o.sz, jump: !!o.jump, dp: !!o.dp, tw: o.twists !== false, round: 1, rounds: o.rounds || 1, score: {}, seen: {}, st: {} };
     newRound(E);
     ctx.setPriv({ draw: E.draw, disc: E.disc });
     const s = Object.assign({}, E); delete s.draw; delete s.disc; s.left = E.draw.length;
@@ -545,7 +564,7 @@ const DEF = {
     const gone = UI.pend ? UI.pend.i : null;
     if(s.phase === "play"){
       const key = JSON.stringify([s.k, E.hands, E.top, E.color, E.turn, E.dir, E.pend, E.drew, E.called, E.log, UI.sel, s.left, E.ban, E.dbl, E.extra, E.evn, evActive(E), gone]);
-      paint(root, key, '<span class="eyebrow">Manche ' + s.round + " / " + s.rounds + "</span>" + tableHTML(E, me, ctx.name, { act: true, sel: UI.sel, gone }) + (gone != null ? dock('<p class="wait">Carte posée…</p>') : dockHTML(E, me, UI, ctx.name)), r => {
+      paint(root, key, '<span class="eyebrow">' + tr("Manche ", "Round ") + s.round + " / " + s.rounds + "</span>" + tableHTML(E, me, ctx.name, { act: true, sel: UI.sel, gone }) + (gone != null ? dock('<p class="wait">' + tr("Carte posée…", "Card played…") + "</p>") : dockHTML(E, me, UI, ctx.name)), r => {
         r.querySelectorAll(".dc-hand [data-c]").forEach(b => b.addEventListener("click", () => {
           const i = +b.dataset.c; buzz(6);
           UI.sel = UI.sel === i ? null : i; again();
@@ -569,7 +588,7 @@ const DEF = {
         r.querySelectorAll("[data-catch]").forEach(b => b.addEventListener("click", () => ctx.send({ x: { n: n("x"), who: b.dataset.catch } })));
         if(ctx.isHost && !ctx.here(E.turn) && E.turn !== me){
           const box = document.createElement("button"); box.type = "button"; box.className = "link warn"; box.style.alignSelf = "center";
-          box.textContent = "Faire jouer " + ctx.name(E.turn) + " (absent)";
+          box.textContent = tr("Faire jouer " + ctx.name(E.turn) + " (absent)", "Play for " + ctx.name(E.turn) + " (away)");
           box.addEventListener("click", () => ctx.act(c => {
             const F = fromState(c.s, c.priv());
             if(F.drew) doPass(F, F.turn, c.name); else { doDraw(F, F.turn, c.name); if(F.drew) doPass(F, F.turn, c.name); }
@@ -583,17 +602,17 @@ const DEF = {
       if(UI.sel !== UI.prev){ selFx(root, UI.sel, UI.prev); UI.prev = UI.sel; }
     } else {
       const last = s.phase === "end", champ = last ? bestOf(E) : s.winner;
-      screen(root, "e" + s.k + s.phase + s.round + ctx.isHost, CSS + '<span class="eyebrow">' + (last ? (s.rounds > 1 ? "Vainqueur de la partie" : "Vainqueur") : "Manche " + s.round + " gagnée par") + '</span><div class="who">' + esc(ctx.name(champ)) + "</div>" +
-        '<p class="dc-log">' + esc(s.log) + "</p>" + (s.rounds > 1 ? '<div class="field"><span class="eyebrow">Scores</span>' + scoresHTML(E, ctx.name) + "</div>" : "") + (last ? awardsHTML(E, ctx.name) : "") +
-        dock(ctx.isHost ? (last ? '<button class="btn acc" type="button" data-back>Retour au salon</button>' : '<button class="btn acc" type="button" data-next>Manche suivante</button>') : '<p class="wait">L\'hôte passe à la suite…</p>'), r => {
+      screen(root, "e" + s.k + s.phase + s.round + ctx.isHost, CSS + '<span class="eyebrow">' + (last ? (s.rounds > 1 ? tr("Vainqueur de la partie", "Game winner") : tr("Vainqueur", "Winner")) : tr("Manche " + s.round + " gagnée par", "Round " + s.round + " won by")) + '</span><div class="who">' + esc(ctx.name(champ)) + "</div>" +
+        '<p class="dc-log">' + esc(s.log) + "</p>" + (s.rounds > 1 ? '<div class="field"><span class="eyebrow">' + tr("Scores", "Scores") + "</span>" + scoresHTML(E, ctx.name) + "</div>" : "") + (last ? awardsHTML(E, ctx.name) : "") +
+        dock(ctx.isHost ? (last ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the lobby") + "</button>" : '<button class="btn acc" type="button" data-next>' + tr("Manche suivante", "Next round") + "</button>") : '<p class="wait">' + tr("L'hôte passe à la suite…", "The host is moving on…") + "</p>"), r => {
         const nx = r.querySelector("[data-next]");
         if(nx) nx.addEventListener("click", () => ctx.act(c => { const F = fromState(c.s, c.priv()); if(F.phase !== "roundend") return; F.round++; newRound(F); publish(c, F); }));
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const F = tableView(c.s), w = c.s.rounds > 1 ? bestOf(F) : c.s.winner;
           const lines = (c.s.rounds > 1 ? F.order.slice().sort((a, b2) => (F.score[b2] || 0) - (F.score[a] || 0)).slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (F.score[id] || 0) + " pts") : [])
-            .concat(awardLines(F, c.name).map(x => x[0] + " : " + x[1]));
-          c.end({ title: "Dernière carte : " + c.name(w) + " gagne", lines, win: [w] });
+            .concat(awardLines(F, c.name).map(x => x[0] + L(c.s, " : ", ": ") + x[1]));
+          c.end({ title: L(c.s, "Dernière carte : " + c.name(w) + " gagne", "Last Card: " + c.name(w) + " wins"), lines, win: [w] });
         }));
       });
     }
@@ -608,10 +627,10 @@ const DEF = {
       let rounds = [1, 3, 5].indexOf(st.dcRounds) >= 0 ? st.dcRounds : 1;
       // Règles maison (mêmes réglages que le salon en réseau)
       const R = { stack: st.dcStack !== false, sz: !!st.dcSz, jump: !!st.dcJump, dp: !!st.dcDp, tw: st.dcTw !== false };
-      const RULES = [["stack", "dcStack", "Cumul des +2 et +4", "On peut renvoyer la pénalité au suivant"], ["sz", "dcSz", "Sept-zéro", "7 : échange ta main avec qui tu veux. 0 : toutes les mains tournent"],
-        ["jump", "dcJump", "Interception", "Pose hors de ton tour une carte identique à celle du dessus"], ["dp", "dcDp", "Pioche jusqu'à pouvoir jouer", "On pioche jusqu'à tomber sur une carte jouable"],
-        ["tw", "dcTw", "Coups de théâtre", "Des événements surprises en pleine manche"]];
-      const BOTN = ["Robotte", "Bipbip", "Zorglub"];
+      const RULES = [["stack", "dcStack", tr("Cumul des +2 et +4", "Stack +2s and +4s"), tr("On peut renvoyer la pénalité au suivant", "Pass the penalty on to the next player")], ["sz", "dcSz", tr("Sept-zéro", "Seven-Zero"), tr("7 : échange ta main avec qui tu veux. 0 : toutes les mains tournent", "7: swap hands with anyone you like. 0: all hands rotate")],
+        ["jump", "dcJump", tr("Interception", "Jump-in"), tr("Pose hors de ton tour une carte identique à celle du dessus", "Play out of turn a card identical to the top card")], ["dp", "dcDp", tr("Pioche jusqu'à pouvoir jouer", "Draw until you can play"), tr("On pioche jusqu'à tomber sur une carte jouable", "Keep drawing until you get a playable card")],
+        ["tw", "dcTw", tr("Coups de théâtre", "Twists"), tr("Des événements surprises en pleine manche", "Surprise events mid-round")]];
+      const BOTN = tr(["Robotte", "Bipbip", "Zorglub"], ["Robbie", "Beepboop", "Zorglub"]);
       let E = null, viewer = "", sel = null, prevSel = null, timer = null, nameMap = {}, gno = 0, jumpPc = -1;
       const nameOf = id => nameMap[id] || "?";
       const isBot = id => id[0] === "b";
@@ -622,19 +641,19 @@ const DEF = {
       function setup(){
         clearTimeout(timer);
         const total = names.length + bots;
-        screen(root, "su" + bots + rounds + JSON.stringify(R), CSS + '<p class="howto">' + (names.length > 1 ? "Les joueurs se passent le téléphone à leur tour : les mains restent cachées." : "Une partie contre les robots.") + "</p>" +
-          '<div class="field"><span class="eyebrow">Robots</span><div class="seg">' + [0, 1, 2, 3].map(b => '<button type="button" data-b="' + b + '" aria-pressed="' + (b === bots) + '">' + b + "</button>").join("") + "</div></div>" +
-          '<div class="field"><span class="eyebrow">Manches</span><div class="seg">' + [1, 3, 5].map(x => '<button type="button" data-r="' + x + '" aria-pressed="' + (x === rounds) + '">' + x + "</button>").join("") + "</div></div>" +
-          '<div class="field"><span class="eyebrow">Règles maison</span><div class="packs">' + RULES.map(x => '<button type="button" class="pack" data-s="' + x[0] + '" aria-pressed="' + R[x[0]] + '"><span class="box">✓</span><span class="tx"><span class="nm">' + x[2] + '</span><span class="ds">' + x[3] + "</span></span></button>").join("") + "</div></div>" +
-          (total < 2 ? '<p class="err">Ajoute au moins un robot pour jouer seul.</p>' : total > 10 ? '<p class="err">10 joueurs maximum, robots compris.</p>' : "") +
-          dock('<button class="btn acc" type="button" data-go' + (total < 2 || total > 10 ? " disabled" : "") + ">Distribuer</button>"), r => {
+        screen(root, "su" + bots + rounds + JSON.stringify(R), CSS + '<p class="howto">' + (names.length > 1 ? tr("Les joueurs se passent le téléphone à leur tour : les mains restent cachées.", "Players pass the phone around on their turn: hands stay hidden.") : tr("Une partie contre les robots.", "A game against the bots.")) + "</p>" +
+          '<div class="field"><span class="eyebrow">' + tr("Robots", "Bots") + '</span><div class="seg">' + [0, 1, 2, 3].map(b => '<button type="button" data-b="' + b + '" aria-pressed="' + (b === bots) + '">' + b + "</button>").join("") + "</div></div>" +
+          '<div class="field"><span class="eyebrow">' + tr("Manches", "Rounds") + '</span><div class="seg">' + [1, 3, 5].map(x => '<button type="button" data-r="' + x + '" aria-pressed="' + (x === rounds) + '">' + x + "</button>").join("") + "</div></div>" +
+          '<div class="field"><span class="eyebrow">' + tr("Règles maison", "House rules") + '</span><div class="packs">' + RULES.map(x => '<button type="button" class="pack" data-s="' + x[0] + '" aria-pressed="' + R[x[0]] + '"><span class="box">✓</span><span class="tx"><span class="nm">' + x[2] + '</span><span class="ds">' + x[3] + "</span></span></button>").join("") + "</div></div>" +
+          (total < 2 ? '<p class="err">' + tr("Ajoute au moins un robot pour jouer seul.", "Add at least one bot to play solo.") + "</p>" : total > 10 ? '<p class="err">' + tr("10 joueurs maximum, robots compris.", "10 players max, bots included.") + "</p>" : "") +
+          dock('<button class="btn acc" type="button" data-go' + (total < 2 || total > 10 ? " disabled" : "") + ">" + tr("Distribuer", "Deal") + "</button>"), r => {
           r.querySelectorAll("[data-b]").forEach(b => b.addEventListener("click", () => { bots = +b.dataset.b; persist({ dcBots: bots }); setup(); }));
           r.querySelectorAll("[data-r]").forEach(b => b.addEventListener("click", () => { rounds = +b.dataset.r; persist({ dcRounds: rounds }); setup(); }));
           r.querySelectorAll("[data-s]").forEach(b => b.addEventListener("click", () => { const x = RULES.find(y => y[0] === b.dataset.s); R[x[0]] = !R[x[0]]; persist({ [x[1]]: R[x[0]] }); setup(); }));
           r.querySelector("[data-go]").addEventListener("click", () => {
             nameMap = {}; const ids = names.map((nm, i) => { nameMap["h" + i] = nm; return "h" + i; });
             for(let i = 0; i < bots; i++){ nameMap["b" + i] = BOTN[i] + " 🤖"; ids.push("b" + i); }
-            E = { order: shuffle(ids), stack: R.stack, sz: R.sz, jump: R.jump, dp: R.dp, tw: R.tw, round: 1, rounds, score: {}, st: {} };
+            E = { lg: SB.lang(), order: shuffle(ids), stack: R.stack, sz: R.sz, jump: R.jump, dp: R.dp, tw: R.tw, round: 1, rounds, score: {}, st: {} };
             newRound(E); viewer = humans().length === 1 ? humans()[0] : ""; sel = null; prevSel = null; gno++; jumpPc = E.pc || 0;
             step();
           });
@@ -667,8 +686,8 @@ const DEF = {
         }
         if(viewer !== cur && humans().length > 1){
           clearTimeout(timer);
-          screen(root, "pass" + cur + E.log + Math.random(), CSS + '<p class="dc-log">' + esc(E.log) + '</p><div class="pass"><span class="eyebrow">Passe le téléphone à</span><div class="who">' + esc(nameOf(cur)) + "</div><p>Les autres, ne regardez pas sa main.</p></div>" +
-            dock('<button class="btn acc" type="button" data-n>C\'est moi</button>'), r => r.querySelector("[data-n]").addEventListener("click", () => { viewer = cur; step(); }));
+          screen(root, "pass" + cur + E.log + Math.random(), CSS + '<p class="dc-log">' + esc(E.log) + '</p><div class="pass"><span class="eyebrow">' + tr("Passe le téléphone à", "Pass the phone to") + '</span><div class="who">' + esc(nameOf(cur)) + "</div><p>" + tr("Les autres, ne regardez pas sa main.", "Everyone else, don't peek at their hand.") + "</p></div>" +
+            dock('<button class="btn acc" type="button" data-n>' + tr("C'est moi", "It's me") + "</button>"), r => r.querySelector("[data-n]").addEventListener("click", () => { viewer = cur; step(); }));
           return;
         }
         draw(cur);
@@ -678,7 +697,7 @@ const DEF = {
       function draw(me){
         if(sel != null && !(E.turn === me ? playable(E, me)[sel] : canJump(E, me, sel))){ sel = null; prevSel = null; }
         const key = JSON.stringify([E.hands, E.top, E.color, E.turn, E.dir, E.pend, E.drew, E.called, E.log, sel, me, E.ban, E.dbl, E.extra, E.evn, evActive(E)]);
-        paint(root, key, '<span class="eyebrow">Manche ' + E.round + " / " + E.rounds + "</span>" + tableHTML(E, me, nameOf, { act: E.turn === me, sel }) + dockHTML(E, me, { sel }, nameOf), r => {
+        paint(root, key, '<span class="eyebrow">' + tr("Manche ", "Round ") + E.round + " / " + E.rounds + "</span>" + tableHTML(E, me, nameOf, { act: E.turn === me, sel }) + dockHTML(E, me, { sel }, nameOf), r => {
           r.querySelectorAll(".dc-hand [data-c]").forEach(b => b.addEventListener("click", () => {
             const i = +b.dataset.c; buzz(6);
             sel = sel === i ? null : i; draw(me);
@@ -708,9 +727,9 @@ const DEF = {
         clearTimeout(timer);
         const last = E.phase === "end", champ = last && E.rounds > 1 ? bestOf(E) : E.winner;
         if(last && api.win) api.win([nameOf(champ)]);
-        screen(root, "end" + E.round + E.phase, CSS + '<span class="eyebrow">' + (last ? (E.rounds > 1 ? "Vainqueur de la partie" : "Vainqueur") : "Manche " + E.round + " gagnée par") + '</span><div class="who">' + esc(nameOf(champ)) + "</div>" +
-          '<p class="dc-log">' + esc(E.log) + "</p>" + (E.rounds > 1 ? '<div class="field"><span class="eyebrow">Scores</span>' + scoresHTML(E, nameOf) + "</div>" : "") + (last ? awardsHTML(E, nameOf) : "") +
-          dock(last ? '<button class="btn acc" type="button" data-a>Rejouer</button><button class="btn ghost" type="button" data-q>Choisir un autre jeu</button>' : '<button class="btn acc" type="button" data-n>Manche suivante</button>'), r => {
+        screen(root, "end" + E.round + E.phase, CSS + '<span class="eyebrow">' + (last ? (E.rounds > 1 ? tr("Vainqueur de la partie", "Game winner") : tr("Vainqueur", "Winner")) : tr("Manche " + E.round + " gagnée par", "Round " + E.round + " won by")) + '</span><div class="who">' + esc(nameOf(champ)) + "</div>" +
+          '<p class="dc-log">' + esc(E.log) + "</p>" + (E.rounds > 1 ? '<div class="field"><span class="eyebrow">' + tr("Scores", "Scores") + "</span>" + scoresHTML(E, nameOf) + "</div>" : "") + (last ? awardsHTML(E, nameOf) : "") +
+          dock(last ? '<button class="btn acc" type="button" data-a>' + tr("Rejouer", "Play again") + '</button><button class="btn ghost" type="button" data-q>' + tr("Choisir un autre jeu", "Pick another game") + "</button>" : '<button class="btn acc" type="button" data-n>' + tr("Manche suivante", "Next round") + "</button>"), r => {
           const nx = r.querySelector("[data-n]"); if(nx) nx.addEventListener("click", () => { E.round++; newRound(E); viewer = humans().length === 1 ? humans()[0] : ""; step(); });
           const a = r.querySelector("[data-a]"); if(a) a.addEventListener("click", api.again);
           const q = r.querySelector("[data-q]"); if(q) q.addEventListener("click", api.exit);
