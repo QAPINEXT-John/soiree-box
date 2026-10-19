@@ -39,6 +39,33 @@ function plain(v){ return JSON.parse(JSON.stringify(v === undefined ? null : v))
 const STORE = "soiree-box";
 function store(){ try{ return JSON.parse(localStorage.getItem(STORE) || "{}") || {}; }catch(e){ return {}; } }
 function persist(patch){ try{ localStorage.setItem(STORE, JSON.stringify(Object.assign(store(), patch))); }catch(e){} }
+
+/* =================== Langue (français / anglais) ===================
+   La langue est choisie sur l'accueil et gardée sur le téléphone ; changer de langue recharge l'appli.
+   - tr("texte français", "English text") : la bonne version selon la langue du téléphone.
+   - Textes fixes de index.html : traduits par le dictionnaire EN_HTML (texte exact → anglais).
+   - En réseau, le contenu des parties (cartes, questions) suit la langue de l'hôte (ctx.s.lg),
+     l'interface suit la langue de chaque téléphone. */
+const LANG = (() => {
+  const l = store().lang;
+  if(l === "fr" || l === "en") return l;
+  try{ return /^fr\b/i.test(navigator.language || "fr") ? "fr" : "en"; }catch(e){ return "fr"; }
+})();
+function tr(fr, en){ return LANG === "en" && en != null ? en : fr; }
+SB.lang = () => LANG;
+SB.tr = tr;
+SB.setLang = function(l){ if((l === "fr" || l === "en") && l !== LANG){ persist({ lang: l }); location.reload(); } };
+// Dictionnaire des textes fixes de index.html (rempli plus bas, avec les autres textes de l'interface).
+const EN_HTML = {};
+function i18nDom(root){
+  if(LANG !== "en") return;
+  const w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT), nodes = [];
+  while(w.nextNode()) nodes.push(w.currentNode);
+  nodes.forEach(n => { const t = n.nodeValue.trim(); if(t && EN_HTML[t]) n.nodeValue = n.nodeValue.replace(t, EN_HTML[t]); });
+  $$("[placeholder],[aria-label],[title]", root || document).forEach(el => ["placeholder", "aria-label", "title"].forEach(a => {
+    const v = el.getAttribute(a); if(v && EN_HTML[v.trim()]) el.setAttribute(a, EN_HTML[v.trim()]);
+  }));
+}
 /* ---------- Rejouabilité : mémoire anti-répétition ----------
    fresh(clé, paquet) mélange un paquet en mettant au-dessus (fin du tableau, on tire avec pop())
    ce qui n'a jamais été vu sur ce téléphone, puis ce qui a été vu il y a le plus longtemps.
@@ -109,6 +136,8 @@ function enter(el){ if(!el) return; el.classList.remove("enter"); void el.offset
 function dock(html){ return '<div class="dock">' + html + "</div>"; }
 function txt(root, sel, value){ const el = root.querySelector(sel); if(el && el.textContent !== String(value)) el.textContent = value; return el; }
 function plural(n, one, many){ return n + " " + (n > 1 ? (many || one + "s") : one); }
+// Anglais : 0 et 2+ au pluriel (« 0 games »), contrairement au français (« 0 jeu »).
+function plural2(n, one, many, oneEn, manyEn){ return LANG === "en" ? n + " " + (n === 1 ? oneEn : (manyEn || oneEn + "s")) : plural(n, one, many); }
 function copyText(text, done, fail){
   try{ navigator.clipboard.writeText(text).then(done, fail); }catch(e){ fail && fail(); }
 }
@@ -228,7 +257,7 @@ function pop(el, delay, shake){
 }
 SB.fx = { fly, flyTo, ghost, flip, pop, thud, ripple };
 
-SB.u = { $, $$, esc, clean, A, shuffle, rid, pick, fix, store, persist, armTap, screen, txt, plural, shareText, copyText, buzz, toast, dock, fresh, saw, twist, byTwist, twistHTML };
+SB.u = { $, $$, esc, clean, A, shuffle, rid, pick, fix, store, persist, armTap, screen, txt, plural, plural2, tr, shareText, copyText, buzz, toast, dock, fresh, saw, twist, byTwist, twistHTML };
 
 /* ---------- Écran toujours allumé ---------- */
 let wakeLock = null, wantWake = false;
@@ -1464,8 +1493,16 @@ function startLocal(def, names){
   try{ def.local.start(root, api); }catch(e){ console.error(e); }
 }
 
+/* ---------- Choix de la langue (accueil) ---------- */
+function renderLang(){
+  const box = $("#h-lang"); if(!box) return;
+  box.innerHTML = '<span>' + tr("Langue", "Language") + '</span>' + [["fr", "Français"], ["en", "English"]].map(l => '<button type="button" data-lang="' + l[0] + '" aria-pressed="' + (LANG === l[0]) + '">' + l[1] + "</button>").join("");
+  $$("[data-lang]", box).forEach(b => b.addEventListener("click", () => { buzz(8); SB.setLang(b.dataset.lang); }));
+}
 /* =================== Démarrage =================== */
 SB.boot = function(){
+  if(LANG === "en"){ document.documentElement.lang = "en"; i18nDom(document.body); }
+  renderLang();
   if(window.AndroidUpdate){
     setTimeout(() => checkUpdate(false), 400);
     document.addEventListener("visibilitychange", () => { if(document.visibilityState === "visible" && Date.now() - UP.last > 3 * 3600 * 1000 && !(UP.st && UP.st.t === "progress")) checkUpdate(false); });
