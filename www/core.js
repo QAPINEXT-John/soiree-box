@@ -764,7 +764,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.7";
+const VERSION = "4.7.1";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -886,11 +886,13 @@ function openBug(type){
 SB.bug = openBug;
 
 /* Familles de jeux pour les filtres de l'accueil et du salon */
-const CATS = { note10: "votes", photoroulette: "votes", quiplus: "votes", tupref: "votes", redflag: "votes", purete: "votes", quiadit: "votes", priorites: "votes",
+const CATS = { note10: "votes", photoroulette: "wip", quiplus: "votes", tupref: "votes", redflag: "votes", purete: "votes", quiadit: "votes", priorites: "votes",
   undercover: "bluff", killer: "bluff", loupgarou: "bluff", menteurs: "bluff", motsint: "cartes", defis: "cartes", dernierecarte: "cartes", punchline: "votes", actionverite: "cartes" };
-const FILTERS = [["all", "Tous"], ["votes", "Votes"], ["bluff", "Bluff"], ["cartes", "Cartes"], ["hot", "18+"]];
+const FILTERS = [["all", "Tous"], ["votes", "Votes"], ["bluff", "Bluff"], ["cartes", "Cartes"], ["hot", "18+"], ["wip", "En travaux"]];
+// Jeux « en travaux » : jouables pour les tester, mais rangés à part, seulement dans leur filtre.
+const isWip = d => CATS[d.id] === "wip";
 const FSEL = { home: "all", salon: "all" };
-function inFilter(d, f){ return f === "all" || (f === "hot" ? !!d.hot : CATS[d.id] === f); }
+function inFilter(d, f){ if(isWip(d)) return f === "wip"; return f === "all" || (f === "hot" ? !!d.hot : CATS[d.id] === f); }
 function filterHTML(which){
   return FILTERS.map(f => '<button type="button" data-f="' + f[0] + '" aria-pressed="' + (FSEL[which] === f[0]) + '"' + (f[0] === "hot" ? ' class="hot"' : "") + ">" + f[1] + "</button>").join("");
 }
@@ -903,8 +905,8 @@ function tileHTML(def, opts){
   opts = opts || {};
   const range = (def.max ? def.min + "–" + def.max : def.min + "+") + " joueurs";
   const meta = esc(range) + (def.hot ? " · 18+" : "") + (def.local && def.local.players && def.local.players.min === 1 ? " · solo" : "");
-  return '<button type="button" class="tile acc-' + esc(def.id) + '" data-id="' + esc(def.id) + '"' + (opts.disabled ? " disabled" : "") + (opts.pressed ? ' aria-pressed="true"' : "") + '>' +
-    '<span class="gl">' + esc(def.glyph || def.name.slice(0, 2)) + '</span><span class="nm">' + esc(def.name) + '</span><span class="ds">' + esc(def.pitch || def.tag || "") + '</span><span class="meta">' + (opts.metaHTML || meta) + "</span>" + CHECK + "</button>";
+  return '<button type="button" class="tile acc-' + esc(def.id) + (isWip(def) ? " wip" : "") + '" data-id="' + esc(def.id) + '"' + (opts.disabled ? " disabled" : "") + (opts.pressed ? ' aria-pressed="true"' : "") + '>' +
+    '<span class="gl">' + esc(def.glyph || def.name.slice(0, 2)) + '</span><span class="nm">' + esc(def.name) + '</span><span class="ds">' + esc(def.pitch || def.tag || "") + '</span><span class="meta">' + (isWip(def) ? '<b class="wipb">En travaux</b> · ' : "") + (opts.metaHTML || meta) + "</span>" + CHECK + "</button>";
 }
 function rulesHTML(def){
   const r = A(def.rules);
@@ -1405,7 +1407,7 @@ const L = { def: null, tick: null };
 function openLocalList(){
   accent(""); keepAwake(false); L.def = null; L.tick = null;
   const t = $("#ll-tiles");
-  t.innerHTML = SB.games.filter(d => d.local).map(d => {
+  t.innerHTML = SB.games.filter(d => d.local).sort((a, b) => isWip(a) - isWip(b)).map(d => {
     const lp = d.local.players;
     const meta = (lp ? (lp.min === 1 ? "Seul ou à " + lp.max + " · Bots" : (lp.max ? lp.min + "–" + lp.max : lp.min + "+") + " joueurs") : "Tout le groupe") + (d.hot ? " · 18+" : "");
     return tileHTML(d, { metaHTML: meta });
@@ -1493,7 +1495,7 @@ SB.boot = function(){
   $("#h-create").addEventListener("click", () => netEnter(makeCode(), true));
   $("#h-join").addEventListener("click", () => netEnter(clean(cd.value, 4).toUpperCase(), false));
   $("#h-local").addEventListener("click", openLocalList);
-  $("#h-count").textContent = plural(SB.games.length, "jeu", "jeux");
+  $("#h-count").textContent = plural(SB.games.filter(d => !isWip(d)).length, "jeu", "jeux");
   const ht = $("#h-tiles");
   const drawHome = () => {
     ht.innerHTML = SB.games.filter(d => inFilter(d, FSEL.home)).map(d => tileHTML(d)).join("");

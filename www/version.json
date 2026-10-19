@@ -1,16 +1,15 @@
 {
- "version": "4.7",
+ "version": "4.7.1",
  "apk": 31,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Photo roulette comme le vrai : photos tirées au hasard dans ta galerie, en surprise ou à vérifier avant",
-  "Sur Android, réinstalle l'appli une fois pour le tirage dans toute la galerie"
+  "Photo roulette passe dans la catégorie « En travaux » : jouable pour tester, rangé à part"
  ],
  "files": {
   "core.js": {
-   "h": "3c5bb1cdcf6f7de0e7b04d252d436881a8690422c9b9c754ef30937f52ddcc91",
-   "s": 95634
+   "h": "3b4a542dd9a7ac1807029fcdfa6958946b201bcf54e25a84b1dee65460bd6456",
+   "s": 95981
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -177,8 +176,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "6d4f8fa04151f8a3775eab523539acfbe3229dcf92deee9fa65f1ab53d70a05c",
-   "s": 40935
+   "h": "bb421671a27af033464531484a6b955cf127f67704ce43bd75b0198776d26eb6",
+   "s": 41019
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
