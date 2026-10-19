@@ -107,7 +107,7 @@ button{font:inherit; color:inherit; cursor:pointer}
 .sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:10px}
 .filters{display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; margin-inline:-2px; padding:2px}
 .filters::-webkit-scrollbar{display:none}
-.langsw{display:flex; align-items:center; justify-content:center; gap:6px; margin:6px 0 0; font-size:13px; color:var(--muted)}.langsw button{border:1.5px solid var(--line); background:transparent; color:var(--ink); border-radius:99px; padding:6px 12px; font-weight:700; font-size:13px}.langsw button[aria-pressed="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+.langrow{display:flex; justify-content:flex-end; margin:-4px 0 -2px}.langsw{display:flex; align-items:center; gap:2px; padding:3px; border-radius:99px; background:var(--card); border:1.5px solid var(--line)}.langsw svg{margin:0 4px 0 6px; color:var(--muted)}.langsw button{border:0; background:transparent; color:var(--ink); border-radius:99px; min-width:44px; min-height:34px; padding:0 10px; font-weight:800; font-size:14px; letter-spacing:.02em}.langsw button[aria-pressed="true"]{background:var(--ink); color:var(--bg)}
 .tile.wip{border-style:dashed; opacity:.85}.wipb{color:var(--acc); font-weight:800}
 .filters button{flex:none; min-height:40px; padding:0 14px; border:2px solid var(--line); border-radius:99px; background:transparent; color:var(--ink); font-weight:700; font-size:14px}
 .filters button[aria-pressed="true"]{background:var(--ink); border-color:var(--ink); color:var(--bg); font-weight:800}
@@ -350,6 +350,7 @@ button,.tile,.opt,.pack,.seg button,.ab button,.pad button{touch-action:manipula
   <!-- ACCUEIL -->
   <section class="screen" id="s-home">
     <div class="hero">
+      <div class="langrow"><div class="langsw" id="h-lang"></div></div>
       <h1 class="brand"><svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="2" y="7" width="30" height="20" rx="5" fill="none" stroke="#ff5a36" stroke-width="3"/><path d="M12 7v20" stroke="#ff5a36" stroke-width="3" stroke-dasharray="3 3"/></svg>Soirée Box</h1>
       <p class="tag">Un salon, un code, et toute la bande joue, chacun sur son téléphone.</p>
     </div>
@@ -376,7 +377,6 @@ button,.tile,.opt,.pack,.seg button,.ab button,.pad button{touch-action:manipula
       <div class="tiles" id="h-tiles"></div>
     </div>
     <button class="footlink" data-bug type="button"><span class="bi"></span>Un bug, un souci ? <u>Signale-le</u></button>
-    <div class="langsw" id="h-lang"></div>
     <p class="ver" id="h-ver"></p>
   </section>
 

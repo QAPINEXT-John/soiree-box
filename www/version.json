@@ -1,16 +1,15 @@
 {
- "version": "4.9",
+ "version": "4.9.1",
  "apk": 31,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Soirée Box en anglais : choisis Français ou English en bas de l'accueil",
-  "En réseau, les cartes suivent la langue de l'hôte et les boutons celle de chaque téléphone"
+  "Le choix de la langue (FR / EN) est maintenant en haut de l'accueil"
  ],
  "files": {
   "core.js": {
-   "h": "bf4b0d0395bc2dcf730bfcd93db1146a0acfbb11c432d808cd5d56ad33be28ae",
-   "s": 106005
+   "h": "9acccbae01a3c4232131e8cd9b3c5ffda6aa90bc4c966776fb7f0af2362f7d6d",
+   "s": 106425
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -177,8 +176,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "539cc3a687d6769b574a46ff6e2fe07ed10d6e42119a2c090145bc6afc525797",
-   "s": 41481
+   "h": "4763da7383d9f2373d00d2a4350ca7d3fc046fb2aceee320357ebc0a8625bd00",
+   "s": 41648
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",

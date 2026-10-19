@@ -123,4 +123,4 @@ Voir **AJOUTER-UN-JEU.md**. En résumé, tu copies `www/games/_modele.js`, tu é
 
 ## Langues
 
-L'appli existe en français et en anglais (choix en bas de l'accueil, gardé sur le téléphone ; par défaut la langue du téléphone). Dans le code : `tr("texte français", "English text")`. En réseau, le contenu des parties suit la langue de l'hôte (`ctx.s.lg`), l'interface celle de chaque téléphone.
+L'appli existe en français et en anglais (boutons FR / EN en haut de l'accueil, gardé sur le téléphone ; par défaut la langue du téléphone). Dans le code : `tr("texte français", "English text")`. En réseau, le contenu des parties suit la langue de l'hôte (`ctx.s.lg`), l'interface celle de chaque téléphone.
