@@ -72,6 +72,25 @@ const HONTE = [
   "mangé un truc tombé par terre devant des invités","eu le ventre qui gargouille pendant un grand silence","fait semblant d'avoir lu un livre dont tout le monde parlait","posté une story pour une seule personne",
   "menti sur tes goûts pour plaire à quelqu'un","envoyé un message vocal sans faire exprès"
 ];
+const HARD = [
+  "fait une gorge profonde", "avalé, sans hésiter", "fait un 69", "essayé la sodomie",
+  "aimé la sodomie", "fait un anulingus", "reçu un anulingus", "fini sur le visage de quelqu'un ou reçu sur le tien",
+  "squirté ou fait squirter quelqu'un", "utilisé un plug anal", "utilisé un gode-ceinture", "été attaché(e) pendant l'amour",
+  "attaché quelqu'un pendant l'amour", "joué le rôle de soumis(e) au lit", "joué le rôle de dominant(e) au lit", "donné ou reçu une fessée qui a laissé des marques",
+  "utilisé un fouet, des pinces ou de la cire chaude", "assumé un fétiche au lit (pieds, latex, uniformes…)", "fait l'amour déguisé(e)", "fait un plan à quatre ou plus",
+  "été la seule fille ou le seul mec d'un plan à plusieurs", "fait de l'échangisme", "regardé ton/ta partenaire coucher avec quelqu'un d'autre", "couché avec quelqu'un pendant que d'autres regardaient",
+  "filmé un plan à plusieurs, avec l'accord de tous", "mis les pieds dans un club BDSM ou fétichiste", "fait l'amour dans un backroom", "testé un glory hole",
+  "couché avec plus de 20 personnes", "couché avec plus de 50 personnes", "couché avec trois personnes différentes en une semaine", "fait l'amour plus de dix fois en un seul week-end",
+  "eu une relation sexuelle avec quelqu'un du même sexe", "couché avec quelqu'un dont tu n'as jamais su le prénom", "couché avec un(e) inconnu(e) d'internet sans avoir vu sa tête avant", "fait l'amour sans capote avec quelqu'un rencontré le soir même",
+  "fait l'amour sous l'effet d'une drogue", "couché avec ton boss ou ton prof d'université", "couché avec le ou la partenaire d'un(e) ami(e)", "été l'amant(e) caché(e) de quelqu'un de marié pendant des mois",
+  "trompé quelqu'un pendant une soirée où il ou elle était aussi", "couché avec deux personnes qui se connaissaient, sans qu'elles le sachent", "couché avec quelqu'un juste pour obtenir quelque chose", "fait des choses avec deux personnes de cette pièce",
+  "masturbé quelqu'un sous une table", "été masturbé(e) sous une table", "eu un orgasme en public sans que personne ne le remarque", "fait l'amour dans un train ou un avion",
+  "fait l'amour dans une cabine d'essayage", "fait l'amour dans un parc ou une forêt en pleine journée", "fait l'amour sur un balcon visible depuis la rue", "fait l'amour dans une piscine ou un jacuzzi avec du monde autour",
+  "fait l'amour dans le lit de tes parents", "été surpris(e) en pleine action par tes parents", "fait l'amour pendant les règles", "fait du sexe par webcam avec un(e) inconnu(e)",
+  "envoyé une vidéo de toi en train de te faire plaisir", "envoyé un nude à la mauvaise personne", "vendu des photos ou vidéos sexy de toi en ligne", "payé pour du contenu sexy en ligne",
+  "fait un strip-tease intégral devant plusieurs personnes", "fait un body shot sur le corps de quelqu'un", "proposé un plan à trois à ton/ta partenaire", "couché avec quelqu'un de plus de vingt ans ton aîné",
+  "couché avec quelqu'un juste pour pouvoir dire que tu l'avais fait", "joui en moins d'une minute", "eu un orgasme rien qu'avec des mots"
+];
 const PACKS = [
   { v: "soiree", label: "Soirées & excès", desc: "Alcool, fêtes, galères", list: SOIREE },
   { v: "sexe", label: "Sexe & couple", desc: "Plans d'un soir, infidélités, expériences", list: SEXE, hot: true },
@@ -79,7 +98,8 @@ const PACKS = [
   { v: "coeur", label: "Cœur & ex", desc: "Ruptures, ghosting, jalousie", list: COEUR },
   { v: "boulot", label: "Boulot & études", desc: "Retards, triches, siestes clandestines", list: BOULOT },
   { v: "voyage", label: "Voyages", desc: "Vols ratés, aventures, passeports perdus", list: VOYAGE },
-  { v: "honte", label: "Moments gênants", desc: "Les hontes qu'on n'avoue jamais", list: HONTE }
+  { v: "honte", label: "Moments gênants", desc: "Les hontes qu'on n'avoue jamais", list: HONTE },
+  { v: "hardcore", label: "Hardcore 18+", desc: "Pratiques, plans à plusieurs, records : zéro filtre", list: HARD, hot: true }
 ];
 const ALL = PACKS.flatMap(p => p.list.map(q => ({ pack: p.v, q })));
 const QIX = {}; ALL.forEach((x, i) => { QIX[x.q] = i; });
@@ -275,6 +295,7 @@ SB.register({
       const names = api.names, st = store();
       let L = { phase: "setup", packs: A(st.puPacks).filter(v => PACKS.some(p => p.v === v)), n: [25, 40, 60, 0].indexOf(st.puN) >= 0 ? st.puN : 40, anon: st.puAnon !== false, tw: st.puTw !== false, twl: [], seed: 0, qi: [], p: 0, ans: [], key: "" };
       if(!L.packs.length) L.packs = PACKS.map(p => p.v);
+      if(!st.puHc){ if(L.packs.indexOf("hardcore") < 0) L.packs.push("hardcore"); persist({ puHc: true, puPacks: L.packs }); } // nouveau thème : coché une fois pour tout le monde
       const cnt = () => ALL.filter(x => L.packs.indexOf(x.pack) >= 0).length;
       const go = () => {
         if(L.phase === "setup"){

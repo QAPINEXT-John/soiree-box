@@ -15,7 +15,7 @@ Les jeux qui ont du contenu adulte le regroupent dans un seul paquet **Adultes (
 | **Mots interdits** | 4–20 | Deux équipes, chrono, faire deviner sans dire les mots interdits. L'équipe adverse buzze. |
 | **Priorités** | 2–16 | Un joueur classe 5 trucs au hasard, du préféré au plus détesté. Les autres devinent son ordre (version coopérative sur un seul téléphone). |
 | **Red Flag** | 2–20 | « Red ou green ? » : chacun vote red, beige ou green flag sur un trait de ton date. « Tu restes ou tu pars ? » : un date parfait, puis 5 red flags un par un. |
-| **Test de pureté** | 1–20 | 90 « As-tu déjà… ? » 100 % adultes. Score secret, classement de l'ange au démon, puis les aveux. |
+| **Test de pureté** | 1–20 | Plus de 370 « As-tu déjà… ? » en 8 thèmes, dont Hardcore 18+. Score secret, classement de l'ange au démon, puis les aveux. |
 | **Killer** | 4–20 | Chacun reçoit en secret une cible et une mission (« fais-lui dire ananas »). Mission réussie : la victime confirme et tu récupères sa cible. Une accusation par joueur pour démasquer son chasseur. Tourne toute la soirée en fond. |
 | **Qui a dit ça ?** | 3–12 | Chacun répond en secret à une question, les réponses s'affichent sans les noms, tout le monde devine l'auteur. Points pour les bons détectives et pour ceux qui bernent les autres. |
 | **Défis en chaîne** | 2–20 | Des cartes qui citent les joueurs par leur prénom : défis, votes, mini-jeux et règles qui durent quelques cartes. Avec gorgées ou sans alcool (gages). |

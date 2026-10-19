@@ -250,7 +250,7 @@ function mention(pct){
 }
 // Trophées de fin de partie, tirés de l'historique. Le titre change d'une partie à l'autre.
 function vary(list, seed){ return list[Math.abs(seed) % list.length]; }
-function awards(hist){
+function awards(hist, tous){
   const h = A(hist).map(A), out = [], seed = h.reduce((a, x) => a + (+x[2] || 0) * 7 + (+x[3] || 0), 0);
   const gp = {}, gn = {};
   h.forEach(x => { gp[x[5]] = (gp[x[5]] || 0) + (+x[4] || 0); gn[x[5]] = (gn[x[5]] || 0) + 1; });
@@ -261,7 +261,7 @@ function awards(hist){
   const cp = {}, cn = {};
   h.forEach(x => A(x[7]).forEach(n => { cp[n] = (cp[n] || 0) + (+x[4] || 0); cn[n] = (cn[n] || 0) + 1; }));
   const ck = Object.keys(cp).filter(n => cn[n] >= 2).map(n => [n, cp[n] / cn[n]]).sort((a, b) => b[1] - a[1]);
-  if(ck.length > 1 && ck[0][1] > ck[ck.length - 1][1]) out.push([vary(["Indice en or", "Boussole du groupe", "Traducteur officiel", "Phare dans la nuit"], seed + 2), ck[0][0], String(Math.round(ck[0][1] * 10) / 10).replace(".", ",") + " pt par indice en moyenne"]);
+  if(ck.length > 1 && ck[0][1] > ck[ck.length - 1][1]) out.push([vary(["Indice en or", "Boussole du groupe", "Traducteur officiel", "Phare dans la nuit"], seed + 2), ck[0][0], String(Math.round(ck[0][1] * 10) / 10).replace(".", ",") + (tous ? " pt en moyenne par devineur" : " pt par indice en moyenne")]);
   return out;
 }
 function awardsHTML(a){ return a.length ? '<div class="field"><span class="eyebrow">Trophées</span><ul class="list">' + a.map(x => '<li><span class="t" style="font-size:19px">' + esc(x[0]) + '</span><span class="by">' + esc(x[1]) + " · " + esc(x[2]) + "</span></li>").join("") + "</ul></div>" : ""; }
@@ -274,7 +274,11 @@ const CSS = '<style>.n10-grade{position:relative; align-self:center; width:220px
   '.n10-ruler{display:grid; grid-template-columns:repeat(10,1fr); gap:3px}.n10-ruler div{height:50px; border-radius:8px; background:var(--soft); display:grid; place-items:center; font-family:var(--f-hand); font-size:24px; color:var(--muted)}' +
   '.n10-ruler .is-note{background:var(--acc); color:var(--card); font-weight:700}.n10-ruler .is-guess{outline:2.5px solid var(--ink); outline-offset:-2.5px; color:var(--ink); font-weight:700}' +
   '.n10-legend{display:flex; gap:16px; font-size:13px; color:var(--muted); flex-wrap:wrap}.n10-legend i{display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:-1px; margin-right:6px}' +
-  '.n10-legend .ln{background:var(--acc)}.n10-legend .lg{outline:2px solid var(--ink); outline-offset:-2px}</style>';
+  '.n10-legend .ln{background:var(--acc)}.n10-legend .lg{outline:2px solid var(--ink); outline-offset:-2px}' +
+  '.n10-sc{list-style:none; margin:0; padding:0; display:grid; gap:6px}.n10-sc li{display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:12px; background:var(--soft)}' +
+  '.n10-sc .rk{flex:none; width:22px; height:22px; display:grid; place-items:center; border-radius:99px; background:var(--card); color:var(--muted); font-weight:800; font-size:13px}' +
+  '.n10-sc .nm{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}.n10-sc li.first .rk{background:var(--acc); color:var(--card)}' +
+  '.n10-res li.ind{opacity:.85; border-top:1px dashed var(--line, var(--soft))}</style>';
 const GRADE = '<svg viewBox="0 0 220 150" aria-hidden="true"><path d="M48 34 C 92 6, 190 12, 203 62 C 215 112, 120 142, 58 128 C 10 117, 6 70, 36 44 C 52 30, 80 22, 104 20"/></svg>';
 function catCard(c, eyebrow, extra){
   return '<div class="card"><span class="eyebrow">' + esc(eyebrow || "Catégorie") + '</span><div class="big">' + esc(c[0]) + '</div><div class="scale"><span>1 · ' + esc(c[1]) + '</span><span>10 · ' + esc(c[2]) + "</span></div>" + (extra || "") + "</div>";
@@ -368,9 +372,172 @@ function nextRound(ctx, reroll){
     for(let t = 0; t < ctx.players.length && !ctx.here(ctx.players[gi].id); t++) gi = (gi + 1) % ctx.players.length;
   }
   const tw = reroll ? (s.tw || "") : rollTwist(ctx.opts.twists !== false, s.tw);
-  ctx.set({ phase: "clues", round: reroll ? s.round : s.round + 1, rr: reroll ? s.rr - 1 : s.rr, gi, guesser: ctx.players[gi].id,
-    c: drawCat(ctx), tw, note: rollNote(tw), dl: tw === "chrono" ? ctx.now() + CHRONO * 1000 : 0, guess: 0, pts: 0, k: ctx.rid() });
+  const who = ctx.players[gi].id;
+  ctx.set(Object.assign({ phase: "clues", round: reroll ? s.round : s.round + 1, rr: reroll ? s.rr - 1 : s.rr, gi,
+    c: drawCat(ctx), tw, note: rollNote(tw), dl: tw === "chrono" ? ctx.now() + CHRONO * 1000 : 0, guess: 0, pts: 0, k: ctx.rid() },
+    s.mode === "tous" ? { ind: who, res: [], ip: 0 } : { guesser: who }));
 }
+/* ---------- Mode « Tout le monde devine » : un indicateur, tous les autres devinent chacun pour soi ---------- */
+const MAXCL = 3;
+// L'indicateur marque la moyenne (arrondie) des points de ses devineurs : plus il est clair, plus il gagne.
+function indPts(res){ return res.length ? Math.round(res.reduce((a, x) => a + (+x[2] || 0), 0) / res.length) : 0; }
+function tgs(ctx){ return ctx.ids.filter(id => id !== ctx.s.ind); }
+function gOf(ctx, id){ const i = ctx.input(id); return i && Number.isInteger(i.n) && i.n >= 1 && i.n <= 10 ? i.n : 0; }
+function clList(ctx){ const i = ctx.input(ctx.s.ind); return A(i && i.cl).map(t => typeof t === "string" ? clean(t, 60) : "").filter(Boolean).slice(0, MAXCL); }
+function revealTous(ctx){
+  const s = ctx.s, iname = ctx.name(s.ind), cat = A(s.c)[0];
+  const res = tgs(ctx).map(id => [id, gOf(ctx, id)]).filter(x => x[1]).map(x => [x[0], x[1], points(s.note, x[1], s.tw)]);
+  const ip = indPts(res), sc = Object.assign({}, s.sc);
+  res.forEach(x => { sc[x[0]] = (sc[x[0]] || 0) + x[2]; });
+  sc[s.ind] = (sc[s.ind] || 0) + ip;
+  ctx.set({ phase: "result", res, ip, sc,
+    hist: A(s.hist).concat(res.map(x => [s.round, cat, s.note, x[1], x[2], ctx.name(x[0]), s.tw || "", [iname]])),
+    rh: A(s.rh).concat([[s.round, cat, s.note, iname, s.tw || "", res.map(x => [ctx.name(x[0]), x[1], x[2]]), ip]]) });
+}
+// Classement : [nom, points], ex aequo au même rang.
+function standHTML(rows, title){
+  rows = rows.slice().sort((a, b) => b[1] - a[1]);
+  let rk = 0, prev = null;
+  return '<div class="field"><span class="eyebrow">' + esc(title || "Classement") + '</span><ul class="n10-sc">' + rows.map((r, i) => {
+    if(r[1] !== prev){ rk = i + 1; prev = r[1]; }
+    return '<li' + (rk === 1 && r[1] > 0 ? ' class="first"' : "") + '><span class="rk">' + rk + '</span><span class="nm">' + esc(r[0]) + "</span><b>" + SB.u.plural(r[1], "pt") + "</b></li>";
+  }).join("") + "</ul></div>";
+}
+function rulerMulti(note, gs){ let h = '<div class="n10-ruler">'; for(let n = 1; n <= 10; n++) h += '<div class="' + (n === note ? "is-note " : "") + (gs.indexOf(n) >= 0 ? "is-guess" : "") + '">' + n + "</div>"; return h + "</div>"; }
+// Résultat d'une manche : res = [[nom, note proposée, points]].
+function guessesHTML(res, iname, ip, tw){
+  const rows = res.slice().sort((a, b) => b[2] - a[2] || a[0].localeCompare(b[0]));
+  return '<ul class="list n10-res">' + (rows.length ? rows.map(x => '<li><span class="t">' + esc(x[0]) + '</span><span class="by">a dit <b class="hand">' + x[1] + "</b> · " + esc((VERDICTS[x[2]] || VERDICTS[0])[0]) + " · +" + x[2] + "</span></li>").join("") : '<li><span class="by">Personne n\'a proposé de note.</span></li>') +
+    '<li class="ind"><span class="t">' + esc(iname) + '</span><span class="by">indicateur · moyenne de ses devineurs · +' + ip + "</span></li></ul>";
+}
+function roundTable(rh){
+  return '<div class="tablewrap"><table><thead><tr><th>Manche</th><th>Indicateur</th><th style="text-align:center">Note</th><th>Propositions</th></tr></thead><tbody>' +
+    A(rh).map(A).map(h => '<tr><td>' + esc(h[0]) + '<div class="sm">' + esc(h[1]) + (TW(h[4]) ? " · " + esc(TW(h[4]).name) : "") + "</div></td><td>" + esc(h[3]) + '<div class="sm">+' + esc(h[6]) + '</div></td><td style="text-align:center" class="hand"><b>' + esc(h[2]) + "</b></td><td>" +
+      (A(h[5]).length ? A(h[5]).map(A).map(x => esc(x[0]) + " " + esc(x[1]) + ' <span class="sm">(+' + esc(x[2]) + ")</span>").join("<br>") : "—") + "</td></tr>").join("") + "</tbody></table></div>";
+}
+function topOf(rows){ const m = Math.max(0, ...rows.map(r => r[1])); return m > 0 ? rows.filter(r => r[1] === m).map(r => r[0]) : []; }
+function scoreRows(ctx){
+  const sc = ctx.s.sc || {}, ids = ctx.ids.slice();
+  Object.keys(sc).forEach(id => { if(ids.indexOf(id) < 0) ids.push(id); });
+  return ids.map(id => [ctx.name(id), +sc[id] || 0, id]);
+}
+const hiddenCard = '<div class="card"><span class="eyebrow">Catégorie</span><div class="big">Cachée !</div><div class="scale"><span>1</span><span>10</span></div></div>';
+let clK = "", clV = [];
+
+function hostTous(ctx){
+  const s = ctx.s;
+  if(s.phase === "clues"){
+    const i = ctx.input(s.ind);
+    if(i && i.rr === s.rr && s.rr > 0){ nextRound(ctx, true); return; }
+    if((i && i.go && clList(ctx).length) || (s.dl && ctx.now() >= s.dl)) ctx.set({ phase: "guess" });
+  } else if(s.phase === "guess"){
+    const live = tgs(ctx).filter(id => ctx.here(id));
+    if(live.length && live.every(id => gOf(ctx, id))) revealTous(ctx);
+  }
+}
+function renderTous(ctx, root){
+  const s = ctx.s, c = view(s.c, s.tw), isI = s.ind === ctx.me, iName = ctx.name(s.ind), playing = ctx.ids.indexOf(ctx.me) >= 0;
+  const label = '<span class="eyebrow">Manche ' + s.round + " / " + s.rounds + " · indicateur : " + esc(iName) + "</span>" + SB.u.twistHTML(TW(s.tw));
+  const hostBox = '<div class="dock" data-hostbox></div>';
+  const one = s.tw === "mot";
+  const clues = () => { const l = clList(ctx); return l.length ? l.map(t => '<li><span class="t">' + esc(t) + "</span></li>").join("") : '<li><span class="by">' + esc(iName) + " n'a pas encore donné d'indice.</span></li>"; };
+  const chips = () => tgs(ctx).map(id => { const ok = !!gOf(ctx, id); return '<span class="chip' + (ok ? " ok" : "") + '">' + (ok ? "✓ " : "") + esc(ctx.name(id)) + (ctx.here(id) ? "" : " (parti)") + "</span>"; }).join("");
+  const sync = (sel, html) => { const e = root.querySelector(sel); if(e && e.innerHTML !== html) e.innerHTML = html; };
+  const hostButtons = (key, html, bind) => {
+    const hb = root.querySelector("[data-hostbox]"); if(!hb) return;
+    if(!ctx.isHost){ if(hb.innerHTML) hb.innerHTML = ""; return; }
+    if(hb.dataset.k === key) return;
+    hb.dataset.k = key; hb.innerHTML = html; bind(hb);
+  };
+  const skip = c2 => { if(c2.s.phase === "clues" || c2.s.phase === "guess"){ c2.set({ rh: A(c2.s.rh).concat([[c2.s.round, A(c2.s.c)[0], c2.s.note, c2.name(c2.s.ind), c2.s.tw || "", [], 0]]) }); nextRound(c2); } };
+  if(s.phase === "clues"){
+    if(isI){
+      if(clK !== s.k){ clK = s.k; clV = A(ctx.mine() && ctx.mine().cl).slice(0, MAXCL); }
+      screen(root, "ic" + s.k, CSS + label + (s.dl ? '<div class="timer" data-t></div>' : "") + catCard(c, "Catégorie", gradeHTML(s.note)) +
+        '<p class="howto">Tu es l\'indicateur. Donne <b>1 à ' + MAXCL + " " + (one ? "mots seuls" : "exemples") + '</b> qui valent cette note pour toi. Sans chiffre. Tous les autres devinent.</p>' +
+        '<div class="field" data-form><label class="eyebrow" for="n10-in">Indice</label><div class="row"><input class="txt" id="n10-in" maxlength="60" autocomplete="off" placeholder="' + (one ? "Un seul mot" : "Un exemple, sans chiffre") + '"><button class="btn ghost" type="button" data-add style="flex:none">Ajouter</button></div><p class="err" data-err hidden></p></div>' +
+        '<ul class="mine" data-mine></ul>' + SB.u.dock('<button class="btn acc" type="button" data-go disabled>Faire deviner</button><button class="link" type="button" data-rr style="align-self:center"' + (s.rr > 0 ? "" : " disabled") + ">" + (s.rr > 0 ? "Changer de catégorie (" + s.rr + " restant" + (s.rr > 1 ? "s" : "") + ")" : "Plus de changement de catégorie") + "</button>") + hostBox, r => {
+        const inp = r.querySelector("#n10-in"), err = r.querySelector("[data-err]");
+        const bad = m => { err.textContent = m; err.hidden = false; };
+        const add = () => {
+          const t = clean(inp.value, 60);
+          if(!t) return bad("Écris un exemple avant d'ajouter.");
+          if(/[0-9]/.test(t)) return bad("Pas de chiffres dans l'indice, c'est trop facile.");
+          if(one && /\s/.test(t)) return bad("Coup de théâtre : un seul mot, sans espace.");
+          if(clV.length >= MAXCL) return bad(MAXCL + " indices maximum. Retire-en un pour changer.");
+          err.hidden = true; clV = clV.concat([t]); inp.value = ""; ctx.send({ cl: clV, go: false }); inp.focus();
+        };
+        r.querySelector("[data-add]").addEventListener("click", add);
+        inp.addEventListener("keydown", e => { if(e.key === "Enter") add(); });
+        r.querySelector("[data-mine]").addEventListener("click", e => {
+          const b = e.target.closest("[data-x]"); if(!b) return;
+          clV = clV.filter((_, j) => j !== +b.dataset.x); ctx.send({ cl: clV, go: false });
+        });
+        r.querySelector("[data-go]").addEventListener("click", () => { if(!clV.length) return; ctx.send({ cl: clV, go: true }); });
+        r.querySelector("[data-rr]").addEventListener("click", () => { if(s.rr > 0) ctx.send({ rr: s.rr }); });
+      });
+      const sent = ctx.mine() && ctx.mine().go;
+      sync("[data-mine]", clV.map((t, j) => '<li><span class="tx"><b>' + esc(t) + '</b></span><button class="x" type="button" data-x="' + j + '" aria-label="Retirer ' + esc(t) + '">×</button></li>').join(""));
+      const go = root.querySelector("[data-go]");
+      go.disabled = !clV.length || !!sent; go.textContent = sent ? "Indices envoyés" : "Faire deviner (" + SB.u.plural(clV.length, "indice") + ")";
+      root.querySelector("[data-form]").hidden = clV.length >= MAXCL || !!sent;
+    } else {
+      screen(root, "wc" + s.k, CSS + label + (s.dl ? '<div class="timer" data-t></div>' : "") + (s.tw === "aveugle" ? hiddenCard : catCard(c)) +
+        '<div class="pass"><span class="eyebrow">' + (playing ? "Tu devines" : "Spectateur") + '</span><div class="who">' + esc(iName) + '</div><p>regarde la note secrète et prépare ses indices.</p></div>' +
+        '<div class="field"><span class="eyebrow">Indices</span><ul class="list" data-clues></ul></div>' + hostBox);
+      sync("[data-clues]", clues());
+    }
+    if(s.dl){ const left = Math.max(0, Math.ceil((s.dl - ctx.now()) / 1000)), t = txt(root, "[data-t]", left); if(t) t.classList.toggle("low", left <= 10); }
+    const gone = !ctx.here(s.ind);
+    hostButtons(s.k + "|" + gone, gone ? '<button class="link warn" type="button" data-skip style="align-self:center">L\'indicateur est parti, passer la manche</button>' : "", hb => {
+      const b = hb.querySelector("[data-skip]"); if(b) b.addEventListener("click", () => ctx.act(skip));
+    });
+  } else if(s.phase === "guess"){
+    const isG = !isI && playing;
+    screen(root, "tg" + s.k + isG, CSS + label + (isI ? catCard(c, "Catégorie", gradeHTML(s.note)) : s.tw === "aveugle" ? hiddenCard : catCard(c)) +
+      '<div class="field"><span class="eyebrow">Les indices de ' + esc(iName) + '</span><ul class="list" data-clues></ul></div>' +
+      (isG ? '<div class="field"><span class="eyebrow">Quelle note a-t-il en tête ?</span>' + padHTML() + "</div>" + SB.u.dock('<button class="btn acc" type="button" data-val disabled>Valider ma note</button>') : "") +
+      '<div class="field"><span class="eyebrow">Notes reçues</span><div class="chips" data-chips></div></div>' + (isG ? "" : SB.u.dock('<p class="wait">Tout le monde réfléchit…</p>')) + hostBox, r => {
+      if(pickK !== s.k){ pickK = s.k; pickN = gOf(ctx, ctx.me); }
+      const v = r.querySelector("[data-val]");
+      const mark = () => r.querySelectorAll("[data-n]").forEach(x => x.setAttribute("aria-pressed", +x.dataset.n === pickN));
+      r.querySelectorAll("[data-n]").forEach(b => b.addEventListener("click", () => { pickN = +b.dataset.n; mark(); if(v){ v.disabled = false; v.textContent = "Valider ma note"; } }));
+      if(v) v.addEventListener("click", () => { if(!pickN) return; ctx.send({ n: pickN }); v.disabled = true; v.textContent = "Note envoyée : " + pickN; });
+      if(pickN){ mark(); if(v){ v.disabled = true; v.textContent = "Note envoyée : " + pickN; } }
+    });
+    sync("[data-clues]", clues());
+    sync("[data-chips]", chips());
+    const n = tgs(ctx).filter(id => gOf(ctx, id)).length, gone = !ctx.here(s.ind);
+    hostButtons(s.k + "|" + (n > 0) + "|" + gone, '<button class="btn ghost" type="button" data-rev' + (n ? "" : " disabled") + ">Révéler sans attendre les autres</button>" +
+      (gone && !n ? '<button class="link warn" type="button" data-skip style="align-self:center">L\'indicateur est parti, passer la manche</button>' : ""), hb => {
+      hb.querySelector("[data-rev]").addEventListener("click", () => ctx.act(c2 => { if(c2.s.phase === "guess") revealTous(c2); }));
+      const b = hb.querySelector("[data-skip]"); if(b) b.addEventListener("click", () => ctx.act(skip));
+    });
+  } else if(s.phase === "result"){
+    const res = A(s.res).map(A), mine = res.find(x => x[0] === ctx.me);
+    const head = isI ? "+" + s.ip + " pour toi" : mine ? (VERDICTS[mine[2]] || VERDICTS[0])[0] + " +" + mine[2] : "La note était " + s.note;
+    screen(root, "tr" + s.k + ctx.isHost, CSS + label + '<div class="verdict">' + esc(head) + '</div><p style="font-size:17px">La note de ' + esc(iName) + " était <b>" + s.note + "</b>" + (mine ? ", tu as dit " + mine[1] : "") + ".</p>" +
+      '<div class="card"><div class="big" style="font-size:22px">' + esc(c[0]) + "</div>" + rulerMulti(s.note, res.map(x => x[1])) + '<div class="n10-legend"><span><i class="ln"></i>Note secrète</span><span><i class="lg"></i>Notes proposées</span></div></div>' +
+      guessesHTML(res.map(x => [ctx.name(x[0]), x[1], x[2]]), iName, s.ip, s.tw) + standHTML(scoreRows(ctx), "Classement") +
+      SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>' + (s.round >= s.rounds ? "Voir le classement final" : "Manche suivante") + "</button>" : '<p class="wait">L\'hôte lance la suite…</p>'), r => {
+      const b = r.querySelector("[data-next]"); if(b) b.addEventListener("click", () => ctx.act(c2 => { if(c2.s.phase === "result") nextRound(c2); }));
+    });
+  } else if(s.phase === "end"){
+    const rows = scoreRows(ctx), top = topOf(rows);
+    screen(root, "tend" + ctx.isHost, CSS + '<span class="eyebrow">Fin de partie</span><div class="verdict">' + (top.length ? esc(top.join(" et ")) + (top.length > 1 ? " gagnent" : " gagne") : "Personne ne marque") + "</div>" +
+      standHTML(rows, "Classement final") + awardsHTML(awards(s.hist, true)) + roundTable(s.rh) +
+      SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>Retour au salon</button>' : '<p class="wait">L\'hôte va vous ramener au salon.</p>'), r => {
+      const b = r.querySelector("[data-back]");
+      if(b) b.addEventListener("click", () => ctx.act(c2 => {
+        const R = scoreRows(c2).sort((a, b2) => b2[1] - a[1]), m = R.length ? R[0][1] : 0;
+        c2.end({ title: m > 0 ? R.filter(x => x[1] === m).map(x => x[0]).join(" et ") + " en tête avec " + SB.u.plural(m, "point") : "Personne n'a marqué",
+          lines: R.slice(0, 5).map(x => x[0] + " : " + SB.u.plural(x[1], "pt")).concat(awards(c2.s.hist, true).map(a => a[0] + " : " + a[1])),
+          win: m > 0 ? R.filter(x => x[1] === m).map(x => x[2]) : [] });
+      }));
+    });
+  }
+}
+
 function histRow(ctx, guess, pts){ const s = ctx.s; return [s.round, A(s.c)[0], s.note, guess, pts, ctx.name(s.guesser), s.tw || "", ctx.ids.filter(id => id !== s.guesser && clueOf(ctx, id)).map(ctx.name)]; }
 let pickN = 0, pickK = "";
 
@@ -380,15 +547,16 @@ SB.register({
   tag: "Une catégorie, une note secrète. Faites-la deviner avec des exemples.",
   min: 2, max: 12,
   rules: [
-    "À chaque manche, un joueur devine. Les autres voient une catégorie et une note secrète de 1 à 10.",
-    "Chacun écrit un exemple de la catégorie qui vaut cette note pour lui. Pas de chiffres.",
-    "Le devineur lit les indices et propose une note.",
-    "Pile : 3 points. À 1 près : 2. À 2 près : 1. Le score est collectif.",
+    "Tout le monde devine (par défaut) : à chaque manche, un indicateur voit une catégorie et une note secrète de 1 à 10. Il donne 1 à 3 exemples qui valent cette note pour lui, sans chiffre.",
+    "Tous les autres proposent une note en secret, chacun pour soi. Pile : 3 points. À 1 près : 2. À 2 près : 1.",
+    "L'indicateur marque la moyenne (arrondie) des points de ses devineurs : plus ses indices sont clairs, plus il gagne. Le rôle tourne à chaque manche. Le meilleur score gagne.",
+    "Un seul devineur : un joueur devine, tous les autres écrivent chacun un indice. Le score est collectif.",
     "Coups de théâtre : une manche sur trois environ, une règle change (note inversée, un seul mot, double ou rien, chrono…).",
     "Les catégories déjà jouées sur ce téléphone reviennent en dernier."
   ],
   presence: () => myCustom().slice(0, 50),
   options: [
+    { id: "mode", label: "Mode", type: "seg", def: "tous", values: [{ v: "tous", label: "Tout le monde devine" }, { v: "un", label: "Un seul devineur" }] },
     { id: "rounds", label: "Manches", type: "seg", def: 6, values: [{ v: 4, label: "4" }, { v: 6, label: "6" }, { v: 10, label: "10" }] },
     { id: "packs", label: "Catégories", type: "multi", def: ["classique"],
       values: ctx => PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, count: p.v === "perso" ? sharedCustom(ctx.peers).length : p.cats.length })) },
@@ -401,10 +569,12 @@ SB.register({
     const deck = SB.u.fresh("note10:cats", pool), c = deck.pop();
     ctx.setPriv({ deck }); SB.u.saw("note10:cats", [c]);
     const gi = Math.floor(Math.random() * ctx.players.length);
+    if(o.mode !== "un") return { phase: "clues", mode: "tous", round: 1, rounds: o.rounds || 6, gi, ind: ctx.players[gi].id, c, tw: "", dl: 0, note: rollNote(""), rr: 2, sc: {}, res: [], ip: 0, hist: [], rh: [] };
     return { phase: "clues", round: 1, rounds: o.rounds || 6, gi, guesser: ctx.players[gi].id, c, tw: "", dl: 0, note: rollNote(""), rr: 2, score: 0, max: 0, guess: 0, pts: 0, hist: [] };
   },
   host(ctx){
     const s = ctx.s;
+    if(s.mode === "tous") return hostTous(ctx);
     if(s.phase === "clues"){
       const gv = givers(ctx);
       if((gv.length && gv.every(id => clueOf(ctx, id))) || (s.dl && ctx.now() >= s.dl)) ctx.set({ phase: "guess" });
@@ -417,6 +587,7 @@ SB.register({
     }
   },
   render(ctx, root){
+    if(ctx.s.mode === "tous") return renderTous(ctx, root);
     const s = ctx.s, c = view(s.c, s.tw), isG = s.guesser === ctx.me, gName = ctx.name(s.guesser);
     const label = '<span class="eyebrow">Manche ' + s.round + " / " + s.rounds + " · devineur : " + esc(gName) + "</span>" + SB.u.twistHTML(TW(s.tw));
     const hostBox = '<div class="dock" data-hostbox></div>';
@@ -513,25 +684,70 @@ SB.register({
     players: { min: 2, max: 12 },
     start(root, api){
       const names = api.names;
-      const L = { phase: "setup", rounds: [4, 6, 10].indexOf(store().n10rounds) >= 0 ? store().n10rounds : 6, packs: A(store().n10packs).length ? A(store().n10packs) : ["classique"], twOn: store().n10tw !== false,
-        round: 0, gi: 0, deck: [], c: null, note: 0, guess: 0, rr: 2, score: 0, max: 0, hist: [], tw: "", dl: 0 };
+      const L = { phase: "setup", rounds: [4, 6, 10].indexOf(store().n10rounds) >= 0 ? store().n10rounds : 6, packs: A(store().n10packs).length ? A(store().n10packs) : ["classique"], twOn: store().n10tw !== false, mode: store().n10mode === "un" ? "un" : "tous",
+        sc: {}, order: [], qi: 0, res: [], rh: [], round: 0, gi: 0, deck: [], c: null, note: 0, guess: 0, rr: 2, score: 0, max: 0, hist: [], tw: "", dl: 0 };
+      const startTous = () => { L.order = names.map((_, i) => names[(L.gi + 1 + i) % names.length]).filter(n => n !== names[L.gi]); L.qi = 0; L.res = []; };
       const draw = () => { if(!L.deck.length) L.deck = SB.u.fresh("note10:cats", buildPool(L.packs, [])); L.c = L.deck.pop() || CATS[0].slice(); SB.u.saw("note10:cats", [L.c]); L.note = rollNote(L.tw); };
       const go = () => {
         const g = names[L.gi], c = view(L.c || ["", "", ""], L.tw);
         const lab = '<span class="eyebrow">Manche ' + L.round + " / " + L.rounds + "</span>" + SB.u.twistHTML(TW(L.tw));
         if(L.phase === "setup"){
-          screen(root, "setup" + JSON.stringify([L.rounds, L.packs, L.twOn]), CSS + '<div class="field"><span class="eyebrow">Manches</span><div class="seg">' + [4, 6, 10].map(n => '<button type="button" data-r="' + n + '" aria-pressed="' + (n === L.rounds) + '">' + n + "</button>").join("") + "</div></div>" +
+          screen(root, "setup" + JSON.stringify([L.rounds, L.packs, L.twOn, L.mode]), CSS + '<div class="field"><span class="eyebrow">Mode</span><div class="seg">' + [["tous", "Tout le monde devine"], ["un", "Un seul devineur"]].map(m => '<button type="button" data-m="' + m[0] + '" aria-pressed="' + (m[0] === L.mode) + '">' + m[1] + "</button>").join("") + '</div><p class="sm" style="margin:6px 0 0">' + (L.mode === "tous" ? "Un indicateur donne les exemples, tous les autres devinent chacun pour soi." : "Un devineur, tous les autres donnent un indice. Score d'équipe.") + "</p></div>" +
+            '<div class="field"><span class="eyebrow">Manches</span><div class="seg">' + [4, 6, 10].map(n => '<button type="button" data-r="' + n + '" aria-pressed="' + (n === L.rounds) + '">' + n + "</button>").join("") + "</div></div>" +
             '<div class="field"><span class="eyebrow">Catégories</span><div class="packs">' + PACKS.map(p => { const n = p.v === "perso" ? myCustom().length : p.cats.length; return '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-p="' + p.v + '" aria-pressed="' + (L.packs.indexOf(p.v) >= 0 && n > 0) + '"' + (n ? "" : " disabled") + '><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.v === "perso" ? "Celles que tu as créées" : p.desc) + '</span></span><span class="ct">' + n + "</span></button>"; }).join("") + "</div>" +
             '<button class="link" type="button" data-edit style="align-self:flex-start">Créer mes propres catégories</button></div>' +
             '<div class="field"><span class="eyebrow">Variante</span>' + TW_TOGGLE(L.twOn) + "</div>" +
-            '<p class="howto">Les indices se disent à voix haute, et on se passe le téléphone entre le groupe et le devineur.</p><div class="dock"><p class="err" data-err hidden></p><button class="btn acc" type="button" data-go>Commencer la partie</button></div>', r => {
+            '<p class="howto">' + (L.mode === "tous" ? "L'indicateur dit ses exemples à voix haute, puis chacun entre sa note en secret sur le téléphone." : "Les indices se disent à voix haute, et on se passe le téléphone entre le groupe et le devineur.") + "</p>" + '<div class="dock"><p class="err" data-err hidden></p><button class="btn acc" type="button" data-go>Commencer la partie</button></div>', r => {
+            r.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => { L.mode = b.dataset.m; persist({ n10mode: L.mode }); go(); }));
             r.querySelectorAll("[data-r]").forEach(b => b.addEventListener("click", () => { L.rounds = +b.dataset.r; persist({ n10rounds: L.rounds }); go(); }));
             r.querySelectorAll("[data-p]").forEach(b => b.addEventListener("click", () => { const i = L.packs.indexOf(b.dataset.p); if(i >= 0) L.packs.splice(i, 1); else L.packs.push(b.dataset.p); persist({ n10packs: L.packs }); go(); }));
             r.querySelector("[data-tw]").addEventListener("click", () => { L.twOn = !L.twOn; persist({ n10tw: L.twOn }); go(); });
             r.querySelector("[data-edit]").addEventListener("click", () => openEditor(() => { root.dataset.key = ""; go(); }));
             r.querySelector("[data-go]").addEventListener("click", () => {
               if(!buildPool(L.packs, []).length){ const e = r.querySelector("[data-err]"); e.textContent = "Choisis au moins un paquet de catégories."; e.hidden = false; return; }
-              L.round = 1; L.score = 0; L.max = 0; L.hist = []; L.rr = 2; L.tw = ""; L.gi = Math.floor(Math.random() * names.length); L.deck = SB.u.fresh("note10:cats", buildPool(L.packs, [])); draw(); L.phase = "team"; go();
+              L.round = 1; L.score = 0; L.max = 0; L.hist = []; L.rr = 2; L.tw = ""; L.gi = Math.floor(Math.random() * names.length); L.sc = {}; L.rh = []; names.forEach(n => { L.sc[n] = 0; }); L.deck = SB.u.fresh("note10:cats", buildPool(L.packs, [])); draw(); startTous(); L.phase = L.mode === "tous" ? "ipass" : "team"; go();
+            });
+          });
+        } else if(L.phase === "ipass"){
+          screen(root, "ipass" + L.round, lab + '<div class="pass"><span class="eyebrow">Indicateur de la manche</span><div class="who">' + esc(g) + "</div><p>Donnez le téléphone à <b>" + esc(g) + "</b>. Lui seul regarde l'écran : il va voir la catégorie et la note secrète.</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>C'est moi, montrer la note</button></div>", r => {
+            r.querySelector("[data-n]").addEventListener("click", () => { L.dl = L.tw === "chrono" ? Date.now() + CHRONO * 1000 : 0; L.phase = "iclue"; go(); });
+          });
+        } else if(L.phase === "iclue"){
+          screen(root, "iclue" + L.round + c[0] + L.rr, CSS + lab + (L.dl ? '<div class="timer" data-t>' + CHRONO + "</div>" : "") + catCard(c, "Catégorie", gradeHTML(L.note)) +
+            '<p class="howto">Dis à voix haute <b>1 à ' + MAXCL + " " + (L.tw === "mot" ? "mots seuls" : "exemples") + '</b> qui valent cette note pour toi. Sans chiffre' + (L.tw === "aveugle" ? ", et sans dire la catégorie" : "") + ".</p>" +
+            '<div class="dock"><button class="btn acc" type="button" data-n>Cacher la note, place aux devineurs</button><button class="link" type="button" data-rr style="align-self:center"' + (L.rr > 0 ? "" : " disabled") + ">" + (L.rr > 0 ? "Changer de catégorie (" + L.rr + " restant" + (L.rr > 1 ? "s" : "") + ")" : "Plus de changement de catégorie") + "</button></div>", r => {
+            r.querySelector("[data-n]").addEventListener("click", () => { L.dl = 0; L.phase = "gpass"; go(); });
+            r.querySelector("[data-rr]").addEventListener("click", () => { if(L.rr > 0){ L.rr--; draw(); if(L.dl) L.dl = Date.now() + CHRONO * 1000; go(); } });
+          });
+        } else if(L.phase === "gpass"){
+          const who = L.order[L.qi];
+          screen(root, "gpass" + L.round + "-" + L.qi, lab + '<div class="pass"><span class="eyebrow">Devineur ' + (L.qi + 1) + " sur " + L.order.length + '</span><div class="who">' + esc(who) + "</div><p>Passe le téléphone à <b>" + esc(who) + "</b>. Les autres ne regardent pas sa note.</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>C'est moi, je devine</button></div>", r => {
+            r.querySelector("[data-n]").addEventListener("click", () => { L.guess = 0; L.phase = "gguess"; go(); });
+          });
+        } else if(L.phase === "gguess"){
+          const who = L.order[L.qi];
+          screen(root, "gguess" + L.round + "-" + L.qi, CSS + lab + (L.tw === "aveugle" ? hiddenCard : catCard(c)) + '<span class="eyebrow">' + esc(who) + ", quelle note " + esc(g) + " a-t-il en tête ?</span>" + padHTML() + '<div class="dock"><button class="btn acc" type="button" data-v disabled>Valider ma note</button></div>', r => {
+            r.querySelectorAll("[data-n]").forEach(b => b.addEventListener("click", () => { L.guess = +b.dataset.n; r.querySelectorAll("[data-n]").forEach(x => x.setAttribute("aria-pressed", +x.dataset.n === L.guess)); r.querySelector("[data-v]").disabled = false; }));
+            r.querySelector("[data-v]").addEventListener("click", () => {
+              if(!L.guess) return;
+              L.res.push([who, L.guess, points(L.note, L.guess, L.tw)]);
+              if(++L.qi < L.order.length){ L.phase = "gpass"; go(); return; }
+              const ip = indPts(L.res);
+              L.res.forEach(x => { L.sc[x[0]] = (L.sc[x[0]] || 0) + x[2]; });
+              L.sc[g] = (L.sc[g] || 0) + ip;
+              L.res.forEach(x => L.hist.push([L.round, c[0], L.note, x[1], x[2], x[0], L.tw, [g]]));
+              L.rh.push([L.round, c[0], L.note, g, L.tw, L.res.slice(), ip]);
+              L.phase = "tres"; go();
+            });
+          });
+        } else if(L.phase === "tres"){
+          const h = L.rh[L.rh.length - 1];
+          screen(root, "tres" + L.round, CSS + lab + '<div class="verdict">La note était ' + h[2] + '</div><div class="card"><div class="big" style="font-size:22px">' + esc(c[0]) + "</div>" + rulerMulti(h[2], h[5].map(x => x[1])) +
+            '<div class="n10-legend"><span><i class="ln"></i>Note secrète</span><span><i class="lg"></i>Notes proposées</span></div></div>' + guessesHTML(h[5], g, h[6], L.tw) + standHTML(names.map(n => [n, L.sc[n] || 0]), "Classement") +
+            '<div class="dock"><button class="btn acc" type="button" data-n>' + (L.round >= L.rounds ? "Voir le classement final" : "Manche suivante") + "</button></div>", r => {
+            r.querySelector("[data-n]").addEventListener("click", () => {
+              if(L.round >= L.rounds){ L.phase = "end"; const top = topOf(names.map(n => [n, L.sc[n] || 0])); if(top.length) api.win(top); go(); return; }
+              L.round++; L.gi = (L.gi + 1) % names.length; L.tw = rollTwist(L.twOn, L.tw); draw(); startTous(); L.phase = "ipass"; go();
             });
           });
         } else if(L.phase === "team"){
@@ -564,6 +780,13 @@ SB.register({
               L.round++; L.gi = (L.gi + 1) % names.length; L.rr = Math.max(L.rr, 0); L.tw = rollTwist(L.twOn, L.tw); draw(); L.phase = "team"; go();
             });
           });
+        } else if(L.phase === "end" && L.mode === "tous"){
+          const rows = names.map(n => [n, L.sc[n] || 0]), top = topOf(rows);
+          screen(root, "tend", CSS + '<span class="eyebrow">Fin de partie</span><div class="verdict">' + (top.length ? esc(top.join(" et ")) + (top.length > 1 ? " gagnent" : " gagne") : "Personne ne marque") + "</div>" +
+            standHTML(rows, "Classement final") + awardsHTML(awards(L.hist, true)) + roundTable(L.rh) + '<div class="dock"><button class="btn acc" type="button" data-a>Rejouer</button><button class="btn ghost" type="button" data-q>Choisir un autre jeu</button></div>', r => {
+            r.querySelector("[data-a]").addEventListener("click", () => api.again());
+            r.querySelector("[data-q]").addEventListener("click", api.exit);
+          });
         } else if(L.phase === "end"){
           screen(root, "end", CSS + reportHTML(L.score, Math.max(1, L.max)) + awardsHTML(awards(L.hist)) + histTable(L.hist) + '<div class="dock"><button class="btn acc" type="button" data-a>Rejouer</button><button class="btn ghost" type="button" data-q>Choisir un autre jeu</button></div>', r => {
             r.querySelector("[data-a]").addEventListener("click", () => api.again());
@@ -572,10 +795,10 @@ SB.register({
         }
       };
       api.onTick(() => {
-        if(L.phase !== "clue" || !L.dl) return;
+        if((L.phase !== "clue" && L.phase !== "iclue") || !L.dl) return;
         const left = Math.max(0, Math.ceil((L.dl - Date.now()) / 1000)), t = txt(root, "[data-t]", left);
         if(t) t.classList.toggle("low", left <= 10);
-        if(left <= 0){ SB.u.buzz([80, 60, 80]); L.phase = "pass"; go(); }
+        if(left <= 0){ SB.u.buzz([80, 60, 80]); L.dl = 0; L.phase = L.phase === "iclue" ? "gpass" : "pass"; go(); }
       });
       go();
     }
