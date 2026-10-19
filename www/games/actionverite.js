@@ -2,6 +2,7 @@
 (function(){
 "use strict";
 const { esc, A, shuffle, screen, txt, store, persist, dock, clean, armTap, pick, buzz } = SB.u;
+const tr = SB.u.tr;
 
 /* Cartes : VT = vérités, AC = actions. {A} et {B} = autres joueurs. Hot et Hard réservés aux adultes. */
 const VT = {
@@ -596,10 +597,603 @@ const AC = {
   ]
 };
 
+/* English cards (same levels). {A} and {B} = other players. */
+const VT_EN = {
+  "soft": [
+  "What's the most embarrassing thing you did in middle school?",
+  "What's a guilty pleasure nobody here knows about?",
+  "What's the last thing you searched for online?",
+  "Who here made the worst first impression on you, and why?",
+  "What's the biggest lie you ever told your parents?",
+  "What song do you belt out when you're home alone?",
+  "What's the most ridiculous nickname you've ever had?",
+  "What's your worst vacation memory?",
+  "Have you ever faked being sick to avoid someone? Spill.",
+  "What's the weirdest thing you've ever eaten?",
+  "What's your biggest irrational fear?",
+  "What's the worst haircut you've ever had?",
+  "What's the last text you regretted sending?",
+  "Who here would last the shortest time on a desert island?",
+  "What useless talent are you secretly proud of?",
+  "Have you ever secretly read someone else's messages?",
+  "What's the worst excuse you've ever made up for being late?",
+  "What movie made you cry like a baby?",
+  "What's the most expensive thing you've ever broken?",
+  "If you could swap lives with someone here, who would it be?",
+  "What's the worst gift you've ever gotten, and did you regift it?",
+  "What weird habit do you have when nobody's watching?",
+  "What's your worst fail in public?",
+  "As an adult, have you ever peed somewhere other than a toilet? Where?",
+  "When did you last cry, and why?",
+  "Who here are you most jealous of, and why?",
+  "What's the worst job you've ever had?",
+  "What secret have you kept the longest?",
+  "Have you ever forgotten someone's name in the middle of a conversation?",
+  "What's the most embarrassing thing in your bedroom right now?",
+  "What's your worst party memory?",
+  "Who here has the worst taste in music?",
+  "Which celebrity would you like to be for a day?",
+  "What lie do you tell most often?",
+  "Have you ever blamed someone else for something you did?",
+  "What's the strangest compliment you've ever gotten?",
+  "What's your most embarrassing moment at work or school?",
+  "What's the last thing you stole, even something tiny?",
+  "Which app do you open the most, and for how many hours a day?",
+  "What's the weirdest dream you can remember?",
+  "Who here would you take on a road trip, and who would you ditch at a gas station?",
+  "What's the most pointless thing you've bought this year?",
+  "What's the most immature thing you still do?",
+  "What's the worst a joke of yours has ever bombed?",
+  "Have you ever stalked an ex on social media? How deep did you go?",
+  "What's the worst thing you've said behind the back of someone here?",
+  "What flaw do you hate most about yourself?",
+  "What dish do you mess up every single time?",
+  "When were you the most scared in your life?",
+  "Have you ever pretended to like a gift from someone here?",
+  "What's the craziest thing you've done to impress someone?",
+  "What's your worst first-date memory?",
+  "Who here would you trust with your keys, and who never?",
+  "What rule do you break most often?",
+  "What would you never admit to your family?",
+  "What's your record for going without washing your hair?",
+  "What's the dumbest thing you believed for years?",
+  "What do you pretend to be great at when you're actually bad at it?",
+  "What's your favorite conspiracy theory, even if you don't buy it?",
+  "Who's the last person you blocked, and why?",
+  "Have you ever napped at work or in class? Where?",
+  "When did you feel the most ridiculous?",
+  "Who here would you never want as a roommate?",
+  "What are you hiding on your phone?",
+  "What's the worst advice you've ever given someone?",
+  "Have you ever eaten something off the floor in front of everyone?",
+  "What game do you cheat at with zero shame?",
+  "What's the worst outfit you've ever worn to a party?",
+  "What's your proudest useless achievement?",
+  "What childish thing still scares you?",
+  "If {A} were a dish, what would it be?",
+  "What was your very first impression of {A}?",
+  "What would you change about {A} if you could?",
+  "What memory with {A} still makes you laugh?",
+  "What secret of {A}'s could you spill without starting a fight?",
+  "What nickname would you give {A}?",
+  "Where do you think {A} will be in ten years?",
+  "Which of {A}'s habits annoys you the most?",
+  "For a two-week trip, do you pick {A} or {B}?",
+  "What's the most awkward moment you've had with {A}?",
+  "What do you secretly admire about {A}?",
+  "What animal would {A} be in another life?",
+  "What's the last thing that made you really angry?",
+  "Have you ever lied in this game? When?",
+  "What's the weirdest thing you've ever googled about yourself?",
+  "What's the best lie you ever told a teacher or a boss?",
+  "Who's the most embarrassing contact in your phone?",
+  "What phrase do you say all the time without realizing it?",
+  "What's the lamest thing you've done for likes?",
+  "What's the last thing you bought in secret?",
+  "What's the worst birthday you've ever had?",
+  "Who here is the most like you, and does that bother you?",
+  "Have you ever sung or talked to yourself without realizing someone was listening?",
+  "Which cartoon character was your first crush?",
+  "What's the dumbest thing you've done while tipsy?",
+  "What's your record number of unread messages?",
+  "What name would you never dare give your kid?",
+  "What's the lamest excuse you've given to bail on a party?",
+  "What's the bravest thing you've ever done?",
+  "Who's the last person who made you blush?",
+  "What's your weirdest bedtime ritual?",
+  "What's the last compliment you gave without meaning it?",
+  "What's the worst photo of you in existence, and who has it?",
+  "What's your biggest regret this year?",
+  "How old were you when you stopped believing in Santa, and who ruined it?",
+  "Have you ever hugged someone just to end a conversation?",
+  "What job would you do if you weren't afraid of anything?",
+  "What's the biggest fight you've had over something stupid?",
+  "What's the last thing you said that you really shouldn't have?",
+  "What's the meanest prank you've ever pulled on a sibling or cousin?",
+  "Who here is most likely to be living a double life?",
+  "What's the cheesiest pickup line you've ever used?"
+  ],
+  "hot": [
+  "How many people have you slept with? The real number.",
+  "What's the tamest fantasy you're willing to admit?",
+  "What's the weirdest place you've ever kissed someone?",
+  "Who here do you think is the best kisser?",
+  "What body part makes you weak at the knees?",
+  "What was your worst first kiss?",
+  "Have you ever had a crush on someone in this room?",
+  "What's the boldest thing you've done to seduce someone?",
+  "Have you ever slept with someone on the first date? Set the scene.",
+  "What was your shortest relationship, and why didn't it last?",
+  "Have you ever sent a dirty text to the wrong person?",
+  "What makes you completely lose it in bed?",
+  "What's your secret flirting technique?",
+  "Have you ever faked it? Roughly how many times?",
+  "What's the worst date you've had from a dating app?",
+  "What outfit on someone drives you wild?",
+  "If you had to date someone here, who would it be?",
+  "What physical compliment gets you every time?",
+  "Have you ever hit on a friend's ex?",
+  "Have you ever had a one-night stand you regretted the next morning?",
+  "What's your favorite position? Just the name.",
+  "Have you ever been caught mid-hookup? By who?",
+  "What's your physical type, honestly?",
+  "What's the first thing you check out on someone you're into?",
+  "Have you ever had sex in a car?",
+  "What's the longest you've gone without sex?",
+  "What's the hottest text you've ever received?",
+  "Have you ever had a fling with a coworker?",
+  "What's your worst memory in bed?",
+  "Have you ever dated two people at the same time?",
+  "Have you ever kissed someone of the same sex?",
+  "What's the most romantic thing you've ever done for someone?",
+  "Who's the oldest person you've ever dated?",
+  "What turns you on most: the voice, the eyes or the smell?",
+  "Have you ever had sex in a public place?",
+  "Have you ever had a regular hookup? How did it end?",
+  "What's the most brutal rejection you've ever had?",
+  "Have you ever hooked up with an ex again? How many times?",
+  "Who here has the best smile?",
+  "Who here has the best body, in your opinion?",
+  "Have you ever flirted with someone just to make someone else jealous?",
+  "Have you ever lied about your number of partners? Up or down?",
+  "What's your record for people kissed in a single night?",
+  "What's the perfect song for a steamy night?",
+  "What's the most awkward thing you've said during an intimate moment?",
+  "Do you prefer to dominate or be dominated?",
+  "Have you ever badly wanted someone at the worst possible moment? Spill.",
+  "Have you ever been attracted to a friend's partner?",
+  "What's the best place you've ever had sex?",
+  "What's the first thing you do after a bad date?",
+  "Have you ever watched porn with someone?",
+  "What's your favorite erogenous zone?",
+  "What do you really think of {A}'s love life?",
+  "If you had to kiss {A} or {B}, who would you pick?",
+  "What do you find sexy about {A}?",
+  "What kind of lover do you think {A} would be?",
+  "What would {A}'s ideal date be?",
+  "Have you ever had a dirty thought about {A}? Be honest.",
+  "What's {A}'s biggest flaw in love, in your opinion?",
+  "In the mirror, what's your favorite part of your body?",
+  "What's your dream meet-cute?",
+  "Have you ever shared a bed with someone without anything happening, and regretted it?",
+  "What's the craziest thing you've ever done for love?",
+  "Have you ever been cheated on? How did you find out?",
+  "Have you ever cheated on someone?",
+  "What's your biggest turn-off?",
+  "How long do you wait before texting after a date?",
+  "Have you ever fallen for someone at first sight? Who?",
+  "Have you ever given someone a striptease?",
+  "What's the naughtiest thing in your nightstand?",
+  "Have you ever been caught flirting by your partner?",
+  "Who's the last person you thought about before falling asleep?",
+  "What's the cutest nickname a partner has ever given you?",
+  "What's your biggest dating app fail?",
+  "Have you ever flirted with someone without knowing they were taken?",
+  "In bed: lights on or off?",
+  "What time of day are you most in the mood?",
+  "Have you ever had sex knowing someone could hear?",
+  "What's your record for rounds in one night?",
+  "Have you ever been in a long-distance relationship? How did you deal with missing them?",
+  "What pickup line would actually work on you?",
+  "What makes you run for the hills immediately?",
+  "Have you ever had a crush on your boss?",
+  "What's the most expensive date you paid for that went nowhere?",
+  "Have you ever been in a hot tub with someone you were into?",
+  "What's the sexiest thing anyone has ever said to you?",
+  "When did you feel the most desirable?",
+  "Have you ever swapped naughty pics?",
+  "Have you ever had a threesome, or almost had one?",
+  "Who here would you have the most chemistry with?",
+  "What's your biggest fear in bed?",
+  "What have you never dared ask a partner for?",
+  "Have you ever cried after a breakup you caused?",
+  "What was your longest relationship, and why did it end?",
+  "What's the most awkward moment you've had with an ex?",
+  "Morning cuddles or bedtime cuddles?",
+  "Who here would be the wildest in bed, in your opinion?",
+  "When was the last time you had sex?",
+  "What makes you most jealous in a relationship?",
+  "What tender gesture makes you melt?",
+  "Have you ever flirted with someone in this group without anyone noticing?"
+  ],
+  "hard": [
+  "What's your most unspeakable kink?",
+  "What category do you watch most on adult sites?",
+  "Describe your last time in detail.",
+  "What sex toy do you own, or dream of owning?",
+  "Have you ever made a sex tape? With who (no names)?",
+  "What position do you hate, and why?",
+  "What's the dirtiest thing you've ever done in bed?",
+  "Have you ever finished in under a minute? Spill.",
+  "What's your most embarrassing sex moment?",
+  "What's the weirdest thing a partner has ever asked you to do?",
+  "Have you ever been to a swingers' party or a sex club?",
+  "How many times a week do you get yourself off?",
+  "What's the riskiest place you've ever gotten yourself off?",
+  "Have you ever blindfolded someone in bed, or been blindfolded?",
+  "What's the best orgasm of your life? Full context.",
+  "Have you ever tried anal? Verdict?",
+  "What's the filthiest thing anyone has said to you in bed?",
+  "Have you ever slept with someone whose name you didn't know?",
+  "What's your record for partners in one week?",
+  "What porn scenario would you love to live out?",
+  "Have you ever been caught getting yourself off? By who?",
+  "What do you like receiving most in bed?",
+  "What do you like giving most in bed?",
+  "For a threesome, what would your ideal lineup be?",
+  "What have you done once in bed but never again?",
+  "Have you ever had sex at work? Where exactly?",
+  "What's your record for how long you've lasted in bed?",
+  "Spit or swallow, or does it depend?",
+  "What's the most sensitive part of your body?",
+  "Have you ever used food during sex? What kind?",
+  "Have you ever said the wrong name during sex?",
+  "What's the worst noise you've ever made during sex?",
+  "Have you ever tried to have sex without making a sound? Mission accomplished?",
+  "Shaved, trimmed or natural? For you and for others.",
+  "Have you ever watched porn while thinking about someone here?",
+  "Have you ever had a fantasy about someone in this room? Describe it without saying who.",
+  "What's your worst performance fail in bed?",
+  "Have you ever paid for a naughty service online?",
+  "Have you ever sexted a stranger?",
+  "How long did your longest foreplay session last?",
+  "Have you ever had an STI? How did you break the news?",
+  "What fetish do you have that even surprises you?",
+  "Have you ever had sex on a beach? How was the sand?",
+  "What's the grossest thing that's ever happened to you during sex?",
+  "What's the quickest sex you've ever had, and what happened?",
+  "Have you ever had a purely physical relationship for more than a year?",
+  "Have you ever been to a strip club?",
+  "What's the ideal size for you? You can answer with your hands.",
+  "Have you ever faked it so well the other person applauded?",
+  "What's the most submissive or most dominant thing you've done in bed?",
+  "What sound turns you on most during sex?",
+  "What everyday object have you turned into a sex toy?",
+  "What's the loudest sex of your life? What did the neighbors say?",
+  "Have you ever slept with two different people on the same day?",
+  "Have you ever regretted an intimate tattoo or piercing?",
+  "Have you ever had sex on a plane, a train or a boat?",
+  "What's the wildest thing you've done on a one-night stand?",
+  "Have you ever had a massage that ended in bed?",
+  "What porn line makes you laugh the most?",
+  "Have you ever gotten a cramp in the middle of the action? Spill.",
+  "Have you ever been way too loud in a vacation rental full of friends?",
+  "In theory, what would you want {A} to do to you in bed?",
+  "Do you think {A} is more of a butt, boobs or eyes person?",
+  "What kink do you imagine {A} has?",
+  "Who here has the highest body count, in your opinion?",
+  "Who here has the most toys in their nightstand, in your opinion?",
+  "Who here would be the best at foreplay?",
+  "If you had a threesome with {A} and {B}, who would do what?",
+  "What's the worst place you've ever had sex?",
+  "Have you ever used handcuffs or restraints? Who held the key?",
+  "Have you ever hooked up with someone of the same sex? Spill.",
+  "Have you ever had period sex, yours or your partner's?",
+  "What role-play have you tried, or would you like to try?",
+  "Have you ever filmed an intimate moment together, with both of you on board? Did you keep it?",
+  "Have you ever made a dirty bet? Who won?",
+  "What's the biggest lie you've told to get someone into bed?",
+  "What's your worst underwear fail at the crucial moment?",
+  "Have you ever fallen asleep in the middle of sex?",
+  "What do you do in bed that you're proudest of?",
+  "Have you ever been to an orgy? If not, would you go?",
+  "Have you ever had a date that ended in the bar bathroom?",
+  "What sound do you make when you come? Do a one-second impression.",
+  "Have you ever had to get dressed in a panic because someone was coming home?",
+  "What compliment about your body did you get in bed that you'll never forget?",
+  "Have you ever been desperately horny somewhere it was impossible to do anything?",
+  "What's your worst condom experience?",
+  "What's the longest all-nighter of sex you've ever pulled?",
+  "What do you do solo that you've never done with a partner?",
+  "Have you ever had an orgasm without being touched?",
+  "What's the strangest sex toy you've seen in real life?",
+  "What's your biggest sexual regret?",
+  "What's the last adult video you watched? Give the title, roughly."
+  ]
+};
+const AC_EN = {
+  "soft": [
+  "Impersonate someone in the room until we guess who it is.",
+  "Sing the chorus of a love song in an opera voice.",
+  "Show everyone the last photo in your camera roll.",
+  "Do your best animal impression for 20 seconds.",
+  "Speak in a made-up foreign accent until your next turn.",
+  "Read the last message you sent out loud.",
+  "Do 10 push-ups, or 20 squats if you prefer.",
+  "Dance with no music for 30 seconds.",
+  "Let {A} post a (nice) status on your favorite social network.",
+  "Call a friend and sing them “Happy Birthday”, even if it's not their birthday.",
+  "Make a dramatic declaration of love to an object in the room.",
+  "Tell a terrible joke. If nobody laughs, go again.",
+  "Balance a spoon on your nose for 15 seconds.",
+  "Only speak by singing until your next turn.",
+  "Show your search history from the last 24 hours.",
+  "Put on a fashion show with three pieces of clothing borrowed from the others.",
+  "Let {A} style your hair however they want.",
+  "Send a voice message to your mom or someone close telling them you love them.",
+  "Give an acceptance speech as if you just won an award.",
+  "Act out your favorite movie until someone gets it.",
+  "Do a 30-second commercial for an object chosen by {A}.",
+  "Let the group choose your profile picture for 24 hours.",
+  "Strut around the room like a runway model.",
+  "Narrate your day like a sports commentator.",
+  "Talk for one minute without using the letter E.",
+  "Pull a face and hold it while everyone takes your picture.",
+  "Draw {A} in 30 seconds and show the result.",
+  "Write a four-line poem about {A} and read it out.",
+  "Get people to guess a job using only sound effects.",
+  "Swap a piece of clothing with {A} until your next turn.",
+  "Wear your socks on your hands until your next turn.",
+  "Imitate the laugh of every person in the room.",
+  "Give every player a sincere compliment.",
+  "Let {A} read your latest conversation for 10 seconds.",
+  "Call a random contact and wish them a lovely evening.",
+  "Improvise a dance routine to a song the group picks.",
+  "Tell a story where every other word is made up.",
+  "Stand on one foot until your next turn.",
+  "Take the ugliest selfie possible and make it your lock screen.",
+  "Present tonight's weather forecast like a TV meteorologist.",
+  "Say the alphabet backwards as fast as you can.",
+  "Act like a robot for one minute.",
+  "Let {A} give you a nickname that everyone uses until the end of the game.",
+  "Act out a dramatic breakup scene with {A}.",
+  "Do a beauty tutorial with whatever's on the table.",
+  "Say the longest word you know, then use it in a sentence.",
+  "Make {A} laugh in under 30 seconds, without touching them.",
+  "Impersonate an influencer pitching an absurd product.",
+  "Talk about yourself in the third person until your next turn.",
+  "Write an ode to your favorite food and perform it.",
+  "Beatbox for 20 seconds.",
+  "Show your most embarrassing screenshot.",
+  "Eat whatever the group picks from what's on the table.",
+  "Let {A} put you in a statue pose for 30 seconds.",
+  "Describe your worst nightmare, acting out the key moments.",
+  "Play a wild air guitar solo.",
+  "Send a random emoji to the fifth person in your chats.",
+  "Do a magic trick, even if it flops.",
+  "Read a product manual like a romantic poem.",
+  "Interview {A} like a TV reporter.",
+  "Invent tonight's battle cry and get everyone to repeat it.",
+  "Act out a celebrity until someone guesses who.",
+  "Let the group scroll through your camera roll for 10 seconds.",
+  "Try to lick your elbow.",
+  "Impersonate the teacher or boss who left the biggest mark on you.",
+  "Swap seats with {A} and copy their posture until your next turn.",
+  "Freestyle an eight-bar rap about tonight.",
+  "Tell your most embarrassing story in a bedtime-story voice.",
+  "Wear your sweater inside out until your next turn.",
+  "Pretend you're a tour guide showing off the room.",
+  "Keep your eyes closed until your next turn.",
+  "Let {A} pick your ringtone for the night.",
+  "Until your next turn, make an animal noise every time someone says your name.",
+  "Invent a game and explain the rules in 30 seconds, with a totally straight face.",
+  "Slow dance with a broom or a cushion.",
+  "Don't say yes or no until your next turn.",
+  "Strike the Statue of Liberty pose with whatever you've got at hand.",
+  "Talk like a pirate until your next turn.",
+  "Invent a secret handshake with {A} and learn it in 30 seconds.",
+  "Tell a story about {A} that nobody here knows.",
+  "Praise {B} as if they were a national hero.",
+  "Whisper a secret to {A}, who decides whether it gets revealed.",
+  "Hold a plank for 30 seconds.",
+  "Act like a baby discovering the world for 20 seconds.",
+  "Let {A} write a word on your hand in pen.",
+  "Pretend to cry tears of joy while opening an imaginary present.",
+  "Read a message from your phone in a strong regional accent.",
+  "Until your next turn, do a victory dance every time someone completes a dare.",
+  "Hold an ice cube in your hand as long as you can, then pass it to {A}.",
+  "Answer every question with a question until your next turn.",
+  "Auction off your phone like a professional auctioneer.",
+  "Describe {A} using only names of dishes.",
+  "Give a wedding toast for {A} and {B}.",
+  "Reenact your last argument, playing both parts.",
+  "Imitate an alarm siren for 10 seconds.",
+  "Let the group do your makeup with whatever they find, without ruining your clothes.",
+  "Film a 10-second video presenting tonight like a news report.",
+  "Text “I miss you” to the last person you messaged, then explain.",
+  "Get people to guess a cartoon by acting it out with just your face.",
+  "Tell a 30-second horror story with the lights off."
+  ],
+  "hot": [
+  "Kiss the person of your choice on the cheek, if they agree.",
+  "Take off one item of clothing of your choice, underwear excluded.",
+  "Do a 30-second sensual dance in front of the group.",
+  "Whisper something naughty in {A}'s ear, if {A} is okay with it.",
+  "Give {A} a one-minute shoulder massage, if {A} agrees.",
+  "Send a flirty text to your current crush, or to your last match.",
+  "Kiss the neck of the person of your choice, if they agree.",
+  "Give {A} your best bedroom eyes for 10 seconds without laughing.",
+  "Sit on {A}'s lap until your next turn, if {A} is okay with it.",
+  "Read your last conversation with a crush in a sultry voice.",
+  "Remove a single accessory striptease-style, with music.",
+  "Act out how you flirt at a club, with {A} as your target if they agree.",
+  "Bite your lip while looking {A} in the eyes for 5 seconds, if {A} is up for playing along.",
+  "Slow dance up close with someone of your choice who agrees.",
+  "Show the naughtiest conversation on your phone, hiding the name.",
+  "Give everyone in the room a sexy compliment.",
+  "Kiss {A}'s hand like in a period drama, if they agree.",
+  "Let {A} choose an item of clothing you have to take off, underwear excluded.",
+  "Recite an improvised love poem to {A}, looking deep into their eyes.",
+  "Act out your favorite position, alone and without a word.",
+  "Swap tops with {A} until your next turn, if {A} agrees.",
+  "Describe your ideal date like a perfume commercial.",
+  "Kiss the forehead of everyone who agrees.",
+  "Dance a tango with {A}, if {A} is okay with it.",
+  "Tell the story of your best kiss, acting out the key moments.",
+  "Let {A} give you a hickey on the arm, if you both agree.",
+  "Pretend you're on a dating app and pitch yourself in 20 seconds.",
+  "Take a sexy (but fully clothed) selfie and make it your wallpaper until tomorrow.",
+  "Stroke {A}'s hair for 20 seconds, if {A} agrees.",
+  "Give a 10-second hug to the person of your choice who agrees.",
+  "Imitate a romance-movie moan for 3 seconds.",
+  "Tell {A} what you find most attractive about them.",
+  "Do an imaginary lingerie runway show, fully dressed, and narrate it.",
+  "Rub noses with {A}, if they agree.",
+  "Write a flirty text to your partner or your crush, and show it to us before sending.",
+  "Give {A} a hand massage with lotion, if {A} agrees.",
+  "Take your socks off with your teeth.",
+  "Read out loud the flirty opening line you'd usually send.",
+  "Twerk for 10 seconds.",
+  "Let {A} write a sweet note in marker on your shoulder, if you're okay with it.",
+  "Look into {A}'s eyes for 30 seconds without talking, if {A} agrees.",
+  "Pick someone who agrees and kiss each other on the cheek at the same time.",
+  "Strike a sexy calendar pose while the group counts to 10.",
+  "Describe in three words what you'd do to {A} on a desert island.",
+  "Dance seductively around a chair for 20 seconds.",
+  "Let the person on your right rest their hand on your knee until your next turn, if you both agree.",
+  "Declare your love to {A} like in a cheesy soap opera.",
+  "Slowly lick a spoonful of something sweet while looking at {A}, if {A} agrees to be your target.",
+  "Eat a strawberry or a piece of fruit as sensually as possible.",
+  "Send a red heart to your last ex, then deal with the fallout.",
+  "Kiss the shoulder of the person of your choice who agrees.",
+  "Act out an awkward first date scene with {A}.",
+  "Say the sexiest line you know in a deep voice.",
+  "Belly dance for 20 seconds.",
+  "Let {A} rest their head on your lap until your next turn, if you both agree.",
+  "Give your reflection a passionate kiss in a mirror or a screen.",
+  "Show your dating app profile, or make up a fake one out loud.",
+  "Play {A}'s sexy waiter until your next turn, and serve them a drink with style.",
+  "Propose to {A}, down on one knee, if {A} agrees to play the scene.",
+  "Remove one of {A}'s accessories with your teeth, if {A} is okay with it.",
+  "Tell your best seduction story in 30 seconds.",
+  "Pretend to seduce an object in the room for 20 seconds.",
+  "Let {A} give you a sexy hairstyle, if you're okay with it.",
+  "Kiss the tip of the nose of the person the group picks, if they agree.",
+  "Give every player a seductive wink, without laughing.",
+  "Recreate the seduction scene from a famous romantic movie with {A}, if they agree.",
+  "Slow dance up close with a cushion as if it's the love of your life.",
+  "Massage {A}'s feet for 30 seconds, if {A} is okay with it.",
+  "Whisper your softest fantasy.",
+  "Pick the person with the best smile and tell them why.",
+  "Hug {A} from behind, if {A} agrees.",
+  "Put on lip balm as sensually as possible.",
+  "Plant a kiss on {A}'s wrist, if {A} is okay with it; otherwise, kiss your own hand.",
+  "Show the group how you kiss, using your hand.",
+  "Let {A} draw a lipstick heart on your cheek, if you agree.",
+  "Act out a make-up-in-bed scene with a pillow.",
+  "Compliment {A}'s body, classy but honest.",
+  "Cradle {A} in your arms for 10 seconds, if {A} is okay with it.",
+  "Pretend to take off an item of clothing very slowly, without actually taking anything off.",
+  "Make up a sexy nickname for {A} and use it until the end of the game.",
+  "Dance sensually with {A} for 20 seconds, if {A} agrees.",
+  "Hit {A} with a cheesy pickup line, with a totally straight face.",
+  "Let the person the group picks kiss you on the face, anywhere but the mouth, if you both agree.",
+  "Put your hand on {A}'s heart for 10 seconds, if {A} is okay with it.",
+  "Tell us about your worst date, impersonating the other person.",
+  "Close your eyes and let a player who agrees kiss you on the cheek, then guess who it was.",
+  "Blow gently on {A}'s neck, if {A} is okay with it.",
+  "Show us the face you make when you get a text from your crush.",
+  "Strip off your jacket or sweater, striptease-style, with music.",
+  "Write a naughty note on a piece of paper and give it to the person of your choice."
+  ],
+  "hard": [
+  "Give {A} a one-minute lap dance, if {A} is okay with it.",
+  "Take off two items of clothing, without going further than your underwear.",
+  "Lick whipped cream off {A}'s neck, if {A} agrees.",
+  "Act out three sex positions with {A}, fully clothed, if {A} is okay with it.",
+  "Do your best fake orgasm for 10 seconds.",
+  "Act out your last time in 15 seconds, without a word.",
+  "Strip down to your underwear until your next turn.",
+  "Do a striptease to music down to your underwear (you can keep one item on if you prefer).",
+  "Kiss {A} on the mouth, if {A} is okay with it; otherwise, kiss someone who agrees on the cheek.",
+  "Act out what you do when you get yourself off, fully clothed and in 5 seconds.",
+  "Read the hottest message on your phone out loud, hiding the names.",
+  "Give {A} a hickey on the neck, if {A} agrees.",
+  "Let {A} tie your hands with a scarf until your next turn, if you both agree.",
+  "Using your hands and a piece of fruit, explain your technique for going down on someone, any way you like.",
+  "Act out a 15-second porn scene with a cushion, fully clothed.",
+  "Eat a banana in the most suggestive way possible.",
+  "Massage {A}'s thighs for 30 seconds, over their clothes, if {A} agrees.",
+  "Straddle {A} for 10 seconds, if {A} is okay with it.",
+  "Describe your filthiest fantasy for 30 seconds, without stopping.",
+  "Say out loud what you'd do to {A} if you were alone, if {A} agrees to listen.",
+  "Spank {A}, if {A} is okay with it, or get spanked by someone of your choice who agrees.",
+  "Demonstrate doggy style with a cushion.",
+  "Lick {A}'s earlobe, if {A} agrees.",
+  "Act out your favorite category of adult videos.",
+  "Nibble the back of {A}'s neck, if {A} is okay with it.",
+  "Take your top off and keep it off until your next turn.",
+  "Until your next turn, moan every time someone says a number.",
+  "Fake an orgasm in a whisper, as if your roommates were asleep next door.",
+  "Tell the story of your wildest one-night stand like a sports commentator.",
+  "Dance pressed up against {A} to music for 30 seconds, if {A} is okay with it.",
+  "Let {A} write a naughty word in marker on your stomach, if you agree.",
+  "Mime undoing {A}'s belt with one hand, a few inches away without touching, if {A} is okay with it.",
+  "Put an ice cube in your mouth and slide it along {A}'s arm, if {A} agrees.",
+  "Demonstrate your kissing technique on a peach or a plum.",
+  "Act out missionary with {A}, clothed and at a distance, if {A} agrees.",
+  "Act out cowgirl with {A}, fully clothed, if {A} is okay with it.",
+  "Sit with your back to {A}, between their legs, until your next turn, if {A} agrees.",
+  "Kiss {A}'s stomach, if {A} is okay with it.",
+  "Kiss the person of your choice who agrees for 5 seconds.",
+  "Say something totally boring in your bedroom voice.",
+  "Describe your steamiest night in three sentences, with as many details as possible.",
+  "Explain how you get yourself off as if it were a cooking recipe.",
+  "Put on a piece of underwear over your clothes until your next turn.",
+  "Give {A} a dramatic movie dip kiss, if {A} agrees; otherwise, do it to a cushion.",
+  "Lick sugar or salt off {A}'s wrist, if {A} is okay with it.",
+  "Let the group pick an item of clothing for you to take off, without going further than your underwear.",
+  "Give a lap dance to an empty chair, as if your fantasy were sitting in it.",
+  "Act out an elevator hookup with {A}, fully clothed, if {A} agrees.",
+  "Imitate your neighbors' noises on a wild night.",
+  "Let {A} blindfold you and have you guess three parts of their arm or face by touch, if you both agree.",
+  "Do your best dirty talk to a cushion for 15 seconds.",
+  "Let {A} give you a naughty order to carry out, within whatever limits you set.",
+  "Show how you open a condom wrapper with your teeth (a candy wrapper will do).",
+  "Give the person of your choice a sexy airport pat-down, if they agree: hands over clothes, private areas off-limits.",
+  "Brag about your skills in bed like an infomercial host.",
+  "Choose between {A} and {B} for a threesome, and explain why.",
+  "Take off your pants or skirt until your next turn, underwear stays on.",
+  "Act out the end of sex, dramatic-movie version.",
+  "Give your own hand a hickey while looking {A} in the eyes, if {A} agrees to hold your gaze.",
+  "Lick whipped cream off your own finger in the most obscene way possible.",
+  "Massage {A}'s back under their top for 30 seconds, if {A} is okay with it.",
+  "Let {A} lick your cheek, if you both agree.",
+  "Tell your best memory in bed like a movie trailer.",
+  "Act out a Kama Sutra position chosen by the group with {A}, fully clothed, if {A} agrees.",
+  "Crawl around the room on all fours, purring like a big cat.",
+  "Kiss {A}'s belly button, if {A} is okay with it.",
+  "Until your next turn, take off an item of clothing every time someone says your name (underwear stays on).",
+  "Make the face you make when you come.",
+  "Draw your ideal sex toy on your skin in marker and present it.",
+  "Make squeaky-bed noises with your mouth while you dance.",
+  "Ride a cushion like a rodeo bull for 10 seconds, with a smoldering look.",
+  "Let {A} take off one of your socks with their teeth, if you both agree.",
+  "Slow dance very close with {A} while whispering dirty things, if {A} agrees.",
+  "Describe your ex's anatomy in three adjectives, without saying their name.",
+  "Kiss {A}'s knee and work your way up two kisses, if {A} is okay with it.",
+  "Pretend to make a dirty phone call to an imaginary person, out loud.",
+  "Act out how you take off a bra, on yourself or on a cushion.",
+  "Put an ice cube on {A}'s neck and let it melt for 10 seconds, if {A} agrees.",
+  "Demonstrate your signature move in bed, on a cushion.",
+  "Take your top off and strut around the room like it's a runway."
+  ]
+};
+
 const LEVELS = [
-  { v: "soft", label: "Classique", desc: "Hontes, imitations, petits secrets : pour tout le monde" },
-  { v: "hot", label: "Hot", desc: "Séduction, bisous, confessions sur ta vie sexuelle", hot: true },
-  { v: "hard", label: "Hard", desc: "Très cru : sexe explicite, strip, défis sans filtre", hot: true }
+  { v: "soft", label: tr("Classique", "Classic"), desc: tr("Hontes, imitations, petits secrets : pour tout le monde", "Cringe stories, impressions, little secrets: for everyone") },
+  { v: "hot", label: "Hot", desc: tr("Séduction, bisous, confessions sur ta vie sexuelle", "Flirting, kisses, confessions about your sex life"), hot: true },
+  { v: "hard", label: "Hard", desc: tr("Très cru : sexe explicite, strip, défis sans filtre", "Very explicit: graphic sex, stripping, no-filter dares"), hot: true }
 ];
 // Gages du mode sans alcool.
 const GAGES = [
@@ -612,14 +1206,29 @@ const GAGES = [
   "fais une pub de 20 secondes pour le verre de ton voisin", "réponds uniquement par des questions jusqu'à ton prochain tour", "fais le cri d'un animal choisi par le groupe chaque fois qu'on te parle, jusqu'à ton prochain tour",
   "garde une cuillère dans la bouche jusqu'à ton prochain tour", "masse les épaules du joueur à ta droite pendant 30 secondes, s'il est d'accord", "fais ta meilleure imitation d'une star du rap"
 ];
+// Forfeits for alcohol-free mode (shown after "forfeit: ").
+const GAGES_EN = [
+  "10 push-ups, right now", "sing a chorus the group picks", "talk in an accent until your next turn", "let the group write your next status update",
+  "waddle around the room like a penguin", "keep your eyes closed until your next turn", "give every player a sincere compliment",
+  "impersonate the player of your choice for 30 seconds", "stand on one foot for 1 minute", "dance for 20 seconds with no music",
+  "let the player on your left style your hair however they want", "talk about yourself in the third person until your next turn", "tell jokes until someone laughs",
+  "make a dramatic declaration of love to an object in the room", "eat a spoonful of a condiment the group picks", "send a random emoji to the 5th contact in your phone",
+  "wear something inside out until the end of the game", "do 20 squats, counting out loud", "let the group pick your profile picture for 1 hour",
+  "do a 20-second commercial for your neighbor's drink", "only answer with questions until your next turn", "make the sound of an animal the group picks every time someone talks to you, until your next turn",
+  "keep a spoon in your mouth until your next turn", "massage the shoulders of the player on your right for 30 seconds, if they agree", "do your best impression of a rap star"
+];
+// Cartes de la partie : langue de l'hôte (E.lg) en réseau, langue du téléphone en local.
+const DECK = { fr: { VT, AC, GAGES }, en: { VT: VT_EN, AC: AC_EN, GAGES: GAGES_EN } };
+const deckOf = lg => DECK[lg === "en" ? "en" : "fr"];
+const UI = deckOf(SB.lang());
 const SEEN = "actionverite:";
 const TW = [
-  { id: "x2", name: "Quitte ou double", desc: "Points doublés, et sanction doublée si tu refuses." },
-  { id: "group", name: "Le groupe décide", desc: "Ce sont les autres qui choisissent : action ou vérité." },
-  { id: "all", name: "Tout le monde y passe", desc: "Vérité imposée, et chacun doit y répondre à son tour.", ok: o => o.n >= 3 },
-  { id: "mirror", name: "Effet miroir", desc: "Après toi, un autre joueur doit faire exactement la même chose." },
-  { id: "nojk", name: "Sans filet", desc: "Pas de joker possible pour cette carte." },
-  { id: "heat", name: "Montée en température", desc: "La carte est tirée dans le niveau supérieur.", ok: o => o.up }
+  { id: "x2", name: tr("Quitte ou double", "Double or nothing"), desc: tr("Points doublés, et sanction doublée si tu refuses.", "Double points, and double penalty if you refuse.") },
+  { id: "group", name: tr("Le groupe décide", "The group decides"), desc: tr("Ce sont les autres qui choisissent : action ou vérité.", "The others choose for you: truth or dare.") },
+  { id: "all", name: tr("Tout le monde y passe", "Everyone's in"), desc: tr("Vérité imposée, et chacun doit y répondre à son tour.", "It's a truth, and everyone has to answer it in turn."), ok: o => o.n >= 3 },
+  { id: "mirror", name: tr("Effet miroir", "Mirror effect"), desc: tr("Après toi, un autre joueur doit faire exactement la même chose.", "After you, another player has to do exactly the same thing.") },
+  { id: "nojk", name: tr("Sans filet", "No safety net"), desc: tr("Pas de joker possible pour cette carte.", "No jokers allowed on this card.") },
+  { id: "heat", name: tr("Montée en température", "Turning up the heat"), desc: tr("La carte est tirée dans le niveau supérieur.", "The card is drawn from the next level up."), ok: o => o.up }
 ];
 const twOf = id => SB.u.byTwist(TW, id);
 
@@ -630,7 +1239,7 @@ function newGame(order, o){
   return { order: order.slice(), lv: lv.length ? lv : ["soft"], mode: o.mode === "soft" ? "soft" : "drink", laps: o.laps || 3, prog: o.prog !== false, twOn: o.twists !== false,
     i: 0, lap: 1, n: 0, phase: "choose", cur: order[0], kind: "", card: "", lvl: "", tw: "", mir: "", last: null,
     jk: Object.fromEntries(order.map(id => [id, o.jokers === false ? 0 : 2])),
-    pts: {}, did: {}, told: {}, ref: {}, jok: {}, sips: {}, dk: {}, fl: Math.floor(Math.random() * 12) };
+    pts: {}, did: {}, told: {}, ref: {}, jok: {}, sips: {}, dk: {}, fl: Math.floor(Math.random() * 12), lg: o.lg === "en" || o.lg === "fr" ? o.lg : SB.lang() };
 }
 // Niveau de la carte : progressif (on monte au fil des tours) ou au hasard parmi les niveaux choisis.
 function levelFor(E){
@@ -640,7 +1249,7 @@ function levelFor(E){
   return Math.random() < .2 && k > 0 ? L[k - 1] : L[k];
 }
 function draw(E, kind, lvl){
-  const key = kind + ":" + lvl, src = (kind === "v" ? VT : AC)[lvl] || [];
+  const D = deckOf(E.lg), key = kind + ":" + lvl, src = (kind === "v" ? D.VT : D.AC)[lvl] || [];
   let d = A(E.dk[key]).slice(); if(!d.length) d = SB.u.fresh(SEEN + key, src);
   const c = d.pop(); E.dk[key] = d; SB.u.saw(SEEN + key, c); return c || "";
 }
@@ -669,7 +1278,12 @@ function reveal(E, kind){
   if(E.tw === "mirror") E.mir = shuffle(E.order.filter(id => id !== E.cur && id !== c.a))[0] || c.a || "";
 }
 function pen(E, kind){ return (kind === "a" ? 3 : 2) * (E.tw === "x2" ? 2 : 1); }
-function penText(E, n){ return E.mode === "drink" ? n + " gorgée" + (n > 1 ? "s" : "") : "gage : " + pick(GAGES) + (n >= 4 ? " (et un deuxième au choix du groupe)" : ""); }
+// Texte de la sanction, dans la langue de la partie (E.lg). Le nombre de gorgées est réaffiché dans la langue de chaque téléphone (sipsText).
+function sipsText(n){ return tr(n + " gorgée" + (n > 1 ? "s" : ""), n === 1 ? "1 sip" : n + " sips"); }
+function penText(E, n){
+  if(E.lg === "en") return E.mode === "drink" ? (n === 1 ? "1 sip" : n + " sips") : "forfeit: " + pick(GAGES_EN) + (n >= 4 ? " (plus a second one picked by the group)" : "");
+  return E.mode === "drink" ? n + " gorgée" + (n > 1 ? "s" : "") : "gage : " + pick(GAGES) + (n >= 4 ? " (et un deuxième au choix du groupe)" : "");
+}
 // Résultat du tour : "ok" (fait / répondu), "jk" (joker), "no" (refus).
 function settle(E, res, live){
   const id = E.cur, m = E.tw === "x2" ? 2 : 1;
@@ -691,7 +1305,8 @@ const ranking = E => E.order.slice().sort((a, b) => (E.pts[b] || 0) - (E.pts[a] 
 
 /* ---------- Affichage ---------- */
 function fillHTML(t, E, nameOf){
-  return esc(t).replace(/\{A\}/g, '<b class="av-n">' + esc(E.ca ? nameOf(E.ca) : "quelqu'un") + "</b>").replace(/\{B\}/g, '<b class="av-n">' + esc(E.cb ? nameOf(E.cb) : "quelqu'un d'autre") + "</b>");
+  const en = E.lg === "en";
+  return esc(t).replace(/\{A\}/g, '<b class="av-n">' + esc(E.ca ? nameOf(E.ca) : en ? "someone" : "quelqu'un") + "</b>").replace(/\{B\}/g, '<b class="av-n">' + esc(E.cb ? nameOf(E.cb) : en ? "someone else" : "quelqu'un d'autre") + "</b>");
 }
 const CSS = '<style>' +
   '.av-k{display:flex; gap:10px}.av-k .btn{flex:1}' +
@@ -708,61 +1323,62 @@ const CSS = '<style>' +
   '.av-row{display:flex; justify-content:space-between; gap:8px; font-size:13px; color:var(--muted); font-weight:700}' +
   '</style>';
 const FL = {
-  win: ["Le plus téméraire", "Sans peur et sans reproche", "Champion de la soirée", "Rien ne lui fait peur"],
-  did: ["Trompe-la-mort", "Le plus courageux", "Toujours partant"],
-  told: ["Livre ouvert", "Zéro secret", "Confessions intimes"],
-  ref: ["Poule mouillée", "Champion du refus", "Le plus prudent"],
-  sips: ["Gosier en pente", "Le plus assoiffé", "Abonné aux gorgées"]
+  win: [tr("Le plus téméraire", "Most fearless"), tr("Sans peur et sans reproche", "Fearless and flawless"), tr("Champion de la soirée", "Champion of the night"), tr("Rien ne lui fait peur", "Scared of nothing")],
+  did: [tr("Trompe-la-mort", "Daredevil"), tr("Le plus courageux", "The bravest"), tr("Toujours partant", "Always up for it")],
+  told: [tr("Livre ouvert", "Open book"), tr("Zéro secret", "Zero secrets"), tr("Confessions intimes", "True confessions")],
+  ref: [tr("Poule mouillée", "Scaredy-cat"), tr("Champion du refus", "Refusal champion"), tr("Le plus prudent", "Plays it safe")],
+  sips: [tr("Gosier en pente", "Hollow legs"), tr("Le plus assoiffé", "The thirstiest"), tr("Abonné aux gorgées", "Sip subscriber")]
 };
 const fl = (l, s, k) => l[((s || 0) + k) % l.length];
 function awards(E, nameOf){
   const out = [], used = [];
   const top = (m, min, label, one, many) => { let b = "", v = min - 1; Object.keys(m || {}).forEach(id => { if((m[id] || 0) > v && used.indexOf(id) < 0){ v = m[id]; b = id; } }); if(b){ used.push(b); out.push([label, nameOf(b), m[b] + " " + (m[b] > 1 ? many : one)]); } };
-  top(E.did, 2, fl(FL.did, E.fl, 1), "action", "actions");
-  top(E.told, 2, fl(FL.told, E.fl, 2), "vérité", "vérités");
-  top(E.ref, 2, fl(FL.ref, E.fl, 3), "refus", "refus");
-  if(E.mode === "drink") top(E.sips, 4, fl(FL.sips, E.fl, 4), "gorgée", "gorgées");
+  top(E.did, 2, fl(FL.did, E.fl, 1), tr("action", "dare"), tr("actions", "dares"));
+  top(E.told, 2, fl(FL.told, E.fl, 2), tr("vérité", "truth"), tr("vérités", "truths"));
+  top(E.ref, 2, fl(FL.ref, E.fl, 3), tr("refus", "refusal"), tr("refus", "refusals"));
+  if(E.mode === "drink") top(E.sips, 4, fl(FL.sips, E.fl, 4), tr("gorgée", "sip"), tr("gorgées", "sips"));
   return out;
 }
 function awardsHTML(aw){ return aw.length ? '<ul class="list">' + aw.map(a => '<li><span class="t">' + esc(a[1]) + '</span><span class="by">' + esc(a[0]) + " · " + esc(a[2]) + "</span></li>").join("") + "</ul>" : ""; }
 function bars(E, nameOf){
   const max = Math.max(1, ...E.order.map(id => E.pts[id] || 0));
-  return '<div class="bars">' + ranking(E).map(id => '<div class="bar"><div class="lb"><span>' + esc(nameOf(id)) + "</span><span>" + (E.pts[id] || 0) + " pt" + ((E.pts[id] || 0) > 1 ? "s" : "") + '</span></div><div class="tr"><div class="fl" style="width:' + Math.round(100 * (E.pts[id] || 0) / max) + '%"></div></div></div>').join("") + "</div>";
+  return '<div class="bars">' + ranking(E).map(id => '<div class="bar"><div class="lb"><span>' + esc(nameOf(id)) + "</span><span>" + tr((E.pts[id] || 0) + " pt" + ((E.pts[id] || 0) > 1 ? "s" : ""), (E.pts[id] || 0) + ((E.pts[id] || 0) === 1 ? " pt" : " pts")) + '</span></div><div class="tr"><div class="fl" style="width:' + Math.round(100 * (E.pts[id] || 0) / max) + '%"></div></div></div>').join("") + "</div>";
 }
 function lastHTML(E, nameOf){
   const l = E.last; if(!l || !l.who) return "";
-  const what = l.res === "no" ? '<span class="no">a refusé ' + (l.kind === "a" ? "l'action" : "la vérité") + "</span> · " + esc(l.txt) : l.res === "jk" ? "a utilisé un joker" : '<span class="ok">' + (l.kind === "a" ? "a relevé le défi" : "a dit la vérité") + "</span> · " + esc(l.txt);
+  const sips = l.res === "no" && E.mode === "drink" && parseInt(l.txt, 10) > 0 ? sipsText(parseInt(l.txt, 10)) : l.txt;
+  const what = l.res === "no" ? '<span class="no">' + (l.kind === "a" ? tr("a refusé l'action", "chickened out of the dare") : tr("a refusé la vérité", "dodged the truth")) + "</span> · " + esc(sips) : l.res === "jk" ? tr("a utilisé un joker", "used a joker") : '<span class="ok">' + (l.kind === "a" ? tr("a relevé le défi", "completed the dare") : tr("a dit la vérité", "told the truth")) + "</span> · " + esc(l.txt);
   return '<div class="av-last"><b>' + esc(nameOf(l.who)) + "</b> " + what + "</div>";
 }
 function headHTML(E, nameOf){
-  return CSS + '<div class="av-row"><span>Tour ' + Math.min(E.lap, E.laps) + " / " + E.laps + "</span><span>" + (E.mode === "drink" ? "Mode gorgées" : "Mode gages") + "</span></div>" + lastHTML(E, nameOf) + SB.u.twistHTML(twOf(E.tw));
+  return CSS + '<div class="av-row"><span>' + tr("Tour ", "Round ") + Math.min(E.lap, E.laps) + " / " + E.laps + "</span><span>" + (E.mode === "drink" ? tr("Mode gorgées", "Sip mode") : tr("Mode gages", "Forfeit mode")) + "</span></div>" + lastHTML(E, nameOf) + SB.u.twistHTML(twOf(E.tw), tr("Coup de théâtre", "Twist"));
 }
 /* Écran commun. can : { choose, settle } = ce téléphone peut agir. act(type, val). */
 function turnHTML(E, nameOf, can){
   const who = nameOf(E.cur), jk = E.jk[E.cur] || 0;
   if(E.phase === "choose"){
     const grp = E.tw === "group";
-    return headHTML(E, nameOf) + '<span class="eyebrow">' + (grp ? "Le groupe choisit pour" : "Au tour de") + '</span><div class="who">' + esc(who) + "</div>" +
-      (can.choose ? '<div class="av-big"><button type="button" class="v" data-c="v">Vérité<small>+1 point</small></button><button type="button" class="a" data-c="a">Action<small>+2 points</small></button></div>' +
-        '<button class="btn ghost" type="button" data-c="h">Au hasard · 1 point bonus</button>'
-        : '<p class="howto">' + (grp ? "Les autres joueurs choisissent pour " + esc(who) + "…" : esc(who) + " choisit : action ou vérité ?") + "</p>") +
-      '<p class="sm">Jokers restants : ' + jk + "</p>";
+    return headHTML(E, nameOf) + '<span class="eyebrow">' + (grp ? tr("Le groupe choisit pour", "The group picks for") : tr("Au tour de", "Up now")) + '</span><div class="who">' + esc(who) + "</div>" +
+      (can.choose ? '<div class="av-big"><button type="button" class="v" data-c="v">' + tr("Vérité", "Truth") + '<small>+1 point</small></button><button type="button" class="a" data-c="a">' + tr("Action", "Dare") + "<small>+2 points</small></button></div>" +
+        '<button class="btn ghost" type="button" data-c="h">' + tr("Au hasard · 1 point bonus", "Random · 1 bonus point") + "</button>"
+        : '<p class="howto">' + (grp ? tr("Les autres joueurs choisissent pour " + esc(who) + "…", "The other players are choosing for " + esc(who) + "…") : tr(esc(who) + " choisit : action ou vérité ?", esc(who) + " is choosing: truth or dare?")) + "</p>") +
+      '<p class="sm">' + tr("Jokers restants : ", "Jokers left: ") + jk + "</p>";
   }
   const lv = LEVELS[lvlIndex(E.lvl)] || LEVELS[0];
-  return headHTML(E, nameOf) + '<span class="eyebrow">' + esc(who) + (E.rand ? " · tiré au hasard" : "") + "</span>" +
-    '<div class="card acc"><span class="av-tag">' + (E.kind === "a" ? "Action" : "Vérité") + " · " + esc(lv.label) + '</span><div class="av-card">' + fillHTML(E.card, E, nameOf) + "</div>" +
-    (E.tw === "all" ? '<span class="sm">Tout le monde répond, en commençant par ' + esc(who) + ".</span>" : "") +
-    (E.mir ? '<span class="sm">Effet miroir : ' + esc(nameOf(E.mir)) + " le fait aussi juste après.</span>" : "") + "</div>" +
-    (can.settle ? dock('<button class="btn acc" type="button" data-r="ok">' + (E.kind === "a" ? "Défi relevé !" : "J'ai répondu") + "</button>" +
-      '<div class="row2">' + (jk > 0 && E.tw !== "nojk" ? '<button class="btn ghost" type="button" data-r="jk">Joker (' + jk + ")</button>" : '<button class="btn ghost" type="button" disabled>' + (E.tw === "nojk" ? "Sans filet" : "Plus de joker") + "</button>") +
-      '<button class="btn ghost" type="button" data-r="no">Je refuse</button></div>' +
-      '<p class="sm" style="text-align:center">Refuser : ' + esc(E.mode === "drink" ? pen(E, E.kind) + " gorgées" : "un gage") + "</p>")
-      : dock('<p class="wait">' + esc(who) + " s'exécute… Le groupe juge !</p>"));
+  return headHTML(E, nameOf) + '<span class="eyebrow">' + esc(who) + (E.rand ? tr(" · tiré au hasard", " · picked at random") : "") + "</span>" +
+    '<div class="card acc"><span class="av-tag">' + (E.kind === "a" ? tr("Action", "Dare") : tr("Vérité", "Truth")) + " · " + esc(lv.label) + '</span><div class="av-card">' + fillHTML(E.card, E, nameOf) + "</div>" +
+    (E.tw === "all" ? '<span class="sm">' + tr("Tout le monde répond, en commençant par " + esc(who) + ".", "Everyone answers, starting with " + esc(who) + ".") + "</span>" : "") +
+    (E.mir ? '<span class="sm">' + tr("Effet miroir : " + esc(nameOf(E.mir)) + " le fait aussi juste après.", "Mirror effect: " + esc(nameOf(E.mir)) + " does it too, right after.") + "</span>" : "") + "</div>" +
+    (can.settle ? dock('<button class="btn acc" type="button" data-r="ok">' + (E.kind === "a" ? tr("Défi relevé !", "Dare done!") : tr("J'ai répondu", "I answered")) + "</button>" +
+      '<div class="row2">' + (jk > 0 && E.tw !== "nojk" ? '<button class="btn ghost" type="button" data-r="jk">Joker (' + jk + ")</button>" : '<button class="btn ghost" type="button" disabled>' + (E.tw === "nojk" ? tr("Sans filet", "No safety net") : tr("Plus de joker", "No jokers left")) + "</button>") +
+      '<button class="btn ghost" type="button" data-r="no">' + tr("Je refuse", "I refuse") + "</button></div>" +
+      '<p class="sm" style="text-align:center">' + tr("Refuser : ", "If you refuse: ") + esc(E.mode === "drink" ? tr(pen(E, E.kind) + " gorgées", "take " + pen(E, E.kind) + " sips") : tr("un gage", "do a forfeit")) + "</p>")
+      : dock('<p class="wait">' + tr(esc(who) + " s'exécute… Le groupe juge !", esc(who) + " is on it… The group judges!") + "</p>"));
 }
 function bindTurn(r, act){
   r.querySelectorAll("[data-c]").forEach(b => b.addEventListener("click", () => { buzz(16); act("c", b.dataset.c); }));
   r.querySelectorAll("[data-r]").forEach(b => {
-    if(b.dataset.r === "no") armTap(b, () => act("r", "no"), "Sûr ? Toucher encore");
+    if(b.dataset.r === "no") armTap(b, () => act("r", "no"), tr("Sûr ? Toucher encore", "Sure? Tap again"));
     else b.addEventListener("click", () => { buzz(20); act("r", b.dataset.r); });
   });
 }
@@ -777,27 +1393,27 @@ function publish(c, E){ c.setPriv({ dk: E.dk }); const o = Object.assign({}, E);
 const liveIds = ctx => ctx.ids.filter(id => ctx.here(id));
 
 const DEF = {
-  id: "actionverite", name: "Action ou vérité", glyph: "A/V", pitch: "Une vérité à avouer ou une action à faire. Refuser coûte cher.", hot: true,
+  id: "actionverite", name: tr("Action ou vérité", "Truth or Dare"), glyph: tr("A/V", "T/D"), pitch: tr("Une vérité à avouer ou une action à faire. Refuser coûte cher.", "A truth to confess or a dare to do. Refusing costs you."), hot: true,
   accent: { light: "#ff3d6e", dark: "#ff3d6e" },
-  tag: "Chacun son tour choisit : une vérité à avouer devant tout le monde, ou une action à faire tout de suite. Refuser, c'est boire (ou prendre un gage).",
+  tag: tr("Chacun son tour choisit : une vérité à avouer devant tout le monde, ou une action à faire tout de suite. Refuser, c'est boire (ou prendre un gage).", "Take turns choosing: a truth to confess in front of everyone, or a dare to do right now. Refuse and you drink (or do a forfeit)."),
   min: 2, max: 16,
   rules: [
-    "Chacun son tour choisit Vérité (+1 point) ou Action (+2 points). Au hasard : 1 point bonus.",
-    "Le groupe juge : si tu as répondu franchement ou relevé le défi, tu marques. Tu peux refuser, mais ça coûte des gorgées (ou un gage en mode sans alcool).",
-    "Deux jokers par partie pour passer une carte sans sanction.",
-    "Trois niveaux : Classique, Hot (18+) et Hard (18+, très cru). En mode progressif, ça monte au fil des tours.",
-    "Coups de théâtre : quitte ou double, le groupe décide, tout le monde y passe, effet miroir, sans filet, montée en température.",
-    "Les actions qui touchent quelqu'un d'autre se font seulement si cette personne est d'accord. Les cartes ne reviennent pas d'une soirée à l'autre."
+    tr("Chacun son tour choisit Vérité (+1 point) ou Action (+2 points). Au hasard : 1 point bonus.", "On your turn, pick Truth (+1 point) or Dare (+2 points). Random: 1 bonus point."),
+    tr("Le groupe juge : si tu as répondu franchement ou relevé le défi, tu marques. Tu peux refuser, mais ça coûte des gorgées (ou un gage en mode sans alcool).", "The group judges: if you answered honestly or completed the dare, you score. You can refuse, but it costs you sips (or a forfeit in alcohol-free mode)."),
+    tr("Deux jokers par partie pour passer une carte sans sanction.", "Two jokers per game to skip a card with no penalty."),
+    tr("Trois niveaux : Classique, Hot (18+) et Hard (18+, très cru). En mode progressif, ça monte au fil des tours.", "Three levels: Classic, Hot (18+) and Hard (18+, very explicit). In progressive mode, things heat up as the rounds go by."),
+    tr("Coups de théâtre : quitte ou double, le groupe décide, tout le monde y passe, effet miroir, sans filet, montée en température.", "Twists: double or nothing, the group decides, everyone's in, mirror effect, no safety net, turning up the heat."),
+    tr("Les actions qui touchent quelqu'un d'autre se font seulement si cette personne est d'accord. Les cartes ne reviennent pas d'une soirée à l'autre.", "Dares that involve touching someone only happen if that person agrees. Cards don't come back from one party to the next.")
   ],
   options: [
-    { id: "laps", label: "Tours de table", type: "seg", def: 3, values: [{ v: 2, label: "2" }, { v: 3, label: "3" }, { v: 5, label: "5" }, { v: 8, label: "8" }] },
-    { id: "packs", label: "Niveaux", type: "multi", def: ["soft"], values: LEVELS.map(l => ({ v: l.v, label: l.label, desc: l.desc, hot: l.hot, count: VT[l.v].length + AC[l.v].length })) },
-    { id: "mode", label: "Sanctions", type: "seg", def: "drink", values: [{ v: "drink", label: "Gorgées" }, { v: "soft", label: "Sans alcool" }] },
-    { id: "prog", label: "Progressif", type: "toggle", text: "Niveau progressif", desc: "On commence doux, et ça monte au fil des tours", def: true },
-    { id: "twists", label: "Coups de théâtre", type: "toggle", text: "Coups de théâtre", desc: "De temps en temps, une règle change pour un tour", def: true }
+    { id: "laps", label: tr("Tours de table", "Rounds"), type: "seg", def: 3, values: [{ v: 2, label: "2" }, { v: 3, label: "3" }, { v: 5, label: "5" }, { v: 8, label: "8" }] },
+    { id: "packs", label: tr("Niveaux", "Levels"), type: "multi", def: ["soft"], values: LEVELS.map(l => ({ v: l.v, label: l.label, desc: l.desc, hot: l.hot, count: UI.VT[l.v].length + UI.AC[l.v].length })) },
+    { id: "mode", label: tr("Sanctions", "Penalties"), type: "seg", def: "drink", values: [{ v: "drink", label: tr("Gorgées", "Sips") }, { v: "soft", label: tr("Sans alcool", "Alcohol-free") }] },
+    { id: "prog", label: tr("Progressif", "Progressive"), type: "toggle", text: tr("Niveau progressif", "Progressive level"), desc: tr("On commence doux, et ça monte au fil des tours", "Start soft, and it heats up as the rounds go by"), def: true },
+    { id: "twists", label: tr("Coups de théâtre", "Twists"), type: "toggle", text: tr("Coups de théâtre", "Twists"), desc: tr("De temps en temps, une règle change pour un tour", "Every now and then, a rule changes for one turn"), def: true }
   ],
   start(ctx, o){
-    if(!A(o.packs).length) throw new Error("Choisis au moins un niveau.");
+    if(!A(o.packs).length) throw new Error(tr("Choisis au moins un niveau.", "Pick at least one level."));
     const E = newGame(shuffle(ctx.ids), o);
     E.n = 0; startTurn(E, ctx.ids);
     ctx.setPriv({ dk: E.dk });
@@ -820,11 +1436,11 @@ const DEF = {
     const E = fromState(s, {});
     if(E.phase === "end"){
       screen(root, "ae:" + s.k + ctx.isHost, endHTML(E, nameOf) +
-        dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>Retour au salon</button>' : '<p class="wait">L\'hôte va vous ramener au salon.</p>'), r => {
+        dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the lobby") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the lobby.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const F = fromState(c.s, {}), o2 = ranking(F), mx = F.pts[o2[0]] || 0;
-          c.end({ title: "Action ou vérité · " + c.name(o2[0]) + " gagne", lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (F.pts[id] || 0) + " pts").concat(awards(F, c.name).slice(0, 2).map(a => a[0] + " : " + a[1])),
+          c.end({ title: tr("Action ou vérité · " + c.name(o2[0]) + " gagne", "Truth or Dare · " + c.name(o2[0]) + " wins"), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (F.pts[id] || 0) + tr(" pts", (F.pts[id] || 0) === 1 ? " pt" : " pts")).concat(awards(F, c.name).slice(0, 2).map(a => a[0] + tr(" : ", ": ") + a[1])),
             win: mx ? o2.filter(id => (F.pts[id] || 0) === mx) : [] });
         }));
       });
@@ -837,9 +1453,9 @@ const DEF = {
       else if(ctx.isHost) ctx.act(c => { const F = fromState(c.s, c.priv()); if(F.n !== E.n) return; if(t === "c" && F.phase === "choose") reveal(F, v); else if(t === "r" && F.phase === "card") settle(F, v, liveIds(c)); publish(c, F); });
     };
     screen(root, "at:" + s.k + JSON.stringify(can) + ctx.isHost, turnHTML(E, nameOf, can) +
-      (ctx.isHost ? '<button class="link" type="button" data-stop style="align-self:center">Terminer la partie</button>' : ""), r => {
+      (ctx.isHost ? '<button class="link" type="button" data-stop style="align-self:center">' + tr("Terminer la partie", "End the game") + "</button>" : ""), r => {
       bindTurn(r, act);
-      const st = r.querySelector("[data-stop]"); if(st) armTap(st, () => ctx.act(c => { const F = fromState(c.s, c.priv()); F.phase = "end"; publish(c, F); }), "Toucher encore pour terminer");
+      const st = r.querySelector("[data-stop]"); if(st) armTap(st, () => ctx.act(c => { const F = fromState(c.s, c.priv()); F.phase = "end"; publish(c, F); }), tr("Toucher encore pour terminer", "Tap again to end"));
     });
     if(E.phase === "card" && SB.fx && root.dataset.fx !== s.k){ root.dataset.fx = s.k; SB.fx.flip(root.querySelector(".card.acc")); }
   },
@@ -855,28 +1471,28 @@ const DEF = {
       let E = null;
       function setup(){
         const tog = (k, on, nm, ds) => '<button type="button" class="pack" data-' + k + ' aria-pressed="' + on + '"><span class="box">✓</span><span class="tx"><span class="nm">' + nm + '</span><span class="ds">' + ds + "</span></span></button>";
-        screen(root, "su" + sel.join() + laps + mode + prog + twOn, CSS + '<p class="howto">Posez le téléphone au milieu. Chacun son tour choisit vérité ou action, le groupe juge, et on passe au suivant.</p>' +
-          '<div class="field"><span class="eyebrow">Tours de table</span><div class="seg">' + [2, 3, 5, 8].map(n => '<button type="button" data-l="' + n + '" aria-pressed="' + (n === laps) + '">' + n + "</button>").join("") + "</div></div>" +
-          '<div class="field"><span class="eyebrow">Niveaux</span><div class="packs">' + LEVELS.map(l => '<button type="button" class="pack' + (l.hot ? " hot" : "") + '" data-k="' + l.v + '" aria-pressed="' + (sel.indexOf(l.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(l.label) + (l.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(l.desc) + '</span></span><span class="ct">' + (VT[l.v].length + AC[l.v].length) + "</span></button>").join("") + "</div></div>" +
-          '<div class="field"><span class="eyebrow">Sanctions</span><div class="seg"><button type="button" data-m="drink" aria-pressed="' + (mode === "drink") + '">Gorgées</button><button type="button" data-m="soft" aria-pressed="' + (mode === "soft") + '">Sans alcool</button></div></div>' +
-          '<div class="field"><span class="eyebrow">Variantes</span><div class="packs">' + tog("pg", prog, "Niveau progressif", "On commence doux, et ça monte au fil des tours") + tog("tw", twOn, "Coups de théâtre", "De temps en temps, une règle change pour un tour") + "</div></div>" +
-          dock('<button class="btn acc" type="button" data-go>Commencer</button>'), r => {
+        screen(root, "su" + sel.join() + laps + mode + prog + twOn, CSS + '<p class="howto">' + tr("Posez le téléphone au milieu. Chacun son tour choisit vérité ou action, le groupe juge, et on passe au suivant.", "Put the phone in the middle. On your turn, pick truth or dare, the group judges, then it's the next player's go.") + "</p>" +
+          '<div class="field"><span class="eyebrow">' + tr("Tours de table", "Rounds") + '</span><div class="seg">' + [2, 3, 5, 8].map(n => '<button type="button" data-l="' + n + '" aria-pressed="' + (n === laps) + '">' + n + "</button>").join("") + "</div></div>" +
+          '<div class="field"><span class="eyebrow">' + tr("Niveaux", "Levels") + '</span><div class="packs">' + LEVELS.map(l => '<button type="button" class="pack' + (l.hot ? " hot" : "") + '" data-k="' + l.v + '" aria-pressed="' + (sel.indexOf(l.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(l.label) + (l.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(l.desc) + '</span></span><span class="ct">' + (UI.VT[l.v].length + UI.AC[l.v].length) + "</span></button>").join("") + "</div></div>" +
+          '<div class="field"><span class="eyebrow">' + tr("Sanctions", "Penalties") + '</span><div class="seg"><button type="button" data-m="drink" aria-pressed="' + (mode === "drink") + '">' + tr("Gorgées", "Sips") + '</button><button type="button" data-m="soft" aria-pressed="' + (mode === "soft") + '">' + tr("Sans alcool", "Alcohol-free") + "</button></div></div>" +
+          '<div class="field"><span class="eyebrow">' + tr("Variantes", "Variants") + '</span><div class="packs">' + tog("pg", prog, tr("Niveau progressif", "Progressive level"), tr("On commence doux, et ça monte au fil des tours", "Start soft, and it heats up as the rounds go by")) + tog("tw", twOn, tr("Coups de théâtre", "Twists"), tr("De temps en temps, une règle change pour un tour", "Every now and then, a rule changes for one turn")) + "</div></div>" +
+          dock('<button class="btn acc" type="button" data-go>' + tr("Commencer", "Start") + "</button>"), r => {
           r.querySelectorAll("[data-l]").forEach(b => b.addEventListener("click", () => { laps = +b.dataset.l; persist({ avLaps: laps }); setup(); }));
           r.querySelectorAll("[data-k]").forEach(b => b.addEventListener("click", () => { const x = sel.indexOf(b.dataset.k); if(x >= 0) sel.splice(x, 1); else sel.push(b.dataset.k); persist({ avPacks: sel }); setup(); }));
           r.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => { mode = b.dataset.m; persist({ avMode: mode }); setup(); }));
           r.querySelector("[data-pg]").addEventListener("click", () => { prog = !prog; persist({ avProg: prog }); setup(); });
           r.querySelector("[data-tw]").addEventListener("click", () => { twOn = !twOn; persist({ avTw: twOn }); setup(); });
           r.querySelector("[data-go]").addEventListener("click", () => {
-            if(!sel.length){ SB.u.toast("Choisis au moins un niveau"); return; }
-            E = newGame(shuffle(ids), { packs: sel, laps, mode, prog, twists: twOn }); startTurn(E, ids); turn();
+            if(!sel.length){ SB.u.toast(tr("Choisis au moins un niveau", "Pick at least one level")); return; }
+            E = newGame(shuffle(ids), { packs: sel, laps, mode, prog, twists: twOn, lg: SB.lang() }); startTurn(E, ids); turn();
           });
         });
       }
       function turn(){
         if(E.phase === "end") return finish();
-        screen(root, "t" + E.n + E.phase, turnHTML(E, nameOf, { choose: true, settle: true }) + '<button class="link" type="button" data-stop style="align-self:center">Terminer la partie</button>', r => {
+        screen(root, "t" + E.n + E.phase, turnHTML(E, nameOf, { choose: true, settle: true }) + '<button class="link" type="button" data-stop style="align-self:center">' + tr("Terminer la partie", "End the game") + "</button>", r => {
           bindTurn(r, (t, v) => { if(t === "c") reveal(E, v); else settle(E, v, ids); turn(); });
-          armTap(r.querySelector("[data-stop]"), finish, "Toucher encore pour terminer");
+          armTap(r.querySelector("[data-stop]"), finish, tr("Toucher encore pour terminer", "Tap again to end"));
         });
         if(E.phase === "card" && SB.fx) SB.fx.flip(root.querySelector(".card.acc"));
       }
@@ -884,7 +1500,7 @@ const DEF = {
         E.phase = "end";
         const o2 = ranking(E), mx = E.pts[o2[0]] || 0;
         if(api.win && mx) api.win(o2.filter(id => (E.pts[id] || 0) === mx).map(nameOf));
-        screen(root, "end" + E.n, endHTML(E, nameOf) + dock('<button class="btn acc" type="button" data-a>Rejouer</button><button class="btn ghost" type="button" data-q>Choisir un autre jeu</button>'), r => {
+        screen(root, "end" + E.n, endHTML(E, nameOf) + dock('<button class="btn acc" type="button" data-a>' + tr("Rejouer", "Play again") + '</button><button class="btn ghost" type="button" data-q>' + tr("Choisir un autre jeu", "Pick another game") + "</button>"), r => {
           r.querySelector("[data-a]").addEventListener("click", api.again);
           r.querySelector("[data-q]").addEventListener("click", api.exit);
         });

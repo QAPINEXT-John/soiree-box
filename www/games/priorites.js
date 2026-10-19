@@ -273,7 +273,7 @@ SB.register({
       const read = ctx.ids.filter(id => A(kn[id])[1]).sort((a, b) => A(kn[b])[0] / A(kn[b])[1] - A(kn[a])[0] / A(kn[a])[1]);
       const med = ctx.ids.slice().sort((a, b) => (sf[b] || 0) - (sf[a] || 0))[0];
       screen(root, "end" + ctx.isHost, CSS + '<span class="eyebrow">' + esc(fl(FL.win, s.fl, 0)) + '</span><div class="who">' + esc(ctx.name(ids[0])) + "</div>" +
-        '<div class="bars">' + ids.map(id => '<div class="bar"><div class="lb"><span>' + esc(ctx.name(id)) + "</span><span>" + (sc[id] || 0) + ' pts</span></div><div class="tr"><div class="fl" style="width:' + Math.round(100 * (sc[id] || 0) / Math.max(1, sc[ids[0]] || 1)) + '%"></div></div></div>').join("") + "</div>" +
+        '<div class="bars">' + ids.map(id => '<div class="bar"><div class="lb"><span>' + esc(ctx.name(id)) + "</span><span>" + (sc[id] || 0) + tr(" pts", (sc[id] || 0) === 1 ? " pt" : " pts") + '</span></div><div class="tr"><div class="fl" style="width:' + Math.round(100 * (sc[id] || 0) / Math.max(1, sc[ids[0]] || 1)) + '%"></div></div></div>').join("") + "</div>" +
         (read.length ? '<div class="card"><span class="eyebrow">' + esc(fl(FL.open, s.fl, 1)) + '</span><div class="big">' + esc(ctx.name(read[0])) + '</div><span class="sm">' + tr("Le plus facile à deviner", "The easiest to read") + "</span></div>" : "") +
         (read.length > 1 ? '<div class="card"><span class="eyebrow">' + esc(fl(FL.myst, s.fl, 2)) + '</span><div class="big">' + esc(ctx.name(read[read.length - 1])) + '</div><span class="sm">' + tr("Le plus imprévisible", "The most unpredictable") + "</span></div>" : "") +
         (sf[med] ? '<div class="card"><span class="eyebrow">' + esc(fl(FL.med, s.fl, 3)) + '</span><div class="big">' + esc(ctx.name(med)) + '</div><span class="sm">' + SB.u.plural2(sf[med], "sans-faute", "sans-faute", "perfect guess", "perfect guesses") + "</span></div>" : "") +
@@ -281,7 +281,7 @@ SB.register({
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const s2 = c.s.scores || {}, o2 = c.ids.slice().sort((a, b2) => (s2[b2] || 0) - (s2[a] || 0)), mx = s2[o2[0]] || 0;
-          c.end({ title: tr("Priorités · " + c.name(o2[0]) + " gagne", "Priorities · " + c.name(o2[0]) + " wins"), lines: o2.map(id => c.name(id) + " · " + (s2[id] || 0) + " pts"), win: mx ? o2.filter(id => (s2[id] || 0) === mx) : [] });
+          c.end({ title: tr("Priorités · " + c.name(o2[0]) + " gagne", "Priorities · " + c.name(o2[0]) + " wins"), lines: o2.map(id => c.name(id) + " · " + (s2[id] || 0) + tr(" pts", (s2[id] || 0) === 1 ? " pt" : " pts")), win: mx ? o2.filter(id => (s2[id] || 0) === mx) : [] });
         }));
       });
     }

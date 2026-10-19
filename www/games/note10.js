@@ -503,35 +503,35 @@ function reportHTML(score, max){
 function b64e(str){ const b = new TextEncoder().encode(str); let s = ""; b.forEach(x => { s += String.fromCharCode(x); }); return btoa(s); }
 function b64d(t){ return new TextDecoder().decode(Uint8Array.from(atob(t), c => c.charCodeAt(0))); }
 function openEditor(onClose){
-  SB.page("Mes catégories", root => {
-    root.innerHTML = '<p style="font-size:15px">Ajoute tes catégories. Elles restent sur ton téléphone et, en réseau, elles sont proposées à tout le salon dans le paquet « Catégories perso ».</p>' +
-      '<div class="field"><label class="eyebrow" for="n10e-name">Catégorie</label><input class="txt" id="n10e-name" maxlength="90" autocomplete="off" placeholder="Ex. Un prof du lycée"></div>' +
-      '<div class="row"><div class="field" style="flex:1"><label class="eyebrow" for="n10e-lo">La note 1, c\'est…</label><input class="txt" id="n10e-lo" maxlength="24" autocomplete="off" placeholder="Le pire"></div>' +
-      '<div class="field" style="flex:1"><label class="eyebrow" for="n10e-hi">La note 10, c\'est…</label><input class="txt" id="n10e-hi" maxlength="24" autocomplete="off" placeholder="Le meilleur"></div></div>' +
-      '<button class="btn" id="n10e-add" type="button">Ajouter la catégorie</button><p class="err" id="n10e-err" hidden></p><ul class="mine" id="n10e-list"></ul>' +
-      '<div class="field"><span class="eyebrow">Transférer mes catégories</span><button class="btn ghost" id="n10e-exp" type="button">Exporter en code</button>' +
-      '<label class="eyebrow" for="n10e-imp">Importer un code reçu</label><div class="row"><input class="txt" id="n10e-imp" autocomplete="off" placeholder="Colle un code NOTE10:…"><button class="btn ghost" id="n10e-impb" type="button" style="flex:none">Importer</button></div><p class="sm" id="n10e-msg" hidden></p></div>';
+  SB.page(tr("Mes catégories", "My categories"), root => {
+    root.innerHTML = '<p style="font-size:15px">' + tr("Ajoute tes catégories. Elles restent sur ton téléphone et, en réseau, elles sont proposées à tout le salon dans le paquet « Catégories perso ».", "Add your own categories. They stay on your phone and, when playing online, they're offered to the whole room in the “Custom categories” pack.") + "</p>" +
+      '<div class="field"><label class="eyebrow" for="n10e-name">' + tr("Catégorie", "Category") + '</label><input class="txt" id="n10e-name" maxlength="90" autocomplete="off" placeholder="' + tr("Ex. Un prof du lycée", "E.g. A high school teacher") + '"></div>' +
+      '<div class="row"><div class="field" style="flex:1"><label class="eyebrow" for="n10e-lo">' + tr("La note 1, c'est…", "A 1 means…") + '</label><input class="txt" id="n10e-lo" maxlength="24" autocomplete="off" placeholder="' + tr("Le pire", "The worst") + '"></div>' +
+      '<div class="field" style="flex:1"><label class="eyebrow" for="n10e-hi">' + tr("La note 10, c'est…", "A 10 means…") + '</label><input class="txt" id="n10e-hi" maxlength="24" autocomplete="off" placeholder="' + tr("Le meilleur", "The best") + '"></div></div>' +
+      '<button class="btn" id="n10e-add" type="button">' + tr("Ajouter la catégorie", "Add category") + '</button><p class="err" id="n10e-err" hidden></p><ul class="mine" id="n10e-list"></ul>' +
+      '<div class="field"><span class="eyebrow">' + tr("Transférer mes catégories", "Transfer my categories") + '</span><button class="btn ghost" id="n10e-exp" type="button">' + tr("Exporter en code", "Export as a code") + "</button>" +
+      '<label class="eyebrow" for="n10e-imp">' + tr("Importer un code reçu", "Import a code you received") + '</label><div class="row"><input class="txt" id="n10e-imp" autocomplete="off" placeholder="' + tr("Colle un code NOTE10:…", "Paste a NOTE10:… code") + '"><button class="btn ghost" id="n10e-impb" type="button" style="flex:none">' + tr("Importer", "Import") + '</button></div><p class="sm" id="n10e-msg" hidden></p></div>';
     const $ = s => root.querySelector(s);
     const msg = t => { const m = $("#n10e-msg"); m.textContent = t; m.hidden = !t; };
     function list(){
       const all = myCustom(), ul = $("#n10e-list");
-      ul.innerHTML = all.length ? "" : '<li><span class="tx sm">Aucune catégorie pour l\'instant.</span></li>';
+      ul.innerHTML = all.length ? "" : '<li><span class="tx sm">' + tr("Aucune catégorie pour l'instant.", "No categories yet.") + "</span></li>";
       all.forEach((c, i) => {
         const li = document.createElement("li");
         li.innerHTML = '<span class="tx"><b></b><div class="sm"></div></span><button class="x" type="button">×</button>';
         li.querySelector("b").textContent = c[0]; li.querySelector(".sm").textContent = "1 · " + c[1] + "   ·   10 · " + c[2];
-        const x = li.querySelector("button"); x.setAttribute("aria-label", "Supprimer " + c[0]);
+        const x = li.querySelector("button"); x.setAttribute("aria-label", tr("Supprimer ", "Delete ") + c[0]);
         x.addEventListener("click", () => { const a = myCustom(); a.splice(i, 1); persist({ n10custom: a }); list(); SB.refreshExtras(); });
         ul.append(li);
       });
     }
     function add(){
       const n = clean($("#n10e-name").value, 90), err = $("#n10e-err");
-      if(!n){ err.textContent = "Donne un nom à ta catégorie, par exemple « Un prof du lycée »."; err.hidden = false; return; }
+      if(!n){ err.textContent = tr("Donne un nom à ta catégorie, par exemple « Un prof du lycée ».", "Give your category a name, for example “A high school teacher”."); err.hidden = false; return; }
       const all = myCustom();
-      if(all.length >= 100){ err.textContent = "Tu as atteint 100 catégories. Supprimes-en une pour en ajouter."; err.hidden = false; return; }
+      if(all.length >= 100){ err.textContent = tr("Tu as atteint 100 catégories. Supprimes-en une pour en ajouter.", "You've reached 100 categories. Delete one to add another."); err.hidden = false; return; }
       err.hidden = true;
-      all.push([n, clean($("#n10e-lo").value, 24) || "Le pire", clean($("#n10e-hi").value, 24) || "Le meilleur"]);
+      all.push([n, clean($("#n10e-lo").value, 24) || tr("Le pire", "The worst"), clean($("#n10e-hi").value, 24) || tr("Le meilleur", "The best")]);
       persist({ n10custom: all });
       $("#n10e-name").value = ""; $("#n10e-lo").value = ""; $("#n10e-hi").value = "";
       list(); SB.refreshExtras(); $("#n10e-name").focus();
@@ -539,18 +539,18 @@ function openEditor(onClose){
     $("#n10e-add").addEventListener("click", add);
     $("#n10e-name").addEventListener("keydown", e => { if(e.key === "Enter") add(); });
     $("#n10e-exp").addEventListener("click", () => {
-      const all = myCustom(); if(!all.length){ msg("Crée au moins une catégorie avant d'exporter."); return; }
+      const all = myCustom(); if(!all.length){ msg(tr("Crée au moins une catégorie avant d'exporter.", "Create at least one category before exporting.")); return; }
       const code = "NOTE10:" + b64e(JSON.stringify(all));
-      SB.u.shareText(code, "", $("#n10e-imp"), m => msg(m === "Copié" ? "Code copié. Colle-le dans un message pour tes potes." : "Code partagé."));
+      SB.u.shareText(code, "", $("#n10e-imp"), m => msg(m === "Copié" ? tr("Code copié. Colle-le dans un message pour tes potes.", "Code copied. Paste it in a message to your friends.") : tr("Code partagé.", "Code shared.")));
     });
     $("#n10e-impb").addEventListener("click", () => {
       const raw = $("#n10e-imp").value.trim(); let got = null;
       try{ if(!raw.startsWith("NOTE10:")) throw 0; got = JSON.parse(b64d(raw.slice(7))); }catch(e){ got = null; }
-      if(!Array.isArray(got)){ msg("Ce code n'est pas valide. Il doit commencer par NOTE10:"); return; }
+      if(!Array.isArray(got)){ msg(tr("Ce code n'est pas valide. Il doit commencer par NOTE10:", "This code isn't valid. It must start with NOTE10:")); return; }
       const all = myCustom(), names = new Set(all.map(c => c[0].toLowerCase())); let n = 0;
       got.forEach(c => { const x = norm(c); if(!x || all.length >= 100 || names.has(x[0].toLowerCase())) return; names.add(x[0].toLowerCase()); all.push(x); n++; });
       persist({ n10custom: all }); $("#n10e-imp").value = ""; list(); SB.refreshExtras();
-      msg(n ? SB.u.plural(n, "catégorie ajoutée", "catégories ajoutées") + "." : "Rien de nouveau : ces catégories sont déjà là.");
+      msg(n ? SB.u.plural2(n, "catégorie ajoutée", "catégories ajoutées", "category added", "categories added") + "." : tr("Rien de nouveau : ces catégories sont déjà là.", "Nothing new: these categories are already here."));
     });
     list();
   }, onClose);
@@ -561,8 +561,9 @@ function givers(ctx){ return ctx.ids.filter(id => id !== ctx.s.guesser && ctx.he
 function clueOf(ctx, id){ const i = ctx.input(id); return i && typeof i.t === "string" ? clean(i.t, 60) : ""; }
 function drawCat(ctx){
   let deck = A(ctx.priv().deck).map(A).filter(c => c.length === 3);
-  if(!deck.length) deck = SB.u.fresh("note10:cats", buildPool(ctx.opts.packs, ctx.peers));
-  const c = deck.pop() || CATS[0].slice();
+  const lg = ctx.s && ctx.s.lg || "fr";
+  if(!deck.length) deck = SB.u.fresh("note10:cats", buildPool(ctx.opts.packs, ctx.peers, lg));
+  const c = deck.pop() || deckOf(lg).classique[0].slice();
   ctx.setPriv({ deck }); SB.u.saw("note10:cats", [c]);
   return c;
 }
@@ -601,30 +602,34 @@ function revealTous(ctx){
 function standHTML(rows, title){
   rows = rows.slice().sort((a, b) => b[1] - a[1]);
   let rk = 0, prev = null;
-  return '<div class="field"><span class="eyebrow">' + esc(title || "Classement") + '</span><ul class="n10-sc">' + rows.map((r, i) => {
+  return '<div class="field"><span class="eyebrow">' + esc(title || tr("Classement", "Standings")) + '</span><ul class="n10-sc">' + rows.map((r, i) => {
     if(r[1] !== prev){ rk = i + 1; prev = r[1]; }
-    return '<li' + (rk === 1 && r[1] > 0 ? ' class="first"' : "") + '><span class="rk">' + rk + '</span><span class="nm">' + esc(r[0]) + "</span><b>" + SB.u.plural(r[1], "pt") + "</b></li>";
+    return '<li' + (rk === 1 && r[1] > 0 ? ' class="first"' : "") + '><span class="rk">' + rk + '</span><span class="nm">' + esc(r[0]) + "</span><b>" + SB.u.plural2(r[1], "pt", null, "pt") + "</b></li>";
   }).join("") + "</ul></div>";
 }
 function rulerMulti(note, gs){ let h = '<div class="n10-ruler">'; for(let n = 1; n <= 10; n++) h += '<div class="' + (n === note ? "is-note " : "") + (gs.indexOf(n) >= 0 ? "is-guess" : "") + '">' + n + "</div>"; return h + "</div>"; }
 // Résultat d'une manche : res = [[nom, note proposée, points]].
 function guessesHTML(res, iname, ip, tw){
   const rows = res.slice().sort((a, b) => b[2] - a[2] || a[0].localeCompare(b[0]));
-  return '<ul class="list n10-res">' + (rows.length ? rows.map(x => '<li><span class="t">' + esc(x[0]) + '</span><span class="by">a dit <b class="hand">' + x[1] + "</b> · " + esc((VERDICTS[x[2]] || VERDICTS[0])[0]) + " · +" + x[2] + "</span></li>").join("") : '<li><span class="by">Personne n\'a proposé de note.</span></li>') +
-    '<li class="ind"><span class="t">' + esc(iname) + '</span><span class="by">indicateur · moyenne de ses devineurs · +' + ip + "</span></li></ul>";
+  return '<ul class="list n10-res">' + (rows.length ? rows.map(x => '<li><span class="t">' + esc(x[0]) + '</span><span class="by">' + tr("a dit ", "said ") + '<b class="hand">' + x[1] + "</b> · " + esc((VERDICTS[x[2]] || VERDICTS[0])[0]) + " · +" + x[2] + "</span></li>").join("") : '<li><span class="by">' + tr("Personne n'a proposé de note.", "Nobody guessed a number.") + "</span></li>") +
+    '<li class="ind"><span class="t">' + esc(iname) + '</span><span class="by">' + tr("indicateur · moyenne de ses devineurs · +", "clue-giver · average of their guessers · +") + ip + "</span></li></ul>";
 }
 function roundTable(rh){
-  return '<div class="tablewrap"><table><thead><tr><th>Manche</th><th>Indicateur</th><th style="text-align:center">Note</th><th>Propositions</th></tr></thead><tbody>' +
+  return '<div class="tablewrap"><table><thead><tr><th>' + tr("Manche", "Round") + "</th><th>" + tr("Indicateur", "Clue-giver") + '</th><th style="text-align:center">' + tr("Note", "Number") + "</th><th>" + tr("Propositions", "Guesses") + "</th></tr></thead><tbody>" +
     A(rh).map(A).map(h => '<tr><td>' + esc(h[0]) + '<div class="sm">' + esc(h[1]) + (TW(h[4]) ? " · " + esc(TW(h[4]).name) : "") + "</div></td><td>" + esc(h[3]) + '<div class="sm">+' + esc(h[6]) + '</div></td><td style="text-align:center" class="hand"><b>' + esc(h[2]) + "</b></td><td>" +
       (A(h[5]).length ? A(h[5]).map(A).map(x => esc(x[0]) + " " + esc(x[1]) + ' <span class="sm">(+' + esc(x[2]) + ")</span>").join("<br>") : "—") + "</td></tr>").join("") + "</tbody></table></div>";
 }
+// "Alice, Bob and Chloe"
+const andList = a => a.length > 1 ? a.slice(0, -1).join(", ") + " and " + a[a.length - 1] : a.join("");
+// Titre de fin du mode « tout le monde devine » : « Alice et Bob gagnent » / "Alice and Bob win".
+function winHTML(top){ return top.length ? tr(esc(top.join(" et ")) + (top.length > 1 ? " gagnent" : " gagne"), esc(andList(top)) + (top.length > 1 ? " win" : " wins")) : tr("Personne ne marque", "Nobody scored"); }
 function topOf(rows){ const m = Math.max(0, ...rows.map(r => r[1])); return m > 0 ? rows.filter(r => r[1] === m).map(r => r[0]) : []; }
 function scoreRows(ctx){
   const sc = ctx.s.sc || {}, ids = ctx.ids.slice();
   Object.keys(sc).forEach(id => { if(ids.indexOf(id) < 0) ids.push(id); });
   return ids.map(id => [ctx.name(id), +sc[id] || 0, id]);
 }
-const hiddenCard = '<div class="card"><span class="eyebrow">Catégorie</span><div class="big">Cachée !</div><div class="scale"><span>1</span><span>10</span></div></div>';
+const hiddenCard = '<div class="card"><span class="eyebrow">' + tr("Catégorie", "Category") + '</span><div class="big">' + tr("Cachée !", "Hidden!") + '</div><div class="scale"><span>1</span><span>10</span></div></div>';
 let clK = "", clV = [];
 
 function hostTous(ctx){
@@ -640,11 +645,11 @@ function hostTous(ctx){
 }
 function renderTous(ctx, root){
   const s = ctx.s, c = view(s.c, s.tw), isI = s.ind === ctx.me, iName = ctx.name(s.ind), playing = ctx.ids.indexOf(ctx.me) >= 0;
-  const label = '<span class="eyebrow">Manche ' + s.round + " / " + s.rounds + " · indicateur : " + esc(iName) + "</span>" + SB.u.twistHTML(TW(s.tw));
+  const label = '<span class="eyebrow">' + tr("Manche ", "Round ") + s.round + " / " + s.rounds + tr(" · indicateur : ", " · clue-giver: ") + esc(iName) + "</span>" + SB.u.twistHTML(TW(s.tw));
   const hostBox = '<div class="dock" data-hostbox></div>';
   const one = s.tw === "mot";
-  const clues = () => { const l = clList(ctx); return l.length ? l.map(t => '<li><span class="t">' + esc(t) + "</span></li>").join("") : '<li><span class="by">' + esc(iName) + " n'a pas encore donné d'indice.</span></li>"; };
-  const chips = () => tgs(ctx).map(id => { const ok = !!gOf(ctx, id); return '<span class="chip' + (ok ? " ok" : "") + '">' + (ok ? "✓ " : "") + esc(ctx.name(id)) + (ctx.here(id) ? "" : " (parti)") + "</span>"; }).join("");
+  const clues = () => { const l = clList(ctx); return l.length ? l.map(t => '<li><span class="t">' + esc(t) + "</span></li>").join("") : '<li><span class="by">' + esc(iName) + tr(" n'a pas encore donné d'indice.", " hasn't given a clue yet.") + "</span></li>"; };
+  const chips = () => tgs(ctx).map(id => { const ok = !!gOf(ctx, id); return '<span class="chip' + (ok ? " ok" : "") + '">' + (ok ? "✓ " : "") + esc(ctx.name(id)) + (ctx.here(id) ? "" : tr(" (parti)", " (left)")) + "</span>"; }).join("");
   const sync = (sel, html) => { const e = root.querySelector(sel); if(e && e.innerHTML !== html) e.innerHTML = html; };
   const hostButtons = (key, html, bind) => {
     const hb = root.querySelector("[data-hostbox]"); if(!hb) return;
@@ -656,18 +661,18 @@ function renderTous(ctx, root){
   if(s.phase === "clues"){
     if(isI){
       if(clK !== s.k){ clK = s.k; clV = A(ctx.mine() && ctx.mine().cl).slice(0, MAXCL); }
-      screen(root, "ic" + s.k, CSS + label + (s.dl ? '<div class="timer" data-t></div>' : "") + catCard(c, "Catégorie", gradeHTML(s.note)) +
-        '<p class="howto">Tu es l\'indicateur. Donne <b>1 à ' + MAXCL + " " + (one ? "mots seuls" : "exemples") + '</b> qui valent cette note pour toi. Sans chiffre. Tous les autres devinent.</p>' +
-        '<div class="field" data-form><label class="eyebrow" for="n10-in">Indice</label><div class="row"><input class="txt" id="n10-in" maxlength="60" autocomplete="off" placeholder="' + (one ? "Un seul mot" : "Un exemple, sans chiffre") + '"><button class="btn ghost" type="button" data-add style="flex:none">Ajouter</button></div><p class="err" data-err hidden></p></div>' +
-        '<ul class="mine" data-mine></ul>' + SB.u.dock('<button class="btn acc" type="button" data-go disabled>Faire deviner</button><button class="link" type="button" data-rr style="align-self:center"' + (s.rr > 0 ? "" : " disabled") + ">" + (s.rr > 0 ? "Changer de catégorie (" + s.rr + " restant" + (s.rr > 1 ? "s" : "") + ")" : "Plus de changement de catégorie") + "</button>") + hostBox, r => {
+      screen(root, "ic" + s.k, CSS + label + (s.dl ? '<div class="timer" data-t></div>' : "") + catCard(c, tr("Catégorie", "Category"), gradeHTML(s.note)) +
+        '<p class="howto">' + tr("Tu es l'indicateur. Donne <b>1 à " + MAXCL + " " + (one ? "mots seuls" : "exemples") + "</b> qui valent cette note pour toi. Sans chiffre. Tous les autres devinent.", "You're the clue-giver. Give <b>1 to " + MAXCL + " " + (one ? "single words" : "examples") + "</b> that are worth this number to you. No digits. Everyone else guesses.") + "</p>" +
+        '<div class="field" data-form><label class="eyebrow" for="n10-in">' + tr("Indice", "Clue") + '</label><div class="row"><input class="txt" id="n10-in" maxlength="60" autocomplete="off" placeholder="' + (one ? tr("Un seul mot", "One word only") : tr("Un exemple, sans chiffre", "An example, no digits")) + '"><button class="btn ghost" type="button" data-add style="flex:none">' + tr("Ajouter", "Add") + '</button></div><p class="err" data-err hidden></p></div>' +
+        '<ul class="mine" data-mine></ul>' + SB.u.dock('<button class="btn acc" type="button" data-go disabled>' + tr("Faire deviner", "Send clues") + '</button><button class="link" type="button" data-rr style="align-self:center"' + (s.rr > 0 ? "" : " disabled") + ">" + rrLabel(s.rr) + "</button>") + hostBox, r => {
         const inp = r.querySelector("#n10-in"), err = r.querySelector("[data-err]");
         const bad = m => { err.textContent = m; err.hidden = false; };
         const add = () => {
           const t = clean(inp.value, 60);
-          if(!t) return bad("Écris un exemple avant d'ajouter.");
-          if(/[0-9]/.test(t)) return bad("Pas de chiffres dans l'indice, c'est trop facile.");
-          if(one && /\s/.test(t)) return bad("Coup de théâtre : un seul mot, sans espace.");
-          if(clV.length >= MAXCL) return bad(MAXCL + " indices maximum. Retire-en un pour changer.");
+          if(!t) return bad(tr("Écris un exemple avant d'ajouter.", "Write an example before adding it."));
+          if(/[0-9]/.test(t)) return bad(tr("Pas de chiffres dans l'indice, c'est trop facile.", "No digits in your clue, that's too easy."));
+          if(one && /\s/.test(t)) return bad(tr("Coup de théâtre : un seul mot, sans espace.", "Plot twist: one word only, no spaces."));
+          if(clV.length >= MAXCL) return bad(tr(MAXCL + " indices maximum. Retire-en un pour changer.", MAXCL + " clues max. Remove one to change it."));
           err.hidden = true; clV = clV.concat([t]); inp.value = ""; ctx.send({ cl: clV, go: false }); inp.focus();
         };
         r.querySelector("[data-add]").addEventListener("click", add);
@@ -680,61 +685,61 @@ function renderTous(ctx, root){
         r.querySelector("[data-rr]").addEventListener("click", () => { if(s.rr > 0) ctx.send({ rr: s.rr }); });
       });
       const sent = ctx.mine() && ctx.mine().go;
-      sync("[data-mine]", clV.map((t, j) => '<li><span class="tx"><b>' + esc(t) + '</b></span><button class="x" type="button" data-x="' + j + '" aria-label="Retirer ' + esc(t) + '">×</button></li>').join(""));
+      sync("[data-mine]", clV.map((t, j) => '<li><span class="tx"><b>' + esc(t) + '</b></span><button class="x" type="button" data-x="' + j + '" aria-label="' + tr("Retirer ", "Remove ") + esc(t) + '">×</button></li>').join(""));
       const go = root.querySelector("[data-go]");
-      go.disabled = !clV.length || !!sent; go.textContent = sent ? "Indices envoyés" : "Faire deviner (" + SB.u.plural(clV.length, "indice") + ")";
+      go.disabled = !clV.length || !!sent; go.textContent = sent ? tr("Indices envoyés", "Clues sent") : tr("Faire deviner (", "Send clues (") + SB.u.plural2(clV.length, "indice", null, "clue") + ")";
       root.querySelector("[data-form]").hidden = clV.length >= MAXCL || !!sent;
     } else {
       screen(root, "wc" + s.k, CSS + label + (s.dl ? '<div class="timer" data-t></div>' : "") + (s.tw === "aveugle" ? hiddenCard : catCard(c)) +
-        '<div class="pass"><span class="eyebrow">' + (playing ? "Tu devines" : "Spectateur") + '</span><div class="who">' + esc(iName) + '</div><p>regarde la note secrète et prépare ses indices.</p></div>' +
-        '<div class="field"><span class="eyebrow">Indices</span><ul class="list" data-clues></ul></div>' + hostBox);
+        '<div class="pass"><span class="eyebrow">' + (playing ? tr("Tu devines", "You're guessing") : tr("Spectateur", "Spectator")) + '</span><div class="who">' + esc(iName) + "</div><p>" + tr("regarde la note secrète et prépare ses indices.", "is looking at the secret number and preparing clues.") + "</p></div>" +
+        '<div class="field"><span class="eyebrow">' + tr("Indices", "Clues") + '</span><ul class="list" data-clues></ul></div>' + hostBox);
       sync("[data-clues]", clues());
     }
     if(s.dl){ const left = Math.max(0, Math.ceil((s.dl - ctx.now()) / 1000)), t = txt(root, "[data-t]", left); if(t) t.classList.toggle("low", left <= 10); }
     const gone = !ctx.here(s.ind);
-    hostButtons(s.k + "|" + gone, gone ? '<button class="link warn" type="button" data-skip style="align-self:center">L\'indicateur est parti, passer la manche</button>' : "", hb => {
+    hostButtons(s.k + "|" + gone, gone ? '<button class="link warn" type="button" data-skip style="align-self:center">' + tr("L'indicateur est parti, passer la manche", "The clue-giver left, skip the round") + "</button>" : "", hb => {
       const b = hb.querySelector("[data-skip]"); if(b) b.addEventListener("click", () => ctx.act(skip));
     });
   } else if(s.phase === "guess"){
     const isG = !isI && playing;
-    screen(root, "tg" + s.k + isG, CSS + label + (isI ? catCard(c, "Catégorie", gradeHTML(s.note)) : s.tw === "aveugle" ? hiddenCard : catCard(c)) +
-      '<div class="field"><span class="eyebrow">Les indices de ' + esc(iName) + '</span><ul class="list" data-clues></ul></div>' +
-      (isG ? '<div class="field"><span class="eyebrow">Quelle note a-t-il en tête ?</span>' + padHTML() + "</div>" + SB.u.dock('<button class="btn acc" type="button" data-val disabled>Valider ma note</button>') : "") +
-      '<div class="field"><span class="eyebrow">Notes reçues</span><div class="chips" data-chips></div></div>' + (isG ? "" : SB.u.dock('<p class="wait">Tout le monde réfléchit…</p>')) + hostBox, r => {
+    screen(root, "tg" + s.k + isG, CSS + label + (isI ? catCard(c, tr("Catégorie", "Category"), gradeHTML(s.note)) : s.tw === "aveugle" ? hiddenCard : catCard(c)) +
+      '<div class="field"><span class="eyebrow">' + tr("Les indices de " + esc(iName), esc(iName) + "'s clues") + '</span><ul class="list" data-clues></ul></div>' +
+      (isG ? '<div class="field"><span class="eyebrow">' + tr("Quelle note a-t-il en tête ?", "What number do they have in mind?") + "</span>" + padHTML() + "</div>" + SB.u.dock('<button class="btn acc" type="button" data-val disabled>' + tr("Valider ma note", "Lock in my guess") + "</button>") : "") +
+      '<div class="field"><span class="eyebrow">' + tr("Notes reçues", "Guesses in") + '</span><div class="chips" data-chips></div></div>' + (isG ? "" : SB.u.dock('<p class="wait">' + tr("Tout le monde réfléchit…", "Everyone's thinking…") + "</p>")) + hostBox, r => {
       if(pickK !== s.k){ pickK = s.k; pickN = gOf(ctx, ctx.me); }
       const v = r.querySelector("[data-val]");
       const mark = () => r.querySelectorAll("[data-n]").forEach(x => x.setAttribute("aria-pressed", +x.dataset.n === pickN));
-      r.querySelectorAll("[data-n]").forEach(b => b.addEventListener("click", () => { pickN = +b.dataset.n; mark(); if(v){ v.disabled = false; v.textContent = "Valider ma note"; } }));
-      if(v) v.addEventListener("click", () => { if(!pickN) return; ctx.send({ n: pickN }); v.disabled = true; v.textContent = "Note envoyée : " + pickN; });
-      if(pickN){ mark(); if(v){ v.disabled = true; v.textContent = "Note envoyée : " + pickN; } }
+      r.querySelectorAll("[data-n]").forEach(b => b.addEventListener("click", () => { pickN = +b.dataset.n; mark(); if(v){ v.disabled = false; v.textContent = tr("Valider ma note", "Lock in my guess"); } }));
+      if(v) v.addEventListener("click", () => { if(!pickN) return; ctx.send({ n: pickN }); v.disabled = true; v.textContent = tr("Note envoyée : ", "Guess sent: ") + pickN; });
+      if(pickN){ mark(); if(v){ v.disabled = true; v.textContent = tr("Note envoyée : ", "Guess sent: ") + pickN; } }
     });
     sync("[data-clues]", clues());
     sync("[data-chips]", chips());
     const n = tgs(ctx).filter(id => gOf(ctx, id)).length, gone = !ctx.here(s.ind);
-    hostButtons(s.k + "|" + (n > 0) + "|" + gone, '<button class="btn ghost" type="button" data-rev' + (n ? "" : " disabled") + ">Révéler sans attendre les autres</button>" +
-      (gone && !n ? '<button class="link warn" type="button" data-skip style="align-self:center">L\'indicateur est parti, passer la manche</button>' : ""), hb => {
+    hostButtons(s.k + "|" + (n > 0) + "|" + gone, '<button class="btn ghost" type="button" data-rev' + (n ? "" : " disabled") + ">" + tr("Révéler sans attendre les autres", "Reveal without waiting for the rest") + "</button>" +
+      (gone && !n ? '<button class="link warn" type="button" data-skip style="align-self:center">' + tr("L'indicateur est parti, passer la manche", "The clue-giver left, skip the round") + "</button>" : ""), hb => {
       hb.querySelector("[data-rev]").addEventListener("click", () => ctx.act(c2 => { if(c2.s.phase === "guess") revealTous(c2); }));
       const b = hb.querySelector("[data-skip]"); if(b) b.addEventListener("click", () => ctx.act(skip));
     });
   } else if(s.phase === "result"){
     const res = A(s.res).map(A), mine = res.find(x => x[0] === ctx.me);
-    const head = isI ? "+" + s.ip + " pour toi" : mine ? (VERDICTS[mine[2]] || VERDICTS[0])[0] + " +" + mine[2] : "La note était " + s.note;
-    screen(root, "tr" + s.k + ctx.isHost, CSS + label + '<div class="verdict">' + esc(head) + '</div><p style="font-size:17px">La note de ' + esc(iName) + " était <b>" + s.note + "</b>" + (mine ? ", tu as dit " + mine[1] : "") + ".</p>" +
-      '<div class="card"><div class="big" style="font-size:22px">' + esc(c[0]) + "</div>" + rulerMulti(s.note, res.map(x => x[1])) + '<div class="n10-legend"><span><i class="ln"></i>Note secrète</span><span><i class="lg"></i>Notes proposées</span></div></div>' +
-      guessesHTML(res.map(x => [ctx.name(x[0]), x[1], x[2]]), iName, s.ip, s.tw) + standHTML(scoreRows(ctx), "Classement") +
-      SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>' + (s.round >= s.rounds ? "Voir le classement final" : "Manche suivante") + "</button>" : '<p class="wait">L\'hôte lance la suite…</p>'), r => {
+    const head = isI ? "+" + s.ip + tr(" pour toi", " for you") : mine ? (VERDICTS[mine[2]] || VERDICTS[0])[0] + " +" + mine[2] : tr("La note était ", "The number was ") + s.note;
+    screen(root, "tr" + s.k + ctx.isHost, CSS + label + '<div class="verdict">' + esc(head) + '</div><p style="font-size:17px">' + tr("La note de " + esc(iName) + " était <b>" + s.note + "</b>" + (mine ? ", tu as dit " + mine[1] : ""), esc(iName) + "'s number was <b>" + s.note + "</b>" + (mine ? ", you said " + mine[1] : "")) + ".</p>" +
+      '<div class="card"><div class="big" style="font-size:22px">' + esc(c[0]) + "</div>" + rulerMulti(s.note, res.map(x => x[1])) + '<div class="n10-legend"><span><i class="ln"></i>' + tr("Note secrète", "Secret number") + '</span><span><i class="lg"></i>' + tr("Notes proposées", "Guesses") + "</span></div></div>" +
+      guessesHTML(res.map(x => [ctx.name(x[0]), x[1], x[2]]), iName, s.ip, s.tw) + standHTML(scoreRows(ctx), tr("Classement", "Standings")) +
+      SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>' + (s.round >= s.rounds ? tr("Voir le classement final", "See final standings") : tr("Manche suivante", "Next round")) + "</button>" : '<p class="wait">' + tr("L'hôte lance la suite…", "The host is starting the next part…") + "</p>"), r => {
       const b = r.querySelector("[data-next]"); if(b) b.addEventListener("click", () => ctx.act(c2 => { if(c2.s.phase === "result") nextRound(c2); }));
     });
   } else if(s.phase === "end"){
     const rows = scoreRows(ctx), top = topOf(rows);
-    screen(root, "tend" + ctx.isHost, CSS + '<span class="eyebrow">Fin de partie</span><div class="verdict">' + (top.length ? esc(top.join(" et ")) + (top.length > 1 ? " gagnent" : " gagne") : "Personne ne marque") + "</div>" +
-      standHTML(rows, "Classement final") + awardsHTML(awards(s.hist, true)) + roundTable(s.rh) +
-      SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>Retour au salon</button>' : '<p class="wait">L\'hôte va vous ramener au salon.</p>'), r => {
+    screen(root, "tend" + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Fin de partie", "Game over") + '</span><div class="verdict">' + winHTML(top) + "</div>" +
+      standHTML(rows, tr("Classement final", "Final standings")) + awardsHTML(awards(s.hist, true)) + roundTable(s.rh) +
+      SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
       const b = r.querySelector("[data-back]");
       if(b) b.addEventListener("click", () => ctx.act(c2 => {
-        const R = scoreRows(c2).sort((a, b2) => b2[1] - a[1]), m = R.length ? R[0][1] : 0;
-        c2.end({ title: m > 0 ? R.filter(x => x[1] === m).map(x => x[0]).join(" et ") + " en tête avec " + SB.u.plural(m, "point") : "Personne n'a marqué",
-          lines: R.slice(0, 5).map(x => x[0] + " : " + SB.u.plural(x[1], "pt")).concat(awards(c2.s.hist, true).map(a => a[0] + " : " + a[1])),
+        const R = scoreRows(c2).sort((a, b2) => b2[1] - a[1]), m = R.length ? R[0][1] : 0, W = R.filter(x => x[1] === m).map(x => x[0]);
+        c2.end({ title: m > 0 ? tr(W.join(" et ") + " en tête avec " + SB.u.plural(m, "point"), andList(W) + (W.length > 1 ? " lead" : " leads") + " with " + SB.u.plural2(m, "point", null, "point")) : tr("Personne n'a marqué", "Nobody scored"),
+          lines: R.slice(0, 5).map(x => x[0] + tr(" : ", ": ") + SB.u.plural2(x[1], "pt", null, "pt")).concat(awards(c2.s.hist, true).map(a => a[0] + tr(" : ", ": ") + a[1])),
           win: m > 0 ? R.filter(x => x[1] === m).map(x => x[2]) : [] });
       }));
     });
@@ -745,35 +750,35 @@ function histRow(ctx, guess, pts){ const s = ctx.s; return [s.round, A(s.c)[0], 
 let pickN = 0, pickK = "";
 
 SB.register({
-  id: "note10", name: "Note sur 10", glyph: "7/10", pitch: "Fais deviner une note secrète sur 10 avec des exemples.", hot: true, ticks: true,
+  id: "note10", name: tr("Note sur 10", "Out of 10"), glyph: "7/10", pitch: tr("Fais deviner une note secrète sur 10 avec des exemples.", "Get others to guess a secret number out of 10 using examples."), hot: true, ticks: true,
   accent: { light: "#ff7b5c", dark: "#ff7b5c" },
-  tag: "Une catégorie, une note secrète. Faites-la deviner avec des exemples.",
+  tag: tr("Une catégorie, une note secrète. Faites-la deviner avec des exemples.", "One category, one secret number. Get it guessed with examples."),
   min: 2, max: 12,
   rules: [
-    "Tout le monde devine (par défaut) : à chaque manche, un indicateur voit une catégorie et une note secrète de 1 à 10. Il donne 1 à 3 exemples qui valent cette note pour lui, sans chiffre.",
-    "Tous les autres proposent une note en secret, chacun pour soi. Pile : 3 points. À 1 près : 2. À 2 près : 1.",
-    "L'indicateur marque la moyenne (arrondie) des points de ses devineurs : plus ses indices sont clairs, plus il gagne. Le rôle tourne à chaque manche. Le meilleur score gagne.",
-    "Un seul devineur : un joueur devine, tous les autres écrivent chacun un indice. Le score est collectif.",
-    "Coups de théâtre : une manche sur trois environ, une règle change (note inversée, un seul mot, double ou rien, chrono…).",
-    "Les catégories déjà jouées sur ce téléphone reviennent en dernier."
+    tr("Tout le monde devine (par défaut) : à chaque manche, un indicateur voit une catégorie et une note secrète de 1 à 10. Il donne 1 à 3 exemples qui valent cette note pour lui, sans chiffre.", "Everyone guesses (default): each round, a clue-giver sees a category and a secret number from 1 to 10. They give 1 to 3 examples that are worth that number to them, with no digits."),
+    tr("Tous les autres proposent une note en secret, chacun pour soi. Pile : 3 points. À 1 près : 2. À 2 près : 1.", "Everyone else secretly guesses a number, each on their own. Spot on: 3 points. Off by 1: 2. Off by 2: 1."),
+    tr("L'indicateur marque la moyenne (arrondie) des points de ses devineurs : plus ses indices sont clairs, plus il gagne. Le rôle tourne à chaque manche. Le meilleur score gagne.", "The clue-giver scores the (rounded) average of their guessers' points: the clearer the clues, the more they score. The role rotates every round. Highest score wins."),
+    tr("Un seul devineur : un joueur devine, tous les autres écrivent chacun un indice. Le score est collectif.", "Single guesser: one player guesses, everyone else writes one clue each. The score is shared by the team."),
+    tr("Coups de théâtre : une manche sur trois environ, une règle change (note inversée, un seul mot, double ou rien, chrono…).", "Plot twists: about one round in three, a rule changes (flipped scale, one word only, double or nothing, against the clock…)."),
+    tr("Les catégories déjà jouées sur ce téléphone reviennent en dernier.", "Categories already played on this phone come back last.")
   ],
   presence: () => myCustom().slice(0, 50),
   options: [
-    { id: "mode", label: "Mode", type: "seg", def: "tous", values: [{ v: "tous", label: "Tout le monde devine" }, { v: "un", label: "Un seul devineur" }] },
-    { id: "rounds", label: "Manches", type: "seg", def: 6, values: [{ v: 4, label: "4" }, { v: 6, label: "6" }, { v: 10, label: "10" }] },
-    { id: "packs", label: "Catégories", type: "multi", def: ["classique"],
-      values: ctx => PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, count: p.v === "perso" ? sharedCustom(ctx.peers).length : p.cats.length })) },
-    { id: "twists", label: "Coups de théâtre", type: "toggle", text: "Coups de théâtre", desc: "Une manche sur trois environ, une règle change", def: true },
-    { id: "edit", type: "button", label: "Créer mes propres catégories", onClick: () => openEditor() }
+    { id: "mode", label: "Mode", type: "seg", def: "tous", values: [{ v: "tous", label: tr("Tout le monde devine", "Everyone guesses") }, { v: "un", label: tr("Un seul devineur", "Single guesser") }] },
+    { id: "rounds", label: tr("Manches", "Rounds"), type: "seg", def: 6, values: [{ v: 4, label: "4" }, { v: 6, label: "6" }, { v: 10, label: "10" }] },
+    { id: "packs", label: tr("Catégories", "Categories"), type: "multi", def: ["classique"],
+      values: ctx => PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, count: p.v === "perso" ? sharedCustom(ctx.peers).length : catsOf(p, SB.lang()).length })) },
+    { id: "twists", label: tr("Coups de théâtre", "Plot twists"), type: "toggle", text: tr("Coups de théâtre", "Plot twists"), desc: tr("Une manche sur trois environ, une règle change", "About one round in three, a rule changes"), def: true },
+    { id: "edit", type: "button", label: tr("Créer mes propres catégories", "Create my own categories"), onClick: () => openEditor() }
   ],
   start(ctx, o){
-    const pool = buildPool(o.packs, ctx.peers);
-    if(!pool.length) throw new Error("Choisis au moins un paquet de catégories.");
+    const lg = SB.lang(), pool = buildPool(o.packs, ctx.peers, lg);
+    if(!pool.length) throw new Error(tr("Choisis au moins un paquet de catégories.", "Pick at least one category pack."));
     const deck = SB.u.fresh("note10:cats", pool), c = deck.pop();
     ctx.setPriv({ deck }); SB.u.saw("note10:cats", [c]);
     const gi = Math.floor(Math.random() * ctx.players.length);
-    if(o.mode !== "un") return { phase: "clues", mode: "tous", round: 1, rounds: o.rounds || 6, gi, ind: ctx.players[gi].id, c, tw: "", dl: 0, note: rollNote(""), rr: 2, sc: {}, res: [], ip: 0, hist: [], rh: [] };
-    return { phase: "clues", round: 1, rounds: o.rounds || 6, gi, guesser: ctx.players[gi].id, c, tw: "", dl: 0, note: rollNote(""), rr: 2, score: 0, max: 0, guess: 0, pts: 0, hist: [] };
+    if(o.mode !== "un") return { phase: "clues", lg, mode: "tous", round: 1, rounds: o.rounds || 6, gi, ind: ctx.players[gi].id, c, tw: "", dl: 0, note: rollNote(""), rr: 2, sc: {}, res: [], ip: 0, hist: [], rh: [] };
+    return { phase: "clues", lg, round: 1, rounds: o.rounds || 6, gi, guesser: ctx.players[gi].id, c, tw: "", dl: 0, note: rollNote(""), rr: 2, score: 0, max: 0, guess: 0, pts: 0, hist: [] };
   },
   host(ctx){
     const s = ctx.s;
@@ -792,25 +797,25 @@ SB.register({
   render(ctx, root){
     if(ctx.s.mode === "tous") return renderTous(ctx, root);
     const s = ctx.s, c = view(s.c, s.tw), isG = s.guesser === ctx.me, gName = ctx.name(s.guesser);
-    const label = '<span class="eyebrow">Manche ' + s.round + " / " + s.rounds + " · devineur : " + esc(gName) + "</span>" + SB.u.twistHTML(TW(s.tw));
+    const label = '<span class="eyebrow">' + tr("Manche ", "Round ") + s.round + " / " + s.rounds + tr(" · devineur : ", " · guesser: ") + esc(gName) + "</span>" + SB.u.twistHTML(TW(s.tw));
     const hostBox = '<div class="dock" data-hostbox></div>';
     const timer = s.dl && s.phase === "clues" ? '<div class="timer" data-t></div>' : "";
     if(s.phase === "clues"){
       if(isG){
-        screen(root, "cg" + s.k, CSS + label + timer + '<div class="pass"><span class="eyebrow">C\'est toi qui devines</span><div class="who">Patience…</div><p>Tes coéquipiers regardent la note secrète et écrivent leurs indices.</p></div><div class="field"><span class="eyebrow">Indices envoyés</span><div class="chips" data-chips></div></div>' + hostBox);
+        screen(root, "cg" + s.k, CSS + label + timer + '<div class="pass"><span class="eyebrow">' + tr("C'est toi qui devines", "You're the guesser") + '</span><div class="who">' + tr("Patience…", "Hang on…") + "</div><p>" + tr("Tes coéquipiers regardent la note secrète et écrivent leurs indices.", "Your teammates are looking at the secret number and writing their clues.") + '</p></div><div class="field"><span class="eyebrow">' + tr("Indices envoyés", "Clues sent") + '</span><div class="chips" data-chips></div></div>' + hostBox);
       } else {
         const one = s.tw === "mot";
-        screen(root, "cc" + s.k, CSS + label + timer + catCard(c, "Catégorie", gradeHTML(s.note)) +
-          '<p class="howto">Donne <b>' + (one ? "un seul mot" : "une réponse") + '</b> qui vaut cette note pour toi' + (one ? "" : " : un exemple, une phrase") + '. Sans chiffre.</p>' +
-          '<div class="field" data-form><label class="eyebrow" for="n10-in">Ton indice</label><div class="row"><input class="txt" id="n10-in" maxlength="60" autocomplete="off" placeholder="' + (one ? "Un seul mot" : "Ta réponse, sans chiffre") + '"><button class="btn acc" type="button" data-send style="flex:none">Envoyer</button></div><p class="err" data-err hidden></p></div>' +
-          '<div class="sent" data-sent hidden><span class="t" data-senttxt></span><button class="link" type="button" data-edit>Modifier</button></div>' +
-          '<div class="field"><span class="eyebrow">Indices envoyés</span><div class="chips" data-chips></div></div>' + hostBox, r => {
+        screen(root, "cc" + s.k, CSS + label + timer + catCard(c, tr("Catégorie", "Category"), gradeHTML(s.note)) +
+          '<p class="howto">' + tr("Donne <b>" + (one ? "un seul mot" : "une réponse") + "</b> qui vaut cette note pour toi" + (one ? "" : " : un exemple, une phrase") + ". Sans chiffre.", "Give <b>" + (one ? "a single word" : "an answer") + "</b> that's worth this number to you" + (one ? "" : ": an example, a phrase") + ". No digits.") + "</p>" +
+          '<div class="field" data-form><label class="eyebrow" for="n10-in">' + tr("Ton indice", "Your clue") + '</label><div class="row"><input class="txt" id="n10-in" maxlength="60" autocomplete="off" placeholder="' + (one ? tr("Un seul mot", "One word only") : tr("Ta réponse, sans chiffre", "Your answer, no digits")) + '"><button class="btn acc" type="button" data-send style="flex:none">' + tr("Envoyer", "Send") + '</button></div><p class="err" data-err hidden></p></div>' +
+          '<div class="sent" data-sent hidden><span class="t" data-senttxt></span><button class="link" type="button" data-edit>' + tr("Modifier", "Edit") + "</button></div>" +
+          '<div class="field"><span class="eyebrow">' + tr("Indices envoyés", "Clues sent") + '</span><div class="chips" data-chips></div></div>' + hostBox, r => {
           const inp = r.querySelector("#n10-in"), err = r.querySelector("[data-err]");
           const send = () => {
             const t = clean(inp.value, 60);
-            if(!t){ err.textContent = "Écris un exemple avant d'envoyer."; err.hidden = false; return; }
-            if(/[0-9]/.test(t)){ err.textContent = "Pas de chiffres dans l'indice, c'est trop facile."; err.hidden = false; return; }
-            if(one && /\s/.test(t)){ err.textContent = "Coup de théâtre : un seul mot, sans espace."; err.hidden = false; return; }
+            if(!t){ err.textContent = tr("Écris un exemple avant d'envoyer.", "Write an example before sending."); err.hidden = false; return; }
+            if(/[0-9]/.test(t)){ err.textContent = tr("Pas de chiffres dans l'indice, c'est trop facile.", "No digits in your clue, that's too easy."); err.hidden = false; return; }
+            if(one && /\s/.test(t)){ err.textContent = tr("Coup de théâtre : un seul mot, sans espace.", "Plot twist: one word only, no spaces."); err.hidden = false; return; }
             err.hidden = true; r.dataset.editing = ""; ctx.send({ t });
           };
           r.querySelector("[data-send]").addEventListener("click", send);
@@ -828,7 +833,7 @@ SB.register({
       }
       if(s.dl){ const left = Math.max(0, Math.ceil((s.dl - ctx.now()) / 1000)), t = txt(root, "[data-t]", left); if(t) t.classList.toggle("low", left <= 10); }
       const ch = root.querySelector("[data-chips]");
-      const chips = ctx.ids.filter(id => id !== s.guesser).map(id => { const ok = !!clueOf(ctx, id); return '<span class="chip' + (ok ? " ok" : "") + '">' + (ok ? "✓ " : "") + esc(ctx.name(id)) + (ctx.here(id) ? "" : " (parti)") + "</span>"; }).join("");
+      const chips = ctx.ids.filter(id => id !== s.guesser).map(id => { const ok = !!clueOf(ctx, id); return '<span class="chip' + (ok ? " ok" : "") + '">' + (ok ? "✓ " : "") + esc(ctx.name(id)) + (ctx.here(id) ? "" : tr(" (parti)", " (left)")) + "</span>"; }).join("");
       if(ch.innerHTML !== chips) ch.innerHTML = chips;
       const hb = root.querySelector("[data-hostbox]");
       if(ctx.isHost){
@@ -836,47 +841,47 @@ SB.register({
         if(hb.dataset.k !== hk){
           hb.dataset.k = hk;
           const any = givers(ctx).some(id => clueOf(ctx, id));
-          hb.innerHTML = '<button class="btn ghost" type="button" data-force' + (any ? "" : " disabled") + '>Montrer les indices au devineur</button>' +
-            '<button class="link" type="button" data-reroll style="align-self:center"' + (s.rr > 0 ? "" : " disabled") + ">" + (s.rr > 0 ? "Changer de catégorie (" + s.rr + " restant" + (s.rr > 1 ? "s" : "") + ")" : "Plus de changement de catégorie") + "</button>";
+          hb.innerHTML = '<button class="btn ghost" type="button" data-force' + (any ? "" : " disabled") + ">" + tr("Montrer les indices au devineur", "Show the clues to the guesser") + "</button>" +
+            '<button class="link" type="button" data-reroll style="align-self:center"' + (s.rr > 0 ? "" : " disabled") + ">" + rrLabel(s.rr) + "</button>";
           hb.querySelector("[data-force]").addEventListener("click", () => ctx.act(c2 => { if(c2.s.phase === "clues") c2.set({ phase: "guess" }); }));
           hb.querySelector("[data-reroll]").addEventListener("click", () => ctx.act(c2 => { if(c2.s.rr > 0 && c2.s.phase === "clues") nextRound(c2, true); }));
         }
       } else if(hb.innerHTML) hb.innerHTML = "";
     } else if(s.phase === "guess"){
       const blind = isG && s.tw === "aveugle";
-      screen(root, "gu" + s.k, CSS + label + (blind ? '<div class="card"><span class="eyebrow">Catégorie</span><div class="big">Cachée !</div><div class="scale"><span>1</span><span>10</span></div></div>' : catCard(c)) + '<div class="field"><span class="eyebrow">Les indices</span><ul class="list" data-clues></ul></div>' +
-        (isG ? '<div class="field"><span class="eyebrow">Quelle note ont-ils en tête ?</span>' + padHTML() + '</div>' + SB.u.dock('<button class="btn acc" type="button" data-val disabled>Valider ma note</button>') : SB.u.dock('<p class="wait">' + esc(gName) + " réfléchit…</p>")) +
-        '<button class="link warn" type="button" data-skip hidden style="align-self:center">Le devineur est parti, passer la manche</button>', r => {
+      screen(root, "gu" + s.k, CSS + label + (blind ? hiddenCard : catCard(c)) + '<div class="field"><span class="eyebrow">' + tr("Les indices", "The clues") + '</span><ul class="list" data-clues></ul></div>' +
+        (isG ? '<div class="field"><span class="eyebrow">' + tr("Quelle note ont-ils en tête ?", "What number do they have in mind?") + "</span>" + padHTML() + '</div>' + SB.u.dock('<button class="btn acc" type="button" data-val disabled>' + tr("Valider ma note", "Lock in my guess") + "</button>") : SB.u.dock('<p class="wait">' + esc(gName) + tr(" réfléchit…", " is thinking…") + "</p>")) +
+        '<button class="link warn" type="button" data-skip hidden style="align-self:center">' + tr("Le devineur est parti, passer la manche", "The guesser left, skip the round") + "</button>", r => {
         if(pickK !== s.k){ pickK = s.k; pickN = 0; }
         r.querySelectorAll("[data-n]").forEach(b => b.addEventListener("click", () => {
           pickN = +b.dataset.n; r.querySelectorAll("[data-n]").forEach(x => x.setAttribute("aria-pressed", +x.dataset.n === pickN)); r.querySelector("[data-val]").disabled = false;
         }));
         const v = r.querySelector("[data-val]");
-        if(v) v.addEventListener("click", () => { if(!pickN) return; ctx.send({ n: pickN }); v.disabled = true; v.textContent = "Note envoyée"; });
+        if(v) v.addEventListener("click", () => { if(!pickN) return; ctx.send({ n: pickN }); v.disabled = true; v.textContent = tr("Note envoyée", "Guess sent"); });
         r.querySelector("[data-skip]").addEventListener("click", () => ctx.act(c2 => {
           c2.set({ hist: A(c2.s.hist).concat([histRow(c2, 0, 0)]), max: (+c2.s.max || 0) + rmax(c2.s.tw) }); nextRound(c2);
         }));
       });
       const items = ctx.ids.filter(id => id !== s.guesser).map(id => ({ id, t: clueOf(ctx, id) })).filter(x => x.t);
-      const html = items.length ? items.map(x => '<li><span class="t">' + esc(x.t) + '</span><span class="by">' + esc(ctx.name(x.id)) + "</span></li>").join("") : '<li><span class="by">Aucun indice pour cette manche.</span></li>';
+      const html = items.length ? items.map(x => '<li><span class="t">' + esc(x.t) + '</span><span class="by">' + esc(ctx.name(x.id)) + "</span></li>").join("") : '<li><span class="by">' + tr("Aucun indice pour cette manche.", "No clues this round.") + "</span></li>";
       const ul = root.querySelector("[data-clues]"); if(ul.innerHTML !== html) ul.innerHTML = html;
       root.querySelector("[data-skip]").hidden = !(ctx.isHost && !ctx.here(s.guesser));
     } else if(s.phase === "result"){
       const v = VERDICTS[s.pts] || VERDICTS[0];
-      screen(root, "re" + s.k + ctx.isHost, CSS + label + '<div class="verdict">' + esc(v[0]) + " +" + s.pts + '</div><p style="font-size:17px">La note était ' + s.note + ", " + esc(gName) + " a dit " + s.guess + ". " + esc(v[1]) + "</p>" +
+      screen(root, "re" + s.k + ctx.isHost, CSS + label + '<div class="verdict">' + esc(v[0]) + " +" + s.pts + '</div><p style="font-size:17px">' + tr("La note était " + s.note + ", " + esc(gName) + " a dit " + s.guess + ". ", "The number was " + s.note + ", " + esc(gName) + " said " + s.guess + ". ") + esc(v[1]) + "</p>" +
         '<div class="card"><div class="big" style="font-size:22px">' + esc(c[0]) + "</div>" + rulerHTML(s.note, s.guess) + legendHTML(gName) + "</div>" +
-        '<div class="tally"><span>Score de l\'équipe</span><b>' + s.score + " / " + (+s.max || s.round * 3) + "</b></div>" +
-        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>' + (s.round >= s.rounds ? "Voir le bulletin" : "Manche suivante") + "</button>" : '<p class="wait">L\'hôte lance la suite…</p>'), r => {
+        '<div class="tally"><span>' + tr("Score de l'équipe", "Team score") + "</span><b>" + s.score + " / " + (+s.max || s.round * 3) + "</b></div>" +
+        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>' + (s.round >= s.rounds ? tr("Voir le bulletin", "See the report card") : tr("Manche suivante", "Next round")) + "</button>" : '<p class="wait">' + tr("L'hôte lance la suite…", "The host is starting the next part…") + "</p>"), r => {
         const b = r.querySelector("[data-next]"); if(b) b.addEventListener("click", () => ctx.act(c2 => { if(c2.s.phase === "result") nextRound(c2); }));
       });
     } else if(s.phase === "end"){
       const max = +s.max || s.rounds * 3;
       screen(root, "end" + ctx.isHost, CSS + reportHTML(s.score, max) + awardsHTML(awards(s.hist)) + histTable(A(s.hist).map(A)) +
-        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>Retour au salon</button>' : '<p class="wait">L\'hôte va vous ramener au salon.</p>'), r => {
+        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c2 => {
           const mx = +c2.s.max || c2.s.rounds * 3, pct = c2.s.score / mx;
-          c2.end({ title: "Score de l'équipe : " + c2.s.score + " / " + mx, lines: ["Mention : " + mention(pct)[0]].concat(awards(c2.s.hist).map(a => a[0] + " : " + a[1])), win: pct >= .5 ? c2.ids : [] });
+          c2.end({ title: tr("Score de l'équipe : ", "Team score: ") + c2.s.score + " / " + mx, lines: [tr("Mention : ", "Grade: ") + mention(pct)[0]].concat(awards(c2.s.hist).map(a => a[0] + tr(" : ", ": ") + a[1])), win: pct >= .5 ? c2.ids : [] });
         }));
       });
     }
@@ -890,46 +895,47 @@ SB.register({
       const L = { phase: "setup", rounds: [4, 6, 10].indexOf(store().n10rounds) >= 0 ? store().n10rounds : 6, packs: A(store().n10packs).length ? A(store().n10packs) : ["classique"], twOn: store().n10tw !== false, mode: store().n10mode === "un" ? "un" : "tous",
         sc: {}, order: [], qi: 0, res: [], rh: [], round: 0, gi: 0, deck: [], c: null, note: 0, guess: 0, rr: 2, score: 0, max: 0, hist: [], tw: "", dl: 0 };
       const startTous = () => { L.order = names.map((_, i) => names[(L.gi + 1 + i) % names.length]).filter(n => n !== names[L.gi]); L.qi = 0; L.res = []; };
-      const draw = () => { if(!L.deck.length) L.deck = SB.u.fresh("note10:cats", buildPool(L.packs, [])); L.c = L.deck.pop() || CATS[0].slice(); SB.u.saw("note10:cats", [L.c]); L.note = rollNote(L.tw); };
+      const lg = SB.lang();
+      const draw = () => { if(!L.deck.length) L.deck = SB.u.fresh("note10:cats", buildPool(L.packs, [], lg)); L.c = L.deck.pop() || deckOf(lg).classique[0].slice(); SB.u.saw("note10:cats", [L.c]); L.note = rollNote(L.tw); };
       const go = () => {
         const g = names[L.gi], c = view(L.c || ["", "", ""], L.tw);
-        const lab = '<span class="eyebrow">Manche ' + L.round + " / " + L.rounds + "</span>" + SB.u.twistHTML(TW(L.tw));
+        const lab = '<span class="eyebrow">' + tr("Manche ", "Round ") + L.round + " / " + L.rounds + "</span>" + SB.u.twistHTML(TW(L.tw));
         if(L.phase === "setup"){
-          screen(root, "setup" + JSON.stringify([L.rounds, L.packs, L.twOn, L.mode]), CSS + '<div class="field"><span class="eyebrow">Mode</span><div class="seg">' + [["tous", "Tout le monde devine"], ["un", "Un seul devineur"]].map(m => '<button type="button" data-m="' + m[0] + '" aria-pressed="' + (m[0] === L.mode) + '">' + m[1] + "</button>").join("") + '</div><p class="sm" style="margin:6px 0 0">' + (L.mode === "tous" ? "Un indicateur donne les exemples, tous les autres devinent chacun pour soi." : "Un devineur, tous les autres donnent un indice. Score d'équipe.") + "</p></div>" +
-            '<div class="field"><span class="eyebrow">Manches</span><div class="seg">' + [4, 6, 10].map(n => '<button type="button" data-r="' + n + '" aria-pressed="' + (n === L.rounds) + '">' + n + "</button>").join("") + "</div></div>" +
-            '<div class="field"><span class="eyebrow">Catégories</span><div class="packs">' + PACKS.map(p => { const n = p.v === "perso" ? myCustom().length : p.cats.length; return '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-p="' + p.v + '" aria-pressed="' + (L.packs.indexOf(p.v) >= 0 && n > 0) + '"' + (n ? "" : " disabled") + '><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.v === "perso" ? "Celles que tu as créées" : p.desc) + '</span></span><span class="ct">' + n + "</span></button>"; }).join("") + "</div>" +
-            '<button class="link" type="button" data-edit style="align-self:flex-start">Créer mes propres catégories</button></div>' +
-            '<div class="field"><span class="eyebrow">Variante</span>' + TW_TOGGLE(L.twOn) + "</div>" +
-            '<p class="howto">' + (L.mode === "tous" ? "L'indicateur dit ses exemples à voix haute, puis chacun entre sa note en secret sur le téléphone." : "Les indices se disent à voix haute, et on se passe le téléphone entre le groupe et le devineur.") + "</p>" + '<div class="dock"><p class="err" data-err hidden></p><button class="btn acc" type="button" data-go>Commencer la partie</button></div>', r => {
+          screen(root, "setup" + JSON.stringify([L.rounds, L.packs, L.twOn, L.mode]), CSS + '<div class="field"><span class="eyebrow">Mode</span><div class="seg">' + [["tous", tr("Tout le monde devine", "Everyone guesses")], ["un", tr("Un seul devineur", "Single guesser")]].map(m => '<button type="button" data-m="' + m[0] + '" aria-pressed="' + (m[0] === L.mode) + '">' + m[1] + "</button>").join("") + '</div><p class="sm" style="margin:6px 0 0">' + (L.mode === "tous" ? tr("Un indicateur donne les exemples, tous les autres devinent chacun pour soi.", "One clue-giver gives examples, everyone else guesses on their own.") : tr("Un devineur, tous les autres donnent un indice. Score d'équipe.", "One guesser, everyone else gives a clue. Team score.")) + "</p></div>" +
+            '<div class="field"><span class="eyebrow">' + tr("Manches", "Rounds") + '</span><div class="seg">' + [4, 6, 10].map(n => '<button type="button" data-r="' + n + '" aria-pressed="' + (n === L.rounds) + '">' + n + "</button>").join("") + "</div></div>" +
+            '<div class="field"><span class="eyebrow">' + tr("Catégories", "Categories") + '</span><div class="packs">' + PACKS.map(p => { const n = p.v === "perso" ? myCustom().length : catsOf(p, lg).length; return '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-p="' + p.v + '" aria-pressed="' + (L.packs.indexOf(p.v) >= 0 && n > 0) + '"' + (n ? "" : " disabled") + '><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.v === "perso" ? tr("Celles que tu as créées", "The ones you've created") : p.desc) + '</span></span><span class="ct">' + n + "</span></button>"; }).join("") + "</div>" +
+            '<button class="link" type="button" data-edit style="align-self:flex-start">' + tr("Créer mes propres catégories", "Create my own categories") + "</button></div>" +
+            '<div class="field"><span class="eyebrow">' + tr("Variante", "Variant") + "</span>" + TW_TOGGLE(L.twOn) + "</div>" +
+            '<p class="howto">' + (L.mode === "tous" ? tr("L'indicateur dit ses exemples à voix haute, puis chacun entre sa note en secret sur le téléphone.", "The clue-giver says their examples out loud, then everyone enters their guess in secret on the phone.") : tr("Les indices se disent à voix haute, et on se passe le téléphone entre le groupe et le devineur.", "Clues are said out loud, and the phone gets passed between the group and the guesser.")) + "</p>" + '<div class="dock"><p class="err" data-err hidden></p><button class="btn acc" type="button" data-go>' + tr("Commencer la partie", "Start the game") + "</button></div>", r => {
             r.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => { L.mode = b.dataset.m; persist({ n10mode: L.mode }); go(); }));
             r.querySelectorAll("[data-r]").forEach(b => b.addEventListener("click", () => { L.rounds = +b.dataset.r; persist({ n10rounds: L.rounds }); go(); }));
             r.querySelectorAll("[data-p]").forEach(b => b.addEventListener("click", () => { const i = L.packs.indexOf(b.dataset.p); if(i >= 0) L.packs.splice(i, 1); else L.packs.push(b.dataset.p); persist({ n10packs: L.packs }); go(); }));
             r.querySelector("[data-tw]").addEventListener("click", () => { L.twOn = !L.twOn; persist({ n10tw: L.twOn }); go(); });
             r.querySelector("[data-edit]").addEventListener("click", () => openEditor(() => { root.dataset.key = ""; go(); }));
             r.querySelector("[data-go]").addEventListener("click", () => {
-              if(!buildPool(L.packs, []).length){ const e = r.querySelector("[data-err]"); e.textContent = "Choisis au moins un paquet de catégories."; e.hidden = false; return; }
-              L.round = 1; L.score = 0; L.max = 0; L.hist = []; L.rr = 2; L.tw = ""; L.gi = Math.floor(Math.random() * names.length); L.sc = {}; L.rh = []; names.forEach(n => { L.sc[n] = 0; }); L.deck = SB.u.fresh("note10:cats", buildPool(L.packs, [])); draw(); startTous(); L.phase = L.mode === "tous" ? "ipass" : "team"; go();
+              if(!buildPool(L.packs, [], lg).length){ const e = r.querySelector("[data-err]"); e.textContent = tr("Choisis au moins un paquet de catégories.", "Pick at least one category pack."); e.hidden = false; return; }
+              L.round = 1; L.score = 0; L.max = 0; L.hist = []; L.rr = 2; L.tw = ""; L.gi = Math.floor(Math.random() * names.length); L.sc = {}; L.rh = []; names.forEach(n => { L.sc[n] = 0; }); L.deck = SB.u.fresh("note10:cats", buildPool(L.packs, [], lg)); draw(); startTous(); L.phase = L.mode === "tous" ? "ipass" : "team"; go();
             });
           });
         } else if(L.phase === "ipass"){
-          screen(root, "ipass" + L.round, lab + '<div class="pass"><span class="eyebrow">Indicateur de la manche</span><div class="who">' + esc(g) + "</div><p>Donnez le téléphone à <b>" + esc(g) + "</b>. Lui seul regarde l'écran : il va voir la catégorie et la note secrète.</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>C'est moi, montrer la note</button></div>", r => {
+          screen(root, "ipass" + L.round, lab + '<div class="pass"><span class="eyebrow">' + tr("Indicateur de la manche", "This round's clue-giver") + '</span><div class="who">' + esc(g) + "</div><p>" + tr("Donnez le téléphone à <b>" + esc(g) + "</b>. Lui seul regarde l'écran : il va voir la catégorie et la note secrète.", "Hand the phone to <b>" + esc(g) + "</b>. Only they look at the screen: they'll see the category and the secret number.") + "</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>" + tr("C'est moi, montrer la note", "It's me, show the number") + "</button></div>", r => {
             r.querySelector("[data-n]").addEventListener("click", () => { L.dl = L.tw === "chrono" ? Date.now() + CHRONO * 1000 : 0; L.phase = "iclue"; go(); });
           });
         } else if(L.phase === "iclue"){
-          screen(root, "iclue" + L.round + c[0] + L.rr, CSS + lab + (L.dl ? '<div class="timer" data-t>' + CHRONO + "</div>" : "") + catCard(c, "Catégorie", gradeHTML(L.note)) +
-            '<p class="howto">Dis à voix haute <b>1 à ' + MAXCL + " " + (L.tw === "mot" ? "mots seuls" : "exemples") + '</b> qui valent cette note pour toi. Sans chiffre' + (L.tw === "aveugle" ? ", et sans dire la catégorie" : "") + ".</p>" +
-            '<div class="dock"><button class="btn acc" type="button" data-n>Cacher la note, place aux devineurs</button><button class="link" type="button" data-rr style="align-self:center"' + (L.rr > 0 ? "" : " disabled") + ">" + (L.rr > 0 ? "Changer de catégorie (" + L.rr + " restant" + (L.rr > 1 ? "s" : "") + ")" : "Plus de changement de catégorie") + "</button></div>", r => {
+          screen(root, "iclue" + L.round + c[0] + L.rr, CSS + lab + (L.dl ? '<div class="timer" data-t>' + CHRONO + "</div>" : "") + catCard(c, tr("Catégorie", "Category"), gradeHTML(L.note)) +
+            '<p class="howto">' + tr("Dis à voix haute <b>1 à " + MAXCL + " " + (L.tw === "mot" ? "mots seuls" : "exemples") + "</b> qui valent cette note pour toi. Sans chiffre" + (L.tw === "aveugle" ? ", et sans dire la catégorie" : ""), "Say <b>1 to " + MAXCL + " " + (L.tw === "mot" ? "single words" : "examples") + "</b> out loud that are worth this number to you. No numbers" + (L.tw === "aveugle" ? ", and don't say the category" : "")) + ".</p>" +
+            '<div class="dock"><button class="btn acc" type="button" data-n>' + tr("Cacher la note, place aux devineurs", "Hide the number, over to the guessers") + '</button><button class="link" type="button" data-rr style="align-self:center"' + (L.rr > 0 ? "" : " disabled") + ">" + rrLabel(L.rr) + "</button></div>", r => {
             r.querySelector("[data-n]").addEventListener("click", () => { L.dl = 0; L.phase = "gpass"; go(); });
             r.querySelector("[data-rr]").addEventListener("click", () => { if(L.rr > 0){ L.rr--; draw(); if(L.dl) L.dl = Date.now() + CHRONO * 1000; go(); } });
           });
         } else if(L.phase === "gpass"){
           const who = L.order[L.qi];
-          screen(root, "gpass" + L.round + "-" + L.qi, lab + '<div class="pass"><span class="eyebrow">Devineur ' + (L.qi + 1) + " sur " + L.order.length + '</span><div class="who">' + esc(who) + "</div><p>Passe le téléphone à <b>" + esc(who) + "</b>. Les autres ne regardent pas sa note.</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>C'est moi, je devine</button></div>", r => {
+          screen(root, "gpass" + L.round + "-" + L.qi, lab + '<div class="pass"><span class="eyebrow">' + tr("Devineur " + (L.qi + 1) + " sur " + L.order.length, "Guesser " + (L.qi + 1) + " of " + L.order.length) + '</span><div class="who">' + esc(who) + "</div><p>" + tr("Passe le téléphone à <b>" + esc(who) + "</b>. Les autres ne regardent pas sa note.", "Pass the phone to <b>" + esc(who) + "</b>. Nobody else looks at their guess.") + "</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>" + tr("C'est moi, je devine", "It's me, I'm guessing") + "</button></div>", r => {
             r.querySelector("[data-n]").addEventListener("click", () => { L.guess = 0; L.phase = "gguess"; go(); });
           });
         } else if(L.phase === "gguess"){
           const who = L.order[L.qi];
-          screen(root, "gguess" + L.round + "-" + L.qi, CSS + lab + (L.tw === "aveugle" ? hiddenCard : catCard(c)) + '<span class="eyebrow">' + esc(who) + ", quelle note " + esc(g) + " a-t-il en tête ?</span>" + padHTML() + '<div class="dock"><button class="btn acc" type="button" data-v disabled>Valider ma note</button></div>', r => {
+          screen(root, "gguess" + L.round + "-" + L.qi, CSS + lab + (L.tw === "aveugle" ? hiddenCard : catCard(c)) + '<span class="eyebrow">' + tr(esc(who) + ", quelle note " + esc(g) + " a-t-il en tête ?", esc(who) + ", what number does " + esc(g) + " have in mind?") + "</span>" + padHTML() + '<div class="dock"><button class="btn acc" type="button" data-v disabled>' + tr("Valider ma note", "Lock in my guess") + "</button></div>", r => {
             r.querySelectorAll("[data-n]").forEach(b => b.addEventListener("click", () => { L.guess = +b.dataset.n; r.querySelectorAll("[data-n]").forEach(x => x.setAttribute("aria-pressed", +x.dataset.n === L.guess)); r.querySelector("[data-v]").disabled = false; }));
             r.querySelector("[data-v]").addEventListener("click", () => {
               if(!L.guess) return;
@@ -945,30 +951,30 @@ SB.register({
           });
         } else if(L.phase === "tres"){
           const h = L.rh[L.rh.length - 1];
-          screen(root, "tres" + L.round, CSS + lab + '<div class="verdict">La note était ' + h[2] + '</div><div class="card"><div class="big" style="font-size:22px">' + esc(c[0]) + "</div>" + rulerMulti(h[2], h[5].map(x => x[1])) +
-            '<div class="n10-legend"><span><i class="ln"></i>Note secrète</span><span><i class="lg"></i>Notes proposées</span></div></div>' + guessesHTML(h[5], g, h[6], L.tw) + standHTML(names.map(n => [n, L.sc[n] || 0]), "Classement") +
-            '<div class="dock"><button class="btn acc" type="button" data-n>' + (L.round >= L.rounds ? "Voir le classement final" : "Manche suivante") + "</button></div>", r => {
+          screen(root, "tres" + L.round, CSS + lab + '<div class="verdict">' + tr("La note était ", "The number was ") + h[2] + '</div><div class="card"><div class="big" style="font-size:22px">' + esc(c[0]) + "</div>" + rulerMulti(h[2], h[5].map(x => x[1])) +
+            '<div class="n10-legend"><span><i class="ln"></i>' + tr("Note secrète", "Secret number") + '</span><span><i class="lg"></i>' + tr("Notes proposées", "Guesses") + "</span></div></div>" + guessesHTML(h[5], g, h[6], L.tw) + standHTML(names.map(n => [n, L.sc[n] || 0]), tr("Classement", "Standings")) +
+            '<div class="dock"><button class="btn acc" type="button" data-n>' + (L.round >= L.rounds ? tr("Voir le classement final", "See final standings") : tr("Manche suivante", "Next round")) + "</button></div>", r => {
             r.querySelector("[data-n]").addEventListener("click", () => {
               if(L.round >= L.rounds){ L.phase = "end"; const top = topOf(names.map(n => [n, L.sc[n] || 0])); if(top.length) api.win(top); go(); return; }
               L.round++; L.gi = (L.gi + 1) % names.length; L.tw = rollTwist(L.twOn, L.tw); draw(); startTous(); L.phase = "ipass"; go();
             });
           });
         } else if(L.phase === "team"){
-          screen(root, "team" + L.round, lab + '<div class="pass"><span class="eyebrow">Devineur de la manche</span><div class="who">' + esc(g) + "</div><p><b>" + esc(g) + "</b> détourne les yeux. Tous les autres se regroupent autour du téléphone.</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>On est prêts, montrer la note</button></div>", r => {
+          screen(root, "team" + L.round, lab + '<div class="pass"><span class="eyebrow">' + tr("Devineur de la manche", "This round's guesser") + '</span><div class="who">' + esc(g) + "</div><p>" + tr("<b>" + esc(g) + "</b> détourne les yeux. Tous les autres se regroupent autour du téléphone.", "<b>" + esc(g) + "</b> looks away. Everyone else gathers around the phone.") + "</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>" + tr("On est prêts, montrer la note", "We're ready, show the number") + "</button></div>", r => {
             r.querySelector("[data-n]").addEventListener("click", () => { L.dl = L.tw === "chrono" ? Date.now() + CHRONO * 1000 : 0; L.phase = "clue"; go(); });
           });
         } else if(L.phase === "clue"){
-          screen(root, "clue" + L.round + c[0] + L.rr, CSS + lab + (L.dl ? '<div class="timer" data-t>' + CHRONO + "</div>" : "") + catCard(c, "Catégorie", gradeHTML(L.note)) + '<p class="howto">Chacun votre tour, donnez <b>' + (L.tw === "mot" ? "un seul mot" : "une réponse") + '</b> qui vaut cette note pour vous. Sans chiffre.</p>' +
-            '<div class="dock"><button class="btn acc" type="button" data-n>Cacher la note et donner à ' + esc(g) + '</button><button class="link" type="button" data-rr style="align-self:center"' + (L.rr > 0 ? "" : " disabled") + ">" + (L.rr > 0 ? "Changer de catégorie (" + L.rr + " restant" + (L.rr > 1 ? "s" : "") + ")" : "Plus de changement de catégorie") + "</button></div>", r => {
+          screen(root, "clue" + L.round + c[0] + L.rr, CSS + lab + (L.dl ? '<div class="timer" data-t>' + CHRONO + "</div>" : "") + catCard(c, tr("Catégorie", "Category"), gradeHTML(L.note)) + '<p class="howto">' + tr("Chacun votre tour, donnez <b>" + (L.tw === "mot" ? "un seul mot" : "une réponse") + "</b> qui vaut cette note pour vous. Sans chiffre.", "Take turns giving <b>" + (L.tw === "mot" ? "a single word" : "an answer") + "</b> that's worth this number to you. No numbers.") + "</p>" +
+            '<div class="dock"><button class="btn acc" type="button" data-n>' + tr("Cacher la note et donner à ", "Hide the number and pass to ") + esc(g) + '</button><button class="link" type="button" data-rr style="align-self:center"' + (L.rr > 0 ? "" : " disabled") + ">" + rrLabel(L.rr) + "</button></div>", r => {
             r.querySelector("[data-n]").addEventListener("click", () => { L.phase = "pass"; go(); });
             r.querySelector("[data-rr]").addEventListener("click", () => { if(L.rr > 0){ L.rr--; draw(); if(L.dl) L.dl = Date.now() + CHRONO * 1000; go(); } });
           });
         } else if(L.phase === "pass"){
-          screen(root, "pass" + L.round, lab + '<div class="pass"><span class="eyebrow">Donnez le téléphone à</span><div class="who">' + esc(g) + "</div><p>La note est cachée. Écoute bien les indices, puis devine.</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>C'est moi, je devine</button></div>", r => {
+          screen(root, "pass" + L.round, lab + '<div class="pass"><span class="eyebrow">' + tr("Donnez le téléphone à", "Hand the phone to") + '</span><div class="who">' + esc(g) + "</div><p>" + tr("La note est cachée. Écoute bien les indices, puis devine.", "The number is hidden. Listen carefully to the clues, then guess.") + "</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>" + tr("C'est moi, je devine", "It's me, I'm guessing") + "</button></div>", r => {
             r.querySelector("[data-n]").addEventListener("click", () => { L.phase = "guess"; L.guess = 0; go(); });
           });
         } else if(L.phase === "guess"){
-          screen(root, "guess" + L.round, lab + (L.tw === "aveugle" ? '<div class="card"><span class="eyebrow">Catégorie</span><div class="big">Cachée !</div><div class="scale"><span>1</span><span>10</span></div></div>' : catCard(c)) + '<span class="eyebrow">Quelle note ont-ils en tête ?</span>' + padHTML() + '<div class="dock"><button class="btn acc" type="button" data-v disabled>Valider ma note</button></div>', r => {
+          screen(root, "guess" + L.round, lab + (L.tw === "aveugle" ? hiddenCard : catCard(c)) + '<span class="eyebrow">' + tr("Quelle note ont-ils en tête ?", "What number do they have in mind?") + "</span>" + padHTML() + '<div class="dock"><button class="btn acc" type="button" data-v disabled>' + tr("Valider ma note", "Lock in my guess") + "</button></div>", r => {
             r.querySelectorAll("[data-n]").forEach(b => b.addEventListener("click", () => { L.guess = +b.dataset.n; r.querySelectorAll("[data-n]").forEach(x => x.setAttribute("aria-pressed", +x.dataset.n === L.guess)); r.querySelector("[data-v]").disabled = false; }));
             r.querySelector("[data-v]").addEventListener("click", () => {
               if(!L.guess) return; const pts = points(L.note, L.guess, L.tw); L.score += pts; L.max += rmax(L.tw); L.hist.push([L.round, c[0], L.note, L.guess, pts, g, L.tw, []]); L.phase = "result"; go();
@@ -976,8 +982,8 @@ SB.register({
           });
         } else if(L.phase === "result"){
           const h = L.hist[L.hist.length - 1], v = VERDICTS[h[4]] || VERDICTS[0];
-          screen(root, "res" + L.round, CSS + lab + '<div class="verdict">' + esc(v[0]) + " +" + h[4] + '</div><p style="font-size:17px">La note était ' + h[2] + ", " + esc(g) + " a dit " + h[3] + ". " + esc(v[1]) + "</p>" +
-            '<div class="card"><div class="big" style="font-size:22px">' + esc(c[0]) + "</div>" + rulerHTML(h[2], h[3]) + legendHTML(g) + '</div><div class="tally"><span>Score de l\'équipe</span><b>' + L.score + " / " + L.max + '</b></div><div class="dock"><button class="btn acc" type="button" data-n>' + (L.round >= L.rounds ? "Voir le bulletin" : "Manche suivante") + "</button></div>", r => {
+          screen(root, "res" + L.round, CSS + lab + '<div class="verdict">' + esc(v[0]) + " +" + h[4] + '</div><p style="font-size:17px">' + tr("La note était " + h[2] + ", " + esc(g) + " a dit " + h[3] + ". ", "The number was " + h[2] + ", " + esc(g) + " said " + h[3] + ". ") + esc(v[1]) + "</p>" +
+            '<div class="card"><div class="big" style="font-size:22px">' + esc(c[0]) + "</div>" + rulerHTML(h[2], h[3]) + legendHTML(g) + '</div><div class="tally"><span>' + tr("Score de l'équipe", "Team score") + "</span><b>" + L.score + " / " + L.max + '</b></div><div class="dock"><button class="btn acc" type="button" data-n>' + (L.round >= L.rounds ? tr("Voir le bulletin", "See the report card") : tr("Manche suivante", "Next round")) + "</button></div>", r => {
             r.querySelector("[data-n]").addEventListener("click", () => {
               if(L.round >= L.rounds){ L.phase = "end"; if(L.score / Math.max(1, L.max) >= .5) api.win(names); go(); return; }
               L.round++; L.gi = (L.gi + 1) % names.length; L.rr = Math.max(L.rr, 0); L.tw = rollTwist(L.twOn, L.tw); draw(); L.phase = "team"; go();
@@ -985,13 +991,13 @@ SB.register({
           });
         } else if(L.phase === "end" && L.mode === "tous"){
           const rows = names.map(n => [n, L.sc[n] || 0]), top = topOf(rows);
-          screen(root, "tend", CSS + '<span class="eyebrow">Fin de partie</span><div class="verdict">' + (top.length ? esc(top.join(" et ")) + (top.length > 1 ? " gagnent" : " gagne") : "Personne ne marque") + "</div>" +
-            standHTML(rows, "Classement final") + awardsHTML(awards(L.hist, true)) + roundTable(L.rh) + '<div class="dock"><button class="btn acc" type="button" data-a>Rejouer</button><button class="btn ghost" type="button" data-q>Choisir un autre jeu</button></div>', r => {
+          screen(root, "tend", CSS + '<span class="eyebrow">' + tr("Fin de partie", "Game over") + '</span><div class="verdict">' + winHTML(top) + "</div>" +
+            standHTML(rows, tr("Classement final", "Final standings")) + awardsHTML(awards(L.hist, true)) + roundTable(L.rh) + '<div class="dock"><button class="btn acc" type="button" data-a>' + tr("Rejouer", "Play again") + '</button><button class="btn ghost" type="button" data-q>' + tr("Choisir un autre jeu", "Pick another game") + "</button></div>", r => {
             r.querySelector("[data-a]").addEventListener("click", () => api.again());
             r.querySelector("[data-q]").addEventListener("click", api.exit);
           });
         } else if(L.phase === "end"){
-          screen(root, "end", CSS + reportHTML(L.score, Math.max(1, L.max)) + awardsHTML(awards(L.hist)) + histTable(L.hist) + '<div class="dock"><button class="btn acc" type="button" data-a>Rejouer</button><button class="btn ghost" type="button" data-q>Choisir un autre jeu</button></div>', r => {
+          screen(root, "end", CSS + reportHTML(L.score, Math.max(1, L.max)) + awardsHTML(awards(L.hist)) + histTable(L.hist) + '<div class="dock"><button class="btn acc" type="button" data-a>' + tr("Rejouer", "Play again") + '</button><button class="btn ghost" type="button" data-q>' + tr("Choisir un autre jeu", "Pick another game") + "</button></div>", r => {
             r.querySelector("[data-a]").addEventListener("click", () => api.again());
             r.querySelector("[data-q]").addEventListener("click", api.exit);
           });

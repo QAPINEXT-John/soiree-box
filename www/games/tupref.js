@@ -121,7 +121,7 @@ const TWL_LABEL = tr("Coup de théâtre", "Twist");
 function pairs(ids){ const out = []; for(let i = 0; i < ids.length; i++) for(let j = i + 1; j < ids.length; j++) out.push([ids[i], ids[j]]); return out; }
 function resHTML(p, a, b, nameOf){
   const n = Math.max(1, a.length + b.length), pa = Math.round(100 * a.length / n), pb = 100 - pa;
-  const col = (label, list, pct) => '<div class="bar"><div class="lb"><span>' + esc(label) + "</span><span>" + pct + ' %</span></div><div class="tr"><div class="fl" style="width:' + pct + '%"></div></div><span class="vt">' + (list.length ? esc(list.map(nameOf).join(", ")) : tr("Personne", "Nobody")) + "</span></div>";
+  const col = (label, list, pct) => '<div class="bar"><div class="lb"><span>' + esc(label) + "</span><span>" + pct + tr(" %", "%") + '</span></div><div class="tr"><div class="fl" style="width:' + pct + '%"></div></div><span class="vt">' + (list.length ? esc(list.map(nameOf).join(", ")) : tr("Personne", "Nobody")) + "</span></div>";
   return '<div class="bars">' + col(p[0], a, a.length + b.length ? pa : 0) + col(p[1], b, a.length + b.length ? pb : 0) + "</div>";
 }
 // Coups de théâtre (réseau). Les points ne viennent que d'eux : le vainqueur est celui qui en a le plus.
@@ -262,7 +262,7 @@ SB.register({
     } else if(s.phase === "end"){
       const hist = A(s.hist).map(h => [A(A(h)[0]), A(A(h)[1])]);
       const ids = ctx.ids, st = stats(ids, hist), agree = st.agree, ks = st.ks, chg = s.chg || {}, pts = s.pts || {}, seed = s.fl;
-      const duo = k => k ? esc(ctx.name(k.split("|")[0])) + " & " + esc(ctx.name(k.split("|")[1])) + " · " + Math.round(100 * agree[k][0] / agree[k][1]) + " %" : "—";
+      const duo = k => k ? esc(ctx.name(k.split("|")[0])) + " & " + esc(ctx.name(k.split("|")[1])) + " · " + Math.round(100 * agree[k][0] / agree[k][1]) + tr(" %", "%") : "—";
       const dith = ids.slice().sort((x, y) => (chg[y] || 0) - (chg[x] || 0))[0];
       const best = ids.slice().sort((x, y) => (pts[y] || 0) - (pts[x] || 0))[0];
       const card = (t, big, sm) => '<div class="card"><span class="eyebrow">' + esc(t) + '</span><div class="big">' + big + "</div>" + (sm ? '<span class="sm">' + esc(sm) + "</span>" : "") + "</div>";
@@ -278,7 +278,7 @@ SB.register({
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const pp = c.s.pts || {}, mx = Math.max.apply(null, c.ids.map(id => pp[id] || 0).concat([0]));
           const lines = [fl(FL.rebel, 0, 0) + sep + c.name(st.rebel)];
-          if(mx) lines.unshift(fl(FL.champ, seed, 0) + sep + c.ids.filter(id => (pp[id] || 0) === mx).map(c.name).join(" & ") + " · " + mx + " pts");
+          if(mx) lines.unshift(fl(FL.champ, seed, 0) + sep + c.ids.filter(id => (pp[id] || 0) === mx).map(c.name).join(" & ") + " · " + mx + tr(" pts", mx === 1 ? " pt" : " pts"));
           c.end({ title: fl(FL.duo, seed, 1) + sep + (ks[0] ? ks[0].split("|").map(c.name).join(" & ") : "—"), lines, win: mx ? c.ids.filter(id => (pp[id] || 0) === mx) : [] });
         }));
       });

@@ -84,7 +84,7 @@ function awards(G, ids, nameOf, seed, lg){
   const wl = ids.filter(id => roles[id] === "loup").sort((a, b) => ((vr[a] || 0) + (sus[a] || 0)) - ((vr[b] || 0) + (sus[b] || 0)))[0], ws = wl ? (vr[wl] || 0) + (sus[wl] || 0) : 0;
   if(wl && G.vr) add(P(["Loup le plus discret", "Loup en peau d'agneau", "Masque parfait"], ["Sneakiest wolf", "Wolf in sheep's clothing", "Perfect poker face"], 1), nameOf(wl) + ", " + (E ? ws + (ws === 1 ? " suspicion" : " suspicions") : ws + " soupçon" + (ws > 1 ? "s" : "")));
   const tt = ids.filter(id => vr[id]).sort((a, b) => vr[b] - vr[a])[0];
-  if(tt) add(P(["Bouc émissaire", "Souffre-douleur", "Cible favorite"], ["Scapegoat", "Punching bag", "Favourite target"], 2), nameOf(tt) + ", " + vr[tt] + (E ? (vr[tt] > 1 ? " votes received" : " vote received") : " voix reçue" + (vr[tt] > 1 ? "s" : "")));
+  if(tt) add(P(["Bouc émissaire", "Souffre-douleur", "Cible favorite"], ["Scapegoat", "Punching bag", "Favorite target"], 2), nameOf(tt) + ", " + vr[tt] + (E ? (vr[tt] > 1 ? " votes received" : " vote received") : " voix reçue" + (vr[tt] > 1 ? "s" : "")));
   if(G.fd) add(P(["Premier à tomber", "Pas de chance", "Première victime"], ["First to fall", "Bad luck", "First victim"], 3), nameOf(G.fd) + " (" + rn(roles[G.fd], E ? "en" : "fr") + ")");
   const L = A(G.lov);
   if(L.length === 2) add(P(["Coup de foudre", "Les tourtereaux", "Amour fou"], ["Love at first sight", "Lovebirds", "Crazy in love"], 4), nameOf(L[0]) + (E ? " and " : " et ") + nameOf(L[1]) + (mixed(L, roles) ? (E ? ", a forbidden love" : ", un amour interdit") : ""));

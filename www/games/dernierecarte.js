@@ -93,7 +93,7 @@ const EVENTS = [
   { id: "pluie", name: tr("Pluie de cartes", "Card shower"), ok: o => o.E.draw.length + o.E.disc.length >= o.E.order.length + 2 },
   { id: "sens", name: tr("Demi-tour", "U-turn"), ok: o => o.E.order.length > 2 },
   { id: "voisin", name: tr("Mains échangées", "Hand swap") },
-  { id: "interdit", name: tr("Couleur interdite", "Banned colour") },
+  { id: "interdit", name: tr("Couleur interdite", "Banned color") },
   { id: "double", name: tr("Double tour", "Double turn") },
   { id: "x2", name: tr("Pénalités doublées", "Double penalties") },
   { id: "pouce", name: tr("Coup de pouce", "Helping hand"), ok: o => o.E.order.some(id => o.E.hands[id].length >= 5) }
@@ -105,7 +105,7 @@ function evInfo(E, nameOf){
     case "pluie": return { name: tr("Pluie de cartes", "Card shower"), desc: tr("Tout le monde pioche une carte.", "Everyone draws a card.") };
     case "sens": return { name: tr("Demi-tour", "U-turn"), desc: tr("Le sens du jeu s'inverse.", "The direction of play reverses.") };
     case "voisin": return { name: tr("Mains échangées", "Hand swap"), desc: tr("Chacun passe sa main à son voisin, dans le sens du jeu.", "Everyone passes their hand to the next player, in the direction of play.") };
-    case "interdit": return { name: tr("Couleur interdite", "Banned colour"), desc: tr("Pendant " + n + " tours, interdit de jouer du " + CNAME[E.evx] + ", même en le choisissant avec un joker.", "For " + n + " turns, no " + CNAME[E.evx] + " allowed, not even by choosing it with a Wild.") };
+    case "interdit": return { name: tr("Couleur interdite", "Banned color"), desc: tr("Pendant " + n + " tours, interdit de jouer du " + CNAME[E.evx] + ", même en le choisissant avec un joker.", "For " + n + " turns, no " + CNAME[E.evx] + " allowed, not even by choosing it with a Wild.") };
     case "double": return { name: tr("Double tour", "Double turn"), desc: tr(nameOf(E.evx) + " joue deux fois de suite.", nameOf(E.evx) + " plays twice in a row.") };
     case "x2": return { name: tr("Pénalités doublées", "Double penalties"), desc: tr("Pendant " + n + " tours, les +2 font piocher 4 et les +4 font piocher 8.", "For " + n + " turns, +2s make you draw 4 and +4s make you draw 8.") };
     case "pouce": return { name: tr("Coup de pouce", "Helping hand"), desc: tr(nameOf(E.evx) + " croule sous les cartes : 2 d'entre elles partent à la défausse.", nameOf(E.evx) + " is drowning in cards: 2 of them go to the discard pile.") };
@@ -153,7 +153,7 @@ function advance(E, steps, nameOf){
 const AWARDS = {
   pl: { t: tr(["Mitraillette à cartes", "Distributeur automatique", "Le bras le plus rapide"], ["Card machine gun", "Vending machine", "Fastest arm in the room"]), d: v => tr(v + " cartes posées", v + (v === 1 ? " card played" : " cards played")), min: 3 },
   dr: { t: tr(["Aspirateur à cartes", "Collectionneur malgré lui", "Éventail géant"], ["Card vacuum", "Reluctant collector", "Giant fan of cards"]), d: v => tr(v + " cartes piochées", v + (v === 1 ? " card drawn" : " cards drawn")), min: 4 },
-  pen: { t: tr(["Cible préférée des +4", "Punching-ball de la table", "Victime désignée"], ["Favourite +4 target", "The table's punching bag", "Designated victim"]), d: v => tr(v + " cartes de pénalité", v + (v === 1 ? " penalty card" : " penalty cards")), min: 2 },
+  pen: { t: tr(["Cible préférée des +4", "Punching-ball de la table", "Victime désignée"], ["Favorite +4 target", "The table's punching bag", "Designated victim"]), d: v => tr(v + " cartes de pénalité", v + (v === 1 ? " penalty card" : " penalty cards")), min: 2 },
   ct: { t: tr(["Œil de lynx", "Gendarme de la table", "Radar à « Dernière ! »"], ["Eagle eye", "Table cop", "“Last card!” radar"]), d: v => tr(v + " oubli" + (v > 1 ? "s" : "") + " attrapé" + (v > 1 ? "s" : ""), v + (v === 1 ? " slip caught" : " slips caught")), min: 1 },
   jp: { t: tr(["Intercepteur", "Voleur de tour", "Sniper de la défausse"], ["Interceptor", "Turn thief", "Discard pile sniper"]), d: v => tr(v + " interception" + (v > 1 ? "s" : ""), v + (v === 1 ? " jump-in" : " jump-ins")), min: 1 },
   sw: { t: tr(["Roi du troc", "Pickpocket", "As de l'échange"], ["King of trading", "Pickpocket", "Swap master"]), d: v => tr(v + " main" + (v > 1 ? "s" : "") + " échangée" + (v > 1 ? "s" : ""), v + (v === 1 ? " hand swapped" : " hands swapped")), min: 1 }
@@ -349,7 +349,7 @@ function dockHTML(E, me, ui, nameOf){
   if(c){
     if(b.length) out.push(b.pop());
     if(wild(c)){
-      out.push('<span class="eyebrow" style="text-align:center">' + tr("Choisis la couleur pour poser ton ", "Pick a colour to play your ") + esc(label(c)) + '</span><div class="dc-pick">' + COLS.map(k => '<button type="button" data-col="' + k + '" style="background:' + CHEX[k] + (k === "y" ? "; color:#1d1405" : "") + '"' + (k === E.ban ? " disabled" : "") + ">" + CNAME[k][0].toUpperCase() + CNAME[k].slice(1) + "</button>").join("") + "</div>");
+      out.push('<span class="eyebrow" style="text-align:center">' + tr("Choisis la couleur pour poser ton ", "Pick a color to play your ") + esc(label(c)) + '</span><div class="dc-pick">' + COLS.map(k => '<button type="button" data-col="' + k + '" style="background:' + CHEX[k] + (k === "y" ? "; color:#1d1405" : "") + '"' + (k === E.ban ? " disabled" : "") + ">" + CNAME[k][0].toUpperCase() + CNAME[k].slice(1) + "</button>").join("") + "</div>");
     } else if(needsTarget(E, me, ui.sel)){
       out.push('<span class="eyebrow" style="text-align:center">' + (myTurn ? "" : tr("Interception · ", "Jump-in · ")) + tr("Sept : avec qui échanges-tu ta main ?", "Seven: who do you swap hands with?") + '</span><div class="dc-to">' + E.order.filter(x => x !== me).map(x => '<button type="button" data-to="' + esc(x) + '">' + esc(nameOf(x)) + "<small>" + tr(E.hands[x].length + " carte" + (E.hands[x].length > 1 ? "s" : ""), E.hands[x].length + (E.hands[x].length === 1 ? " card" : " cards")) + "</small></button>").join("") + "</div>");
     } else out.push('<button class="btn acc" type="button" data-ok style="min-height:62px">' + (myTurn ? tr("Poser ", "Play ") : tr("Intercepter : ", "Jump in: ")) + esc(label(c)) + (E.sz && val(c) === "0" && mine.length > 1 ? tr(" · les mains tournent", " · hands rotate") : "") + "</button>");
@@ -492,9 +492,9 @@ function animate(root, E, me, key){
 let LTOK = 0;
 
 const DEF = {
-  id: "dernierecarte", name: tr("Dernière carte", "Last Card"), glyph: "+4 !", pitch: tr("Même couleur ou même chiffre, et crie « Dernière ! ».", "Match the colour or the number, and shout “Last card!”."), hot: false,
+  id: "dernierecarte", name: tr("Dernière carte", "Last Card"), glyph: "+4 !", pitch: tr("Même couleur ou même chiffre, et crie « Dernière ! ».", "Match the color or the number, and shout “Last card!”."), hot: false,
   accent: { light: "#ff8a4c", dark: "#ff8a4c" },
-  tag: tr("Même couleur ou même valeur, des +2, des +4, des inversions… Et n'oublie pas de crier « Dernière ! » quand il ne te reste plus qu'une carte.", "Match the colour or the value, with +2s, +4s, Reverses… And don't forget to shout “Last card!” when you're down to one card."),
+  tag: tr("Même couleur ou même valeur, des +2, des +4, des inversions… Et n'oublie pas de crier « Dernière ! » quand il ne te reste plus qu'une carte.", "Match the color or the value, with +2s, +4s, Reverses… And don't forget to shout “Last card!” when you're down to one card."),
   min: 2, max: 10,
   rules: tr([
     "Chacun reçoit 7 cartes. À ton tour, pose une carte de la même couleur ou de la même valeur que celle du dessus.",
@@ -506,14 +506,14 @@ const DEF = {
     "Règles maison au choix : Sept-zéro (7 = tu échanges ta main avec qui tu veux, 0 = toutes les mains tournent), Interception (pose hors de ton tour une carte identique à celle du dessus), Pioche jusqu'à pouvoir jouer (on continue de piocher tant que la carte ne va pas).",
     "Coups de théâtre : de temps en temps, un événement chamboule la partie (couleur interdite, pluie de cartes, mains échangées, double tour…)."
   ], [
-    "Everyone gets 7 cards. On your turn, play a card that matches the colour or the value of the top card.",
-    "Skip: the next player misses their turn. Reverse: the direction changes. +2 and +4: the next player draws. Wild and +4: you pick the colour.",
+    "Everyone gets 7 cards. On your turn, play a card that matches the color or the value of the top card.",
+    "Skip: the next player misses their turn. Reverse: the direction changes. +2 and +4: the next player draws. Wild and +4: you pick the color.",
     "No playable card? Draw. If the card you drew fits, you can play it right away.",
     "With stacking, you can bounce a +2 back with a +2 or a +4, and a +4 with a +4. Whoever can't (or won't) stack takes the whole total.",
     "When you have 2 cards left, tap “Last card!” before playing your second-to-last. If you end up with one card without calling it, anyone can tap “Catch!”: you draw 2 cards.",
     "The first player with no cards left wins the round and scores the value of the cards left in everyone else's hands.",
     "Optional house rules: Seven-Zero (7 = swap hands with anyone you like, 0 = all hands rotate), Jump-in (play out of turn a card identical to the top card), Draw until you can play (keep drawing until you get a card that fits).",
-    "Twists: every now and then, an event shakes up the game (banned colour, card shower, hand swap, double turn…)."
+    "Twists: every now and then, an event shakes up the game (banned color, card shower, hand swap, double turn…)."
   ]),
   options: [
     { id: "rounds", label: tr("Manches", "Rounds"), type: "seg", def: 1, values: [{ v: 1, label: "1" }, { v: 3, label: "3" }, { v: 5, label: "5" }] },

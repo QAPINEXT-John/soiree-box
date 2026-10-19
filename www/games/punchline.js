@@ -1,7 +1,7 @@
 /* Punchline — une phrase à trous, chacun la complète avec une carte de sa main, le juge garde la plus drôle. */
 (function(){
 "use strict";
-const { esc, A, shuffle, screen, txt, store, persist, dock, clean, armTap, pick, buzz } = SB.u;
+const { esc, A, shuffle, screen, txt, store, persist, dock, clean, armTap, pick, buzz, tr } = SB.u;
 
 /* Cartes : PQ = phrases à trous (___), PA = réponses. Paquets hard et noir réservés aux adultes. */
 const PQ = {
@@ -1720,26 +1720,30 @@ const PA_EN = {
  ]
 };
 
+// Contenu dans la langue de l'hôte (E.lg / s.lg) ; l'interface suit le téléphone (tr).
+const QX = { fr: PQ, en: PQ_EN }, AX = { fr: PA, en: PA_EN };
+const lgOf = lg => (lg === "en" ? "en" : "fr");
 const PACKS = [
-  { v: "classique", label: "Classique", desc: "Absurde, gênant, sous-entendus : pour tout le monde" },
-  { v: "hard", label: "Hard", desc: "Sexe, trash, excès : aucune limite de bon goût", hot: true },
-  { v: "noir", label: "Humour noir", desc: "Mort, enterrements, fin du monde", hot: true }
+  { v: "classique", label: tr("Classique", "Classic"), desc: tr("Absurde, gênant, sous-entendus : pour tout le monde", "Absurd, awkward, innuendo: for everyone") },
+  { v: "hard", label: "Hard", desc: tr("Sexe, trash, excès : aucune limite de bon goût", "Sex, trash, excess: zero limits on good taste"), hot: true },
+  { v: "noir", label: tr("Humour noir", "Dark humor"), desc: tr("Mort, enterrements, fin du monde", "Death, funerals, the end of the world"), hot: true }
 ];
+const packCount = k => QX[lgOf(SB.lang())][k].length + AX[lgOf(SB.lang())][k].length;
 const HAND = 7, BL = "b:";
 const SEEN_Q = "punchline:q", SEEN_A = "punchline:a";
-const qPool = packs => { const p = A(packs).filter(k => PQ[k]); return (p.length ? p : ["classique"]).flatMap(k => PQ[k]); };
-const aPool = packs => { const p = A(packs).filter(k => PA[k]); return (p.length ? p : ["classique"]).flatMap(k => PA[k]); };
+const qPool = (packs, lg) => { const Q = QX[lgOf(lg)], p = A(packs).filter(k => Q[k]); return (p.length ? p : ["classique"]).flatMap(k => Q[k]); };
+const aPool = (packs, lg) => { const P = AX[lgOf(lg)], p = A(packs).filter(k => P[k]); return (p.length ? p : ["classique"]).flatMap(k => P[k]); };
 const holes = q => Math.max(1, Math.min(2, (String(q).match(/___/g) || []).length));
 
 /* Coups de théâtre : une règle change pour une manche (jamais la première, jamais deux fois de suite). */
 const TW = [
-  { id: "jackpot", name: "Jackpot", desc: "La réponse gagnante rapporte 2 points." },
-  { id: "public", name: "Vote du public", desc: "Pas de juge : tout le monde vote, et on ne vote pas pour soi.", ok: o => o.n >= 4 },
-  { id: "reverse", name: "Le monde à l'envers", desc: "Le juge choisit la réponse la plus nulle : c'est elle qui gagne." },
-  { id: "double", name: "Deux chances", desc: "Chacun joue deux réponses séparées. Le juge n'en garde qu'une.", ok: o => o.need === 1 },
-  { id: "roulette", name: "Roulette", desc: "Pas de choix : vos cartes sont tirées au hasard dans votre main. Pourvu que le sort soit drôle !" },
-  { id: "duel", name: "Duel", desc: "Seuls deux joueurs s'affrontent. La victoire vaut 2 points.", ok: o => o.n >= 4 },
-  { id: "fresh", name: "Main neuve", desc: "Tout le monde défausse sa main et reçoit 7 nouvelles cartes." }
+  { id: "jackpot", name: "Jackpot", desc: tr("La réponse gagnante rapporte 2 points.", "The winning answer scores 2 points.") },
+  { id: "public", name: tr("Vote du public", "Crowd vote"), desc: tr("Pas de juge : tout le monde vote, et on ne vote pas pour soi.", "No judge: everyone votes, and you can't vote for yourself."), ok: o => o.n >= 4 },
+  { id: "reverse", name: tr("Le monde à l'envers", "Upside down"), desc: tr("Le juge choisit la réponse la plus nulle : c'est elle qui gagne.", "The judge picks the worst answer: that one wins.") },
+  { id: "double", name: tr("Deux chances", "Two shots"), desc: tr("Chacun joue deux réponses séparées. Le juge n'en garde qu'une.", "Everyone plays two separate answers. The judge keeps only one."), ok: o => o.need === 1 },
+  { id: "roulette", name: "Roulette", desc: tr("Pas de choix : vos cartes sont tirées au hasard dans votre main. Pourvu que le sort soit drôle !", "No choosing: your cards are drawn at random from your hand. Here's hoping fate is funny!") },
+  { id: "duel", name: "Duel", desc: tr("Seuls deux joueurs s'affrontent. La victoire vaut 2 points.", "Only two players face off. The win is worth 2 points."), ok: o => o.n >= 4 },
+  { id: "fresh", name: tr("Main neuve", "Fresh hand"), desc: tr("Tout le monde défausse sa main et reçoit 7 nouvelles cartes.", "Everyone discards their hand and draws 7 new cards.") }
 ];
 const twOf = id => SB.u.byTwist(TW, id);
 
@@ -1747,19 +1751,19 @@ const twOf = id => SB.u.byTwist(TW, id);
 function drawA(E){
   if(!E.ad.length){
     const inHands = new Set(); Object.keys(E.hands).forEach(id => A(E.hands[id]).forEach(a => inHands.add(a)));
-    E.ad = SB.u.fresh(SEEN_A, aPool(E.packs).filter(a => !inHands.has(a)));
-    if(!E.ad.length) E.ad = SB.u.fresh(SEEN_A, aPool(E.packs));
+    E.ad = SB.u.fresh(SEEN_A, aPool(E.packs, E.lg).filter(a => !inHands.has(a)));
+    if(!E.ad.length) E.ad = SB.u.fresh(SEEN_A, aPool(E.packs, E.lg));
   }
   const a = E.ad.pop(); SB.u.saw(SEEN_A, a); return a;
 }
-function drawQ(E){ if(!E.qd.length) E.qd = SB.u.fresh(SEEN_Q, qPool(E.packs)); const q = E.qd.pop(); SB.u.saw(SEEN_Q, q); return q; }
+function drawQ(E){ if(!E.qd.length) E.qd = SB.u.fresh(SEEN_Q, qPool(E.packs, E.lg)); const q = E.qd.pop(); SB.u.saw(SEEN_Q, q); return q; }
 function deal(E){ E.order.forEach(id => { E.hands[id] = A(E.hands[id]).slice(); while(E.hands[id].length < HAND) E.hands[id].push(drawA(E)); }); }
 function newGame(order, o){
-  const E = { order: order.slice(), packs: A(o.packs).length ? A(o.packs).slice() : ["classique"], target: o.target || 5, twOn: o.twists !== false,
+  const E = { lg: lgOf(o.lg || SB.lang()), order: order.slice(), packs: A(o.packs).length ? A(o.packs).slice() : ["classique"], target: o.target || 5, twOn: o.twists !== false,
     round: 0, judge: "", phase: "play", q: "", need: 1, tw: "", duel: [], subs: [], win: [], votes: {}, hands: {}, blanks: {},
     pts: {}, wins: {}, bw: {}, byJ: {}, miss: {}, qd: [], ad: [], fl: Math.floor(Math.random() * 12) };
   E.order.forEach(id => { E.hands[id] = []; E.blanks[id] = o.blank === false ? 0 : 2; });
-  E.qd = SB.u.fresh(SEEN_Q, qPool(E.packs)); E.ad = SB.u.fresh(SEEN_A, aPool(E.packs));
+  E.qd = SB.u.fresh(SEEN_Q, qPool(E.packs, E.lg)); E.ad = SB.u.fresh(SEEN_A, aPool(E.packs, E.lg));
   deal(E);
   return E;
 }
@@ -1844,20 +1848,20 @@ function filled(q, ans){
   return h;
 }
 const FL = {
-  win: ["Roi de la punchline", "Champion du mauvais goût", "Plus drôle que tout le monde", "Maître de la vanne", "Légende de la soirée"],
-  fav: ["Chouchou du juge", "Fait toujours rire le même juge", "Dans les petits papiers du juge"],
-  blank: ["Plume libre", "Auteur maison", "Carte blanche en or"],
-  miss: ["Incompris", "Trop en avance sur son temps", "Un humour venu du futur"]
+  win: tr(["Roi de la punchline", "Champion du mauvais goût", "Plus drôle que tout le monde", "Maître de la vanne", "Légende de la soirée"], ["Punchline royalty", "Champion of bad taste", "Funnier than everyone", "Master of the zinger", "Legend of the night"]),
+  fav: tr(["Chouchou du juge", "Fait toujours rire le même juge", "Dans les petits papiers du juge"], ["Judge's pet", "Always cracks up the same judge", "In the judge's good books"]),
+  blank: tr(["Plume libre", "Auteur maison", "Carte blanche en or"], ["Freelance writer", "In-house author", "Golden blank card"]),
+  miss: tr(["Incompris", "Trop en avance sur son temps", "Un humour venu du futur"], ["Misunderstood genius", "Ahead of their time", "Humor from the future"])
 };
 const fl = (list, seed, k) => list[((seed || 0) + k) % list.length];
 function awards(E, nameOf){
   const out = [], used = [], seed = E.fl || 0;
   const top = (m, min) => { let b = "", v = min - 1; Object.keys(m || {}).forEach(id => { if((m[id] || 0) > v && used.indexOf(id) < 0){ v = m[id]; b = id; } }); if(b) used.push(b); return b; };
   let fk = "", fv = 1; Object.keys(E.byJ || {}).forEach(k => { if(E.byJ[k] > fv){ fv = E.byJ[k]; fk = k; } });
-  if(fk){ const [j, w] = fk.split("|"); used.push(w); out.push([fl(FL.fav, seed, 1) + (/de$/.test(fl(FL.fav, seed, 1)) ? " " + nameOf(j) : ""), nameOf(w), fv + " victoires avec " + nameOf(j) + " comme juge"]); }
-  const b = top(E.bw, 1); if(b) out.push([fl(FL.blank, seed, 2), nameOf(b), E.bw[b] + " victoire" + (E.bw[b] > 1 ? "s" : "") + " avec une carte blanche"]);
+  if(fk){ const [j, w] = fk.split("|"); used.push(w); out.push([fl(FL.fav, seed, 1) + (/de$/.test(fl(FL.fav, seed, 1)) ? " " + nameOf(j) : ""), nameOf(w), tr(fv + " victoires avec " + nameOf(j) + " comme juge", fv + " wins with " + nameOf(j) + " as judge")]); }
+  const b = top(E.bw, 1); if(b) out.push([fl(FL.blank, seed, 2), nameOf(b), tr(E.bw[b] + " victoire" + (E.bw[b] > 1 ? "s" : "") + " avec une carte blanche", E.bw[b] + (E.bw[b] > 1 ? " wins" : " win") + " with a blank card")]);
   const losers = {}; E.order.forEach(id => { if(!(E.wins[id] || 0) && (E.miss[id] || 0) >= 3) losers[id] = E.miss[id]; });
-  const m = top(losers, 3); if(m) out.push([fl(FL.miss, seed, 3), nameOf(m), E.miss[m] + " réponses, zéro victoire"]);
+  const m = top(losers, 3); if(m) out.push([fl(FL.miss, seed, 3), nameOf(m), tr(E.miss[m] + " réponses, zéro victoire", E.miss[m] + " answers, zero wins")]);
   return out;
 }
 function awardsHTML(aw){ return aw.length ? '<ul class="list">' + aw.map(a => '<li><span class="t">' + esc(a[1]) + '</span><span class="by">' + esc(a[0]) + " · " + esc(a[2]) + "</span></li>").join("") + "</ul>" : ""; }
@@ -1887,17 +1891,17 @@ const CSS = '<style>' +
   '</style>';
 function head(E, nameOf, extra){
   const T = twOf(E.tw);
-  const who = E.tw === "public" ? "Vote du public" : E.tw === "duel" ? "Duel : " + E.duel.map(nameOf).join(" contre ") + " · juge " + nameOf(E.judge) : "Juge : " + nameOf(E.judge);
-  return CSS + '<span class="eyebrow">Manche ' + E.round + " · " + esc(who) + "</span>" + SB.u.twistHTML(T) +
-    '<div class="card acc"><div class="pl-q">' + filled(E.q, extra || []) + "</div>" + (E.need === 2 && E.tw !== "double" ? '<span class="sm">Deux cartes, dans l\'ordre</span>' : E.tw === "double" ? '<span class="sm">Deux réponses séparées</span>' : "") + "</div>";
+  const who = E.tw === "public" ? tr("Vote du public", "Crowd vote") : E.tw === "duel" ? tr("Duel : " + E.duel.map(nameOf).join(" contre ") + " · juge " + nameOf(E.judge), "Duel: " + E.duel.map(nameOf).join(" vs. ") + " · judge " + nameOf(E.judge)) : tr("Juge : ", "Judge: ") + nameOf(E.judge);
+  return CSS + '<span class="eyebrow">' + tr("Manche ", "Round ") + E.round + " · " + esc(who) + "</span>" + SB.u.twistHTML(T) +
+    '<div class="card acc"><div class="pl-q">' + filled(E.q, extra || []) + "</div>" + (E.need === 2 && E.tw !== "double" ? '<span class="sm">' + tr("Deux cartes, dans l'ordre", "Two cards, in order") + "</span>" : E.tw === "double" ? '<span class="sm">' + tr("Deux réponses séparées", "Two separate answers") + "</span>" : "") + "</div>";
 }
 // Main du joueur : sélection dans l'ordre, carte blanche en option.
 function handHTML(E, id, sel, blankOpen){
   const hand = A(E.hands[id]), n = needOf(E), bl = E.blanks[id] || 0;
-  return '<span class="eyebrow">Ta main · choisis ' + (n === 2 ? "2 cartes" : "1 carte") + "</span>" +
+  return '<span class="eyebrow">' + tr("Ta main · choisis " + (n === 2 ? "2 cartes" : "1 carte"), "Your hand · pick " + (n === 2 ? "2 cards" : "1 card")) + "</span>" +
     '<div class="pl-h">' + hand.map((a, i) => { const k = sel.indexOf(String(i)); return '<button type="button" class="pl-c" data-i="' + i + '" aria-pressed="' + (k >= 0) + '">' + (k >= 0 && n > 1 ? '<span class="no">' + (k + 1) + "</span>" : "") + "<span>" + esc(a) + "</span></button>"; }).join("") +
-    (bl > 0 ? (blankOpen ? '<textarea class="txt pl-ta" maxlength="80" placeholder="Écris ta propre réponse…" aria-label="Carte blanche"></textarea>' :
-      '<button type="button" class="pl-c blank" data-blank>Carte blanche : écris ta réponse (' + bl + " restante" + (bl > 1 ? "s" : "") + ")</button>") : "") + "</div>";
+    (bl > 0 ? (blankOpen ? '<textarea class="txt pl-ta" maxlength="80" placeholder="' + tr("Écris ta propre réponse…", "Write your own answer…") + '" aria-label="' + tr("Carte blanche", "Blank card") + '"></textarea>' :
+      '<button type="button" class="pl-c blank" data-blank>' + tr("Carte blanche : écris ta réponse (" + bl + " restante" + (bl > 1 ? "s" : "") + ")", "Blank card: write your own answer (" + bl + " left)") + "</button>") : "") + "</div>";
 }
 function bindHand(r, E, id, st, redraw, onPlay){
   const n = needOf(E);
@@ -1923,7 +1927,7 @@ function bindHand(r, E, id, st, redraw, onPlay){
 // Aperçu : la phrase se remplit avec les cartes choisies.
 function preview(E, id, st){ if(E.tw === "double") return []; const hand = A(E.hands[id]); const a = st.sel.map(i => hand[+i]); if(st.blankOpen && clean(st.blank, 80)) a.push(clean(st.blank, 80)); return a; }
 function playDock(E, st){
-  return dock('<button class="btn acc" type="button" data-play disabled>' + (needOf(E) === 2 ? "Jouer ces 2 cartes" : "Jouer cette carte") + "</button>" + (st.blankOpen ? '<button class="link" type="button" data-noblank style="align-self:center">Annuler la carte blanche</button>' : ""));
+  return dock('<button class="btn acc" type="button" data-play disabled>' + (needOf(E) === 2 ? tr("Jouer ces 2 cartes", "Play these 2 cards") : tr("Jouer cette carte", "Play this card")) + "</button>" + (st.blankOpen ? '<button class="link" type="button" data-noblank style="align-self:center">' + tr("Annuler la carte blanche", "Cancel blank card") + "</button>" : ""));
 }
 function subsHTML(E, nameOf, opts){
   // opts : { sel, reveal, me }
@@ -1931,16 +1935,16 @@ function subsHTML(E, nameOf, opts){
     const win = opts.reveal && E.win.indexOf(i) >= 0;
     const mine = opts.me && s.id === opts.me;
     return '<button type="button" class="pl-s' + (win ? " win" : "") + '" data-s="' + i + '" aria-pressed="' + (opts.sel === i) + '"' + (opts.reveal || mine ? " disabled" : "") + ">" + filled(E.q, s.a) +
-      (opts.reveal ? '<span class="by">' + (win ? "Gagnant · " : "") + esc(nameOf(s.id)) + (s.b ? " · carte blanche" : "") + "</span>" : mine ? '<span class="by">Ta réponse</span>' : "") + "</button>";
+      (opts.reveal ? '<span class="by">' + (win ? tr("Gagnant · ", "Winner · ") : "") + esc(nameOf(s.id)) + (s.b ? tr(" · carte blanche", " · blank card") : "") + "</span>" : mine ? '<span class="by">' + tr("Ta réponse", "Your answer") + "</span>" : "") + "</button>";
   }).join("") + "</div>";
 }
 function revHTML(E, nameOf){
   const w = E.win.map(i => E.subs[i]).filter(Boolean), names = [];
   w.forEach(s => { if(names.indexOf(s.id) < 0) names.push(s.id); });
-  const verb = E.tw === "reverse" ? "La plus nulle, donc la gagnante" : E.tw === "public" ? "Le public a choisi" : "Le juge a choisi";
+  const verb = E.tw === "reverse" ? tr("La plus nulle, donc la gagnante", "The worst, so the winner") : E.tw === "public" ? tr("Le public a choisi", "The crowd picked") : tr("Le juge a choisi", "The judge picked");
   return '<span class="eyebrow">' + esc(verb) + '</span><div class="card acc"><div class="pl-q">' + filled(E.q, (w[0] || {}).a || []) + "</div></div>" +
-    '<div class="who">' + esc(names.map(nameOf).join(" & ")) + "</div><p class=\"sm\">+" + (E.gain || 1) + " point" + ((E.gain || 1) > 1 ? "s" : "") + (names.length > 1 ? " chacun (égalité)" : "") + "</p>" +
-    '<span class="eyebrow">Toutes les réponses</span>' + subsHTML(E, nameOf, { reveal: true });
+    '<div class="who">' + esc(names.map(nameOf).join(" & ")) + "</div><p class=\"sm\">+" + (E.gain || 1) + " point" + ((E.gain || 1) > 1 ? "s" : "") + (names.length > 1 ? tr(" chacun (égalité)", " each (tie)") : "") + "</p>" +
+    '<span class="eyebrow">' + tr("Toutes les réponses", "All answers") + "</span>" + subsHTML(E, nameOf, { reveal: true });
 }
 
 // Redessine sans remonter en haut quand on reste dans la même étape (choix d'une carte…).
@@ -1960,27 +1964,34 @@ const UI = { k: "", sel: [], blankOpen: false, blank: "", js: null };
 function liveIds(ctx){ return ctx.ids.filter(id => ctx.here(id)); }
 
 const DEF = {
-  id: "punchline", name: "Punchline", glyph: "___ !", pitch: "Complète la phrase avec ta carte la plus trash.", hot: true,
+  id: "punchline", name: "Punchline", glyph: tr("___ !", "___!"), pitch: tr("Complète la phrase avec ta carte la plus trash.", "Fill in the blank with your trashiest card."), hot: true,
   accent: { light: "#ff4fd8", dark: "#ff4fd8" },
-  tag: "Une phrase à trous, sept cartes en main : complète-la avec la réponse la plus drôle (ou la plus horrible). Le juge garde sa préférée.",
+  tag: tr("Une phrase à trous, sept cartes en main : complète-la avec la réponse la plus drôle (ou la plus horrible). Le juge garde sa préférée.", "A fill-in-the-blank sentence, seven cards in hand: complete it with the funniest (or most horrible) answer. The judge keeps their favorite."),
   min: 3, max: 12,
-  rules: [
+  rules: tr([
     "Chacun reçoit 7 cartes réponses. À chaque manche, une phrase à trous s'affiche et un juge est désigné (chacun son tour).",
     "Les autres complètent la phrase avec une carte de leur main (deux pour les phrases à deux trous), en secret.",
     "Les réponses arrivent sans les noms. Le juge choisit sa préférée : son auteur marque 1 point. Le premier à atteindre le score visé gagne.",
     "Carte blanche : deux fois par partie, tu peux écrire ta propre réponse.",
     "Coups de théâtre : jackpot, vote du public, monde à l'envers, deux chances, roulette, duel, main neuve. Les phrases et les cartes déjà vues passent après les nouvelles d'une soirée à l'autre.",
     "Paquets Hard et Humour noir : réservés aux adultes, vraiment sans filtre."
-  ],
+  ], [
+    "Everyone gets 7 answer cards. Each round, a fill-in-the-blank sentence appears and a judge is chosen (everyone takes a turn).",
+    "Everyone else secretly completes the sentence with a card from their hand (two for sentences with two blanks).",
+    "Answers show up without names. The judge picks their favorite: its author scores 1 point. First to reach the target score wins.",
+    "Blank card: twice per game, you can write your own answer.",
+    "Twists: jackpot, crowd vote, upside down, two shots, roulette, duel, fresh hand. Sentences and cards you've already seen come after new ones from one night to the next.",
+    "Hard and Dark humor packs: adults only, seriously unfiltered."
+  ]),
   options: [
-    { id: "target", label: "Points pour gagner", type: "seg", def: 5, values: [{ v: 3, label: "3" }, { v: 5, label: "5" }, { v: 8, label: "8" }] },
-    { id: "packs", label: "Paquets", type: "multi", def: ["classique"], values: PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, count: PQ[p.v].length + PA[p.v].length })) },
-    { id: "blank", label: "Cartes blanches", type: "toggle", text: "Cartes blanches", desc: "Deux réponses libres à écrire soi-même par partie", def: true },
-    { id: "twists", label: "Coups de théâtre", type: "toggle", text: "Coups de théâtre", desc: "De temps en temps, une règle change pour une manche", def: true }
+    { id: "target", label: tr("Points pour gagner", "Points to win"), type: "seg", def: 5, values: [{ v: 3, label: "3" }, { v: 5, label: "5" }, { v: 8, label: "8" }] },
+    { id: "packs", label: tr("Paquets", "Packs"), type: "multi", def: ["classique"], values: PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, count: packCount(p.v) })) },
+    { id: "blank", label: tr("Cartes blanches", "Blank cards"), type: "toggle", text: tr("Cartes blanches", "Blank cards"), desc: tr("Deux réponses libres à écrire soi-même par partie", "Two free answers to write yourself per game"), def: true },
+    { id: "twists", label: tr("Coups de théâtre", "Twists"), type: "toggle", text: tr("Coups de théâtre", "Twists"), desc: tr("De temps en temps, une règle change pour une manche", "Now and then, a rule changes for one round"), def: true }
   ],
   start(ctx, o){
-    if(!A(o.packs).length) throw new Error("Choisis au moins un paquet de cartes.");
-    const E = newGame(shuffle(ctx.ids), o);
+    if(!A(o.packs).length) throw new Error(tr("Choisis au moins un paquet de cartes.", "Pick at least one card pack."));
+    const E = newGame(shuffle(ctx.ids), Object.assign({}, o, { lg: SB.lang() }));
     nextRound(E, ctx.ids);
     ctx.setPriv({ qd: E.qd, ad: E.ad });
     const s = Object.assign({}, E); delete s.qd; delete s.ad;
@@ -2023,28 +2034,28 @@ const DEF = {
       } else {
         const my = sent ? check(E, me, mine.p.o) : null;
         view(root, "pw" + s.k, key, head(E, nameOf, my && E.tw !== "double" ? my.map(x => x.t) : []) +
-          (role === "sent" ? '<div class="sent"><span class="t">' + (E.tw === "double" ? esc(my.map(x => x.t).join(" / ")) : "Réponse envoyée") + '</span><button class="link" type="button" data-edit>Changer</button></div>'
-            : '<p class="howto">' + (me === E.judge ? "Tu es le juge de cette manche. Les réponses arrivent en secret : tu choisiras ta préférée." : "Tu ne joues pas cette manche : regarde le duel.") + "</p>") +
-          dock('<p class="wait" data-wait></p>' + (ctx.isHost ? '<button class="link" type="button" data-skip style="align-self:center" hidden>Continuer sans les retardataires</button>' : "")), r => {
+          (role === "sent" ? '<div class="sent"><span class="t">' + (E.tw === "double" ? esc(my.map(x => x.t).join(" / ")) : tr("Réponse envoyée", "Answer sent")) + '</span><button class="link" type="button" data-edit>' + tr("Changer", "Change") + "</button></div>"
+            : '<p class="howto">' + (me === E.judge ? tr("Tu es le juge de cette manche. Les réponses arrivent en secret : tu choisiras ta préférée.", "You're the judge this round. Answers come in secretly: you'll pick your favorite.") : tr("Tu ne joues pas cette manche : regarde le duel.", "You're sitting this round out: enjoy the duel.")) + "</p>") +
+          dock('<p class="wait" data-wait></p>' + (ctx.isHost ? '<button class="link" type="button" data-skip style="align-self:center" hidden>' + tr("Continuer sans les retardataires", "Continue without the stragglers") + "</button>" : "")), r => {
           const e = r.querySelector("[data-edit]"); if(e) e.addEventListener("click", () => { UI.sel = []; UI.blankOpen = false; ctx.send({ p: null }); });
           const sk = r.querySelector("[data-skip]"); if(sk) armTap(sk, () => ctx.act(c => {
             const F = fromState(c.s, c.priv()); if(F.phase !== "play") return;
             const picks = {}; players(F, liveIds(c)).forEach(id => { const x = c.input(id); if(x && x.p && x.p.r === F.round && check(F, id, x.p.o)) picks[id] = x.p.o; });
             if(Object.keys(picks).length >= 1){ toJudge(F, picks); publish(c, F); }
-          }), "Toucher encore pour continuer");
+          }), tr("Toucher encore pour continuer", "Tap again to continue"));
         });
       }
-      txt(root, "[data-wait]", done + " / " + need.length + " réponses");
+      txt(root, "[data-wait]", done + " / " + need.length + tr(" réponses", " answers"));
       const sk = root.querySelector("[data-skip]"); if(sk) sk.hidden = done < 1 || done >= need.length;
     } else if(E.phase === "judge"){
       const isPub = E.tw === "public", amJudge = me === E.judge && !isPub;
       const mine = ctx.mine(), myVote = isPub && mine && mine.v && mine.v.r === E.round ? mine.v.i : null;
       const canPick = amJudge || (isPub && myVote == null && E.subs.some(x => x.id !== me)) || (ctx.isHost && !isPub && !ctx.here(E.judge));
       const key = "pj:" + s.k + canPick + UI.js + myVote;
-      const verb = E.tw === "reverse" ? "Choisis la réponse la plus nulle" : isPub ? "Vote pour ta préférée (pas la tienne)" : "Choisis ta réponse préférée";
-      view(root, "pj" + s.k, key, head(E, nameOf) + '<span class="eyebrow">' + (canPick ? esc(verb) : isPub ? "Vote enregistré" : esc(nameOf(E.judge)) + " choisit…") + "</span>" +
+      const verb = E.tw === "reverse" ? tr("Choisis la réponse la plus nulle", "Pick the worst answer") : isPub ? tr("Vote pour ta préférée (pas la tienne)", "Vote for your favorite (not your own)") : tr("Choisis ta réponse préférée", "Pick your favorite answer");
+      view(root, "pj" + s.k, key, head(E, nameOf) + '<span class="eyebrow">' + (canPick ? esc(verb) : isPub ? tr("Vote enregistré", "Vote saved") : tr(esc(nameOf(E.judge)) + " choisit…", esc(nameOf(E.judge)) + " is choosing…")) + "</span>" +
         subsHTML(E, nameOf, { sel: UI.js, me: isPub ? me : "" }) +
-        dock((canPick ? '<button class="btn acc" type="button" data-pick' + (UI.js == null ? " disabled" : "") + ">" + (isPub ? "Voter pour celle-là" : "Elle gagne !") + "</button>" : "") + '<p class="wait" data-wait></p>'), r => {
+        dock((canPick ? '<button class="btn acc" type="button" data-pick' + (UI.js == null ? " disabled" : "") + ">" + (isPub ? tr("Voter pour celle-là", "Vote for this one") : tr("Elle gagne !", "This one wins!")) + "</button>" : "") + '<p class="wait" data-wait></p>'), r => {
         if(canPick){
           r.querySelectorAll("[data-s]").forEach(b => b.addEventListener("click", () => { UI.js = +b.dataset.s; buzz(8); root.dataset.key = ""; DEF.render(SB.ctx(), root); }));
           const pk = r.querySelector("[data-pick]");
@@ -2057,28 +2068,28 @@ const DEF = {
         } else r.querySelectorAll("[data-s]").forEach(b => { b.disabled = true; });
       });
       if(isPub){ const voters = live.filter(id => E.subs.some(x => x.id !== id)); txt(root, "[data-wait]", voters.filter(id => { const x = ctx.input(id); return x && x.v && x.v.r === E.round; }).length + " / " + voters.length + " votes"); }
-      else txt(root, "[data-wait]", !ctx.here(E.judge) && ctx.isHost ? nameOf(E.judge) + " est absent : choisis à sa place." : "");
+      else txt(root, "[data-wait]", !ctx.here(E.judge) && ctx.isHost ? tr(nameOf(E.judge) + " est absent : choisis à sa place.", nameOf(E.judge) + " is away: pick for them.") : "");
     } else if(E.phase === "rev"){
       const end = over(E);
-      screen(root, "pr:" + s.k + ctx.isHost, CSS + '<span class="eyebrow">Manche ' + E.round + "</span>" + SB.u.twistHTML(twOf(E.tw)) + revHTML(E, nameOf) +
+      screen(root, "pr:" + s.k + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Manche ", "Round ") + E.round + "</span>" + SB.u.twistHTML(twOf(E.tw)) + revHTML(E, nameOf) +
         '<div class="field"><span class="eyebrow">Scores</span>' + bars(E, nameOf) + "</div>" +
-        dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>' + (end ? "Voir le podium" : "Manche suivante") + '</button><button class="link" type="button" data-stop style="align-self:center">Terminer la partie</button>' : '<p class="wait">L\'hôte passe à la suite…</p>'), r => {
+        dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>' + (end ? tr("Voir le podium", "See the podium") : tr("Manche suivante", "Next round")) + '</button><button class="link" type="button" data-stop style="align-self:center">' + tr("Terminer la partie", "End the game") + "</button>" : '<p class="wait">' + tr("L'hôte passe à la suite…", "Waiting for the host…") + "</p>"), r => {
         const nx = r.querySelector("[data-next]");
         if(nx) nx.addEventListener("click", () => ctx.act(c => {
           const F = fromState(c.s, c.priv()); if(F.phase !== "rev") return;
           if(over(F)) F.phase = "end"; else nextRound(F, liveIds(c));
           publish(c, F);
         }));
-        const st = r.querySelector("[data-stop]"); if(st) armTap(st, () => ctx.act(c => { const F = fromState(c.s, c.priv()); F.phase = "end"; publish(c, F); }), "Toucher encore pour terminer");
+        const st = r.querySelector("[data-stop]"); if(st) armTap(st, () => ctx.act(c => { const F = fromState(c.s, c.priv()); F.phase = "end"; publish(c, F); }), tr("Toucher encore pour terminer", "Tap again to end"));
       });
     } else if(E.phase === "end"){
       const rk2 = ranking(E), champ = rk2[0];
       screen(root, "pe:" + s.k + ctx.isHost, CSS + '<span class="eyebrow">' + esc(fl(FL.win, E.fl, 0)) + '</span><div class="who">' + esc(nameOf(champ)) + "</div>" + bars(E, nameOf) + awardsHTML(awards(E, nameOf)) +
-        dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>Retour au salon</button>' : '<p class="wait">L\'hôte va vous ramener au salon.</p>'), r => {
+        dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the lobby") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the lobby.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const F = fromState(c.s, {}), o2 = ranking(F), mx = F.pts[o2[0]] || 0;
-          c.end({ title: "Punchline · " + c.name(o2[0]) + " gagne", lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (F.pts[id] || 0) + " pts").concat(awards(F, c.name).slice(0, 2).map(a => a[0] + " : " + a[1])),
+          c.end({ title: "Punchline · " + c.name(o2[0]) + tr(" gagne", " wins"), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (F.pts[id] || 0) + " pts").concat(awards(F, c.name).slice(0, 2).map(a => a[0] + tr(" : ", ": ") + a[1])),
             win: mx ? o2.filter(id => (F.pts[id] || 0) === mx) : [] });
         }));
       });
@@ -2095,20 +2106,20 @@ const DEF = {
       let target = [3, 5, 8].indexOf(S0.plTarget) >= 0 ? S0.plTarget : 5, twOn = S0.plTw !== false, blOn = S0.plBlank !== false;
       let E = null, queue = [], picks = {}, st = { sel: [], blankOpen: false, blank: "" }, js = null;
       function setup(){
-        screen(root, "su" + sel.join() + target + twOn + blOn, CSS + '<p class="howto">Chacun à son tour prend le téléphone et choisit sa carte en secret. Puis on passe le téléphone au juge, qui lit les phrases à voix haute et garde sa préférée.</p>' +
-          '<div class="field"><span class="eyebrow">Points pour gagner</span><div class="seg">' + [3, 5, 8].map(n => '<button type="button" data-t="' + n + '" aria-pressed="' + (n === target) + '">' + n + "</button>").join("") + "</div></div>" +
-          '<div class="field"><span class="eyebrow">Paquets</span><div class="packs">' + PACKS.map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-k="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + (PQ[p.v].length + PA[p.v].length) + "</span></button>").join("") + "</div></div>" +
-          '<div class="field"><span class="eyebrow">Variantes</span><div class="packs">' +
-            '<button type="button" class="pack" data-bl aria-pressed="' + blOn + '"><span class="box">✓</span><span class="tx"><span class="nm">Cartes blanches</span><span class="ds">Deux réponses libres à écrire soi-même par partie</span></span></button>' +
-            '<button type="button" class="pack" data-tw aria-pressed="' + twOn + '"><span class="box">✓</span><span class="tx"><span class="nm">Coups de théâtre</span><span class="ds">De temps en temps, une règle change pour une manche</span></span></button></div></div>' +
-          dock('<button class="btn acc" type="button" data-go>Commencer</button>'), r => {
+        screen(root, "su" + sel.join() + target + twOn + blOn, CSS + '<p class="howto">' + tr("Chacun à son tour prend le téléphone et choisit sa carte en secret. Puis on passe le téléphone au juge, qui lit les phrases à voix haute et garde sa préférée.", "Take turns with the phone and secretly pick your card. Then pass the phone to the judge, who reads the sentences out loud and keeps their favorite.") + "</p>" +
+          '<div class="field"><span class="eyebrow">' + tr("Points pour gagner", "Points to win") + '</span><div class="seg">' + [3, 5, 8].map(n => '<button type="button" data-t="' + n + '" aria-pressed="' + (n === target) + '">' + n + "</button>").join("") + "</div></div>" +
+          '<div class="field"><span class="eyebrow">' + tr("Paquets", "Packs") + '</span><div class="packs">' + PACKS.map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-k="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + packCount(p.v) + "</span></button>").join("") + "</div></div>" +
+          '<div class="field"><span class="eyebrow">' + tr("Variantes", "Variants") + '</span><div class="packs">' +
+            '<button type="button" class="pack" data-bl aria-pressed="' + blOn + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Cartes blanches", "Blank cards") + '</span><span class="ds">' + tr("Deux réponses libres à écrire soi-même par partie", "Two free answers to write yourself per game") + "</span></span></button>" +
+            '<button type="button" class="pack" data-tw aria-pressed="' + twOn + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Twists") + '</span><span class="ds">' + tr("De temps en temps, une règle change pour une manche", "Now and then, a rule changes for one round") + "</span></span></button></div></div>" +
+          dock('<button class="btn acc" type="button" data-go>' + tr("Commencer", "Start") + "</button>"), r => {
           r.querySelectorAll("[data-t]").forEach(b => b.addEventListener("click", () => { target = +b.dataset.t; persist({ plTarget: target }); setup(); }));
           r.querySelectorAll("[data-k]").forEach(b => b.addEventListener("click", () => { const x = sel.indexOf(b.dataset.k); if(x >= 0) sel.splice(x, 1); else sel.push(b.dataset.k); persist({ plPacks: sel }); setup(); }));
           r.querySelector("[data-bl]").addEventListener("click", () => { blOn = !blOn; persist({ plBlank: blOn }); setup(); });
           r.querySelector("[data-tw]").addEventListener("click", () => { twOn = !twOn; persist({ plTw: twOn }); setup(); });
           r.querySelector("[data-go]").addEventListener("click", () => {
-            if(!sel.length){ SB.u.toast("Choisis au moins un paquet"); return; }
-            E = newGame(ids, { packs: sel, target, twists: twOn, blank: blOn });
+            if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet", "Pick at least one pack")); return; }
+            E = newGame(ids, { packs: sel, target, twists: twOn, blank: blOn, lg: SB.lang() });
             E.judge = ids[ids.length - 1];
             round();
           });
@@ -2124,40 +2135,40 @@ const DEF = {
         const id = queue[0];
         if(id == null){ toJudge(E, picks); toJudgeScreen(); return; }
         st = { sel: [], blankOpen: false, blank: "" };
-        screen(root, "pa" + E.round + "-" + id, CSS + '<span class="eyebrow">Manche ' + E.round + "</span>" + SB.u.twistHTML(twOf(E.tw)) + '<div class="pass"><span class="eyebrow">Passe le téléphone à</span><div class="who">' + esc(nameOf(id)) + "</div><p>Les autres, ne regardez pas l'écran.</p></div>" +
-          dock('<button class="btn acc" type="button" data-n>C\'est moi</button>'), r => r.querySelector("[data-n]").addEventListener("click", () => choose(id)));
+        screen(root, "pa" + E.round + "-" + id, CSS + '<span class="eyebrow">' + tr("Manche ", "Round ") + E.round + "</span>" + SB.u.twistHTML(twOf(E.tw)) + '<div class="pass"><span class="eyebrow">' + tr("Passe le téléphone à", "Pass the phone to") + '</span><div class="who">' + esc(nameOf(id)) + "</div><p>" + tr("Les autres, ne regardez pas l'écran.", "Everyone else, don't look at the screen.") + "</p></div>" +
+          dock('<button class="btn acc" type="button" data-n>' + tr("C'est moi", "It's me") + "</button>"), r => r.querySelector("[data-n]").addEventListener("click", () => choose(id)));
       }
       function choose(id){
-        view(root, "ch" + E.round + id, "ch" + E.round + id + st.sel.join() + st.blankOpen, '<span class="eyebrow">' + esc(nameOf(id)) + " choisit</span>" + head(E, nameOf, preview(E, id, st)) + handHTML(E, id, st.sel, st.blankOpen) + playDock(E, st), r => {
+        view(root, "ch" + E.round + id, "ch" + E.round + id + st.sel.join() + st.blankOpen, '<span class="eyebrow">' + tr(esc(nameOf(id)) + " choisit", esc(nameOf(id)) + " is choosing") + "</span>" + head(E, nameOf, preview(E, id, st)) + handHTML(E, id, st.sel, st.blankOpen) + playDock(E, st), r => {
           bindHand(r, E, id, st, () => { root.dataset.key = ""; choose(id); }, o => { picks[id] = o; queue.shift(); buzz(18); passTo(); });
         });
       }
       function toJudgeScreen(){
         const isPub = E.tw === "public";
-        screen(root, "pj" + E.round, CSS + '<span class="eyebrow">Manche ' + E.round + "</span>" + '<div class="pass"><span class="eyebrow">' + (isPub ? "Tout le monde autour du téléphone !" : "Passe le téléphone au juge") + '</span><div class="who">' + esc(isPub ? "Vote du public" : nameOf(E.judge)) + "</div><p>" + (isPub ? "Lisez les phrases à voix haute, votez à main levée, puis touchez la gagnante." : "Lis les phrases à voix haute, puis choisis ta préférée.") + "</p></div>" +
-          dock('<button class="btn acc" type="button" data-n>' + (isPub ? "C'est parti" : "C'est moi, le juge") + "</button>"), r => r.querySelector("[data-n]").addEventListener("click", judge));
+        screen(root, "pj" + E.round, CSS + '<span class="eyebrow">' + tr("Manche ", "Round ") + E.round + "</span>" + '<div class="pass"><span class="eyebrow">' + (isPub ? tr("Tout le monde autour du téléphone !", "Everyone gather around the phone!") : tr("Passe le téléphone au juge", "Pass the phone to the judge")) + '</span><div class="who">' + esc(isPub ? tr("Vote du public", "Crowd vote") : nameOf(E.judge)) + "</div><p>" + (isPub ? tr("Lisez les phrases à voix haute, votez à main levée, puis touchez la gagnante.", "Read the sentences out loud, vote by show of hands, then tap the winner.") : tr("Lis les phrases à voix haute, puis choisis ta préférée.", "Read the sentences out loud, then pick your favorite.")) + "</p></div>" +
+          dock('<button class="btn acc" type="button" data-n>' + (isPub ? tr("C'est parti", "Let's go") : tr("C'est moi, le juge", "I'm the judge")) + "</button>"), r => r.querySelector("[data-n]").addEventListener("click", judge));
       }
       function judge(){
-        const verb = E.tw === "reverse" ? "Choisis la réponse la plus nulle" : E.tw === "public" ? "Touchez la réponse qui a le plus de voix" : "Choisis ta réponse préférée";
+        const verb = E.tw === "reverse" ? tr("Choisis la réponse la plus nulle", "Pick the worst answer") : E.tw === "public" ? tr("Touchez la réponse qui a le plus de voix", "Tap the answer with the most votes") : tr("Choisis ta réponse préférée", "Pick your favorite answer");
         view(root, "ju" + E.round, "ju" + E.round + js, head(E, nameOf) + '<span class="eyebrow">' + esc(verb) + "</span>" + subsHTML(E, nameOf, { sel: js }) +
-          dock('<button class="btn acc" type="button" data-pick' + (js == null ? " disabled" : "") + ">Elle gagne !</button>"), r => {
+          dock('<button class="btn acc" type="button" data-pick' + (js == null ? " disabled" : "") + ">" + tr("Elle gagne !", "This one wins!") + "</button>"), r => {
           r.querySelectorAll("[data-s]").forEach(b => b.addEventListener("click", () => { js = +b.dataset.s; buzz(8); judge(); }));
           r.querySelector("[data-pick]").addEventListener("click", () => { if(js == null) return; buzz(24); decide(E, [js]); reveal(); });
         });
       }
       function reveal(){
         const end = over(E);
-        screen(root, "rv" + E.round, CSS + '<span class="eyebrow">Manche ' + E.round + "</span>" + SB.u.twistHTML(twOf(E.tw)) + revHTML(E, nameOf) + '<div class="field"><span class="eyebrow">Scores</span>' + bars(E, nameOf) + "</div>" +
-          dock('<button class="btn acc" type="button" data-n>' + (end ? "Voir le podium" : "Manche suivante") + '</button><button class="link" type="button" data-stop style="align-self:center">Terminer la partie</button>'), r => {
+        screen(root, "rv" + E.round, CSS + '<span class="eyebrow">' + tr("Manche ", "Round ") + E.round + "</span>" + SB.u.twistHTML(twOf(E.tw)) + revHTML(E, nameOf) + '<div class="field"><span class="eyebrow">Scores</span>' + bars(E, nameOf) + "</div>" +
+          dock('<button class="btn acc" type="button" data-n>' + (end ? tr("Voir le podium", "See the podium") : tr("Manche suivante", "Next round")) + '</button><button class="link" type="button" data-stop style="align-self:center">' + tr("Terminer la partie", "End the game") + "</button>"), r => {
           r.querySelector("[data-n]").addEventListener("click", () => (end ? finish() : round()));
-          armTap(r.querySelector("[data-stop]"), finish, "Toucher encore pour terminer");
+          armTap(r.querySelector("[data-stop]"), finish, tr("Toucher encore pour terminer", "Tap again to end"));
         });
       }
       function finish(){
         const o2 = ranking(E), mx = E.pts[o2[0]] || 0;
         if(api.win && mx) api.win(o2.filter(id => (E.pts[id] || 0) === mx).map(nameOf));
         screen(root, "end" + E.round, CSS + '<span class="eyebrow">' + esc(fl(FL.win, E.fl, 0)) + '</span><div class="who">' + esc(nameOf(o2[0])) + "</div>" + bars(E, nameOf) + awardsHTML(awards(E, nameOf)) +
-          dock('<button class="btn acc" type="button" data-a>Rejouer</button><button class="btn ghost" type="button" data-q>Choisir un autre jeu</button>'), r => {
+          dock('<button class="btn acc" type="button" data-a>' + tr("Rejouer", "Play again") + '</button><button class="btn ghost" type="button" data-q>' + tr("Choisir un autre jeu", "Choose another game") + "</button>"), r => {
           r.querySelector("[data-a]").addEventListener("click", api.again);
           r.querySelector("[data-q]").addEventListener("click", api.exit);
         });
@@ -2166,6 +2177,6 @@ const DEF = {
     }
   }
 };
-DEF.engine = { newGame, nextRound, players, check, toJudge, decide, tally, over, needOf, filled, holes, PQ, PA };
+DEF.engine = { newGame, nextRound, players, check, toJudge, decide, tally, over, needOf, filled, holes, PQ, PA, PQ_EN, PA_EN };
 SB.register(DEF);
 })();
