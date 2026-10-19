@@ -5,90 +5,90 @@ const { esc, A, shuffle, screen, txt, store, persist, dock, buzz } = SB.u;
 
 const SOIREE = [
   "été ivre au point de ne plus te souvenir de ta soirée","vomi en soirée","vomi sur quelqu'un","dormi dehors après une soirée","fait un black-out complet",
-  "bu de l'alcool au travail ou en cours","conduit en ayant trop bu","été viré d'un bar ou d'une boîte","fini une soirée aux urgences",
+  "bu de l'alcool au travail ou en cours","conduit après avoir trop bu","été viré d'un bar ou d'une boîte","fini une soirée aux urgences",
   "envoyé un message que tu as regretté le lendemain","appelé ton ex en étant bourré","menti à tes parents sur l'endroit où tu dormais",
   "raté un examen ou un rendez-vous important à cause d'une gueule de bois","dansé sur une table","fini une soirée tout nu","été réveillé par la police",
   "passé une nuit en garde à vue","volé quelque chose dans un magasin","fraudé dans les transports plus de dix fois","fait pipi dans un lieu public",
   "pris un taxi sans être capable de donner ton adresse","fait la fête plus de 24 heures d'affilée","dépensé plus de 200 € en une seule soirée",
   "menti sur ton âge pour entrer quelque part","fait semblant d'être malade pour ne pas aller travailler","été viré d'un boulot",
-  "fait un tatouage sur un coup de tête","été identifié sur une photo compromettante","fini une soirée chez de parfaits inconnus","bu dans une chaussure",
-  "enchaîné deux soirées sans dormir entre les deux","oublié où tu avais garé ta voiture après une soirée","perdu ton téléphone en soirée","fini une bouteille entière seul",
-  "mélangé tous les alcools de la soirée dans un seul verre","dormi dans une baignoire","raté le dernier train et dormi à la gare","découvert ta soirée le lendemain grâce aux photos des autres",
-  "commandé à manger à 5 h du matin","chanté au karaoké jusqu'à perdre ta voix","organisé une fête chez toi sans prévenir tes colocs","fait la fête un soir de semaine avant un examen"
+  "fait un tatouage sur un coup de tête","été tagué sur une photo compromettante","fini une soirée chez de parfaits inconnus","bu dans une chaussure",
+  "enchaîné deux soirées sans dormir","oublié où tu avais garé ta voiture après une soirée","perdu ton téléphone en soirée","fini une bouteille entière tout seul",
+  "mélangé tous les alcools de la soirée dans un seul verre","dormi dans une baignoire","raté le dernier train et dormi à la gare","découvert le lendemain, grâce aux photos des autres, ce que tu avais fait la veille",
+  "commandé à manger à 5 h du matin","chanté au karaoké jusqu'à perdre ta voix","organisé une fête chez toi sans prévenir tes colocs","fait la fête toute la nuit la veille d'un examen"
 ];
 const SEXE = [
   "embrassé quelqu'un dont tu ne connaissais pas le prénom","embrassé plus de trois personnes dans la même soirée","embrassé quelqu'un du même sexe",
-  "couché avec quelqu'un le premier soir","eu un plan d'un soir","eu un plan cul régulier","recouché avec un ex après la rupture",
+  "couché avec quelqu'un le premier soir","eu un plan d'un soir","eu un plan cul régulier","recouché avec ton ex après la rupture",
   "couché avec quelqu'un de ce groupe","couché avec l'ex d'un pote","couché avec un collègue","couché avec quelqu'un qui était en couple",
-  "trompé quelqu'un","été trompé et l'avoir découvert","fait l'amour dans un lieu public","fait l'amour dans une voiture","fait l'amour au travail",
+  "trompé quelqu'un","découvert que ton partenaire te trompait","fait l'amour dans un lieu public","fait l'amour dans une voiture","fait l'amour au travail",
   "fait l'amour dans les toilettes d'un bar ou d'une boîte","fait un plan à trois","mis les pieds dans un club libertin","envoyé des nudes",
   "filmé ou photographié un moment intime, avec l'accord de l'autre","utilisé un sex toy","utilisé des menottes ou un bandeau","fait un jeu de rôle au lit",
   "simulé un orgasme","regardé du porno avec ton partenaire","regardé du porno au travail","été surpris en pleine action","surpris quelqu'un en pleine action",
   "couché avec quelqu'un rencontré sur une appli le jour même","payé pour un strip-tease privé","fait l'amour plus de cinq fois dans la même journée",
-  "fait l'amour dans le lit de quelqu'un sans qu'il le sache","couché avec quelqu'un de plus de quinze ans ton aîné","fait du sexting avec quelqu'un que tu n'avais jamais vu",
+  "fait l'amour dans le lit de quelqu'un sans qu'il le sache","couché avec quelqu'un qui avait au moins quinze ans de plus que toi","fait du sexting avec quelqu'un que tu n'avais jamais rencontré",
   "participé à une partouze","couché avec deux personnes différentes dans la même journée","fait l'amour alors que quelqu'un dormait dans la même pièce",
   "oublié le prénom de quelqu'un avec qui tu venais de coucher","eu une relation avec deux personnes en même temps sans qu'elles le sachent",
   "fait l'amour à la plage","fait l'amour dans un ascenseur","dragué quelqu'un uniquement pour rendre ton ex jaloux","eu une aventure pendant des vacances",
   "fait l'amour chez tes parents pendant qu'ils étaient là","eu une aventure avec un voisin ou une voisine","fait l'amour plus de trois heures d'affilée","échangé des photos coquines avec quelqu'un de cette pièce",
-  "acheté de la lingerie spécialement pour un rendez-vous","fait l'amour sous une tente","fini un premier rendez-vous au lit avant le dessert","eu un plan d'un soir avec quelqu'un rencontré le soir même dans un bar"
+  "acheté de la lingerie spécialement pour un rendez-vous","fait l'amour sous une tente","fini au lit dès le premier rendez-vous, avant même le dessert","ramené chez toi quelqu'un rencontré le soir même dans un bar"
 ];
 const INTERDIT = [
   "fumé du cannabis","pris une drogue plus forte que le cannabis","vendu quelque chose d'illégal","été arrêté par la police",
-  "escaladé un endroit interdit (toit, grue, monument)","pénétré dans un lieu abandonné ou interdit","fait un excès de vitesse de plus de 50 km/h",
+  "escaladé un endroit interdit (toit, grue, monument)","exploré un lieu abandonné ou interdit d'accès","fait un excès de vitesse de plus de 50 km/h",
   "triché à un examen important","menti sur ton CV","fouillé dans le téléphone de ton partenaire","créé un faux compte pour espionner quelqu'un",
   "lu les messages privés de quelqu'un en cachette","gardé l'argent d'un portefeuille trouvé","quitté un restaurant sans payer",
   "cassé quelque chose et accusé quelqu'un d'autre","menti à la police","dit « je t'aime » sans le penser","gardé un secret qui pourrait détruire un couple",
-  "piqué de l'argent à tes parents","fait croire à une maladie pour obtenir quelque chose",
-  "conduit sans permis","fait le mur pour sortir la nuit","menti à un contrôleur pour éviter une amende","emporté autre chose que les savons d'un hôtel",
-  "ouvert le courrier de quelqu'un d'autre","gonflé une note de frais","utilisé le compte de streaming de quelqu'un sans lui demander","inventé un décès pour sécher",
+  "piqué de l'argent à tes parents","inventé une maladie pour obtenir quelque chose",
+  "conduit sans permis","fait le mur pour sortir la nuit","menti à un contrôleur pour éviter une amende","piqué dans un hôtel autre chose que les petits savons",
+  "ouvert le courrier de quelqu'un d'autre","gonflé une note de frais","utilisé le compte de streaming de quelqu'un sans lui demander","inventé un décès pour sécher les cours ou le travail",
   "imité la signature de tes parents","acheté de l'alcool avant l'âge légal","revendu un cadeau qu'on t'avait offert"
 ];
 const COEUR = [
   "ghosté quelqu'un après plusieurs rendez-vous","été ghosté","dit « je t'aime » dès le premier mois","rompu par message",
-  "stalké le nouveau partenaire de ton ex","menti sur ton métier pour séduire quelqu'un","utilisé une photo retouchée sur une appli de rencontre","dragué quelqu'un de déjà pris",
+  "stalké le nouveau copain ou la nouvelle copine de ton ex","menti sur ton métier pour séduire quelqu'un","utilisé une photo retouchée sur une appli de rencontre","dragué quelqu'un qui était déjà en couple",
   "été amoureux de deux personnes en même temps","écrit une lettre d'amour que tu n'as jamais envoyée","écrit à ton ex au milieu de la nuit","fait une scène de jalousie en public",
   "fait semblant d'adorer un cadeau de ton partenaire","oublié un anniversaire de couple","rompu le jour de l'anniversaire de l'autre","craqué pour le partenaire d'un ami",
-  "été en couple avec deux personnes du même groupe d'amis","rompu puis recommencé plus de deux fois avec la même personne","annulé un rendez-vous avec une fausse excuse","quitté un date avant la fin tellement c'était raté",
-  "pleuré une rupture devant tes collègues","gardé un cadeau d'un ex en souvenir… et en cachette"
+  "été en couple avec deux personnes du même groupe d'amis","rompu puis remis ça plus de deux fois avec la même personne","annulé un rendez-vous avec une fausse excuse","quitté un rendez-vous galant avant la fin tellement c'était raté",
+  "pleuré à cause d'une rupture devant tes collègues","gardé un cadeau d'un ex en souvenir… et en cachette"
 ];
 const BOULOT = [
   "dormi sur ton lieu de travail","fait une sieste dans les toilettes du bureau","envoyé un message moqueur à la personne dont tu te moquais","menti en entretien d'embauche",
   "copié sur ton voisin pendant un examen","rendu un devoir écrit par quelqu'un d'autre","inventé une panne de réveil pour justifier un retard","quitté un job sans prévenir personne",
-  "critiqué ton chef sans savoir qu'il pouvait t'entendre","fait semblant de travailler pendant une journée entière","coupé ta caméra en visio pour faire tout autre chose","gardé ton bas de pyjama pendant une visio",
-  "piqué des fournitures au bureau","pris un arrêt pour partir en week-end","séché plus de la moitié des cours d'un semestre","raté un examen à cause d'une soirée la veille",
-  "pleuré dans les toilettes du travail","réussi un examen sans avoir ouvert un seul cours","démissionné sur un coup de tête","postulé en douce pour le poste de ton chef"
+  "critiqué ton chef sans savoir qu'il t'entendait","fait semblant de travailler pendant une journée entière","coupé ta caméra en visio pour faire tout autre chose","gardé ton bas de pyjama pendant une visio",
+  "piqué des fournitures au bureau","pris un arrêt maladie pour partir en week-end","séché plus de la moitié des cours d'un semestre","fait une présentation importante avec une gueule de bois",
+  "pleuré dans les toilettes du travail","réussi un examen sans avoir ouvert tes cours","démissionné sur un coup de tête","postulé en douce pour le poste de ton chef"
 ];
 const VOYAGE = [
   "raté un avion","voyagé sans avoir réservé de logement","dormi dans un aéroport","perdu ton passeport ou ta carte d'identité en voyage",
-  "fait du stop","vécu une histoire de vacances que personne ne connaît","menti sur tes vacances pour impressionner quelqu'un","acheté un billet d'avion la veille sur un coup de tête",
-  "fait un bain de minuit tout nu","été malade dans un bus ou un bateau","dépensé tout ton budget vacances en trois jours","menti à la douane",
-  "dormi à la belle étoile sans tente","été perdu dans une ville étrangère sans batterie","pris une photo interdite dans un musée","prolongé tes vacances sans prévenir ton travail"
+  "fait du stop","gardé secrète une histoire de vacances","menti sur tes vacances pour impressionner quelqu'un","acheté un billet d'avion la veille sur un coup de tête",
+  "pris un bain de minuit tout nu","été malade dans un bus ou un bateau","dépensé tout ton budget vacances en trois jours","menti à la douane",
+  "dormi à la belle étoile sans tente","été perdu dans une ville étrangère avec ton téléphone à plat","pris une photo interdite dans un musée","prolongé tes vacances sans prévenir ton boulot"
 ];
 const HONTE = [
-  "appelé un prof « maman » ou « papa »","répondu à un coucou qui ne t'était pas destiné","raté une marche devant tout le monde","envoyé une capture d'écran à la personne dont il était question",
-  "répondu « vous aussi » au serveur qui te souhaitait bon appétit","liké une vieille photo en stalkant quelqu'un","chanté à tue-tête avec un casque sans savoir qu'on t'entendait","appelé ton partenaire par le prénom de ton ex",
+  "appelé un prof « maman » ou « papa »","répondu à un signe de la main qui ne t'était pas destiné","raté une marche devant tout le monde","envoyé une capture d'écran à la personne dont il était question",
+  "répondu « vous aussi » au serveur qui te souhaitait bon appétit","liké une vieille photo en stalkant quelqu'un","chanté à tue-tête avec ton casque sur les oreilles sans te rendre compte que tout le monde t'entendait","appelé ton partenaire par le prénom de ton ex",
   "été surpris en train de parler tout seul","été surpris en train de danser devant un miroir","oublié le prénom de quelqu'un juste avant de le présenter","eu un fou rire à un moment totalement déplacé",
   "ri si fort que ta boisson est ressortie par le nez","fait tomber ton téléphone dans les toilettes","porté un vêtement à l'envers toute une journée","foncé dans une porte vitrée",
-  "mangé un truc tombé par terre devant des invités","eu le ventre qui gargouille pendant un grand silence","fait semblant d'avoir lu un livre dont tout le monde parlait","posté une story pour une seule personne",
+  "mangé un truc tombé par terre devant des invités","eu le ventre qui gargouillait en plein silence","fait semblant d'avoir lu un livre dont tout le monde parlait","posté une story pour une seule personne",
   "menti sur tes goûts pour plaire à quelqu'un","envoyé un message vocal sans faire exprès"
 ];
 const HARD = [
-  "fait une gorge profonde", "avalé, sans hésiter", "fait un 69", "essayé la sodomie",
-  "aimé la sodomie", "fait un anulingus", "reçu un anulingus", "fini sur le visage de quelqu'un ou reçu sur le tien",
-  "squirté ou fait squirter quelqu'un", "utilisé un plug anal", "utilisé un gode-ceinture", "été attaché(e) pendant l'amour",
-  "attaché quelqu'un pendant l'amour", "joué le rôle de soumis(e) au lit", "joué le rôle de dominant(e) au lit", "donné ou reçu une fessée qui a laissé des marques",
-  "utilisé un fouet, des pinces ou de la cire chaude", "assumé un fétiche au lit (pieds, latex, uniformes…)", "fait l'amour déguisé(e)", "fait un plan à quatre ou plus",
-  "été la seule fille ou le seul mec d'un plan à plusieurs", "fait de l'échangisme", "regardé ton/ta partenaire coucher avec quelqu'un d'autre", "couché avec quelqu'un pendant que d'autres regardaient",
+  "fait une gorge profonde", "avalé après une fellation", "fait un 69", "essayé la sodomie",
+  "aimé la sodomie", "fait un anulingus", "reçu un anulingus", "joui sur le visage de quelqu'un, ou reçu ça sur le tien",
+  "fait squirter quelqu'un, ou squirté toi-même", "utilisé un plug anal", "utilisé un gode-ceinture", "été attaché(e) pendant l'amour",
+  "attaché quelqu'un pendant l'amour", "joué le rôle du soumis ou de la soumise au lit", "joué le rôle du dominant ou de la dominante au lit", "donné ou reçu une fessée qui a laissé des marques",
+  "utilisé un fouet, des pinces ou de la cire chaude", "réalisé un de tes fétiches au lit (pieds, latex, uniformes…)", "fait l'amour déguisé(e)", "fait un plan à quatre ou plus",
+  "été la seule fille ou le seul mec dans un plan à plusieurs", "fait de l'échangisme", "regardé ton ou ta partenaire coucher avec quelqu'un d'autre", "couché avec quelqu'un pendant que d'autres regardaient",
   "filmé un plan à plusieurs, avec l'accord de tous", "mis les pieds dans un club BDSM ou fétichiste", "fait l'amour dans un backroom", "testé un glory hole",
   "couché avec plus de 20 personnes", "couché avec plus de 50 personnes", "couché avec trois personnes différentes en une semaine", "fait l'amour plus de dix fois en un seul week-end",
-  "eu une relation sexuelle avec quelqu'un du même sexe", "couché avec quelqu'un dont tu n'as jamais su le prénom", "couché avec un(e) inconnu(e) d'internet sans avoir vu sa tête avant", "fait l'amour sans capote avec quelqu'un rencontré le soir même",
-  "fait l'amour sous l'effet d'une drogue", "couché avec ton boss ou ton prof d'université", "couché avec le ou la partenaire d'un(e) ami(e)", "été l'amant(e) caché(e) de quelqu'un de marié pendant des mois",
-  "trompé quelqu'un pendant une soirée où il ou elle était aussi", "couché avec deux personnes qui se connaissaient, sans qu'elles le sachent", "couché avec quelqu'un juste pour obtenir quelque chose", "fait des choses avec deux personnes de cette pièce",
-  "masturbé quelqu'un sous une table", "été masturbé(e) sous une table", "eu un orgasme en public sans que personne ne le remarque", "fait l'amour dans un train ou un avion",
+  "eu une relation sexuelle avec quelqu'un du même sexe", "couché avec quelqu'un dont tu n'as jamais su le prénom", "couché avec quelqu'un rencontré sur internet sans jamais avoir vu son visage avant", "fait l'amour sans capote avec quelqu'un rencontré le soir même",
+  "fait l'amour sous l'effet d'une drogue", "couché avec ton patron ou un de tes profs à la fac", "couché avec le copain ou la copine d'un ami", "été pendant des mois l'amant ou la maîtresse de quelqu'un de marié",
+  "trompé ton ou ta partenaire pendant une soirée où il ou elle était aussi", "couché avec deux personnes qui se connaissaient, sans que l'une sache pour l'autre", "couché avec quelqu'un juste pour obtenir quelque chose", "eu des aventures avec deux personnes présentes ce soir",
+  "masturbé quelqu'un sous la table", "été masturbé(e) sous la table", "eu un orgasme en public sans que personne ne le remarque", "fait l'amour dans un train ou un avion",
   "fait l'amour dans une cabine d'essayage", "fait l'amour dans un parc ou une forêt en pleine journée", "fait l'amour sur un balcon visible depuis la rue", "fait l'amour dans une piscine ou un jacuzzi avec du monde autour",
-  "fait l'amour dans le lit de tes parents", "été surpris(e) en pleine action par tes parents", "fait l'amour pendant les règles", "fait du sexe par webcam avec un(e) inconnu(e)",
+  "fait l'amour dans le lit de tes parents", "été surpris(e) en pleine action par tes parents", "fait l'amour pendant les règles (les tiennes ou celles de l'autre)", "eu une séance coquine par webcam avec quelqu'un que tu ne connaissais pas",
   "envoyé une vidéo de toi en train de te faire plaisir", "envoyé un nude à la mauvaise personne", "vendu des photos ou vidéos sexy de toi en ligne", "payé pour du contenu sexy en ligne",
-  "fait un strip-tease intégral devant plusieurs personnes", "fait un body shot sur le corps de quelqu'un", "proposé un plan à trois à ton/ta partenaire", "couché avec quelqu'un de plus de vingt ans ton aîné",
+  "fait un strip-tease intégral devant plusieurs personnes", "bu un shot sur le corps de quelqu'un", "proposé un plan à trois à ton ou ta partenaire", "couché avec quelqu'un qui avait au moins vingt ans de plus que toi",
   "couché avec quelqu'un juste pour pouvoir dire que tu l'avais fait", "joui en moins d'une minute", "eu un orgasme rien qu'avec des mots"
 ];
 const PACKS = [
@@ -153,7 +153,7 @@ const AW = {
   pure: ["Le plus pur", "L'ange de la bande", "Casier vierge"],
   demon: ["Le démon de la bande", "Le diable en personne", "Mauvaise influence officielle"],
   solo: ["Seul au monde", "L'aveu en solitaire", "Le seul à avoir osé"],
-  trap: ["Tombé dans tous les pièges", "Roi des questions piège", "Aimant à embrouilles"]
+  trap: ["Tombé dans tous les pièges", "Roi des questions pièges", "Aimant à embrouilles"]
 };
 const aw = (k, seed) => AW[k][(+seed || 0) % AW[k].length];
 const CSS = '<style>.pu-q{font-size:28px; font-weight:800; line-height:1.2; overflow-wrap:anywhere}' +
@@ -231,7 +231,7 @@ SB.register({
   tag: "Un questionnaire secret et sans filtre. Qui est l'ange de la bande, et qui est le démon ?",
   min: 1, max: 20,
   rules: [
-    "Chacun répond en secret, sur son téléphone, à une série de « As-tu déjà… ? » 100 % adultes, tirés au hasard dans les thèmes choisis : soirées, sexe, interdits, cœur, boulot, voyages, moments gênants.",
+    "Chacun répond en secret, sur son téléphone, à une série de « As-tu déjà… ? » 100 % adultes, tirés au hasard dans les thèmes choisis : soirées, sexe, interdits, cœur, boulot, voyages, moments gênants, hardcore.",
     "Chaque test est différent : les questions déjà posées sur ce téléphone reviennent en dernier.",
     "Ton score de pureté : 100 % si tu n'as rien fait, et ça baisse à chaque « oui ».",
     "Quand tout le monde a fini, le classement tombe, de l'ange au démon.",

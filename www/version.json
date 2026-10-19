@@ -1,14 +1,14 @@
 {
- "version": "4.7.1",
+ "version": "4.7.2",
  "apk": 31,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Photo roulette passe dans la catégorie « En travaux » : jouable pour tester, rangé à part"
+  "Test de pureté : plus de 50 questions reformulées pour sonner plus naturel"
  ],
  "files": {
   "core.js": {
-   "h": "3b4a542dd9a7ac1807029fcdfa6958946b201bcf54e25a84b1dee65460bd6456",
+   "h": "f3ab0e84a6afcbd460da7a0f37812deddb8a9fd2c5c28399a706d9e4fdfc54eb",
    "s": 95981
   },
   "firebase-app-compat.js": {
@@ -128,8 +128,8 @@
    "s": 73112
   },
   "games/purete.js": {
-   "h": "938ff1e40122ac5a07dc84069825e64b1dbe7fcbd43e287749634dbf181aa724",
-   "s": 35840
+   "h": "a41940d05e63958a64524d55189b7556a60fc48a9a2ae7dd6ef8d0646be7db6e",
+   "s": 36210
   },
   "games/quiadit.js": {
    "h": "b0674479e6dc5c7d510e15a735fff0f0fa9fab31a583a2a71525d73429177bdc",
