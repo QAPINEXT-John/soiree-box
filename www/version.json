@@ -1,15 +1,16 @@
 {
- "version": "4.6.1",
- "apk": 30,
+ "version": "4.7",
+ "apk": 31,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Photo roulette : bouton pour télécharger la nouvelle appli quand elle est nécessaire"
+  "Photo roulette comme le vrai : photos tirées au hasard dans ta galerie, en surprise ou à vérifier avant",
+  "Sur Android, réinstalle l'appli une fois pour le tirage dans toute la galerie"
  ],
  "files": {
   "core.js": {
-   "h": "adf4f0bb348e6e21354d0bd4249f389d842c4dcafffec1407ffc6c9a1c4c6e32",
-   "s": 95636
+   "h": "3c5bb1cdcf6f7de0e7b04d252d436881a8690422c9b9c754ef30937f52ddcc91",
+   "s": 95634
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -116,8 +117,8 @@
    "s": 92314
   },
   "games/photoroulette.js": {
-   "h": "111fed55e5d6617ccf67043b94ac93caaeae35aaa3f3347e00f36e29adfecf67",
-   "s": 30873
+   "h": "5857a9e52524cfbddbf81a77f7931316076670568ad591868df76ebf8c9ce903",
+   "s": 38232
   },
   "games/priorites.js": {
    "h": "4ddc3fc28ab108dbfa9374960bf3ac68dddc7cdfbc010c223ee78d20344488d8",

@@ -23,6 +23,7 @@ public class MainActivity extends Activity {
     static final String ORIGIN_HOST = "localhost";
     private WebView web;
     private ValueCallback<Uri[]> pick;
+    private Gallery gallery;
     private static final int PICK = 41;
 
     @Override
@@ -47,6 +48,9 @@ public class MainActivity extends Activity {
         // Mises à jour sans réinstaller : les fichiers téléchargés (files/ota/www) passent avant ceux de l'APK.
         Updater.cleanup(this);
         web.addJavascriptInterface(new Updater(this, web), "AndroidUpdate");
+        // Photo roulette : photos tirées au hasard dans la galerie, après autorisation du joueur.
+        gallery = new Gallery(this, web);
+        web.addJavascriptInterface(gallery, "AndroidGallery");
         web.setWebViewClient(new WebViewClient() {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest req) {
@@ -125,6 +129,11 @@ public class MainActivity extends Activity {
                 }
             });
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int req, String[] perms, int[] res) {
+        if (req == Gallery.PERM && gallery != null) gallery.onPermission();
     }
 
     @Override

@@ -23,6 +23,8 @@ const CSS = '<style>' +
   '.pr-thumbs div{position:relative; aspect-ratio:1; border-radius:12px; overflow:hidden; background:var(--soft)}' +
   '.pr-thumbs img{width:100%; height:100%; object-fit:cover}' +
   '.pr-thumbs button{position:absolute; top:4px; right:4px; width:28px; height:28px; border-radius:99px; border:0; background:rgba(0,0,0,.65); color:#fff; font-weight:800}' +
+  '.pr-hid{display:grid !important; place-items:center; font-family:var(--f-disp); font-weight:800; font-size:28px; color:var(--muted); background:repeating-linear-gradient(45deg,var(--soft),var(--soft) 8px,var(--card) 8px,var(--card) 16px) !important}' +
+  '.row2{display:grid; grid-template-columns:1fr 1fr; gap:8px}.row2 .btn{font-size:15px; padding-inline:8px}.pr-mode{margin-bottom:4px}' +
   '.pr-file{position:absolute; width:1px; height:1px; opacity:0; pointer-events:none}' +
   '.pr-res{list-style:none; margin:0; padding:0; display:grid; gap:6px}' +
   '.pr-res li{display:flex; justify-content:space-between; gap:10px; padding:9px 12px; border-radius:12px; background:var(--soft)}' +
@@ -84,6 +86,86 @@ function bindPicker(r, imgs, max, onChange){
   r.querySelectorAll("[data-rm]").forEach(b => b.addEventListener("click", () => { imgs.splice(+b.dataset.rm, 1); onChange(); }));
 }
 
+/* ---------- Tirage au hasard dans la galerie (comme le vrai Photo roulette) ----------
+   Appli Android récente : le jeu pioche lui-même dans toute la galerie, après l'autorisation « Photos ».
+   iPhone, site ou appli plus ancienne : le joueur sélectionne un gros paquet de photos, le jeu en garde quelques-unes au hasard.
+   Dans les deux cas, le joueur peut jouer la surprise ou regarder ses photos et en changer avant de valider. */
+const nativeGal = () => !!(window.AndroidGallery && typeof window.AndroidGallery.random === "function");
+const GAL = { n: 0, cb: {} };
+SB.onGallery = e => { const f = e && GAL.cb[e.req]; if(f) f(e); };
+function galDraw(n){
+  return new Promise(res => {
+    const req = "g" + (++GAL.n), out = [];
+    const fin = (t, x) => { if(!GAL.cb[req]) return; delete GAL.cb[req]; clearTimeout(tm); res(Object.assign({ imgs: out, t }, x || {})); };
+    const tm = setTimeout(() => fin("error"), 90000);
+    GAL.cb[req] = e => {
+      if(e.t === "img"){ if(typeof e.d === "string" && /^data:image\/jpeg;base64,/.test(e.d) && e.d.length < 400000) out.push(e.d); }
+      else fin(e.t, { total: +e.total || 0 });
+    };
+    try{ window.AndroidGallery.random(n, req); }catch(err){ fin("error"); }
+  });
+}
+async function poolDraw(P, n){
+  const out = [];
+  while(out.length < n && P.pool.length){ const d = await shrink(P.pool.pop()); if(d) out.push(d); }
+  return out;
+}
+function drawHTML(P, max){
+  const nat = nativeGal(), n = P.imgs.length;
+  let h = '<div class="seg pr-mode"><button type="button" data-mode="hasard" aria-pressed="' + (P.mode === "hasard") + '">Au hasard</button><button type="button" data-mode="choix" aria-pressed="' + (P.mode === "choix") + '">Je choisis</button></div>';
+  if(P.mode === "choix") return h + '<p class="howto">Choisis jusqu\'à ' + max + " photos de ta galerie. Les autres devront deviner qu'elles sont à toi.</p>" + pickerHTML(P.imgs, max);
+  h += '<p class="note-box">Le jeu tire ' + max + " photos au hasard dans ta galerie, comme le vrai Photo roulette. Elles ne sont montrées au groupe que pendant la partie, puis effacées. Tu peux jouer la surprise, ou les regarder et en changer avant de valider.</p>";
+  h += '<input class="pr-file" type="file" accept="image/*" multiple data-pool>';
+  if(P.busy) return h + '<div class="card"><b>Tirage au hasard…</b><span class="sm">' + (nat ? "Si le téléphone te le demande, autorise l'accès aux photos." : "Préparation des photos…") + "</span></div>";
+  if(!n){
+    h += nat ? '<button class="btn acc" type="button" data-draw>Tirer ' + max + " photos au hasard</button>"
+      : '<p class="sm">Sélectionne plein de photos d\'un coup, au moins ' + max * 4 + " (sur iPhone, glisse le doigt sur les photos). Le jeu en garde " + max + ' au hasard.</p><button class="btn ghost" type="button" data-draw>Sélectionner un paquet de photos</button>';
+    if(P.denied) h += '<p class="note-box">Accès aux photos refusé. Tu peux l\'autoriser dans les réglages Android (Soirée Box › Autorisations › Photos), ou passer en « Je choisis ».</p>';
+    if(window.AndroidUpdate && !nat && !oldApk()) h += '<p class="sm">Avec la dernière version de l\'appli, le tirage se fait directement dans toute ta galerie.</p>' + apkBtn;
+    return h;
+  }
+  h += '<div class="field"><span class="eyebrow">' + n + " photo" + (n > 1 ? "s" : "") + " tirée" + (n > 1 ? "s" : "") + " au hasard" + (P.look ? "" : " · cachées") + "</span>";
+  h += '<div class="pr-thumbs">' + P.imgs.map((d, i) => P.look
+    ? '<div><img alt="" src="' + d + '"><button type="button" data-re="' + i + '" aria-label="Changer cette photo">↻</button></div>'
+    : '<div class="pr-hid">?</div>').join("") + "</div></div>";
+  h += '<div class="row2"><button class="btn ghost" type="button" data-look>' + (P.look ? "Cacher mes photos" : "Regarder (et changer)") + '</button><button class="btn ghost" type="button" data-redraw>Tout re-tirer</button></div>';
+  if(P.look) h += '<p class="sm">Appuie sur ↻ pour remplacer une photo par une autre, au hasard.</p>';
+  return h;
+}
+function bindDraw(r, P, max, onChange){
+  const nat = nativeGal(), inp = r.querySelector("[data-pool]");
+  const v = () => { P.v = (P.v || 0) + 1; onChange(); };
+  r.querySelectorAll("[data-mode]").forEach(b => b.addEventListener("click", () => { if(P.busy || P.mode === b.dataset.mode) return; P.mode = b.dataset.mode; P.imgs.length = 0; P.look = false; persist({ prMode: P.mode }); v(); }));
+  if(P.mode === "choix"){ bindPicker(r, P.imgs, max, v); return; }
+  // count photos à tirer, à mettre à la place `at` (ou à la suite)
+  async function draw(count, at){
+    if(P.busy) return;
+    if(!nat && !P.pool.length){ P.want = [count, at]; inp.click(); return; }
+    P.busy = true; P.denied = false; v();
+    let got = [];
+    if(nat){ const res = await galDraw(count); got = res.imgs; if(res.t === "denied") P.denied = true; else if(!got.length) toast(res.total === 0 ? "Aucune photo trouvée dans la galerie" : "Le tirage n'a pas marché, réessaie"); }
+    else got = await poolDraw(P, count);
+    P.busy = false;
+    if(at == null) got.forEach(d => { if(P.imgs.length < max) P.imgs.push(d); });
+    else if(got[0]) P.imgs[at] = got[0];
+    else if(!nat) toast("Plus de photos dans ta sélection : re-tire tout pour en choisir d'autres");
+    v();
+  }
+  if(inp) inp.addEventListener("change", () => {
+    const files = Array.from(inp.files || []).filter(f => /^image\//.test(f.type || "image/"));
+    inp.value = "";
+    if(!files.length) return;
+    P.pool = shuffle(files);
+    if(files.length < max) toast("Seulement " + files.length + " photo" + (files.length > 1 ? "s" : "") + " sélectionnée" + (files.length > 1 ? "s" : ""));
+    const w = P.want || [max, null]; P.want = null; draw(w[0], w[1]);
+  });
+  const d = r.querySelector("[data-draw]"); if(d) d.addEventListener("click", () => draw(max, null));
+  const lk = r.querySelector("[data-look]"); if(lk) lk.addEventListener("click", () => { P.look = !P.look; v(); });
+  const rd = r.querySelector("[data-redraw]"); if(rd) rd.addEventListener("click", () => { if(P.busy) return; P.imgs.length = 0; P.look = false; if(!nat) P.pool = []; draw(max, null); });
+  r.querySelectorAll("[data-re]").forEach(b => b.addEventListener("click", () => draw(1, +b.dataset.re)));
+  bindApk(r);
+}
+
 /* Ordre des photos : jamais deux fois de suite le même propriétaire quand c'est possible. */
 function deal(counts, rounds){
   const left = {}; Object.keys(counts).forEach(id => { if(counts[id] > 0) left[id] = shuffle(Array.from({ length: counts[id] }, (_, i) => i)); });
@@ -113,9 +195,10 @@ function fxStyle(tw, since){
 }
 
 /* ---------- Réseau ---------- */
-const MY = { pid: "", imgs: [], put: {}, sent: 0 };
-function mine(s){ if(MY.pid !== s.pid){ MY.pid = s.pid; MY.imgs = []; MY.put = {}; } return MY; }
-function wipe(ctx){ MY.pid = ""; MY.imgs = []; MY.put = {}; if(ctx && ctx.blob) ctx.blob.clear(); }
+const newPick = () => ({ imgs: [], mode: store().prMode === "choix" ? "choix" : "hasard", look: false, busy: false, pool: [], v: 0 });
+const MY = Object.assign({ pid: "", put: {} }, newPick());
+function mine(s){ if(MY.pid !== s.pid){ Object.assign(MY, newPick(), { pid: s.pid, put: {} }); } return MY; }
+function wipe(ctx){ Object.assign(MY, newPick(), { pid: "", put: {} }); if(ctx && ctx.blob) ctx.blob.clear(); }
 
 function nextRound(c){
   const st = c.s, deck = A(c.priv().deck).map(A);
@@ -133,7 +216,8 @@ SB.register({
   tag: "Chacun choisit quelques photos de sa galerie. Une photo s'affiche : à qui est-elle ?",
   min: 3, max: 12, ticks: true,
   rules: [
-    "Chacun choisit lui-même 3 à 8 photos de sa galerie. Rien n'est pris sans toi.",
+    "Au hasard (par défaut) : le jeu tire quelques photos dans ta galerie, sur ton téléphone et seulement quand tu appuies sur « Tirer ». Joue la surprise, ou regarde-les et change celles que tu ne veux pas montrer.",
+    "Je choisis : tu prends toi-même tes photos.",
     "Une photo s'affiche sur tous les téléphones. Devine à qui elle appartient.",
     "Bonne réponse : 2 points, et 1 de plus pour le plus rapide. Si personne ne trouve, le propriétaire gagne 2 points.",
     "Si c'est ta photo, vote quand même pour brouiller les pistes.",
@@ -196,17 +280,17 @@ SB.register({
       const ready = ctx.ids.filter(id => { const i = ctx.input(id); return i && i.ok; });
       const withPh = ready.filter(id => (+ctx.input(id).n || 0) > 0);
       const old = oldApk(), playing = ctx.playing;
-      screen(root, "pick" + s.k + M.imgs.length + (my.ok ? 1 : 0) + ctx.isHost + old, CSS +
+      screen(root, "pick" + s.k + "|" + M.imgs.length + "|" + M.v + (my.ok ? 1 : 0) + ctx.isHost + old, CSS +
         '<span class="eyebrow">Photo roulette · choix des photos</span>' +
         (!playing ? '<p class="howto">Tu regardes la partie. Les joueurs choisissent leurs photos.</p>' :
-          my.ok ? '<div class="card"><b>' + (M.imgs.length ? M.imgs.length + " photo" + (M.imgs.length > 1 ? "s" : "") + " prête" + (M.imgs.length > 1 ? "s" : "") : "Tu joues sans photo") + '</b><span class="sm">Tes photos restent sur ton téléphone jusqu\'à leur tour.</span></div><button class="link" type="button" data-edit>Modifier mes photos</button>' :
+          my.ok ? '<div class="card"><b>' + (M.imgs.length ? M.imgs.length + " photo" + (M.imgs.length > 1 ? "s" : "") + " prête" + (M.imgs.length > 1 ? "s" : "") + (M.mode === "hasard" && !M.look ? " · surprise !" : "") : "Tu joues sans photo") + '</b><span class="sm">Tes photos restent sur ton téléphone jusqu\'à leur tour.</span></div><button class="link" type="button" data-edit>Modifier mes photos</button>' :
           old ? '<p class="note-box">' + esc(APK_MSG) + " En attendant, tu peux jouer sans photo et deviner quand même.</p>" + apkBtn :
-          '<p class="howto">Choisis jusqu\'à ' + s.per + " photos de ta galerie. Les autres devront deviner qu'elles sont à toi.</p>" + pickerHTML(M.imgs, s.per)) +
+          drawHTML(M, s.per)) +
         '<p class="wait" data-wait></p>' +
-        dock((playing && !my.ok ? '<button class="btn acc" type="button" data-ok' + (M.imgs.length || old ? "" : " disabled") + ">" + (M.imgs.length ? "C'est bon, j'ai choisi" : old ? "Jouer sans photo" : "Choisis au moins une photo") + "</button>" : "") +
+        dock((playing && !my.ok ? '<button class="btn acc" type="button" data-ok' + (M.imgs.length || old ? "" : " disabled") + ">" + (M.imgs.length ? "C'est bon, on joue avec" : old ? "Jouer sans photo" : M.mode === "hasard" ? "Tire tes photos d'abord" : "Choisis au moins une photo") + "</button>" : "") +
           (ctx.isHost ? '<button class="btn ' + (playing && !my.ok ? "ghost" : "acc") + '" type="button" data-go>Lancer la partie</button>' : "")), r => {
-        if(playing && !my.ok && !old) bindPicker(r, M.imgs, s.per, () => { root.dataset.key = ""; ctx.send({ ok: 0, n: M.imgs.length }); });
-        const ok = r.querySelector("[data-ok]"); if(ok) ok.addEventListener("click", () => { buzz(15); ctx.send({ ok: 1, n: M.imgs.length }); });
+        if(playing && !my.ok && !old) bindDraw(r, M, s.per, () => { root.dataset.key = ""; ctx.send({ ok: 0, n: M.imgs.length }); });
+        const ok = r.querySelector("[data-ok]"); if(ok) ok.addEventListener("click", () => { if(M.busy) return; buzz(15); ctx.send({ ok: 1, n: M.imgs.length }); });
         const ed = r.querySelector("[data-edit]"); if(ed) ed.addEventListener("click", () => ctx.send({ ok: 0, n: M.imgs.length }));
         bindApk(r);
         const go = r.querySelector("[data-go]"); if(go) go.addEventListener("click", () => ctx.act(c => {
@@ -302,7 +386,7 @@ SB.register({
       });
       const go = () => {
         if(L.phase === "setup"){
-          screen(root, "setup" + L.per + L.rounds + L.twOn, CSS + '<p class="howto">Chacun à son tour choisit quelques photos de sa galerie sur ce téléphone, sans que les autres regardent. Ensuite, les photos défilent : à qui sont-elles ?</p>' +
+          screen(root, "setup" + L.per + L.rounds + L.twOn, CSS + '<p class="howto">Sur un seul téléphone, toutes les photos viennent de sa galerie. Chacun à son tour en choisit quelques-unes en secret, celles qui lui ressemblent le plus. Ensuite elles défilent : qui a choisi quoi ?</p><p class="sm">Pour le vrai Photo roulette (photos tirées au hasard dans la galerie de chacun), jouez en réseau, chacun sur son téléphone.</p>' +
             '<div class="field"><span class="eyebrow">Photos par joueur</span><div class="seg">' + [3, 5, 8].map(v => '<button type="button" data-per="' + v + '" aria-pressed="' + (v === L.per) + '">' + v + "</button>").join("") + "</div></div>" +
             '<div class="field"><span class="eyebrow">Photos dans la partie</span><div class="seg">' + [10, 15, 25].map(v => '<button type="button" data-r="' + v + '" aria-pressed="' + (v === L.rounds) + '">' + v + "</button>").join("") + "</div></div>" +
             '<div class="field"><span class="eyebrow">Variante</span><div class="seg"><button type="button" data-tw aria-pressed="' + L.twOn + '">Coups de théâtre : ' + (L.twOn ? "oui" : "non") + "</button></div></div>" +
@@ -322,7 +406,7 @@ SB.register({
           });
         } else if(L.phase === "pick"){
           const imgs = L.imgs[L.who], last = L.who === names.length - 1;
-          screen(root, "pick" + L.who + "|" + imgs.length, CSS + '<span class="eyebrow">' + esc(names[L.who]) + ' · tes photos</span><p class="howto">Choisis jusqu\'à ' + L.per + " photos.</p>" + pickerHTML(imgs, L.per) +
+          screen(root, "pick" + L.who + "|" + imgs.length, CSS + '<span class="eyebrow">' + esc(names[L.who]) + ' · tes photos</span><p class="howto">Choisis en secret jusqu\'à ' + L.per + " photos de ce téléphone, celles qui te ressemblent. Les autres devront deviner que c'est toi qui les as choisies.</p>" + pickerHTML(imgs, L.per) +
             '<div class="dock"><button class="btn acc" type="button" data-n>' + (last ? "Terminé, on joue !" : "Terminé, au suivant") + '</button><button class="link" type="button" data-skip style="align-self:center">Je joue sans photo</button></div>', r => {
             bindPicker(r, imgs, L.per, () => { root.dataset.key = ""; go(); });
             const done = () => {
@@ -337,9 +421,9 @@ SB.register({
         } else if(L.phase === "show" || L.phase === "res"){
           const [oi, ii] = L.cur, img = L.imgs[oi][ii], owner = names[oi], res = L.phase === "res";
           screen(root, L.phase + L.n, CSS + '<span class="eyebrow">Photo ' + L.n + " / " + L.total + "</span>" + (res ? "" : SB.u.twistHTML(L.tw)) +
-            (res ? '<div class="card"><span class="eyebrow">C\'était la photo de</span><div class="who">' + esc(owner) + "</div></div>" : "") +
+            (res ? '<div class="card"><span class="eyebrow">Photo choisie par</span><div class="who">' + esc(owner) + "</div></div>" : "") +
             '<div class="pr-ph' + (res ? " sm" : "") + '"><img alt="Photo mystère" data-img src="' + img + '"' + (!res && L.tw ? ' style="' + fxStyle(L.tw.id, Date.now() - L.t0) + '"' : "") + "></div>" +
-            (!res ? '<p class="big" style="margin:4px 0 0">C\'est la photo de qui ?</p><p class="howto">À trois, tout le monde pointe quelqu\'un du doigt !</p>' +
+            (!res ? '<p class="big" style="margin:4px 0 0">Qui a choisi cette photo ?</p><p class="howto">À trois, tout le monde pointe quelqu\'un du doigt !</p>' +
               '<div class="dock"><button class="btn acc" type="button" data-rev>Révéler</button></div>' :
               '<div class="field"><span class="eyebrow">Qui avait trouvé ? (' + (L.tw && L.tw.id === "double" ? "4" : "2") + ' pts)</span><div class="pr-who">' +
               names.filter(n => n !== owner).map(n => '<button type="button" data-f="' + esc(n) + '" aria-pressed="' + !!L.found[n] + '">' + esc(n) + "</button>").join("") + "</div></div>" +
