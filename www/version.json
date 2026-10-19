@@ -1,15 +1,16 @@
 {
- "version": "4.7.2",
+ "version": "4.8",
  "apk": 31,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Test de pureté : plus de 50 questions reformulées pour sonner plus naturel"
+  "Tous les jeux relus : plus de 600 cartes et textes reformulés pour sonner naturel",
+  "Punchline : les réponses s'insèrent correctement dans les phrases"
  ],
  "files": {
   "core.js": {
-   "h": "f3ab0e84a6afcbd460da7a0f37812deddb8a9fd2c5c28399a706d9e4fdfc54eb",
-   "s": 95981
+   "h": "d93af32d2e74e882e770a487817ebc37c9fe334c378b3f14a3a4071923596d80",
+   "s": 96104
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -84,72 +85,72 @@
    "s": 6236
   },
   "games/actionverite.js": {
-   "h": "aa4b5a24ca3bde1fcbf61f0bbbffafabb50ef324ed32112e7182dbc6bd726829",
-   "s": 63925
+   "h": "b593bc9e4fc578447abefa19c5899af9600775b998ff4b146946c7f921e251e2",
+   "s": 64072
   },
   "games/defis.js": {
-   "h": "97c22b49361644c32fda1d6829f1a6778519cb724294cc4303cde87e02046645",
-   "s": 41222
+   "h": "c3536433e86a4823eb54328c27c831e8e75c66762eeb530e43b69c6b2208d22c",
+   "s": 41673
   },
   "games/dernierecarte.js": {
-   "h": "d0054c78f767b9ba295c6f9c262f89c7be110e95691a5728ddfa61ae274c9e4a",
-   "s": 54437
+   "h": "c5e63ae4acd8e51743483c732d62fb6d6ebdb13771dd751334b4aa0856e0509a",
+   "s": 54914
   },
   "games/killer.js": {
-   "h": "200307423687a99b089d633d744813c387432fe10166ea57b3fe8ec1bb653780",
-   "s": 48044
+   "h": "7a3d07cf6b107cc2b9bd1397fe4e31a4d2b4fb7843923d3049304a2c86147550",
+   "s": 48252
   },
   "games/loupgarou.js": {
-   "h": "84adf6429c3a81f6e299de1a67a6b0bf2f2ff533885d8aa0f51cc45687536af3",
-   "s": 54910
+   "h": "f74d8cedd726af1e80e0f0d0aa9163f2d765ac7c546d5fbcdfcf1602733d8bef",
+   "s": 55350
   },
   "games/menteurs.js": {
-   "h": "9845a542a4ee65ee690ab7d2e5b17643767e1df013d6219ce930cefe827e1a09",
-   "s": 37765
+   "h": "84fb55aa8f72444bf874a48a464f3f216cdbe78428c59c9f8a699751fc8d1d39",
+   "s": 37777
   },
   "games/motsint.js": {
-   "h": "57bf4708b9d6caed5360e4d25be635a0eb698f0d9b0fa130ecdf6c40494be522",
-   "s": 31554
+   "h": "6202ef7d10f3778a9a8f6d72a47f18ca12e33b737ba8470904242cdae449c2f6",
+   "s": 31610
   },
   "games/note10.js": {
-   "h": "d6c5b098a99987acfb69b18b1cee1a3fd772af74c100de1ca61b9b05d8e7535d",
-   "s": 92314
+   "h": "4061c37486fa282a5c5cc17e981659811785b19272505d9c26203cfcaffb0084",
+   "s": 92733
   },
   "games/photoroulette.js": {
-   "h": "5857a9e52524cfbddbf81a77f7931316076670568ad591868df76ebf8c9ce903",
-   "s": 38232
+   "h": "e87d0ccbc561c0bab4e9ca344814c73a5ecd95f49b62219dd44ad5026457edf3",
+   "s": 38393
   },
   "games/priorites.js": {
-   "h": "4ddc3fc28ab108dbfa9374960bf3ac68dddc7cdfbc010c223ee78d20344488d8",
-   "s": 29316
+   "h": "ab6fe35357436da9a0b9930119988f486e9183fab515201005e8f83fb6168dcc",
+   "s": 29386
   },
   "games/punchline.js": {
-   "h": "79439413f828358721ca976281e4a1c6409148b645badfa01efcf2fcb985c80c",
-   "s": 73112
+   "h": "24119641f234e673274de036cfdc79d74ec20f8b09d65efc0bd247ea137cc265",
+   "s": 73606
   },
   "games/purete.js": {
    "h": "a41940d05e63958a64524d55189b7556a60fc48a9a2ae7dd6ef8d0646be7db6e",
    "s": 36210
   },
   "games/quiadit.js": {
-   "h": "b0674479e6dc5c7d510e15a735fff0f0fa9fab31a583a2a71525d73429177bdc",
-   "s": 35205
+   "h": "7958624726128503d6218b260f3122f8614ddf1c6f06205145c3751b93d0b188",
+   "s": 35369
   },
   "games/quiplus.js": {
-   "h": "96b12f5bf925698453a187a267ea9e19f0e11c0eb5ac3260caecc33f47cb25b0",
-   "s": 25786
+   "h": "b24518cffabb6bc3b96e45f3ddd3b1835598f741e391fea1b59a814ed075221f",
+   "s": 26249
   },
   "games/redflag.js": {
-   "h": "965b002dd38a7866d916616ffc74f6a917e7918464775a3b15898f21a09d58ed",
-   "s": 47479
+   "h": "624cd5ad9771c38562716d53a4ed48465a8425ba844450286e4fb9d163e390f3",
+   "s": 47799
   },
   "games/tupref.js": {
-   "h": "4b049eb158435e085637c376ff053744a29ed737bf9e40be641acc960bff4107",
-   "s": 28791
+   "h": "065bf4f3d2257e413861e2bc16867392c34411f5a4d541d2870ade1273a3a27f",
+   "s": 29991
   },
   "games/undercover.js": {
-   "h": "6757b153953c4b9c13c1935ce1e57818c29f8fdb9c4a20e7e72dee7f1aa05b35",
-   "s": 36375
+   "h": "07b0fbf950ae5298994259fc5edff44bcf2886280c45cae91e02471bbf6e5f5e",
+   "s": 36511
   },
   "icons/apple-touch-icon.png": {
    "h": "c6a8d73afcfb5db146ca68617cea122c1b06465d3a6bde68efe2ecc2d8ece998",
@@ -176,8 +177,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "bb421671a27af033464531484a6b955cf127f67704ce43bd75b0198776d26eb6",
-   "s": 41019
+   "h": "0f3930cacb37f39a45cfd1fb478658173cc2301d3a218e77d36be4f77436941f",
+   "s": 41052
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
