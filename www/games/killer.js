@@ -222,7 +222,7 @@ function awards(W, ids, nameOf, seed, lg){
   const out = [], E = T(lg, 0, 1) === 1, log = A(W.log);
   const P = (fr, en, i) => { const k = (seed + i) % fr.length; return [E ? en[k] : fr[k], fr[k]]; }, add = (t, d) => out.push([t[0], d, t[1]]);
   if(W.fast && W.fast.id) add(P(["Gâchette la plus rapide", "Tir éclair", "Plus rapide que son ombre"], ["Quickest trigger", "Lightning strike", "Faster than their shadow"], 0), nameOf(W.fast.id) + (E ? ", a mission done in " : ", une mission bouclée en ") + dur(W.fast.dt));
-  if(log.length) add(P(["Premier sang", "A ouvert le bal", "Premier coup de couteau"], ["First blood", "Opened the dance", "First stab"], 1), nameOf(log[0].by) + (E ? " struck first" : " a frappé en premier"));
+  if(log.length) add(P(["Premier sang", "A ouvert le bal", "Premier coup de couteau"], ["First blood", "Kicked things off", "First stab"], 1), nameOf(log[0].by) + (E ? " struck first" : " a frappé en premier"));
   const u = log.find(x => x.how === "u");
   if(u) add(P(["L'arroseur arrosé", "Pris à son propre piège", "Grillé par sa propre cible"], ["Hunter hunted", "Caught in their own trap", "Busted by their own target"], 2), nameOf(u.on) + (E ? ", unmasked by " : ", démasqué par ") + nameOf(u.by));
   const pr = log.find(x => x.b === "p");
