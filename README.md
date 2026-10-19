@@ -120,3 +120,7 @@ Voir **AJOUTER-UN-JEU.md**. En résumé, tu copies `www/games/_modele.js`, tu é
 | `www/manifest.webmanifest`, `www/sw.js` | Installation en appli web et cache hors ligne |
 | `database.rules.json` | Règles de sécurité Firebase |
 | `android/` | Appli Android : `SoireeBox.apk`, sources, `build.sh`, clé de signature |
+
+## Langues
+
+L'appli existe en français et en anglais (choix en bas de l'accueil, gardé sur le téléphone ; par défaut la langue du téléphone). Dans le code : `tr("texte français", "English text")`. En réseau, le contenu des parties suit la langue de l'hôte (`ctx.s.lg`), l'interface celle de chaque téléphone.
