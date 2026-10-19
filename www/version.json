@@ -1,16 +1,16 @@
 {
- "version": "4.10",
+ "version": "4.11",
  "apk": 32,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "QR code dans le salon : on le scanne avec l'appareil photo pour rejoindre",
-  "Sur Android, le QR code ouvre directement l'appli dans le salon (nouvelle appli à installer une fois)"
+  "Nouveau jeu 18+ : Test kink, ton profil d'envies (dominant, soumis, switch…) en secret",
+  "Tes réponses restent sur ton téléphone ; tu choisis si tu partages ton top 3"
  ],
  "files": {
   "core.js": {
-   "h": "1f8a509ad0b373dce1989acf62edcf25fa559692dc685c7201b957e32c3021fc",
-   "s": 111076
+   "h": "bed53eaf72f1c4216bb5ff689c175273a667256374c38216443574de3a158138",
+   "s": 111091
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -100,6 +100,10 @@
    "h": "477925d1b443e12c3102439d4ce3733c8de29a6d4aeede780bcf41b2713e6d27",
    "s": 65249
   },
+  "games/kink.js": {
+   "h": "ef3341c0865f3348c20e1c41e7088eb0396817cf26ea3ec2a131f98b3d51128d",
+   "s": 28314
+  },
   "games/loupgarou.js": {
    "h": "a1e3a137d7a88bf2b0296ce29d523ec706b46ad34519a779282111c833ce85c9",
    "s": 69584
@@ -177,8 +181,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "86d9125f27ca2b29d4d1e432327ab8cabbc1deceea5f969e2f87da4b640aab53",
-   "s": 42953
+   "h": "e6ab8c32c9bf295e9da5a57efac5dc36e5f2c0ea72503444d1f18a661e02290e",
+   "s": 42991
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
