@@ -1,4 +1,8 @@
 {
+  "4.9.5": [
+    "Test de pureté : graphique sur 5 axes (Sexe, Drogues, Alcool, Hygiène, Morale)",
+    "Deux nouveaux thèmes de questions : Drogues & substances, Hygiène & crasse"
+  ],
   "4.9.4": [
     "Test de pureté : un profil à la fois sur le graphique, on touche un prénom pour changer",
     "Nouveaux noms de catégories : Fêtard, Coquin, Hors-la-loi, Cœur d'artichaut, Tire-au-flanc, Baroudeur, Malaisant, Sans limites"

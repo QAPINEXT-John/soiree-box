@@ -180,9 +180,47 @@ const HARD_EN = [
   "done a full striptease in front of a group", "done a body shot off someone", "suggested a threesome to your partner", "slept with someone at least twenty years older than you",
   "slept with someone just so you could say you'd done it", "come in under a minute", "had an orgasm from words alone"
 ];
+const DROGUES = [
+  "fumé un joint avant d'aller travailler ou en cours", "pris de la MDMA ou de l'ecstasy en soirée", "goûté aux champignons hallucinogènes",
+  "pris du LSD", "pris de la cocaïne", "acheté de la drogue à un inconnu",
+  "fait un bad trip", "caché de la drogue chez quelqu'un sans le lui dire", "passé une soirée tellement défoncé que tu ne t'en souviens plus",
+  "été défoncé à un repas de famille", "pris du protoxyde d'azote (les ballons)", "mangé un space cake",
+  "été défoncé au travail", "mélangé alcool et drogue dans la même soirée", "dealé, même juste à des potes",
+  "fait pousser du cannabis chez toi", "passé une frontière avec de la drogue sur toi", "été contrôlé par la police avec de la drogue sur toi",
+  "pris de la kétamine", "vapoté du THC"
+];
+const DROGUES_EN = [
+  "smoked a joint before work or class", "taken MDMA or ecstasy at a party", "tried magic mushrooms",
+  "taken LSD", "done cocaine", "bought drugs from a stranger",
+  "had a bad trip", "hidden drugs at someone's place without telling them", "been so high at a party that you can't remember it",
+  "been high at a family dinner", "done laughing gas (nitrous balloons)", "eaten a space cake",
+  "been high at work", "mixed alcohol and drugs on the same night", "dealt drugs, even just to friends",
+  "grown weed at home", "crossed a border with drugs on you", "been stopped by the police with drugs on you",
+  "taken ketamine", "vaped THC"
+];
+const CRADO = [
+  "porté le même caleçon ou la même culotte trois jours de suite", "passé plus de trois jours sans te doucher", "utilisé la brosse à dents de quelqu'un d'autre",
+  "reniflé un vêtement sale pour savoir s'il pouvait encore se porter", "appliqué la règle des cinq secondes", "remis des chaussettes sales faute d'en avoir des propres",
+  "dormi sans te laver les dents ni te démaquiller", "fait pipi sous la douche", "mangé quelque chose périmé depuis plus d'une semaine",
+  "laissé de la vaisselle sale traîner plus d'une semaine", "mangé une crotte de nez depuis que tu es adulte", "gardé les mêmes draps plus d'un mois",
+  "pété dans un ascenseur bondé", "accusé quelqu'un d'autre de ton pet", "fait tes besoins dans la nature sans papier",
+  "remâché un chewing-gum que tu avais déjà mâché", "fini le fond de verre de quelqu'un d'autre en soirée", "oublié de te laver les mains en sortant des toilettes",
+  "dormi tout habillé, chaussures aux pieds, après une soirée", "mangé de la nourriture récupérée dans une poubelle", "coupé tes ongles de pied dans un lieu public",
+  "dormi dans un lit plein de miettes parce que tu mangeais dedans"
+];
+const CRADO_EN = [
+  "worn the same underwear three days in a row", "gone more than three days without showering", "used someone else's toothbrush",
+  "sniffed dirty clothes to see if they could be worn again", "followed the five-second rule", "put dirty socks back on because you had no clean ones",
+  "gone to bed without brushing your teeth or taking your makeup off", "peed in the shower", "eaten something more than a week past its date",
+  "left dirty dishes lying around for over a week", "eaten a booger as an adult", "kept the same sheets on for over a month",
+  "farted in a packed elevator", "blamed someone else for your fart", "had to go in the woods with no toilet paper",
+  "re-chewed gum you'd already chewed", "finished the dregs of someone else's glass at a party", "skipped washing your hands after using the toilet",
+  "fallen asleep fully dressed, shoes on, after a night out", "eaten food you fished out of a bin", "clipped your toenails in public",
+  "slept in a bed full of crumbs from eating in it"
+];
 const QS = {
-  fr: { soiree: SOIREE, sexe: SEXE, interdit: INTERDIT, coeur: COEUR, boulot: BOULOT, voyage: VOYAGE, honte: HONTE, hardcore: HARD },
-  en: { soiree: SOIREE_EN, sexe: SEXE_EN, interdit: INTERDIT_EN, coeur: COEUR_EN, boulot: BOULOT_EN, voyage: VOYAGE_EN, honte: HONTE_EN, hardcore: HARD_EN }
+  fr: { soiree: SOIREE, sexe: SEXE, interdit: INTERDIT, coeur: COEUR, boulot: BOULOT, voyage: VOYAGE, honte: HONTE, hardcore: HARD, drogues: DROGUES, crado: CRADO },
+  en: { soiree: SOIREE_EN, sexe: SEXE_EN, interdit: INTERDIT_EN, coeur: COEUR_EN, boulot: BOULOT_EN, voyage: VOYAGE_EN, honte: HONTE_EN, hardcore: HARD_EN, drogues: DROGUES_EN, crado: CRADO_EN }
 };
 const LG = lg => lg === "en" ? "en" : "fr";
 const PACKS = [
@@ -193,6 +231,8 @@ const PACKS = [
   { v: "boulot", label: tr("Boulot & études", "Work & studies"), desc: tr("Retards, triches, siestes clandestines", "Late again, cheating, secret naps") },
   { v: "voyage", label: tr("Voyages", "Travel"), desc: tr("Vols ratés, aventures, passeports perdus", "Missed flights, flings, lost passports") },
   { v: "honte", label: tr("Moments gênants", "Cringe moments"), desc: tr("Les hontes qu'on n'avoue jamais", "The shame you never admit to") },
+  { v: "drogues", label: tr("Drogues & substances", "Drugs & substances"), desc: tr("Joints, pilules, bad trips", "Joints, pills, bad trips"), hot: true },
+  { v: "crado", label: tr("Hygiène & crasse", "Hygiene & gross stuff"), desc: tr("Les petits secrets pas très propres", "Your not-so-clean little secrets") },
   { v: "hardcore", label: "Hardcore 18+", desc: tr("Pratiques, plans à plusieurs, records : zéro filtre", "Kinks, group sex, body counts: zero filter"), hot: true }
 ];
 PACKS.forEach(p => { p.list = QS[LG(SB.lang())][p.v]; }); // listes de ce téléphone (réglages, compteurs)
@@ -251,18 +291,36 @@ function score(ans, tw){
   return Math.max(0, Math.min(100, Math.round(100 * (1 - bad / Math.max(1, W)))));
 }
 /* ---------- Profil par thème : graphique radar en fin de test ---------- */
-const SHORT = { soiree: tr("Fêtard", "Party animal"), sexe: tr("Coquin", "Naughty"), interdit: tr("Hors-la-loi", "Outlaw"), coeur: tr("Cœur d'artichaut", "Heartbreaker"), boulot: tr("Tire-au-flanc", "Slacker"), voyage: tr("Baroudeur", "Globetrotter"), honte: tr("Malaisant", "Cringe"), hardcore: tr("Sans limites", "No limits") };
+// Le graphique ne suit pas les thèmes du test mais 5 axes : chaque question est rangée dans l'un d'eux.
+const DIMS = ["sexe", "drogues", "alcool", "hygiene", "morale"];
+const SHORT = { sexe: tr("Sexe", "Sex"), drogues: tr("Drogues", "Drugs"), alcool: tr("Alcool", "Alcohol"), hygiene: tr("Hygiène", "Hygiene"), morale: tr("Morale", "Morals") };
+const RX = {
+  drogues: /cannabis|drogue|joint|ecstasy|mdma|cocaïne|champignons? halluc|\blsd\b|kétamine|space cake|défoncé|protoxyde|\bthc\b|\bdeal|\bweed\b|\bdrugs?\b|cocaine|mushrooms|ketamine|\bhigh\b|laughing gas|\bdealt\b/i,
+  alcool: /\bivre\b|vomi|\bbu\b|bourré|gueule de bois|black-out|bouteille|alcool|\bshot|soûl|saoul|bière|karaoké|\bfête|soirée|drunk|wasted|hungover|hangover|booze|threw up|puke|blacked out|alcohol|bottle|\bbeer|\bparty|karaoke|night out|drinking/i,
+  hygiene: /pipi|doucher|douche|brosse à dents|\bdents\b|tombé par terre|à l'envers|caleçon|culotte|chaussettes|crotte|draps|\bpété|ton pet\b|besoins dans la nature|chewing-gum|poubelle|ongles|miettes|vaisselle|périmé|reniflé|cinq secondes|\bpee|shower|toothbrush|\bteeth\b|off the floor|inside out|underwear|\bsocks\b|booger|\bsheets\b|farted|your fart|toilet paper|\bgum\b|\bbin\b|toenails|crumbs|dishes|past its date|sniffed|five-second/i,
+  morale: /volé|fraud|police|garde à vue|menti|triché|viré d'un boulot|semblant d'être malade|stole|shoplift|\bfares?\b|\bcops\b|arrest|police cell|\blied\b|cheated|fired|faked being sick|pretended to be sick/i
+};
+function dimOf(pack, q){
+  if(pack === "sexe" || pack === "hardcore") return "sexe";
+  if(pack === "drogues") return "drogues";
+  if(pack === "crado") return "hygiene";
+  if(RX.drogues.test(q)) return "drogues";
+  if(pack === "soiree"){ if(RX.hygiene.test(q)) return "hygiene"; if(RX.morale.test(q)) return "morale"; return "alcool"; }
+  if(RX.alcool.test(q)) return "alcool";
+  if(RX.hygiene.test(q)) return "hygiene";
+  return "morale";
+}
 const PAL = ["var(--acc)", "#4fd1bf", "#ffb020", "#8b7bff", "#5bc0ff", "#9be15d", "#ff8a4c", "#ff6b8a"];
 // Thèmes présents dans le test (dans l'ordre des thèmes) et % de « oui » de chaque réponse.
-function themesOf(qi, lg){ const all = ALL(lg), seen = {}; A(qi).forEach(i => { const x = all[i]; if(x) seen[x.pack] = 1; }); return PACKS.map(p => p.v).filter(v => seen[v]); }
+function themesOf(qi, lg){ const all = ALL(lg), seen = {}; A(qi).forEach(i => { const x = all[i]; if(x) seen[dimOf(x.pack, x.q)] = 1; }); return DIMS.filter(v => seen[v]); }
 function profile(qi, ans, lg){
   const all = ALL(lg), a = String(ans || ""), st = {};
-  A(qi).forEach((qx, i) => { const x = all[qx]; if(!x || i >= a.length) return; const o = st[x.pack] = st[x.pack] || [0, 0]; o[1]++; if(a[i] === "1") o[0]++; });
+  A(qi).forEach((qx, i) => { const x = all[qx]; if(!x || i >= a.length) return; const d = dimOf(x.pack, x.q), o = st[d] = st[d] || [0, 0]; o[1]++; if(a[i] === "1") o[0]++; });
   return st;
 }
 const pcOf = st => v => (st[v] && st[v][1] ? Math.round(100 * st[v][0] / st[v][1]) : 0);
 function radarSVG(themes, series){
-  const n = themes.length, cx = 200, cy = 150, R = 96, ang = i => -Math.PI / 2 + i * 2 * Math.PI / n;
+  const n = themes.length, cx = 170, cy = 150, R = 104, ang = i => -Math.PI / 2 + i * 2 * Math.PI / n;
   const pt = (i, r) => [cx + r * Math.cos(ang(i)), cy + r * Math.sin(ang(i))].map(x => x.toFixed(1));
   let g = "";
   [25, 50, 75, 100].forEach(k => { g += '<polygon points="' + themes.map((_, i) => pt(i, R * k / 100).join(",")).join(" ") + '" style="fill:none;stroke:var(--line);stroke-width:1"/>'; });
@@ -275,9 +333,9 @@ function radarSVG(themes, series){
   });
   themes.forEach((v, i) => {
     const e = pt(i, R + 16), c = Math.cos(ang(i)), anc = Math.abs(c) < .2 ? "middle" : c > 0 ? "start" : "end", dy = Math.sin(ang(i)) > .5 ? 10 : Math.sin(ang(i)) < -.5 ? -2 : 4;
-    g += '<text x="' + e[0] + '" y="' + (+e[1] + dy) + '" text-anchor="' + anc + '" style="fill:var(--ink);font-size:12px;font-weight:700">' + esc(SHORT[v] || v) + "</text>";
+    g += '<text x="' + e[0] + '" y="' + (+e[1] + dy) + '" text-anchor="' + anc + '" style="fill:var(--ink);font-size:14px;font-weight:700">' + esc(SHORT[v] || v) + "</text>";
   });
-  return '<svg class="pu-radar" viewBox="0 0 400 300" role="img" aria-label="' + esc(tr("Profil par thème", "Profile by theme")) + '">' + g + "</svg>";
+  return '<svg class="pu-radar" viewBox="0 0 340 300" role="img" aria-label="' + esc(tr("Profil par thème", "Profile by theme")) + '">' + g + "</svg>";
 }
 function barsHTML(themes, sr){ return '<ul class="pu-bars">' + themes.map(v => '<li><span>' + esc(SHORT[v] || v) + '</span><span class="pu-bar"><i style="width:' + sr.pc(v) + '%;background:' + sr.c + '"></i></span><b>' + pct(sr.pc(v)) + "</b></li>").join("") + "</ul>"; }
 // Bloc complet : radar (3 thèmes ou plus) ou barres, chiffres du joueur mis en avant, légende si plusieurs joueurs.
@@ -416,7 +474,7 @@ SB.register({
   tag: tr("Un questionnaire secret et sans filtre. Qui est l'ange de la bande, et qui est le démon ?", "A secret, no-filter questionnaire. Who's the angel of the group, and who's the demon?"),
   min: 1, max: 20,
   rules: [
-    tr("Chacun répond en secret, sur son téléphone, à une série de « As-tu déjà… ? » 100 % adultes, tirés au hasard dans les thèmes choisis : soirées, sexe, interdits, cœur, boulot, voyages, moments gênants, hardcore.", "Everyone secretly answers, on their own phone, a series of 100% adult “Have you ever…?” questions, drawn at random from the chosen themes: parties, sex, off-limits, love, work, travel, cringe moments, hardcore."),
+    tr("Chacun répond en secret, sur son téléphone, à une série de « As-tu déjà… ? » 100 % adultes, tirés au hasard dans les thèmes choisis : soirées, sexe, interdits, cœur, boulot, voyages, moments gênants, drogues, hygiène, hardcore.", "Everyone secretly answers, on their own phone, a series of 100% adult “Have you ever…?” questions, drawn at random from the chosen themes: parties, sex, off-limits, love, work, travel, cringe moments, drugs, hygiene, hardcore."),
     tr("Chaque test est différent : les questions déjà posées sur ce téléphone reviennent en dernier.", "Every test is different: questions already asked on this phone come up last."),
     tr("Ton score de pureté : 100 % si tu n'as rien fait, et ça baisse à chaque « oui ».", "Your purity score: 100% if you've done nothing, and it drops with every “yes”."),
     tr("Quand tout le monde a fini, le classement tombe, de l'ange au démon.", "Once everyone's done, the ranking drops, from angel to demon."),
@@ -486,6 +544,7 @@ SB.register({
       let L = { phase: "setup", packs: A(st.puPacks).filter(v => PACKS.some(p => p.v === v)), n: [25, 40, 60, 0].indexOf(st.puN) >= 0 ? st.puN : 40, anon: st.puAnon !== false, tw: st.puTw !== false, twl: [], seed: 0, qi: [], p: 0, ans: [], key: "" };
       if(!L.packs.length) L.packs = PACKS.map(p => p.v);
       if(!st.puHc){ if(L.packs.indexOf("hardcore") < 0) L.packs.push("hardcore"); persist({ puHc: true, puPacks: L.packs }); } // nouveau thème : coché une fois pour tout le monde
+      if(!st.puV2){ ["drogues", "crado"].forEach(v => { if(L.packs.indexOf(v) < 0) L.packs.push(v); }); persist({ puV2: true, puPacks: L.packs }); }
       const lg = SB.lang(), cnt = () => ALL(lg).filter(x => L.packs.indexOf(x.pack) >= 0).length;
       const go = () => {
         if(L.phase === "setup"){

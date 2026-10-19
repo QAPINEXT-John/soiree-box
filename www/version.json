@@ -1,15 +1,15 @@
 {
- "version": "4.9.4",
+ "version": "4.9.5",
  "apk": 31,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Test de pureté : un profil à la fois sur le graphique, on touche un prénom pour changer",
-  "Nouveaux noms de catégories : Fêtard, Coquin, Hors-la-loi, Cœur d'artichaut, Tire-au-flanc, Baroudeur, Malaisant, Sans limites"
+  "Test de pureté : graphique sur 5 axes (Sexe, Drogues, Alcool, Hygiène, Morale)",
+  "Deux nouveaux thèmes de questions : Drogues & substances, Hygiène & crasse"
  ],
  "files": {
   "core.js": {
-   "h": "fb61a13098846640174f95e9a782c0630523bf25270be25b9094bff47ad61ce2",
+   "h": "735aa40c5414859f89e57b5b5a3a8c736c5ed667bea88e6e11f58d588b365ceb",
    "s": 106425
   },
   "firebase-app-compat.js": {
@@ -129,8 +129,8 @@
    "s": 112723
   },
   "games/purete.js": {
-   "h": "31695b60b705cd05d0349f667db8ac96c1f88c233fdb1896f92ce9de048cf75b",
-   "s": 63867
+   "h": "0a5c74641cf344513791741253223514d890db8c0765ee94f5626e9acad7f0e2",
+   "s": 69774
   },
   "games/quiadit.js": {
    "h": "9b1bdf3534785f9d9a15452da34f75636addc57805ad87c7b82c9a2f0863fdab",
