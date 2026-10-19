@@ -492,7 +492,7 @@ function animate(root, E, me, key){
 let LTOK = 0;
 
 const DEF = {
-  id: "dernierecarte", name: tr("Dernière carte", "Last Card"), glyph: "+4 !", pitch: tr("Même couleur ou même chiffre, et crie « Dernière ! ».", "Match the color or the number, and shout “Last card!”."), hot: false,
+  id: "dernierecarte", name: tr("Dernière carte", "Last Card"), glyph: tr("+4 !", "+4!"), pitch: tr("Même couleur ou même chiffre, et crie « Dernière ! ».", "Match the color or the number, and shout “Last card!”."), hot: false,
   accent: { light: "#ff8a4c", dark: "#ff8a4c" },
   tag: tr("Même couleur ou même valeur, des +2, des +4, des inversions… Et n'oublie pas de crier « Dernière ! » quand il ne te reste plus qu'une carte.", "Match the color or the value, with +2s, +4s, Reverses… And don't forget to shout “Last card!” when you're down to one card."),
   min: 2, max: 10,
