@@ -115,9 +115,9 @@ function packButtons(sel){
   return '<div class="packs">' + PACKS.map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-p="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + p.list.length + "</span></button>").join("") + "</div>";
 }
 function twToggle(on){
-  return '<div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + !!on + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(tr("Coups de théâtre", "Twists")) + '</span><span class="ds">' + esc(tr("De temps en temps, une règle change pour une question", "Every now and then, a rule changes for one question")) + '</span></span></button></div>';
+  return '<div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + !!on + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(tr("Coups de théâtre", "Plot twists")) + '</span><span class="ds">' + esc(tr("De temps en temps, une règle change pour une question", "Every now and then, a rule changes for one question")) + '</span></span></button></div>';
 }
-const TWL_LABEL = tr("Coup de théâtre", "Twist");
+const TWL_LABEL = tr("Coup de théâtre", "Plot twist");
 function pairs(ids){ const out = []; for(let i = 0; i < ids.length; i++) for(let j = i + 1; j < ids.length; j++) out.push([ids[i], ids[j]]); return out; }
 function resHTML(p, a, b, nameOf){
   const n = Math.max(1, a.length + b.length), pa = Math.round(100 * a.length / n), pb = 100 - pa;
@@ -183,7 +183,7 @@ SB.register({
   options: [
     { id: "rounds", label: tr("Questions", "Questions"), type: "seg", def: 10, values: [{ v: 10, label: "10" }, { v: 15, label: "15" }, { v: 20, label: "20" }] },
     { id: "packs", label: tr("Paquets", "Packs"), type: "multi", def: ["soft"], values: PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, count: p.list.length })) },
-    { id: "twists", label: tr("Coups de théâtre", "Twists"), type: "toggle", text: tr("Coups de théâtre", "Twists"), desc: tr("De temps en temps, une règle change pour une question", "Every now and then, a rule changes for one question"), def: true }
+    { id: "twists", label: tr("Coups de théâtre", "Plot twists"), type: "toggle", text: tr("Coups de théâtre", "Plot twists"), desc: tr("De temps en temps, une règle change pour une question", "Every now and then, a rule changes for one question"), def: true }
   ],
   start(ctx, o){
     if(!A(o.packs).length) throw new Error(tr("Choisis au moins un paquet de questions.", "Pick at least one question pack."));
@@ -273,7 +273,7 @@ SB.register({
         (ks.length > 1 ? card(fl(FL.anti, seed, 2), duo(ks[ks.length - 1])) : "") +
         card(fl(FL.rebel, seed, 3), esc(ctx.name(st.rebel)), tr("Dans le camp minoritaire ", "In the minority ") + times(st.minor[st.rebel] || 0)) +
         (chg[dith] ? card(fl(FL.dither, seed, 4), esc(ctx.name(dith)), tr("A changé d'avis ", "Changed their mind ") + times(chg[dith])) : "") +
-        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the lobby") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the lobby.") + "</p>"), r => {
+        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const pp = c.s.pts || {}, mx = Math.max.apply(null, c.ids.map(id => pp[id] || 0).concat([0]));

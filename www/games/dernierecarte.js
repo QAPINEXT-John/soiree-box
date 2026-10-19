@@ -521,7 +521,7 @@ const DEF = {
     { id: "sz", label: tr("Sept-zéro", "Seven-Zero"), type: "toggle", text: tr("Sept-zéro", "Seven-Zero"), desc: tr("7 : échange ta main avec qui tu veux. 0 : toutes les mains tournent", "7: swap hands with anyone you like. 0: all hands rotate"), def: false },
     { id: "jump", label: tr("Interception", "Jump-in"), type: "toggle", text: tr("Interception", "Jump-in"), desc: tr("Pose hors de ton tour une carte identique à celle du dessus", "Play out of turn a card identical to the top card"), def: false },
     { id: "dp", label: tr("Pioche", "Drawing"), type: "toggle", text: tr("Pioche jusqu'à pouvoir jouer", "Draw until you can play"), desc: tr("On pioche jusqu'à tomber sur une carte jouable", "Keep drawing until you get a playable card"), def: false },
-    { id: "twists", label: tr("Coups de théâtre", "Twists"), type: "toggle", text: tr("Coups de théâtre", "Twists"), desc: tr("Des événements surprises en pleine manche", "Surprise events mid-round"), def: true }
+    { id: "twists", label: tr("Coups de théâtre", "Plot twists"), type: "toggle", text: tr("Coups de théâtre", "Plot twists"), desc: tr("Des événements surprises en pleine manche", "Surprise events mid-round"), def: true }
   ],
   start(ctx, o){
     const E = { lg: SB.lang(), order: shuffle(ctx.ids), stack: o.stack !== false, sz: !!o.sz, jump: !!o.jump, dp: !!o.dp, tw: o.twists !== false, round: 1, rounds: o.rounds || 1, score: {}, seen: {}, st: {} };
@@ -604,7 +604,7 @@ const DEF = {
       const last = s.phase === "end", champ = last ? bestOf(E) : s.winner;
       screen(root, "e" + s.k + s.phase + s.round + ctx.isHost, CSS + '<span class="eyebrow">' + (last ? (s.rounds > 1 ? tr("Vainqueur de la partie", "Game winner") : tr("Vainqueur", "Winner")) : tr("Manche " + s.round + " gagnée par", "Round " + s.round + " won by")) + '</span><div class="who">' + esc(ctx.name(champ)) + "</div>" +
         '<p class="dc-log">' + esc(s.log) + "</p>" + (s.rounds > 1 ? '<div class="field"><span class="eyebrow">' + tr("Scores", "Scores") + "</span>" + scoresHTML(E, ctx.name) + "</div>" : "") + (last ? awardsHTML(E, ctx.name) : "") +
-        dock(ctx.isHost ? (last ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the lobby") + "</button>" : '<button class="btn acc" type="button" data-next>' + tr("Manche suivante", "Next round") + "</button>") : '<p class="wait">' + tr("L'hôte passe à la suite…", "The host is moving on…") + "</p>"), r => {
+        dock(ctx.isHost ? (last ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<button class="btn acc" type="button" data-next>' + tr("Manche suivante", "Next round") + "</button>") : '<p class="wait">' + tr("L'hôte passe à la suite…", "The host is moving on…") + "</p>"), r => {
         const nx = r.querySelector("[data-next]");
         if(nx) nx.addEventListener("click", () => ctx.act(c => { const F = fromState(c.s, c.priv()); if(F.phase !== "roundend") return; F.round++; newRound(F); publish(c, F); }));
         const b = r.querySelector("[data-back]");
@@ -629,7 +629,7 @@ const DEF = {
       const R = { stack: st.dcStack !== false, sz: !!st.dcSz, jump: !!st.dcJump, dp: !!st.dcDp, tw: st.dcTw !== false };
       const RULES = [["stack", "dcStack", tr("Cumul des +2 et +4", "Stack +2s and +4s"), tr("On peut renvoyer la pénalité au suivant", "Pass the penalty on to the next player")], ["sz", "dcSz", tr("Sept-zéro", "Seven-Zero"), tr("7 : échange ta main avec qui tu veux. 0 : toutes les mains tournent", "7: swap hands with anyone you like. 0: all hands rotate")],
         ["jump", "dcJump", tr("Interception", "Jump-in"), tr("Pose hors de ton tour une carte identique à celle du dessus", "Play out of turn a card identical to the top card")], ["dp", "dcDp", tr("Pioche jusqu'à pouvoir jouer", "Draw until you can play"), tr("On pioche jusqu'à tomber sur une carte jouable", "Keep drawing until you get a playable card")],
-        ["tw", "dcTw", tr("Coups de théâtre", "Twists"), tr("Des événements surprises en pleine manche", "Surprise events mid-round")]];
+        ["tw", "dcTw", tr("Coups de théâtre", "Plot twists"), tr("Des événements surprises en pleine manche", "Surprise events mid-round")]];
       const BOTN = tr(["Robotte", "Bipbip", "Zorglub"], ["Robbie", "Beepboop", "Zorglub"]);
       let E = null, viewer = "", sel = null, prevSel = null, timer = null, nameMap = {}, gno = 0, jumpPc = -1;
       const nameOf = id => nameMap[id] || "?";

@@ -381,7 +381,7 @@ const DEF = {
         hostFix(r);
       });
     } else {
-      screen(root, "end" + s.k + ctx.isHost, endHTML(E, nameOf) + dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the lobby") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the lobby.") + "</p>"), r => {
+      screen(root, "end" + s.k + ctx.isHost, endHTML(E, nameOf) + dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
         const b = r.querySelector("[data-back]"); if(b) b.addEventListener("click", () => ctx.act(c => { const F = fromState(c.s); c.end({ title: tr("Roulette des menteurs : " + c.name(c.s.winner) + " survit", "Liars: " + c.name(c.s.winner) + " survives"), lines: [tr(c.s.round + " manches", SB.u.plural2(c.s.round, "", "", "round"))].concat(awardLines(F, c.name).map(x => tr(x[0] + " : " + x[1], x[0] + ": " + x[1]))), win: [c.s.winner] }); }));
       });
     }

@@ -1351,7 +1351,7 @@ function lastHTML(E, nameOf){
   return '<div class="av-last"><b>' + esc(nameOf(l.who)) + "</b> " + what + "</div>";
 }
 function headHTML(E, nameOf){
-  return CSS + '<div class="av-row"><span>' + tr("Tour ", "Round ") + Math.min(E.lap, E.laps) + " / " + E.laps + "</span><span>" + (E.mode === "drink" ? tr("Mode gorgées", "Sip mode") : tr("Mode gages", "Forfeit mode")) + "</span></div>" + lastHTML(E, nameOf) + SB.u.twistHTML(twOf(E.tw), tr("Coup de théâtre", "Twist"));
+  return CSS + '<div class="av-row"><span>' + tr("Tour ", "Round ") + Math.min(E.lap, E.laps) + " / " + E.laps + "</span><span>" + (E.mode === "drink" ? tr("Mode gorgées", "Sip mode") : tr("Mode gages", "Forfeit mode")) + "</span></div>" + lastHTML(E, nameOf) + SB.u.twistHTML(twOf(E.tw), tr("Coup de théâtre", "Plot twist"));
 }
 /* Écran commun. can : { choose, settle } = ce téléphone peut agir. act(type, val). */
 function turnHTML(E, nameOf, can){
@@ -1410,7 +1410,7 @@ const DEF = {
     { id: "packs", label: tr("Niveaux", "Levels"), type: "multi", def: ["soft"], values: LEVELS.map(l => ({ v: l.v, label: l.label, desc: l.desc, hot: l.hot, count: UI.VT[l.v].length + UI.AC[l.v].length })) },
     { id: "mode", label: tr("Sanctions", "Penalties"), type: "seg", def: "drink", values: [{ v: "drink", label: tr("Gorgées", "Sips") }, { v: "soft", label: tr("Sans alcool", "Alcohol-free") }] },
     { id: "prog", label: tr("Progressif", "Progressive"), type: "toggle", text: tr("Niveau progressif", "Progressive level"), desc: tr("On commence doux, et ça monte au fil des tours", "Start soft, and it heats up as the rounds go by"), def: true },
-    { id: "twists", label: tr("Coups de théâtre", "Twists"), type: "toggle", text: tr("Coups de théâtre", "Twists"), desc: tr("De temps en temps, une règle change pour un tour", "Every now and then, a rule changes for one turn"), def: true }
+    { id: "twists", label: tr("Coups de théâtre", "Plot twists"), type: "toggle", text: tr("Coups de théâtre", "Plot twists"), desc: tr("De temps en temps, une règle change pour un tour", "Every now and then, a rule changes for one turn"), def: true }
   ],
   start(ctx, o){
     if(!A(o.packs).length) throw new Error(tr("Choisis au moins un niveau.", "Pick at least one level."));
@@ -1436,7 +1436,7 @@ const DEF = {
     const E = fromState(s, {});
     if(E.phase === "end"){
       screen(root, "ae:" + s.k + ctx.isHost, endHTML(E, nameOf) +
-        dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the lobby") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the lobby.") + "</p>"), r => {
+        dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const F = fromState(c.s, {}), o2 = ranking(F), mx = F.pts[o2[0]] || 0;
@@ -1475,7 +1475,7 @@ const DEF = {
           '<div class="field"><span class="eyebrow">' + tr("Tours de table", "Rounds") + '</span><div class="seg">' + [2, 3, 5, 8].map(n => '<button type="button" data-l="' + n + '" aria-pressed="' + (n === laps) + '">' + n + "</button>").join("") + "</div></div>" +
           '<div class="field"><span class="eyebrow">' + tr("Niveaux", "Levels") + '</span><div class="packs">' + LEVELS.map(l => '<button type="button" class="pack' + (l.hot ? " hot" : "") + '" data-k="' + l.v + '" aria-pressed="' + (sel.indexOf(l.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(l.label) + (l.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(l.desc) + '</span></span><span class="ct">' + (UI.VT[l.v].length + UI.AC[l.v].length) + "</span></button>").join("") + "</div></div>" +
           '<div class="field"><span class="eyebrow">' + tr("Sanctions", "Penalties") + '</span><div class="seg"><button type="button" data-m="drink" aria-pressed="' + (mode === "drink") + '">' + tr("Gorgées", "Sips") + '</button><button type="button" data-m="soft" aria-pressed="' + (mode === "soft") + '">' + tr("Sans alcool", "Alcohol-free") + "</button></div></div>" +
-          '<div class="field"><span class="eyebrow">' + tr("Variantes", "Variants") + '</span><div class="packs">' + tog("pg", prog, tr("Niveau progressif", "Progressive level"), tr("On commence doux, et ça monte au fil des tours", "Start soft, and it heats up as the rounds go by")) + tog("tw", twOn, tr("Coups de théâtre", "Twists"), tr("De temps en temps, une règle change pour un tour", "Every now and then, a rule changes for one turn")) + "</div></div>" +
+          '<div class="field"><span class="eyebrow">' + tr("Variantes", "Variants") + '</span><div class="packs">' + tog("pg", prog, tr("Niveau progressif", "Progressive level"), tr("On commence doux, et ça monte au fil des tours", "Start soft, and it heats up as the rounds go by")) + tog("tw", twOn, tr("Coups de théâtre", "Plot twists"), tr("De temps en temps, une règle change pour un tour", "Every now and then, a rule changes for one turn")) + "</div></div>" +
           dock('<button class="btn acc" type="button" data-go>' + tr("Commencer", "Start") + "</button>"), r => {
           r.querySelectorAll("[data-l]").forEach(b => b.addEventListener("click", () => { laps = +b.dataset.l; persist({ avLaps: laps }); setup(); }));
           r.querySelectorAll("[data-k]").forEach(b => b.addEventListener("click", () => { const x = sel.indexOf(b.dataset.k); if(x >= 0) sel.splice(x, 1); else sel.push(b.dataset.k); persist({ avPacks: sel }); setup(); }));

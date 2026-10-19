@@ -1987,7 +1987,7 @@ const DEF = {
     { id: "target", label: tr("Points pour gagner", "Points to win"), type: "seg", def: 5, values: [{ v: 3, label: "3" }, { v: 5, label: "5" }, { v: 8, label: "8" }] },
     { id: "packs", label: tr("Paquets", "Packs"), type: "multi", def: ["classique"], values: PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, count: packCount(p.v) })) },
     { id: "blank", label: tr("Cartes blanches", "Blank cards"), type: "toggle", text: tr("Cartes blanches", "Blank cards"), desc: tr("Deux réponses libres à écrire soi-même par partie", "Two free answers to write yourself per game"), def: true },
-    { id: "twists", label: tr("Coups de théâtre", "Twists"), type: "toggle", text: tr("Coups de théâtre", "Twists"), desc: tr("De temps en temps, une règle change pour une manche", "Now and then, a rule changes for one round"), def: true }
+    { id: "twists", label: tr("Coups de théâtre", "Plot twists"), type: "toggle", text: tr("Coups de théâtre", "Plot twists"), desc: tr("De temps en temps, une règle change pour une manche", "Now and then, a rule changes for one round"), def: true }
   ],
   start(ctx, o){
     if(!A(o.packs).length) throw new Error(tr("Choisis au moins un paquet de cartes.", "Pick at least one card pack."));
@@ -2085,7 +2085,7 @@ const DEF = {
     } else if(E.phase === "end"){
       const rk2 = ranking(E), champ = rk2[0];
       screen(root, "pe:" + s.k + ctx.isHost, CSS + '<span class="eyebrow">' + esc(fl(FL.win, E.fl, 0)) + '</span><div class="who">' + esc(nameOf(champ)) + "</div>" + bars(E, nameOf) + awardsHTML(awards(E, nameOf)) +
-        dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the lobby") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the lobby.") + "</p>"), r => {
+        dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const F = fromState(c.s, {}), o2 = ranking(F), mx = F.pts[o2[0]] || 0;
@@ -2111,7 +2111,7 @@ const DEF = {
           '<div class="field"><span class="eyebrow">' + tr("Paquets", "Packs") + '</span><div class="packs">' + PACKS.map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-k="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + packCount(p.v) + "</span></button>").join("") + "</div></div>" +
           '<div class="field"><span class="eyebrow">' + tr("Variantes", "Variants") + '</span><div class="packs">' +
             '<button type="button" class="pack" data-bl aria-pressed="' + blOn + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Cartes blanches", "Blank cards") + '</span><span class="ds">' + tr("Deux réponses libres à écrire soi-même par partie", "Two free answers to write yourself per game") + "</span></span></button>" +
-            '<button type="button" class="pack" data-tw aria-pressed="' + twOn + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Twists") + '</span><span class="ds">' + tr("De temps en temps, une règle change pour une manche", "Now and then, a rule changes for one round") + "</span></span></button></div></div>" +
+            '<button type="button" class="pack" data-tw aria-pressed="' + twOn + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Plot twists") + '</span><span class="ds">' + tr("De temps en temps, une règle change pour une manche", "Now and then, a rule changes for one round") + "</span></span></button></div></div>" +
           dock('<button class="btn acc" type="button" data-go>' + tr("Commencer", "Start") + "</button>"), r => {
           r.querySelectorAll("[data-t]").forEach(b => b.addEventListener("click", () => { target = +b.dataset.t; persist({ plTarget: target }); setup(); }));
           r.querySelectorAll("[data-k]").forEach(b => b.addEventListener("click", () => { const x = sel.indexOf(b.dataset.k); if(x >= 0) sel.splice(x, 1); else sel.push(b.dataset.k); persist({ plPacks: sel }); setup(); }));

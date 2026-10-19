@@ -2,7 +2,7 @@
 (function(){
 "use strict";
 const { esc, A, shuffle, screen, txt, store, persist, dock, buzz } = SB.u;
-const tr = SB.u.tr, TWLABEL = tr("Coup de théâtre", "Twist");
+const tr = SB.u.tr, TWLABEL = tr("Coup de théâtre", "Plot twist");
 
 // Tout et n'importe quoi : objets, gens, situations, petits plaisirs et grosses galères
 const CLASSIQUE = [
@@ -200,7 +200,7 @@ SB.register({
   options: [
     { id: "packs", label: tr("Paquets", "Packs"), type: "multi", def: ["classique"], values: PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, count: p.list.length })) },
     { id: "laps", label: tr("Manches", "Rounds"), type: "seg", def: 1, values: [{ v: 1, label: tr("1 par joueur", "1 per player") }, { v: 2, label: tr("2 par joueur", "2 per player") }] },
-    { id: "twists", label: tr("Coups de théâtre", "Twists"), type: "toggle", text: tr("Coups de théâtre", "Twists"), desc: tr("De temps en temps, une règle change pour une manche", "Every now and then, a rule changes for one round"), def: true }
+    { id: "twists", label: tr("Coups de théâtre", "Plot twists"), type: "toggle", text: tr("Coups de théâtre", "Plot twists"), desc: tr("De temps en temps, une règle change pour une manche", "Every now and then, a rule changes for one round"), def: true }
   ],
   start(ctx, o){
     if(!A(o.packs).length) throw new Error(tr("Choisis au moins un paquet.", "Pick at least one pack."));
@@ -277,7 +277,7 @@ SB.register({
         (read.length ? '<div class="card"><span class="eyebrow">' + esc(fl(FL.open, s.fl, 1)) + '</span><div class="big">' + esc(ctx.name(read[0])) + '</div><span class="sm">' + tr("Le plus facile à deviner", "The easiest to read") + "</span></div>" : "") +
         (read.length > 1 ? '<div class="card"><span class="eyebrow">' + esc(fl(FL.myst, s.fl, 2)) + '</span><div class="big">' + esc(ctx.name(read[read.length - 1])) + '</div><span class="sm">' + tr("Le plus imprévisible", "The most unpredictable") + "</span></div>" : "") +
         (sf[med] ? '<div class="card"><span class="eyebrow">' + esc(fl(FL.med, s.fl, 3)) + '</span><div class="big">' + esc(ctx.name(med)) + '</div><span class="sm">' + SB.u.plural2(sf[med], "sans-faute", "sans-faute", "perfect guess", "perfect guesses") + "</span></div>" : "") +
-        (ctx.isHost ? dock('<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the lobby") + "</button>") : dock('<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the lobby.") + "</p>")), r => {
+        (ctx.isHost ? dock('<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>") : dock('<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>")), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const s2 = c.s.scores || {}, o2 = c.ids.slice().sort((a, b2) => (s2[b2] || 0) - (s2[a] || 0)), mx = s2[o2[0]] || 0;
@@ -305,7 +305,7 @@ SB.register({
         if(L.phase === "setup"){
           screen(root, "setup" + sel.join() + twOn, CSS + '<p class="howto">' + tr("Version coopérative : à chaque manche, un joueur classe en secret, puis le groupe devine son classement ensemble.", "Co-op version: each round, one player ranks in secret, then the group guesses their ranking together.") + "</p>" +
             '<div class="field"><span class="eyebrow">' + tr("Paquets", "Packs") + "</span>" + packsHTML(sel) + "</div>" +
-            '<div class="field"><span class="eyebrow">' + tr("Variante", "Variant") + '</span><div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + twOn + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Twists") + '</span><span class="ds">' + tr("De temps en temps, une règle change pour une manche", "Every now and then, a rule changes for one round") + "</span></span></button></div></div>" +
+            '<div class="field"><span class="eyebrow">' + tr("Variante", "Variant") + '</span><div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + twOn + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Plot twists") + '</span><span class="ds">' + tr("De temps en temps, une règle change pour une manche", "Every now and then, a rule changes for one round") + "</span></span></button></div></div>" +
             dock('<button class="btn acc" type="button" data-go>' + tr("Commencer", "Start") + "</button>"), r => {
             r.querySelectorAll("[data-p]").forEach(b => b.addEventListener("click", () => { const i = sel.indexOf(b.dataset.p); if(i >= 0) sel.splice(i, 1); else sel.push(b.dataset.p); persist({ prPacks: sel }); go(); }));
             r.querySelector("[data-tw]").addEventListener("click", () => { twOn = !twOn; persist({ prTw: twOn }); go(); });

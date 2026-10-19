@@ -349,7 +349,7 @@ const DEF = {
         '<div class="field"><span class="eyebrow">' + tr("Tableau de chasse", "Kill board") + '</span><ul class="kl-chain">' + order.map(id => "<li><span>" + esc(nameOf(id)) + (alive.indexOf(id) >= 0 ? tr(" · vivant", " · alive") : "") + "</span><span>" + ptsTxt(score(W, id)) + "</span></li>").join("") + "</ul></div>" +
         awardsHTML(awards(W, ctx.ids, nameOf, seed)) +
         '<div class="field"><span class="eyebrow">' + tr("Cimetière", "Graveyard") + "</span>" + graveHTML(W.log, nameOf) + "</div>" +
-        dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the lobby") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the lobby.") + "</p>"), r => {
+        dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const lg = c.s.lg || "fr", sep = T(lg, " : ", ": ");

@@ -374,7 +374,7 @@ SB.register({
       screen(root, "end" + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Classement final", "Final standings") + "</span>" + rankHTML(rank) +
         (mys ? '<div class="card"><span class="eyebrow">' + tr("Galerie la plus mystérieuse", "Most mysterious gallery") + '</span><div class="big">' + esc(ctx.name(mys)) + '</div><span class="sm">' + tr("Ses photos ont été reconnues " + byO[mys][0] + " fois sur " + byO[mys][1], "Their photos were recognized " + byO[mys][0] + " out of " + byO[mys][1] + " times") + "</span></div>" : "") +
         '<p class="sm">' + tr("Toutes les photos de la partie ont été effacées des téléphones.", "All the photos from this game have been erased from the phones.") + "</p>" +
-        dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the lobby") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the lobby.") + "</p>"), r => {
+        dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const scc = c.s.sc || {}, win = topOf(scc), mx = win.length ? scc[win[0]] : 0;

@@ -378,7 +378,7 @@ SB.register({
         awardsHTML(rows, qi, s.tw, s.seed) +
         rankHTML(rows, s.seed) + (me ? '<p class="appre">' + tr("« " + esc(title(me.p, s.seed)[1]) + " »", "“" + esc(title(me.p, s.seed)[1]) + "”") + "</p>" : "") +
         '<div class="field"><span class="eyebrow">' + tr("Les aveux", "Confessions") + (s.anon ? tr(" (anonymes)", " (anonymous)") : "") + "</span>" + aveuxHTML(qi, rows, s.anon, rows.length, s.tw, s.k, lg) + "</div>" +
-        (ctx.isHost ? dock('<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the lobby") + "</button>") : dock('<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the lobby.") + "</p>")), r => {
+        (ctx.isHost ? dock('<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>") : dock('<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>")), r => {
         bindAveux(r);
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {

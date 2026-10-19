@@ -87,7 +87,7 @@ function packButtons(sel){
   return '<div class="packs">' + PACKS.map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-p="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + p.list.length + "</span></button>").join("") + "</div>";
 }
 function twToggle(on){
-  return '<div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + !!on + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Twists") + '</span><span class="ds">' + tr("De temps en temps, une règle change pour une question", "Now and then, a rule changes for one question") + '</span></span></button></div>';
+  return '<div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + !!on + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Plot twists") + '</span><span class="ds">' + tr("De temps en temps, une règle change pour une question", "Now and then, a rule changes for one question") + '</span></span></button></div>';
 }
 function bars(ids, counts, nameOf, voters){
   const total = Math.max(1, ids.reduce((a, id) => a + (counts[id] || 0), 0));
@@ -159,7 +159,7 @@ SB.register({
     { id: "rounds", label: "Questions", type: "seg", def: 10, values: [{ v: 10, label: "10" }, { v: 15, label: "15" }, { v: 20, label: "20" }] },
     { id: "packs", label: tr("Paquets", "Packs"), type: "multi", def: ["soft"], values: PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, count: p.list.length })) },
     { id: "anon", label: "Votes", type: "toggle", text: tr("Votes anonymes", "Anonymous votes"), desc: tr("Sinon, on voit qui a voté pour qui", "Otherwise, everyone sees who voted for whom"), def: true },
-    { id: "twists", label: tr("Coups de théâtre", "Twists"), type: "toggle", text: tr("Coups de théâtre", "Twists"), desc: tr("De temps en temps, une règle change pour une question", "Now and then, a rule changes for one question"), def: true }
+    { id: "twists", label: tr("Coups de théâtre", "Plot twists"), type: "toggle", text: tr("Coups de théâtre", "Plot twists"), desc: tr("De temps en temps, une règle change pour une question", "Now and then, a rule changes for one question"), def: true }
   ],
   start(ctx, o){
     if(!A(o.packs).length) throw new Error(tr("Choisis au moins un paquet de questions.", "Pick at least one question pack."));
@@ -247,7 +247,7 @@ SB.register({
       screen(root, "end" + ctx.isHost, '<span class="eyebrow">' + esc(fl(FL.champ, s.fl, 0)) + '</span><div class="who">' + esc(ctx.name(champ)) + '</div><p style="font-size:17px">' + tr((t[champ] || 0) + " votes au compteur. Le groupe vous connaît bien.", (t[champ] || 0) + ((t[champ] || 0) === 1 ? " vote" : " votes") + " in total. The group knows you well.") + "</p>" +
         '<div class="field"><span class="eyebrow">' + tr("Classement", "Standings") + '</span>' + bars(ctx.ids, t, ctx.name, null) + "</div>" +
         (aw.length ? '<ul class="list">' + aw.map(a => '<li><span class="t">' + esc(a[1]) + '</span><span class="by">' + esc(a[0]) + " · " + esc(a[2]) + "</span></li>").join("") + "</ul>" : "") +
-        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the lobby") + '</button>' : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the lobby.") + "</p>"), r => {
+        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + '</button>' : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const tt = c.s.total || {}, o2 = c.ids.slice().sort((a, b2) => (tt[b2] || 0) - (tt[a] || 0)), mx = tt[o2[0]] || 0;
