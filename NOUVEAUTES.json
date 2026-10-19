@@ -1,4 +1,7 @@
 {
+  "4.9.3": [
+    "Test de pureté : on choisit qui comparer sur le graphique (3 profils max), lisible même à 20"
+  ],
   "4.9.2": [
     "Test de pureté : graphique récapitulatif par thème à la fin du test"
   ],

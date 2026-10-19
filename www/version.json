@@ -1,14 +1,14 @@
 {
- "version": "4.9.2",
+ "version": "4.9.3",
  "apk": 31,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Test de pureté : graphique récapitulatif par thème à la fin du test"
+  "Test de pureté : on choisit qui comparer sur le graphique (3 profils max), lisible même à 20"
  ],
  "files": {
   "core.js": {
-   "h": "ffbfad2aa3919ce0b5b827ed41ea62f7083db85f4233e32868f9e6428be59a08",
+   "h": "c9d88f44da00bcafea83f18aa1f9f5d1ee6ac48b7d710986896129c845bb767f",
    "s": 106425
   },
   "firebase-app-compat.js": {
@@ -128,8 +128,8 @@
    "s": 112723
   },
   "games/purete.js": {
-   "h": "37ef4d2345efc513ff8285eb20128e3119871addd22a021eedb79b7ec75c9004",
-   "s": 60804
+   "h": "9bc2e3e165630067d5fb50e4314f4ac197b8944cf073aa4f746b7e82ad2e246a",
+   "s": 64014
   },
   "games/quiadit.js": {
    "h": "9b1bdf3534785f9d9a15452da34f75636addc57805ad87c7b82c9a2f0863fdab",

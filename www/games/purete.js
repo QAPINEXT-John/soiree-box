@@ -292,6 +292,39 @@ function profileHTML(qi, lg, series, mineIdx, title){
     themes.map(v => "<li>" + esc(SHORT[v] || v) + " <b>" + pct(m.pc(v)) + "</b></li>").join("") + "</ul>";
   return h + "</div>";
 }
+/* Plusieurs joueurs : on choisit qui comparer (3 profils max à la fois, sinon le graphique devient illisible).
+   Par défaut : toi + le profil moyen du groupe (ou tout le monde si on n'est que 3). */
+const MAXCMP = 3;
+function compareHTML(qi, lg, rows, meId, title){
+  const themes = themesOf(qi, lg); if(!themes.length || !rows.length) return "";
+  const sr = seriesOf(rows, qi, lg), avg = avgSeries(rows, qi, lg);
+  const all = sr.map(x => ({ n: x.name, id: x.id, v: themes.map(t => x.pc(t)) })).concat([{ n: avg.name, id: "_avg", v: themes.map(t => avg.pc(t)), g: 1 }]);
+  const mi = sr.findIndex(x => x.id === meId);
+  let sel = sr.length <= MAXCMP ? sr.map((_, i) => i) : (mi >= 0 ? [mi, all.length - 1] : [0, all.length - 1]);
+  const m = mi >= 0 ? sr[mi] : null;
+  const tot = m ? Object.keys(m.st).reduce((a, k) => [a[0] + m.st[k][0], a[1] + m.st[k][1]], [0, 0]) : null;
+  return '<div class="field pu-prof" data-prof="' + esc(JSON.stringify({ t: themes, a: all, s: sel, m: mi })) + '"><span class="eyebrow">' + esc(title || tr("Profils par thème", "Profiles by theme")) + "</span>" +
+    '<div class="pu-plot"></div>' +
+    (all.length - 1 > MAXCMP ? '<p class="sm" style="margin:0">' + tr("Touche les prénoms pour comparer (3 max).", "Tap names to compare (3 max).") + "</p>" : "") +
+    '<div class="pu-cmp">' + all.map((x, i) => '<button type="button" data-pi="' + i + '"' + (x.g ? ' class="g"' : "") + "><i></i>" + esc(x.n) + "</button>").join("") + "</div>" +
+    (tot ? '<ul class="pu-stats"><li>' + tr("Toi · réponses positives", "You · “yes” answers") + " <b>" + pct(Math.round(100 * tot[0] / Math.max(1, tot[1]))) + "</b></li>" + themes.map(v => "<li>" + esc(SHORT[v] || v) + " <b>" + pct(m.pc(v)) + "</b></li>").join("") + "</ul>" : "") + "</div>";
+}
+function bindProfile(r){
+  r.querySelectorAll("[data-prof]").forEach(box => {
+    let d; try{ d = JSON.parse(box.dataset.prof); }catch(e){ return; }
+    const draw = () => {
+      const ser = d.s.map((i, k) => ({ name: d.a[i].n, c: PAL[k % PAL.length], pc: t => d.a[i].v[d.t.indexOf(t)] || 0 }));
+      box.querySelector(".pu-plot").innerHTML = d.t.length >= 3 ? radarSVG(d.t, ser) : ser.map(x => (ser.length > 1 ? '<b class="sm">' + esc(x.name) + "</b>" : "") + barsHTML(d.t, x)).join("");
+      box.querySelectorAll("[data-pi]").forEach(b => { const k = d.s.indexOf(+b.dataset.pi); b.setAttribute("aria-pressed", k >= 0); b.querySelector("i").style.background = k >= 0 ? PAL[k % PAL.length] : "transparent"; });
+    };
+    box.querySelectorAll("[data-pi]").forEach(b => b.addEventListener("click", () => {
+      const i = +b.dataset.pi, k = d.s.indexOf(i);
+      if(k >= 0){ if(d.s.length > 1) d.s.splice(k, 1); } else { d.s.push(i); if(d.s.length > MAXCMP){ const o = d.s.findIndex(x => x !== d.m); d.s.splice(o < 0 ? 0 : o, 1); } }
+      draw();
+    }));
+    draw();
+  });
+}
 function seriesOf(rows, qi, lg){ return rows.map((r, i) => { const st = profile(qi, r.a, lg); return { name: r.name, st, pc: pcOf(st), c: PAL[i % PAL.length], id: r.id }; }); }
 function avgSeries(rows, qi, lg){
   const sum = {}; rows.forEach(r => { const st = profile(qi, r.a, lg); Object.keys(st).forEach(k => { const o = sum[k] = sum[k] || [0, 0]; o[0] += st[k][0]; o[1] += st[k][1]; }); });
@@ -321,6 +354,8 @@ const CSS = '<style>.pu-q{font-size:28px; font-weight:800; line-height:1.2; over
   '.pu-prof{background:var(--card); border:1.5px solid var(--line); border-radius:18px; padding:12px}.pu-radar{width:100%; max-width:380px; height:auto; display:block; margin:0 auto; overflow:visible}' +
   '.pu-leg{display:flex; flex-wrap:wrap; gap:6px 12px; justify-content:center; font-size:13px; font-weight:700}.pu-leg i{display:inline-block; width:10px; height:10px; border-radius:99px; margin-right:5px; vertical-align:-1px}' +
   '.pu-stats{list-style:none; margin:4px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:6px}.pu-stats li{background:var(--soft); border-radius:99px; padding:5px 11px; font-size:13px; color:var(--muted)}.pu-stats b{color:var(--ink); margin-left:3px}' +
+  '.pu-cmp{display:flex; flex-wrap:wrap; gap:6px; justify-content:center}.pu-cmp button{display:inline-flex; align-items:center; gap:6px; min-height:34px; padding:0 12px; border-radius:99px; border:1.5px solid var(--line); background:transparent; color:var(--muted); font-weight:700; font-size:13px}' +
+  '.pu-cmp button[aria-pressed="true"]{color:var(--ink); border-color:var(--ink)}.pu-cmp button.g{font-style:italic}.pu-cmp i{width:10px; height:10px; border-radius:99px; border:1.5px solid var(--line)}' +
   '.pu-bars{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px}.pu-bars li{display:grid; grid-template-columns:80px 1fr 48px; gap:10px; align-items:center; font-weight:700; font-size:14px}.pu-bars b{text-align:right}</style>';
 
 /* Questionnaire réutilisé en réseau et sur un seul téléphone */
@@ -432,12 +467,11 @@ SB.register({
         rankHTML(rows, s.seed) + (me ? '<p class="appre">' + tr("« " + esc(title(me.p, s.seed)[1]) + " »", "“" + esc(title(me.p, s.seed)[1]) + "”") + "</p>" : "") +
         (function(){
           if(s.anon){ return me ? profileHTML(qi, lg, seriesOf([me], qi, lg), 0) : profileHTML(qi, lg, [avgSeries(rows, qi, lg)], 0, tr("Profil du groupe", "Group profile")); }
-          const sr = seriesOf(rows, qi, lg), mi = sr.findIndex(x => x.id === ctx.me);
-          return profileHTML(qi, lg, sr, mi, tr("Profils par thème", "Profiles by theme"));
+          return compareHTML(qi, lg, rows, ctx.me);
         })() +
         '<div class="field"><span class="eyebrow">' + tr("Les aveux", "Confessions") + (s.anon ? tr(" (anonymes)", " (anonymous)") : "") + "</span>" + aveuxHTML(qi, rows, s.anon, rows.length, s.tw, s.k, lg) + "</div>" +
         (ctx.isHost ? dock('<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>") : dock('<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>")), r => {
-        bindAveux(r);
+        bindAveux(r); bindProfile(r);
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const rr = A(c.s.res).map(A).map(x => ({ id: x[0], n: c.name(x[0]), p: score(x[1], c.s.tw) })).sort((a, b2) => b2.p - a.p);
@@ -495,9 +529,9 @@ SB.register({
           if(!solo) api.win(rows.filter(x => x.p === rows[0].p).map(x => x.name));
           screen(root, "res" + L.key, CSS + (solo ? '<span class="eyebrow">' + tr("Ton score de pureté", "Your purity score") + '</span><div class="pu-score">' + rows[0].p + '%</div><p class="big">' + esc(title(rows[0].p, L.seed)[0]) + '</p><p class="appre">' + tr("« " + esc(title(rows[0].p, L.seed)[1]) + " »", "“" + esc(title(rows[0].p, L.seed)[1]) + "”") + "</p>" + profileHTML(L.qi, lg, seriesOf(rows, L.qi, lg), 0)
             : '<span class="eyebrow">' + tr("Classement de pureté", "Purity ranking") + "</span>" + awardsHTML(rows, L.qi, L.twl, L.seed) + rankHTML(rows, L.seed) +
-              (L.anon ? profileHTML(L.qi, lg, [avgSeries(rows, L.qi, lg)], 0, tr("Profil du groupe", "Group profile")) : profileHTML(L.qi, lg, seriesOf(rows, L.qi, lg), -1, tr("Profils par thème", "Profiles by theme"))) + '<div class="field"><span class="eyebrow">' + tr("Les aveux", "Confessions") + (L.anon ? tr(" (anonymes)", " (anonymous)") : "") + "</span>" + aveuxHTML(L.qi, rows, L.anon, rows.length, L.twl, L.key, lg) + "</div>") +
+              (L.anon ? profileHTML(L.qi, lg, [avgSeries(rows, L.qi, lg)], 0, tr("Profil du groupe", "Group profile")) : compareHTML(L.qi, lg, rows, null)) + '<div class="field"><span class="eyebrow">' + tr("Les aveux", "Confessions") + (L.anon ? tr(" (anonymes)", " (anonymous)") : "") + "</span>" + aveuxHTML(L.qi, rows, L.anon, rows.length, L.twl, L.key, lg) + "</div>") +
             dock('<button class="btn acc" type="button" data-a>' + tr("Refaire un test", "Take another test") + '</button><button class="link" type="button" data-q style="align-self:center">' + tr("Choisir un autre jeu", "Choose another game") + "</button>"), r => {
-            bindAveux(r);
+            bindAveux(r); bindProfile(r);
             r.querySelector("[data-a]").addEventListener("click", api.again);
             r.querySelector("[data-q]").addEventListener("click", api.exit);
           });
