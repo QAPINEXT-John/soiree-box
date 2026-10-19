@@ -188,7 +188,7 @@ SB.register({
     } else if(s.phase === "res"){
       const a = A(s.a), b = A(s.b), mine = a.indexOf(ctx.me) >= 0 ? "a" : b.indexOf(ctx.me) >= 0 ? "b" : "";
       const minority = a.length === b.length ? "" : (a.length < b.length ? "a" : "b");
-      const head = !mine ? "Résultats" : (!minority ? "Groupe coupé en deux" : mine === minority ? "Tu es dans la minorité" : "Tu es avec la majorité");
+      const head = !mine ? "Résultats" : (!minority ? "Le groupe est coupé en deux" : mine === minority ? "Tu es dans la minorité" : "Tu es avec la majorité");
       const got = s.got || {}, gk = Object.keys(got).filter(id => got[id]);
       let extra = "";
       if(gk.length) extra += '<div class="field"><span class="eyebrow">Points de la manche</span><div class="chips">' + gk.map(id => '<span class="chip ok">' + esc(ctx.name(id)) + " +" + got[id] + "</span>").join("") + "</div></div>";
@@ -217,7 +217,7 @@ SB.register({
         (pts[best] ? card(fl(FL.champ, seed, 0), esc(ctx.name(best)), (pts[best] || 0) + " point" + (pts[best] > 1 ? "s" : "") + " grâce aux coups de théâtre") : "") +
         card(fl(FL.duo, seed, 1), duo(ks[0])) +
         (ks.length > 1 ? card(fl(FL.anti, seed, 2), duo(ks[ks.length - 1])) : "") +
-        card(fl(FL.rebel, seed, 3), esc(ctx.name(st.rebel)), "Seul ou presque " + (st.minor[st.rebel] || 0) + " fois") +
+        card(fl(FL.rebel, seed, 3), esc(ctx.name(st.rebel)), "Dans le camp minoritaire " + (st.minor[st.rebel] || 0) + " fois") +
         (chg[dith] ? card(fl(FL.dither, seed, 4), esc(ctx.name(dith)), "A changé d'avis " + chg[dith] + " fois") : "") +
         SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>Retour au salon</button>' : '<p class="wait">L\'hôte va vous ramener au salon.</p>'), r => {
         const b = r.querySelector("[data-back]");
@@ -241,7 +241,7 @@ SB.register({
       });
       const go = phase => {
         if(phase === "setup"){
-          screen(root, "setup" + sel.join() + twOn, '<p class="howto">Mode cartes : lisez les deux choix, et chacun lève la main pour A ou pour B. Puis débattez.</p>' +
+          screen(root, "setup" + sel.join() + twOn, '<p class="howto">Mode cartes : lisez les deux choix à voix haute, puis chacun lève la main pour A ou pour B. Ensuite, débattez !</p>' +
             '<div class="field"><span class="eyebrow">Paquets</span>' + packButtons(sel) + "</div>" +
             '<div class="field"><span class="eyebrow">Variante</span>' + twToggle(twOn) + "</div>" +
             '<div class="dock"><button class="btn acc" type="button" data-go>Commencer</button></div>', r => {

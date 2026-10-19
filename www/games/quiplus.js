@@ -78,6 +78,9 @@ const TWL = [
   { id: "eyes", name: "Yeux fermés", desc: "Tout le monde ferme les yeux pour pointer, et on les rouvre en même temps." }
 ];
 const PREFIX_MOINS = "Qui est le MOINS susceptible de…";
+// « de avoir » → « d'avoir » : le début de la question décide de l'élision.
+const elide = q => { const t = String(q || "").trim(); return /^[aeiouyàâäéèêëîïôöùûüœ]/i.test(t) || /^h(abit|abill|ésit|érit|umili|allucin|onor|ospital)/i.test(t); };
+const prefixFor = (moins, q) => (moins ? PREFIX_MOINS : PREFIX).replace(/de…$/, elide(q) ? "d'…" : "de…");
 const FL = {
   champ: ["Titre de la soirée", "Élu par le peuple", "La star du groupe", "Suspect numéro un"],
   mav: ["L'électron libre", "Le franc-tireur", "Jamais d'accord avec personne"],
@@ -146,7 +149,7 @@ SB.register({
   render(ctx, root){
     const s = ctx.s, me = ctx.me, tw = s.tw || "", T = SB.u.byTwist(TW, tw);
     const lab = '<span class="eyebrow">Question ' + s.round + " / " + s.rounds + "</span>" + SB.u.twistHTML(T);
-    const qCard = '<div class="card acc"><span class="eyebrow">' + (tw === "moins" ? PREFIX_MOINS : PREFIX) + '</span><div class="big">… ' + esc(s.q) + "</div></div>";
+    const qCard = '<div class="card acc"><span class="eyebrow">' + prefixFor(tw === "moins", s.q) + '</span><div class="big">… ' + esc(s.q) + "</div></div>";
     if(s.phase === "vote"){
       const duo = tw === "duo", noself = tw === "noself";
       screen(root, "v" + s.k, lab + qCard + (duo ? '<p class="sm">Choisis deux joueurs.</p>' : "") + '<div class="choices">' + ctx.players.map(p => '<button type="button" class="opt" data-v="' + esc(p.id) + '"' + (noself && p.id === me ? " disabled" : "") + ">" + esc(p.name) + (p.id === me ? ' <span class="pill me">Moi</span>' : "") + "</button>").join("") +
@@ -228,7 +231,7 @@ SB.register({
           const foot = t === "pick"
             ? '<span class="eyebrow">Le plus désigné choisit la suite</span><div class="choices">' + ch.map((x, i) => '<button type="button" class="opt" data-ch="' + i + '">… ' + esc(x) + "</button>").join("") + "</div>"
             : "";
-          screen(root, "q" + n, '<span class="eyebrow">Question ' + n + "</span>" + SB.u.twistHTML(tw) + '<div class="card acc"><span class="eyebrow">' + (t === "moins" ? PREFIX_MOINS : PREFIX) + '</span><div class="big">… ' + esc(q) + '</div></div><div class="pass" style="min-height:' + (foot ? "10" : "20") + 'vh"><div class="who">' + (t === "eyes" ? "Yeux fermés… 3, 2, 1, pointez !" : "3, 2, 1… pointez !") + "</div></div>" + foot +
+          screen(root, "q" + n, '<span class="eyebrow">Question ' + n + "</span>" + SB.u.twistHTML(tw) + '<div class="card acc"><span class="eyebrow">' + prefixFor(t === "moins", q) + '</span><div class="big">… ' + esc(q) + '</div></div><div class="pass" style="min-height:' + (foot ? "10" : "20") + 'vh"><div class="who">' + (t === "eyes" ? "Yeux fermés… 3, 2, 1, pointez !" : "3, 2, 1… pointez !") + "</div></div>" + foot +
             '<div class="dock">' + (foot ? "" : '<button class="btn acc" type="button" data-n>Question suivante</button>') + '<button class="link" type="button" data-q style="align-self:center">Choisir un autre jeu</button></div>', r => {
             const nb = r.querySelector("[data-n]"); if(nb) nb.addEventListener("click", () => next());
             r.querySelectorAll("[data-ch]").forEach(b => b.addEventListener("click", () => next(+b.dataset.ch)));
