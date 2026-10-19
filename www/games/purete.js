@@ -250,6 +250,54 @@ function score(ans, tw){
   }
   return Math.max(0, Math.min(100, Math.round(100 * (1 - bad / Math.max(1, W)))));
 }
+/* ---------- Profil par thème : graphique radar en fin de test ---------- */
+const SHORT = { soiree: tr("Soirées", "Parties"), sexe: tr("Sexe", "Sex"), interdit: tr("Interdit", "Off-limits"), coeur: tr("Cœur", "Love"), boulot: tr("Boulot", "Work"), voyage: tr("Voyages", "Travel"), honte: tr("Gênant", "Cringe"), hardcore: "Hardcore" };
+const PAL = ["var(--acc)", "#4fd1bf", "#ffb020", "#8b7bff", "#5bc0ff", "#9be15d", "#ff8a4c", "#ff6b8a"];
+// Thèmes présents dans le test (dans l'ordre des thèmes) et % de « oui » de chaque réponse.
+function themesOf(qi, lg){ const all = ALL(lg), seen = {}; A(qi).forEach(i => { const x = all[i]; if(x) seen[x.pack] = 1; }); return PACKS.map(p => p.v).filter(v => seen[v]); }
+function profile(qi, ans, lg){
+  const all = ALL(lg), a = String(ans || ""), st = {};
+  A(qi).forEach((qx, i) => { const x = all[qx]; if(!x || i >= a.length) return; const o = st[x.pack] = st[x.pack] || [0, 0]; o[1]++; if(a[i] === "1") o[0]++; });
+  return st;
+}
+const pcOf = st => v => (st[v] && st[v][1] ? Math.round(100 * st[v][0] / st[v][1]) : 0);
+function radarSVG(themes, series){
+  const n = themes.length, cx = 170, cy = 150, R = 100, ang = i => -Math.PI / 2 + i * 2 * Math.PI / n;
+  const pt = (i, r) => [cx + r * Math.cos(ang(i)), cy + r * Math.sin(ang(i))].map(x => x.toFixed(1));
+  let g = "";
+  [25, 50, 75, 100].forEach(k => { g += '<polygon points="' + themes.map((_, i) => pt(i, R * k / 100).join(",")).join(" ") + '" style="fill:none;stroke:var(--line);stroke-width:1"/>'; });
+  themes.forEach((_, i) => { const e = pt(i, R); g += '<line x1="' + cx + '" y1="' + cy + '" x2="' + e[0] + '" y2="' + e[1] + '" style="stroke:var(--line);stroke-width:1"/>'; });
+  g += '<text x="' + (cx + 4) + '" y="' + (cy - R / 2 + 4) + '" style="fill:var(--muted);font-size:10px">50</text>';
+  series.forEach(sr => {
+    const pts = themes.map((v, i) => pt(i, R * Math.max(3, sr.pc(v)) / 100));
+    g += '<polygon points="' + pts.map(p => p.join(",")).join(" ") + '" style="fill:' + sr.c + ';fill-opacity:.22;stroke:' + sr.c + ';stroke-width:2.5;stroke-linejoin:round"/>';
+    g += pts.map(p => '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="3.5" style="fill:' + sr.c + '"/>').join("");
+  });
+  themes.forEach((v, i) => {
+    const e = pt(i, R + 16), c = Math.cos(ang(i)), anc = Math.abs(c) < .2 ? "middle" : c > 0 ? "start" : "end", dy = Math.sin(ang(i)) > .5 ? 10 : Math.sin(ang(i)) < -.5 ? -2 : 4;
+    g += '<text x="' + e[0] + '" y="' + (+e[1] + dy) + '" text-anchor="' + anc + '" style="fill:var(--ink);font-size:12px;font-weight:700">' + esc(SHORT[v] || v) + "</text>";
+  });
+  return '<svg class="pu-radar" viewBox="0 0 340 300" role="img" aria-label="' + esc(tr("Profil par thème", "Profile by theme")) + '">' + g + "</svg>";
+}
+function barsHTML(themes, sr){ return '<ul class="pu-bars">' + themes.map(v => '<li><span>' + esc(SHORT[v] || v) + '</span><span class="pu-bar"><i style="width:' + sr.pc(v) + '%;background:' + sr.c + '"></i></span><b>' + pct(sr.pc(v)) + "</b></li>").join("") + "</ul>"; }
+// Bloc complet : radar (3 thèmes ou plus) ou barres, chiffres du joueur mis en avant, légende si plusieurs joueurs.
+function profileHTML(qi, lg, series, mineIdx, title){
+  const themes = themesOf(qi, lg); if(!themes.length || !series.length) return "";
+  const m = mineIdx == null ? series[0] : mineIdx >= 0 ? series[mineIdx] : null;
+  const tot = m && m.st ? Object.keys(m.st).reduce((a, k) => [a[0] + m.st[k][0], a[1] + m.st[k][1]], [0, 0]) : [0, 0];
+  let h = '<div class="field pu-prof"><span class="eyebrow">' + esc(title || tr("Ton profil", "Your profile")) + "</span>";
+  h += themes.length >= 3 ? radarSVG(themes, series) : series.map(sr => (series.length > 1 ? '<b class="sm">' + esc(sr.name) + "</b>" : "") + barsHTML(themes, sr)).join("");
+  if(series.length > 1 && themes.length >= 3) h += '<div class="pu-leg">' + series.map(sr => '<span><i style="background:' + sr.c + '"></i>' + esc(sr.name) + "</span>").join("") + "</div>";
+  if(m && m.st) h += '<ul class="pu-stats"><li>' + tr("Réponses positives", "“Yes” answers") + " <b>" + pct(Math.round(100 * tot[0] / Math.max(1, tot[1]))) + "</b></li>" +
+    themes.map(v => "<li>" + esc(SHORT[v] || v) + " <b>" + pct(m.pc(v)) + "</b></li>").join("") + "</ul>";
+  return h + "</div>";
+}
+function seriesOf(rows, qi, lg){ return rows.map((r, i) => { const st = profile(qi, r.a, lg); return { name: r.name, st, pc: pcOf(st), c: PAL[i % PAL.length], id: r.id }; }); }
+function avgSeries(rows, qi, lg){
+  const sum = {}; rows.forEach(r => { const st = profile(qi, r.a, lg); Object.keys(st).forEach(k => { const o = sum[k] = sum[k] || [0, 0]; o[0] += st[k][0]; o[1] += st[k][1]; }); });
+  return { name: tr("Le groupe", "The group"), st: sum, pc: pcOf(sum), c: "var(--acc)" };
+}
+
 function hsh(x){ let h = 7; String(x).split("").forEach(c => { h = (h * 31 + c.charCodeAt(0)) >>> 0; }); return h; }
 const AW = {
   pure: [tr("Le plus pur", "The purest"), tr("L'ange de la bande", "The group's angel"), tr("Casier vierge", "Spotless record")],
@@ -269,7 +317,11 @@ const CSS = '<style>.pu-q{font-size:28px; font-weight:800; line-height:1.2; over
   '.pu-av{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px}' +
   '.pu-av li{background:var(--card); border:1.5px solid var(--line); border-radius:12px; padding:10px 14px; display:flex; flex-direction:column; gap:4px}' +
   '.pu-av .c{font-weight:800; color:var(--acc)}.pu-av li.tw{border-style:dashed; border-color:var(--acc)}.pu-tw{font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--acc)}' +
-  '.pu-sus{min-height:40px; padding:6px 14px; font-size:14px; align-self:flex-start}</style>';
+  '.pu-sus{min-height:40px; padding:6px 14px; font-size:14px; align-self:flex-start}' +
+  '.pu-prof{background:var(--card); border:1.5px solid var(--line); border-radius:18px; padding:12px}.pu-radar{width:100%; max-width:380px; height:auto; display:block; margin:0 auto; overflow:visible}' +
+  '.pu-leg{display:flex; flex-wrap:wrap; gap:6px 12px; justify-content:center; font-size:13px; font-weight:700}.pu-leg i{display:inline-block; width:10px; height:10px; border-radius:99px; margin-right:5px; vertical-align:-1px}' +
+  '.pu-stats{list-style:none; margin:4px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:6px}.pu-stats li{background:var(--soft); border-radius:99px; padding:5px 11px; font-size:13px; color:var(--muted)}.pu-stats b{color:var(--ink); margin-left:3px}' +
+  '.pu-bars{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px}.pu-bars li{display:grid; grid-template-columns:80px 1fr 48px; gap:10px; align-items:center; font-weight:700; font-size:14px}.pu-bars b{text-align:right}</style>';
 
 /* Questionnaire réutilisé en réseau et sur un seul téléphone */
 function runQuiz(root, key, qi, onDone, header, note, tw, lg){
@@ -364,7 +416,8 @@ SB.register({
       const mine = ctx.mine();
       if(mine && typeof mine.a === "string" && mine.a.length === qi.length){
         screen(root, "w" + s.k, CSS + '<span class="eyebrow">' + tr("Ton score", "Your score") + '</span><div class="pu-score">' + score(mine.a, s.tw) + '%</div><p class="big">' + esc(title(score(mine.a, s.tw), s.seed)[0]) + "</p>" +
-          '<p class="howto">' + tr("Garde-le pour toi. Le classement s'affiche quand tout le monde a fini.", "Keep it to yourself. The ranking shows up once everyone's done.") + "</p>" + dock('<p class="wait" data-wait></p>'));
+          '<p class="howto">' + tr("Garde-le pour toi. Le classement s'affiche quand tout le monde a fini.", "Keep it to yourself. The ranking shows up once everyone's done.") + "</p>" +
+          profileHTML(qi, lg, seriesOf([{ name: "", a: mine.a }], qi, lg), 0) + dock('<p class="wait" data-wait></p>'));
         const live = ctx.ids.filter(id => ctx.here(id)), done = live.filter(id => { const i = ctx.input(id); return i && typeof i.a === "string" && i.a.length === qi.length; }).length;
         txt(root, "[data-wait]", tr(done + " / " + live.length + " ont terminé", done + " / " + live.length + " done"));
       } else {
@@ -377,6 +430,11 @@ SB.register({
       screen(root, "res" + s.k + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Classement de pureté", "Purity ranking") + "</span>" +
         awardsHTML(rows, qi, s.tw, s.seed) +
         rankHTML(rows, s.seed) + (me ? '<p class="appre">' + tr("« " + esc(title(me.p, s.seed)[1]) + " »", "“" + esc(title(me.p, s.seed)[1]) + "”") + "</p>" : "") +
+        (function(){
+          if(s.anon){ return me ? profileHTML(qi, lg, seriesOf([me], qi, lg), 0) : profileHTML(qi, lg, [avgSeries(rows, qi, lg)], 0, tr("Profil du groupe", "Group profile")); }
+          const sr = seriesOf(rows, qi, lg), mi = sr.findIndex(x => x.id === ctx.me);
+          return profileHTML(qi, lg, sr, mi, tr("Profils par thème", "Profiles by theme"));
+        })() +
         '<div class="field"><span class="eyebrow">' + tr("Les aveux", "Confessions") + (s.anon ? tr(" (anonymes)", " (anonymous)") : "") + "</span>" + aveuxHTML(qi, rows, s.anon, rows.length, s.tw, s.k, lg) + "</div>" +
         (ctx.isHost ? dock('<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>") : dock('<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>")), r => {
         bindAveux(r);
@@ -435,8 +493,9 @@ SB.register({
           const rows = names.map((n, i) => ({ name: n, a: L.ans[i] || "", p: score(L.ans[i], L.twl) })).sort((a, b) => b.p - a.p);
           const solo = names.length === 1;
           if(!solo) api.win(rows.filter(x => x.p === rows[0].p).map(x => x.name));
-          screen(root, "res" + L.key, CSS + (solo ? '<span class="eyebrow">' + tr("Ton score de pureté", "Your purity score") + '</span><div class="pu-score">' + rows[0].p + '%</div><p class="big">' + esc(title(rows[0].p, L.seed)[0]) + '</p><p class="appre">' + tr("« " + esc(title(rows[0].p, L.seed)[1]) + " »", "“" + esc(title(rows[0].p, L.seed)[1]) + "”") + "</p>"
-            : '<span class="eyebrow">' + tr("Classement de pureté", "Purity ranking") + "</span>" + awardsHTML(rows, L.qi, L.twl, L.seed) + rankHTML(rows, L.seed) + '<div class="field"><span class="eyebrow">' + tr("Les aveux", "Confessions") + (L.anon ? tr(" (anonymes)", " (anonymous)") : "") + "</span>" + aveuxHTML(L.qi, rows, L.anon, rows.length, L.twl, L.key, lg) + "</div>") +
+          screen(root, "res" + L.key, CSS + (solo ? '<span class="eyebrow">' + tr("Ton score de pureté", "Your purity score") + '</span><div class="pu-score">' + rows[0].p + '%</div><p class="big">' + esc(title(rows[0].p, L.seed)[0]) + '</p><p class="appre">' + tr("« " + esc(title(rows[0].p, L.seed)[1]) + " »", "“" + esc(title(rows[0].p, L.seed)[1]) + "”") + "</p>" + profileHTML(L.qi, lg, seriesOf(rows, L.qi, lg), 0)
+            : '<span class="eyebrow">' + tr("Classement de pureté", "Purity ranking") + "</span>" + awardsHTML(rows, L.qi, L.twl, L.seed) + rankHTML(rows, L.seed) +
+              (L.anon ? profileHTML(L.qi, lg, [avgSeries(rows, L.qi, lg)], 0, tr("Profil du groupe", "Group profile")) : profileHTML(L.qi, lg, seriesOf(rows, L.qi, lg), -1, tr("Profils par thème", "Profiles by theme"))) + '<div class="field"><span class="eyebrow">' + tr("Les aveux", "Confessions") + (L.anon ? tr(" (anonymes)", " (anonymous)") : "") + "</span>" + aveuxHTML(L.qi, rows, L.anon, rows.length, L.twl, L.key, lg) + "</div>") +
             dock('<button class="btn acc" type="button" data-a>' + tr("Refaire un test", "Take another test") + '</button><button class="link" type="button" data-q style="align-self:center">' + tr("Choisir un autre jeu", "Choose another game") + "</button>"), r => {
             bindAveux(r);
             r.querySelector("[data-a]").addEventListener("click", api.again);

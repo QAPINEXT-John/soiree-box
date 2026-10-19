@@ -1,4 +1,7 @@
 {
+  "4.9.2": [
+    "Test de pureté : graphique récapitulatif par thème à la fin du test"
+  ],
   "4.9.1": [
     "Le choix de la langue (FR / EN) est maintenant en haut de l'accueil"
   ],
