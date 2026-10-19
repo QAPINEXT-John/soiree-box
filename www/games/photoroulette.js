@@ -52,6 +52,9 @@ function shrink(file){
   });
 }
 // Ancienne appli Android : le choix de photos n'y marche pas (il faut l'APK 4.6 ou plus récent).
+const APK_MSG = "Pour ce jeu, la mise à jour dans l'appli ne suffit pas : il faut réinstaller l'appli une seule fois, pour qu'elle puisse ouvrir ta galerie. Appuie sur le bouton, télécharge, puis installe par-dessus (tes réglages sont gardés).";
+const apkBtn = '<button class="btn ghost" type="button" data-apk>Télécharger la nouvelle appli</button>';
+const bindApk = r => { const b = r.querySelector("[data-apk]"); if(b) b.addEventListener("click", () => { try{ window.AndroidUpdate.openApk(); }catch(e){} }); };
 const oldApk = () => !!window.AndroidUpdate && !(window.AndroidShare && typeof window.AndroidShare.photos === "function");
 
 /* Écran de choix des photos, commun au réseau et au mode un seul téléphone. */
@@ -197,7 +200,7 @@ SB.register({
         '<span class="eyebrow">Photo roulette · choix des photos</span>' +
         (!playing ? '<p class="howto">Tu regardes la partie. Les joueurs choisissent leurs photos.</p>' :
           my.ok ? '<div class="card"><b>' + (M.imgs.length ? M.imgs.length + " photo" + (M.imgs.length > 1 ? "s" : "") + " prête" + (M.imgs.length > 1 ? "s" : "") : "Tu joues sans photo") + '</b><span class="sm">Tes photos restent sur ton téléphone jusqu\'à leur tour.</span></div><button class="link" type="button" data-edit>Modifier mes photos</button>' :
-          old ? '<p class="note-box">Ton appli est trop ancienne pour choisir des photos. Installe la nouvelle version (une seule fois), ou joue sans photo : tu pourras quand même deviner.</p><button class="btn ghost" type="button" data-apk>Installer la nouvelle appli</button>' :
+          old ? '<p class="note-box">' + esc(APK_MSG) + " En attendant, tu peux jouer sans photo et deviner quand même.</p>" + apkBtn :
           '<p class="howto">Choisis jusqu\'à ' + s.per + " photos de ta galerie. Les autres devront deviner qu'elles sont à toi.</p>" + pickerHTML(M.imgs, s.per)) +
         '<p class="wait" data-wait></p>' +
         dock((playing && !my.ok ? '<button class="btn acc" type="button" data-ok' + (M.imgs.length || old ? "" : " disabled") + ">" + (M.imgs.length ? "C'est bon, j'ai choisi" : old ? "Jouer sans photo" : "Choisis au moins une photo") + "</button>" : "") +
@@ -205,7 +208,7 @@ SB.register({
         if(playing && !my.ok && !old) bindPicker(r, M.imgs, s.per, () => { root.dataset.key = ""; ctx.send({ ok: 0, n: M.imgs.length }); });
         const ok = r.querySelector("[data-ok]"); if(ok) ok.addEventListener("click", () => { buzz(15); ctx.send({ ok: 1, n: M.imgs.length }); });
         const ed = r.querySelector("[data-edit]"); if(ed) ed.addEventListener("click", () => ctx.send({ ok: 0, n: M.imgs.length }));
-        const ap = r.querySelector("[data-apk]"); if(ap) ap.addEventListener("click", () => { try{ window.AndroidUpdate.openApk(); }catch(e){} });
+        bindApk(r);
         const go = r.querySelector("[data-go]"); if(go) go.addEventListener("click", () => ctx.act(c => {
           const n = c.ids.filter(id => { const i = c.input(id); return i && i.ok && (+i.n || 0) > 0; }).length;
           if(n < 2){ toast("Il faut au moins 2 joueurs avec des photos prêtes"); return; }
@@ -302,14 +305,15 @@ SB.register({
           screen(root, "setup" + L.per + L.rounds + L.twOn, CSS + '<p class="howto">Chacun à son tour choisit quelques photos de sa galerie sur ce téléphone, sans que les autres regardent. Ensuite, les photos défilent : à qui sont-elles ?</p>' +
             '<div class="field"><span class="eyebrow">Photos par joueur</span><div class="seg">' + [3, 5, 8].map(v => '<button type="button" data-per="' + v + '" aria-pressed="' + (v === L.per) + '">' + v + "</button>").join("") + "</div></div>" +
             '<div class="field"><span class="eyebrow">Photos dans la partie</span><div class="seg">' + [10, 15, 25].map(v => '<button type="button" data-r="' + v + '" aria-pressed="' + (v === L.rounds) + '">' + v + "</button>").join("") + "</div></div>" +
-            '<div class="field"><span class="eyebrow">Variante</span><div class="seg"><button type="button" data-tw aria-pressed="' + L.twOn + '">Coups de théâtre</button></div></div>' +
-            (oldApk() ? '<p class="note-box">Ton appli est trop ancienne pour choisir des photos. Installe la nouvelle version pour jouer à Photo roulette.</p>' : "") +
+            '<div class="field"><span class="eyebrow">Variante</span><div class="seg"><button type="button" data-tw aria-pressed="' + L.twOn + '">Coups de théâtre : ' + (L.twOn ? "oui" : "non") + "</button></div></div>" +
+            (oldApk() ? '<p class="note-box">' + esc(APK_MSG) + "</p>" + apkBtn : "") +
             '<div class="dock"><button class="btn acc" type="button" data-go' + (oldApk() ? " disabled" : "") + '>Commencer</button><button class="link" type="button" data-q style="align-self:center">Choisir un autre jeu</button></div>', r => {
             r.querySelectorAll("[data-per]").forEach(b => b.addEventListener("click", () => { L.per = +b.dataset.per; persist({ prPer: L.per }); go(); }));
             r.querySelectorAll("[data-r]").forEach(b => b.addEventListener("click", () => { L.rounds = +b.dataset.r; persist({ prRounds: L.rounds }); go(); }));
             r.querySelector("[data-tw]").addEventListener("click", () => { L.twOn = !L.twOn; persist({ prTw: L.twOn }); go(); });
             r.querySelector("[data-go]").addEventListener("click", () => { L.who = 0; L.imgs = names.map(() => []); L.phase = "pass"; go(); });
             r.querySelector("[data-q]").addEventListener("click", api.exit);
+            bindApk(r);
           });
         } else if(L.phase === "pass"){
           screen(root, "pass" + L.who, CSS + '<span class="eyebrow">Joueur ' + (L.who + 1) + " / " + names.length + '</span><p class="howto">Passe le téléphone à</p><div class="who">' + esc(names[L.who]) + "</div>" +

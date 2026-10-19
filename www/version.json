@@ -1,16 +1,15 @@
 {
- "version": "4.6",
+ "version": "4.6.1",
  "apk": 30,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Nouveau jeu : Photo roulette, en réseau ou sur un seul téléphone",
-  "Sur Android, installe la nouvelle appli une fois pour pouvoir choisir tes photos"
+  "Photo roulette : bouton pour télécharger la nouvelle appli quand elle est nécessaire"
  ],
  "files": {
   "core.js": {
-   "h": "64d0d27080a29210b9d73622959198334be0a05e0aef0a1b9345b097c73e7e1c",
-   "s": 95634
+   "h": "adf4f0bb348e6e21354d0bd4249f389d842c4dcafffec1407ffc6c9a1c4c6e32",
+   "s": 95636
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -117,8 +116,8 @@
    "s": 92314
   },
   "games/photoroulette.js": {
-   "h": "499f7695feed181cf924a1fa262336d0d7fbf639d40372735ee39bf40625c08c",
-   "s": 30646
+   "h": "111fed55e5d6617ccf67043b94ac93caaeae35aaa3f3347e00f36e29adfecf67",
+   "s": 30873
   },
   "games/priorites.js": {
    "h": "4ddc3fc28ab108dbfa9374960bf3ac68dddc7cdfbc010c223ee78d20344488d8",
