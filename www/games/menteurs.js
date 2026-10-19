@@ -20,14 +20,14 @@ const good = (E, c) => c === "J" || c === E.table || (!!E.t2 && c === E.t2);
 function stat(E, id, k, n){ const S = E.st = E.st || {}; const o = S[id] = Object.assign({}, S[id]); o[k] = (o[k] || 0) + (n == null ? 1 : n); S[id] = o; }
 /* Coups de théâtre : une règle spéciale pour toute la manche (jamais à la première, jamais deux fois de suite). */
 const EVENTS = [
-  { id: "joker", name: "Jokers en folie", desc: "Deux jokers de plus dans le paquet : la vérité devient plus facile… et le doute aussi." },
-  { id: "double", name: "Double table", desc: "Deux valeurs comptent comme vraies cette manche." },
-  { id: "sens", name: "Sens inversé", desc: "On joue dans l'autre sens : tu accuses quelqu'un d'autre.", ok: o => o.E.order.filter(id => o.E.alive[id]).length > 2 },
+  { id: "joker", name: "Jokers en folie", desc: "Deux jokers de plus dans le paquet : dire la vérité devient plus facile… et démasquer un menteur, plus difficile." },
+  { id: "double", name: "Double table", desc: "Cette manche, deux valeurs de cartes sont valables." },
+  { id: "sens", name: "Sens inversé", desc: "On joue dans l'autre sens : tu ne passes plus après le même joueur.", ok: o => o.E.order.filter(id => o.E.alive[id]).length > 2 },
   { id: "petit", name: "Mains légères", desc: "Seulement 3 cartes chacun : la manche va vite." },
   { id: "une", name: "Une à la fois", desc: "Une seule carte par tour, pas plus." },
   { id: "aveugle", name: "À l'aveugle", desc: "Tes cartes restent face cachée : tu ne sais pas ce que tu poses." },
   { id: "nerveux", name: "Barillet nerveux", desc: "Celui qui perd la manche tire deux fois de suite." },
-  { id: "recharge", name: "Barillet rechargé", desc: "Les compteurs repartent à zéro, avec une balle replacée au hasard.", ok: o => o.E.order.some(id => o.E.alive[id] && (o.E.pulls[id] || 0) >= 2) }
+  { id: "recharge", name: "Barillet rechargé", desc: "Les compteurs repartent à zéro et chaque barillet est rechargé au hasard.", ok: o => o.E.order.some(id => o.E.alive[id] && (o.E.pulls[id] || 0) >= 2) }
 ];
 const pickTwist = (list, o) => (SB.u.twist ? SB.u.twist(list, o) : null);
 const evOf = E => EVENTS.find(t => t.id === E.ev) || null;
@@ -109,11 +109,11 @@ function newBullets(ids){ const b = {}; ids.forEach(id => { b[id] = 1 + rnd(6); 
 
 /* ---------- Trophées de fin de partie ---------- */
 const AWARDS = {
-  bl: { t: ["Menteur professionnel", "Visage de marbre", "Bluffeur en chef"], d: v => v + " carte" + (v > 1 ? "s" : "") + " mensongère" + (v > 1 ? "s" : "") + " posée" + (v > 1 ? "s" : ""), min: 2 },
+  bl: { t: ["Menteur professionnel", "Visage de marbre", "Bluffeur en chef"], d: v => v + " fausse" + (v > 1 ? "s" : "") + " carte" + (v > 1 ? "s" : "") + " posée" + (v > 1 ? "s" : ""), min: 2 },
   cg: { t: ["Nez de Pinocchio", "Pris la main dans le sac", "Mauvais menteur"], d: v => "démasqué " + v + " fois", min: 1 },
   gc: { t: ["Détecteur de mensonges", "Flair infaillible", "Inspecteur du bar"], d: v => v + " menteur" + (v > 1 ? "s" : "") + " démasqué" + (v > 1 ? "s" : ""), min: 1 },
   cl: { t: ["Survivant chanceux", "Chat à neuf vies", "Trompe-la-mort"], d: v => v + " clic" + (v > 1 ? "s" : "") + " à vide", min: 2 },
-  pl: { t: ["Main leste", "Poseur compulsif", "Distributeur du bar"], d: v => v + " cartes posées", min: 4 }
+  pl: { t: ["Mitraillette à cartes", "Poseur compulsif", "Croupier du bar"], d: v => v + " cartes posées", min: 4 }
 };
 function awards(E){
   const S = E.st || {}, out = [];
@@ -170,7 +170,7 @@ function evHTML(E){ const t = evOf(E); return t ? '<div class="lb-ev">' + SB.u.t
 function cylHTML(n){ let h = '<span class="lb-cyl" aria-label="' + n + ' sur 6">'; for(let i = 0; i < 6; i++) h += '<i class="' + (i < n ? "x" : "") + '"></i>'; return h + "</span>"; }
 function playersHTML(E, nameOf, me){
   return '<ul class="lb-pl">' + E.order.map(id => '<li data-p="' + esc(id) + '" class="' + (!E.alive[id] ? "dead" : E.phase === "play" && E.turn === id ? "on" : "") + '"><span class="nm">' + esc(nameOf(id)) + (id === me ? ' <span class="pill me">Toi</span>' : "") + "</span>" +
-    (E.alive[id] ? '<span class="ct">' + (E.hands[id] || []).length + " carte" + ((E.hands[id] || []).length > 1 ? "s" : "") + "</span>" : '<span class="ct">mort</span>') + cylHTML(E.pulls[id] || 0) + "</li>").join("") + "</ul>";
+    (E.alive[id] ? '<span class="ct">' + (E.hands[id] || []).length + " carte" + ((E.hands[id] || []).length > 1 ? "s" : "") + "</span>" : '<span class="ct">hors jeu</span>') + cylHTML(E.pulls[id] || 0) + "</li>").join("") + "</ul>";
 }
 function tableHTML(E){ return '<div class="lb-table"><span style="white-space:nowrap">Table des</span><span class="t">' + PLUR[E.table] + (E.t2 ? " + " + PLUR[E.t2] : "") + "</span><span class=\"sm\" style=\"flex-basis:100%; color:#c9b89a\">Les jokers valent n'importe quelle carte" + (E.maxc === 1 ? " · une carte par tour" : "") + "</span></div>"; }
 function lastHTML(E, nameOf){
@@ -184,7 +184,7 @@ function playHTML(E, me, nameOf, sel){
   if(me && E.alive[me]){
     const mx = E.maxc || 3;
     html += '<span class="eyebrow">Ta main' + (E.blind ? " · face cachée" : "") + (my && h.length ? (mx === 1 ? " · choisis 1 carte" : " · choisis 1 à " + mx + " cartes") : "") + '</span><div class="lb-hand">' +
-      (h.length ? h.map((c, i) => { const at = ' data-c="' + i + '" aria-pressed="' + (sel.indexOf(i) >= 0) + '"' + (my ? "" : " disabled"); return E.blind ? hidHTML(at) : cardHTML(c, at, good(E, c) ? "tb" : ""); }).join("") : '<p class="sm">Plus de cartes : tu attends la fin de la manche.</p>') + "</div>";
+      (h.length ? h.map((c, i) => { const at = ' data-c="' + i + '" aria-pressed="' + (sel.indexOf(i) >= 0) + '"' + (my ? "" : " disabled"); return E.blind ? hidHTML(at) : cardHTML(c, at, good(E, c) ? "tb" : ""); }).join("") : '<p class="sm">Plus de cartes : attends la fin de la manche.</p>') + "</div>";
   } else if(me) html += '<p class="howto">Tu es hors jeu. Regarde les autres trembler.</p>';
   html += '<span class="eyebrow">Joueurs · barillet</span>' + playersHTML(E, nameOf, me);
   return html;
@@ -199,15 +199,15 @@ function playDock(E, me, sel){
 function revealHTML(E, me, nameOf){
   return CSS + tableHTML(E) + '<p class="lb-log">' + esc(E.log) + '</p><span class="eyebrow">Les cartes de ' + esc(nameOf(E.last.by)) + '</span><div class="lb-row">' + E.reveal.map(c => cardHTML(c, " disabled", good(E, c) ? "tb" : "")).join("") + "</div>" +
     '<div class="lb-big' + (E.truth ? "" : " boom") + '">' + (E.truth ? "Vérité" : "Bluff !") + "</div>" +
-    '<div class="pass" style="min-height:0"><span class="eyebrow">' + (E.loser === me ? "C'est toi qui tires" : "Le revolver passe à") + '</span><div class="who">' + esc(nameOf(E.loser)) + "</div><p>Déjà " + (E.pulls[E.loser] || 0) + " coup" + ((E.pulls[E.loser] || 0) > 1 ? "s" : "") + " tiré" + ((E.pulls[E.loser] || 0) > 1 ? "s" : "") + " : 1 chance sur " + (6 - (E.pulls[E.loser] || 0)) + "." + (E.more > 0 ? " Barillet nerveux : il faudra tirer deux fois." : "") + "</p></div>";
+    '<div class="pass" style="min-height:0"><span class="eyebrow">' + (E.loser === me ? "C'est toi qui tires" : "Le revolver passe à") + '</span><div class="who">' + esc(nameOf(E.loser)) + "</div><p>Coups déjà tirés : " + (E.pulls[E.loser] || 0) + " · risque : 1 sur " + (6 - (E.pulls[E.loser] || 0)) + "." + (E.more > 0 ? " Barillet nerveux : il faudra tirer deux fois." : "") + "</p></div>";
 }
 function shotHTML(E, nameOf, bullet){
   const n = E.pulls[E.loser] || 0;
   let gun = '<div class="lb-gun">'; for(let i = 1; i <= 6; i++) gun += '<i class="' + (E.boom && i === n ? "b" : i <= n ? "x" : "") + '"></i>'; gun += "</div>";
   return CSS + '<div class="pass" style="min-height:30vh"><div class="lb-big' + (E.boom ? " boom" : "") + '">' + (E.boom ? "PAN !" : "Clic…") + '</div><div class="who" style="text-align:center">' + esc(nameOf(E.loser)) + '</div><p style="text-align:center; max-width:none">' +
-    (E.boom ? "est hors jeu." : "survit. Prochain coup : 1 chance sur " + Math.max(1, 6 - n) + ".") + (E.more > 0 && !E.boom ? " <b>Barillet nerveux : encore un coup !</b>" : "") + "</p>" + gun + "</div>" + (E.winner ? '<p class="lb-log">Il ne reste que ' + esc(nameOf(E.winner)) + " !</p>" : "");
+    (E.boom ? "est hors jeu." : "survit. Prochain coup : 1 risque sur " + Math.max(1, 6 - n) + ".") + (E.more > 0 && !E.boom ? " <b>Barillet nerveux : encore un coup !</b>" : "") + "</p>" + gun + "</div>" + (E.winner ? '<p class="lb-log">Il ne reste que ' + esc(nameOf(E.winner)) + " !</p>" : "");
 }
-const OUTRO = ["Le seul à tenir encore debout au bar.", "Les autres ont mordu la poussière.", "Le barman lui offre la tournée.", "Personne n'a su lire dans son jeu.", "Nerfs d'acier, et un peu de chance."];
+const OUTRO = ["Le seul à tenir encore debout au bar.", "Les autres ont mordu la poussière.", "Le barman lui offre la tournée.", "Personne n'a su lire dans son jeu.", "Des nerfs d'acier… et un peu de chance."];
 function endHTML(E, nameOf){
   const L = awardLines(E, nameOf);
   return CSS + '<span class="eyebrow">Dernier survivant</span><div class="who">' + esc(nameOf(E.winner)) + "</div><p>" + OUTRO[(E.round || 1) % OUTRO.length] + "</p>" +
@@ -280,16 +280,16 @@ function shotFx(root, boom){ if(SB.fx) SB.fx.pop(root.querySelector(".lb-big"), 
 let LTOK = 0;
 
 const DEF = {
-  id: "menteurs", name: "Roulette des menteurs", glyph: "Bluff", pitch: "Bluffe sur tes cartes, ou tire au revolver.", hot: false,
+  id: "menteurs", name: "Roulette des menteurs", glyph: "Bluff", pitch: "Bluffe sur tes cartes… ou appuie sur la détente.", hot: false,
   accent: { light: "#e0a479", dark: "#e0a479" },
-  tag: "Pose tes cartes face cachée en jurant qu'elles collent à la table. « Menteur ! » : celui qui a tort appuie sur la détente.",
+  tag: "Pose tes cartes face cachée en jurant qu'elles correspondent à la table. « Menteur ! » : celui qui a tort appuie sur la détente.",
   min: 2, max: 6,
   rules: [
-    "Chaque manche, la table annonce une carte : Rois, Dames ou As. Chacun reçoit 5 cartes. Les jokers valent n'importe quoi.",
-    "À ton tour, pose 1 à 3 cartes face cachée : tu affirmes que ce sont des cartes de la table. Tu peux mentir.",
+    "À chaque manche, la table impose une valeur : Rois, Dames ou As. Chacun reçoit 5 cartes. Les jokers valent n'importe quelle carte.",
+    "À ton tour, pose 1 à 3 cartes face cachée en affirmant qu'elles correspondent à la table. Tu as le droit de mentir.",
     "Le joueur suivant pose à son tour, ou crie « Menteur ! » pour retourner les cartes.",
-    "Si c'était du bluff, le menteur tire. Si c'était vrai, c'est l'accusateur qui tire. Barillet de 6 chambres, une seule balle : chaque coup survécu rend le suivant plus risqué.",
-    "Puis nouvelle manche, nouvelle donne. Le dernier survivant gagne.",
+    "Si c'était du bluff, le menteur tire. Si c'était vrai, c'est l'accusateur qui tire. Le barillet a 6 chambres et une seule balle : chaque coup à vide rend le suivant plus risqué.",
+    "Ensuite : nouvelle manche, nouvelle donne. Le dernier survivant gagne.",
     "Coups de théâtre : certaines manches ont une règle spéciale (double table, à l'aveugle, une carte à la fois, barillet nerveux…)."
   ],
   options: [
@@ -354,16 +354,16 @@ const DEF = {
       if(UI.sel.join() !== UI.prev.join()){ selFx(root, UI.sel, UI.prev); UI.prev = UI.sel.slice(); }
     } else if(s.phase === "reveal"){
       paint(root, "rv" + s.k + s.round + E.loser + (E.loser === me), revealHTML(E, me, nameOf) + (E.loser === me ? dock('<button class="btn bad big-tap" type="button" data-shoot>Appuyer sur la détente</button>') : dock('<p class="wait">' + esc(nameOf(E.loser)) + " tient le revolver…</p>")), r => {
-        const b = r.querySelector("[data-shoot]"); if(b) armTap(b, () => { buzz(80); ctx.send({ p: { n: n(), t: "shoot" } }); }, "Toucher encore… si tu oses");
+        const b = r.querySelector("[data-shoot]"); if(b) armTap(b, () => { buzz(80); ctx.send({ p: { n: n(), t: "shoot" } }); }, "Touche encore… si tu oses");
         hostFix(r); revealFx(r);
       });
     } else if(s.phase === "shot"){
       const again2 = canShoot(E, E.loser);
       paint(root, "sh" + s.k + s.round + ctx.isHost + (E.pulls[E.loser] || 0) + E.more + (E.loser === me), shotHTML(E, nameOf) + dock(again2 ? (E.loser === me ? '<button class="btn bad big-tap" type="button" data-shoot>Tirer encore une fois</button>' : '<p class="wait">' + esc(nameOf(E.loser)) + " doit tirer encore une fois…</p>")
-        : ctx.isHost ? '<button class="btn acc" type="button" data-next>' + (E.winner ? "Voir le vainqueur" : "Manche suivante") + "</button>" : '<p class="wait">L\'hôte sert la manche suivante…</p>'), r => {
+        : ctx.isHost ? '<button class="btn acc" type="button" data-next>' + (E.winner ? "Voir le vainqueur" : "Manche suivante") + "</button>" : '<p class="wait">L\'hôte prépare la manche suivante…</p>'), r => {
         if(E.boom) buzz([200, 80, 200]);
         shotFx(r, E.boom);
-        const sh = r.querySelector("[data-shoot]"); if(sh) armTap(sh, () => { buzz(80); ctx.send({ p: { n: n(), t: "shoot" } }); }, "Toucher encore… si tu oses");
+        const sh = r.querySelector("[data-shoot]"); if(sh) armTap(sh, () => { buzz(80); ctx.send({ p: { n: n(), t: "shoot" } }); }, "Touche encore… si tu oses");
         const b = r.querySelector("[data-next]"); if(b) b.addEventListener("click", () => ctx.act(c => {
           const F = fromState(c.s);
           if(!nextRound(F)) return;
@@ -396,7 +396,7 @@ const DEF = {
       function setup(){
         clearTimeout(timer);
         const total = names.length + bots;
-        screen(root, "su" + bots + tw, CSS + '<p class="howto">' + (names.length > 1 ? "Les joueurs se passent le téléphone à leur tour : les mains restent cachées." : "Une partie contre les robots du bar.") + " Pose tes cartes en bluffant, et crie « Menteur ! » au bon moment.</p>" +
+        screen(root, "su" + bots + tw, CSS + '<p class="howto">' + (names.length > 1 ? "Les joueurs se passent le téléphone à leur tour : les mains restent cachées." : "Une partie contre les robots du bar.") + " Pose tes cartes en bluffant et crie « Menteur ! » au bon moment.</p>" +
           '<div class="field"><span class="eyebrow">Robots</span><div class="seg">' + [0, 1, 2, 3].map(b => '<button type="button" data-b="' + b + '" aria-pressed="' + (b === bots) + '">' + b + "</button>").join("") + "</div></div>" +
           '<div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + tw + '"><span class="box">✓</span><span class="tx"><span class="nm">Coups de théâtre</span><span class="ds">Certaines manches ont une règle spéciale</span></span></button></div>' +
           (total < 2 ? '<p class="err">Ajoute au moins un robot pour jouer seul.</p>' : total > 6 ? '<p class="err">6 joueurs maximum, robots compris.</p>' : "") +
@@ -446,7 +446,7 @@ const DEF = {
       function reveal(){
         const L = E.loser, me = isBot(L) ? viewer : L;
         paint(root, "rv" + E.round + L, revealHTML(E, me, nameOf) + (isBot(L) ? dock('<p class="wait">' + esc(nameOf(L)) + " tient le revolver…</p>") : dock('<button class="btn bad big-tap" type="button" data-shoot>' + esc(nameOf(L)) + " : appuyer sur la détente</button>")), r => {
-          const b = r.querySelector("[data-shoot]"); if(b) armTap(b, () => { buzz(80); doShoot(E, L, bullets, nameOf); step(); }, "Toucher encore… si tu oses");
+          const b = r.querySelector("[data-shoot]"); if(b) armTap(b, () => { buzz(80); doShoot(E, L, bullets, nameOf); step(); }, "Touche encore… si tu oses");
           revealFx(r);
         });
         if(isBot(L)) later(() => { doShoot(E, L, bullets, nameOf); step(); }, 2200);
@@ -458,7 +458,7 @@ const DEF = {
         paint(root, "sh" + E.round + (E.pulls[L] || 0) + E.more, shotHTML(E, nameOf) + dock(!more ? '<button class="btn acc" type="button" data-n>' + (E.winner ? "Voir le vainqueur" : "Manche suivante") + "</button>"
           : isBot(L) ? '<p class="wait">' + esc(nameOf(L)) + " doit tirer encore une fois…</p>" : '<button class="btn bad big-tap" type="button" data-shoot>' + esc(nameOf(L)) + " : tirer encore une fois</button>"), r => {
           shotFx(r, E.boom);
-          const sh = r.querySelector("[data-shoot]"); if(sh) armTap(sh, () => { buzz(80); doShoot(E, L, bullets, nameOf); step(); }, "Toucher encore… si tu oses");
+          const sh = r.querySelector("[data-shoot]"); if(sh) armTap(sh, () => { buzz(80); doShoot(E, L, bullets, nameOf); step(); }, "Touche encore… si tu oses");
           const nx = r.querySelector("[data-n]");
           if(nx) nx.addEventListener("click", () => { nextRound(E); if(E.ev === "recharge" && E.phase === "play") bullets = newBullets(E.order); if(liveHumans().length === 1) viewer = liveHumans()[0]; else viewer = ""; step(); });
         });

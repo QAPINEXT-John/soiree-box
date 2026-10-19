@@ -31,19 +31,19 @@ const PAIRS = [
   ["Cuisinier","Serveur"],["Détective","Espion"],["Chevalier","Samouraï"],["Momie","Squelette"],["Sirène","Fée"],["Ogre","Géant"],
   ["Extraterrestre","Monstre"],["Pique-nique","Barbecue"],["Concert","Festival"],["Pyramide","Temple"],["Balançoire","Toboggan"],["Trampoline","Château gonflable"],
   ["Hamac","Transat"],["Bougie","Lampe"],["Clé","Cadenas"],["Coffre-fort","Tirelire"],["Télescope","Jumelles"],["Boussole","Carte routière"],
-  ["Sifflet","Klaxon"],["Mail","Lettre"]
+  ["Sifflet","Klaxon"],["E-mail","Lettre"]
 ];
 // Mots hard : sexe, fête et humour noir (option 18+)
 const HARD_PAIRS = [
   ["Préservatif","Pilule"],["Menottes","Bandeau"],["Plan cul","Ex"],["Strip-tease","Lap dance"],
-  ["Sex toy","Lubrifiant"],["Kamasutra","Cinquante nuances de Grey"],["Club libertin","Boîte de nuit"],["Nudes","Sexto"],
+  ["Sextoy","Lubrifiant"],["Kamasutra","Cinquante nuances de Grey"],["Club libertin","Boîte de nuit"],["Nudes","Sexto"],
   ["Lingerie","Pyjama"],["Tinder","Grindr"],["Plan à trois","Partouze"],["Fessée","Martinet"],
   ["Préliminaires","Câlin"],["Porno","Film érotique"],["Gueule de bois","Cuite"],["Suçon","Morsure"],
   ["Walk of shame","After"],["Cercueil","Urne"],["Cimetière","Morgue"],["Testament","Héritage"],
   ["Enterrement","Veillée funèbre"],["Croque-mort","Médecin légiste"],["Tueur en série","Tueur à gages"],["Enfer","Purgatoire"],
   ["Jacuzzi","Sauna"],["Body shot","Shooter"],["Sugar daddy","Gigolo"],["Infidélité","Jalousie"],
   ["Strip-poker","Action ou vérité"],["Nuisette","Porte-jarretelles"],["Massage","Caresse"],["Coup d'un soir","Relation libre"],
-  ["Love hotel","Motel"],["Fouet","Cravache"],["Huile de massage","Bougie parfumée"],["Message coquin","Photo osée"],
+  ["Love hotel","Motel"],["Fouet","Cravache"],["Huile de massage","Bougie parfumée"],["Latex","Cuir"],
   ["Fossoyeur","Embaumeur"],["Pierre tombale","Épitaphe"],["Crémation","Inhumation"],["Chaise électrique","Guillotine"],
   ["Barman","Videur"],["Rendez-vous galant","Speed dating"]
 ];
@@ -95,9 +95,9 @@ function twBanner(tw, tp){
 }
 function clueErr(t, tw, tp){
   const w = t.trim().split(/\s+/);
-  if(tw === "lettre" && norm(t).charAt(0) !== String(tp || "").toLowerCase()) return "Coup de théâtre : ton indice doit commencer par " + tp + ".";
-  if(tw === "deux" && w.length !== 2) return "Coup de théâtre : exactement deux mots.";
-  if(tw === "verbe" && (w.length !== 1 || !/(er|ir|re)$/.test(norm(t)))) return "Coup de théâtre : un verbe à l'infinitif (manger, partir, prendre…).";
+  if(tw === "lettre" && norm(t).charAt(0) !== String(tp || "").toLowerCase()) return "Coup de théâtre : ton indice doit commencer par la lettre " + tp + ".";
+  if(tw === "deux" && w.length !== 2) return "Coup de théâtre : ton indice doit faire exactement deux mots.";
+  if(tw === "verbe" && (w.length !== 1 || !/(er|ir|re)$/.test(norm(t)))) return "Coup de théâtre : il faut un seul verbe à l'infinitif (manger, partir, prendre…).";
   return "";
 }
 
@@ -110,11 +110,11 @@ function awards(ids, roles, vh, outAt, last, name){
   const hit = {}, got = {};
   A(vh).map(A).forEach(v => { if(!bad(v[1]) && bad(v[2])) hit[v[1]] = (hit[v[1]] || 0) + 1; if(!bad(v[2])) got[v[2]] = (got[v[2]] || 0) + 1; });
   const h = Object.keys(hit).sort((a, b) => hit[b] - hit[a])[0];
-  if(h) out.push([vary(["Flair de limier", "Œil de lynx", "Détecteur de mensonges", "Inspecteur en chef"], seed), name(h), SB.u.plural(hit[h], "vote") + " sur un imposteur"]);
+  if(h) out.push([vary(["Flair de limier", "Œil de lynx", "Détecteur de mensonges", "Inspecteur en chef"], seed), name(h), SB.u.plural(hit[h], "vote") + " contre les imposteurs"]);
   const g = Object.keys(got).sort((a, b) => got[b] - got[a])[0];
-  if(g && got[g] >= 2) out.push([vary(["Tête de suspect", "Coupable idéal", "Paratonnerre", "Bouc émissaire"], seed + 1), name(g), SB.u.plural(got[g], "vote") + " reçus sans être intrus"]);
+  if(g && got[g] >= 2) out.push([vary(["Tête de suspect", "Coupable idéal", "Paratonnerre", "Bouc émissaire"], seed + 1), name(g), SB.u.plural(got[g], "vote") + " reçus sans être coupable"]);
   const b = ids.filter(bad).map(id => [id, outAt[id] || last + 1]).sort((x, y) => y[1] - x[1])[0];
-  if(b && b[1] >= 2) out.push([vary(["Caméléon", "Agent dormant", "Maître du bluff", "Visage de marbre"], seed + 2), name(b[0]), outAt[b[0]] ? "tenu " + SB.u.plural(b[1] - 1, "tour") + " avant d'être démasqué" : "jamais démasqué"]);
+  if(b && b[1] >= 2) out.push([vary(["Caméléon", "Agent dormant", "Maître du bluff", "Visage de marbre"], seed + 2), name(b[0]), outAt[b[0]] ? "a tenu " + SB.u.plural(b[1] - 1, "tour") + " avant d'être démasqué" : "jamais démasqué"]);
   return out;
 }
 function awardsHTML(a){ return a.length ? '<div class="field"><span class="eyebrow">Trophées</span><ul class="list">' + a.map(x => '<li><span class="t" style="font-size:19px">' + esc(x[0]) + '</span><span class="by">' + esc(x[1]) + " · " + esc(x[2]) + "</span></li>").join("") + "</ul></div>" : ""; }
@@ -123,22 +123,22 @@ function winners(ids, roles, w){ return ids.filter(id => w === "c" ? roles[id] =
 function packBtn(attr, on, name, desc, hot){ return '<button type="button" class="pack' + (hot ? " hot" : "") + '" ' + attr + ' aria-pressed="' + on + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(name) + (hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(desc) + "</span></span></button>"; }
 
 SB.register({
-  id: "undercover", name: "Undercover", glyph: "Intrus", pitch: "Tous le même mot secret… sauf les intrus.", hot: true,
+  id: "undercover", name: "Undercover", glyph: "Intrus", pitch: "Un mot secret pour tous… sauf pour les intrus.", hot: true,
   accent: { light: "#8f9bff", dark: "#8f9bff" },
   tag: "Tout le monde a le même mot, sauf les intrus. Démasquez-les avant qu'ils gagnent.",
   min: 3, max: 16,
   rules: [
-    "Chacun reçoit un mot secret. Les intrus ont un mot proche, mais différent, et ne savent pas qu'ils sont intrus.",
-    "Chacun son tour, donnez un indice d'un mot sur votre mot, sans le dire.",
-    "Votez ensuite pour éliminer la personne qui vous semble suspecte.",
+    "Chacun reçoit un mot secret. Les intrus ont un mot proche mais différent, et ne savent pas qu'ils le sont.",
+    "Chacun son tour, donnez un indice en un seul mot en rapport avec votre mot secret, sans le prononcer.",
+    "Votez ensuite pour éliminer le joueur qui vous semble le plus suspect.",
     "Les civils gagnent s'ils éliminent tous les intrus. Les intrus gagnent s'ils sont aussi nombreux que les civils.",
-    "Variante Mister White : un joueur n'a aucun mot. S'il est éliminé, il gagne seul en devinant le mot des civils.",
+    "Variante Mister White : un joueur n'a aucun mot. S'il est éliminé, il peut encore gagner seul en devinant le mot des civils.",
     "Coups de théâtre : certains tours imposent une contrainte (lettre, thème, deux mots, immunité, voix double…)."
   ],
   options: [
     { id: "imp", label: "Nombre d'intrus", type: "seg", def: 0, values: [{ v: 0, label: "Auto" }, { v: 1, label: "1" }, { v: 2, label: "2" }, { v: 3, label: "3" }] },
     { id: "white", label: "Variante", type: "toggle", text: "Mister White", desc: "Un joueur sans mot qui peut gagner en devinant celui des civils", def: false },
-    { id: "twists", label: "Coups de théâtre", type: "toggle", text: "Coups de théâtre", desc: "Un tour sur trois environ, une contrainte s'ajoute", def: true },
+    { id: "twists", label: "Coups de théâtre", type: "toggle", text: "Coups de théâtre", desc: "Environ un tour sur trois, une contrainte s'ajoute", def: true },
     { id: "hard", label: "Mots", type: "toggle", text: "Ajouter le contenu 18+", desc: "Sexe, porno, tabous, humour noir : tout le contenu adulte", hot: true, def: false }
   ],
   start(ctx, o){
@@ -188,11 +188,11 @@ SB.register({
     const s = ctx.s, me = ctx.me, roles = s.roles || {}, words = s.words || {}, alive = A(s.alive);
     const isAlive = alive.indexOf(me) >= 0, myWord = words[me] || "", amW = roles[me] === "w";
     const lab = '<span class="eyebrow">Tour ' + s.round + " · " + SB.u.plural(alive.length, "joueur") + " en jeu</span>" + (s.phase === "clues" || s.phase === "vote" ? twBanner(s.tw, s.tp) : "");
-    const reminder = isAlive ? '<details><summary>Revoir mon mot</summary><p class="huge" style="margin-top:6px">' + (amW ? "Aucun mot" : esc(myWord)) + "</p>" + (amW ? '<p class="sm">Tu es Mister White : bluffe.</p>' : "") + "</details>" : '<p class="note-box">Tu es éliminé. Tu regardes la suite sans rien dévoiler.</p>';
+    const reminder = isAlive ? '<details><summary>Revoir mon mot</summary><p class="huge" style="margin-top:6px">' + (amW ? "Aucun mot" : esc(myWord)) + "</p>" + (amW ? '<p class="sm">Tu es Mister White : bluffe.</p>' : "") + "</details>" : '<p class="note-box">Tu es éliminé : regarde la suite sans rien dévoiler.</p>';
     const cluesHTML = hide => { const cl = A(s.clues).map(A); if(hide) return '<li><span class="by">Indices à l\'aveugle : ils seront révélés au moment du vote. ' + SB.u.plural(cl.length, "indice") + " donné" + (cl.length > 1 ? "s" : "") + ".</span></li>"; return cl.length ? cl.map(c => '<li><span class="t">' + esc(c[1]) + '</span><span class="by">' + esc(ctx.name(c[0])) + "</span></li>").join("") : '<li><span class="by">Pas encore d\'indice.</span></li>'; };
     if(s.phase === "reveal"){
       screen(root, "rv" + s.k, lab + '<div class="card acc"><span class="eyebrow">' + (amW ? "Ton rôle" : "Ton mot secret") + '</span><div data-w hidden>' + (amW ? '<p class="huge">Mister White</p><p class="sm">Tu n\'as pas de mot. Écoute les indices et bluffe. Si on t\'élimine, devine le mot des civils pour gagner.</p>' : '<p class="huge">' + esc(myWord) + "</p>") + '</div><p class="sm" data-hint>Cache ton écran, puis touche le bouton.</p>' +
-        '<button class="btn ghost" type="button" data-show>Voir mon mot</button></div><p class="howto">Personne ne sait s\'il est intrus. Retiens ton mot, puis confirme.</p>' +
+        '<button class="btn ghost" type="button" data-show>Voir mon mot</button></div><p class="howto">Personne ne sait s\'il est un intrus. Retiens ton mot, puis confirme.</p>' +
         '<div class="field"><span class="eyebrow">Prêts</span><div class="chips" data-chips></div></div>' + SB.u.dock('<button class="btn acc" type="button" data-ok>J\'ai retenu mon mot</button>'), r => {
         const w = r.querySelector("[data-w]"), b = r.querySelector("[data-show]");
         b.addEventListener("click", () => { w.hidden = !w.hidden; b.textContent = w.hidden ? "Voir mon mot" : "Cacher mon mot"; r.querySelector("[data-hint]").hidden = !w.hidden; });
@@ -204,9 +204,9 @@ SB.register({
       const ch = root.querySelector("[data-chips]"); if(ch.innerHTML !== chips) ch.innerHTML = chips;
     } else if(s.phase === "clues"){
       const order = A(s.order), cur = order[s.turn] || "", myTurn = cur === me;
-      const ask = s.tw === "deux" ? "un indice de deux mots" : s.tw === "verbe" ? "un verbe à l'infinitif" : s.tw === "emotion" ? "une émotion ou une sensation" : s.tw === "lieu" ? "un lieu" : s.tw === "lettre" ? "un indice d'un mot qui commence par " + esc(s.tp) : "un indice d'un seul mot";
+      const ask = s.tw === "deux" ? "un indice de deux mots" : s.tw === "verbe" ? "un verbe à l'infinitif" : s.tw === "emotion" ? "une émotion ou une sensation" : s.tw === "lieu" ? "un lieu" : s.tw === "lettre" ? "un indice en un mot commençant par " + esc(s.tp) : "un indice en un seul mot";
       screen(root, "cl" + s.k + "|" + s.turn + "|" + myTurn, lab + reminder + '<div class="field"><span class="eyebrow">Indices du tour</span><ul class="list" data-clues></ul></div>' +
-        SB.u.dock(myTurn ? '<div class="card acc"><span class="eyebrow">À toi</span><p>Donne ' + ask + " sur ton mot, sans le dire.</p><div class=\"row\"><input class=\"txt\" id=\"uc-in\" maxlength=\"30\" autocomplete=\"off\" placeholder=\"Ton indice\"><button class=\"btn acc\" type=\"button\" data-send style=\"flex:none\">Envoyer</button></div><p class=\"err\" data-err hidden></p></div>"
+        SB.u.dock(myTurn ? '<div class="card acc"><span class="eyebrow">À toi</span><p>Donne ' + ask + " en rapport avec ton mot, sans le dire.</p><div class=\"row\"><input class=\"txt\" id=\"uc-in\" maxlength=\"30\" autocomplete=\"off\" placeholder=\"Ton indice\"><button class=\"btn acc\" type=\"button\" data-send style=\"flex:none\">Envoyer</button></div><p class=\"err\" data-err hidden></p></div>"
           : '<p class="wait">' + esc(ctx.name(cur)) + " cherche son indice…</p>"), r => {
         const b = r.querySelector("[data-send]");
         if(b){
@@ -214,7 +214,7 @@ SB.register({
           const go = () => {
             const t = clean(inp.value, 30);
             if(!t){ err.textContent = "Écris un indice avant d'envoyer."; err.hidden = false; return; }
-            if(myWord && norm(t) === norm(myWord)){ err.textContent = "Tu ne peux pas donner ton mot lui-même."; err.hidden = false; return; }
+            if(myWord && norm(t) === norm(myWord)){ err.textContent = "Tu ne peux pas donner ton propre mot."; err.hidden = false; return; }
             const e = clueErr(t, s.tw, s.tp); if(e){ err.textContent = e; err.hidden = false; return; }
             err.hidden = true; b.disabled = true; ctx.send({ t });
           };
@@ -247,7 +247,7 @@ SB.register({
         : '<span class="eyebrow">Éliminé</span><div class="who">' + esc(ctx.name(s.out)) + '</div><p style="font-size:18px">' + esc(ctx.name(s.out)) + " était <b>" + roleLabel(roles[s.out]) + "</b>." + (roles[s.out] === "w" ? (s.wg ? " Sa proposition, « " + esc(s.wg) + " », est fausse." : " Il n'a rien proposé.") : " Son mot : « " + esc(words[s.out]) + " ».") + "</p>";
       const open = s.tw === "decouvert" ? '<div class="field"><span class="eyebrow">Vote à découvert</span><ul class="list">' + A(s.vl).map(A).map(v => '<li><span class="t" style="font-size:17px">' + esc(ctx.name(v[0])) + " → " + esc(ctx.name(v[1])) + "</span></li>").join("") + "</ul></div>" : "";
       screen(root, "out" + s.k + ctx.isHost + s.tie + s.out, head + '<div class="field"><span class="eyebrow">Votes</span><div class="bars">' + rows.map(id => '<div class="bar"><div class="lb"><span>' + esc(ctx.name(id)) + "</span><span>" + t[id] + '</span></div><div class="tr"><div class="fl" style="width:' + Math.round(100 * t[id] / Math.max(1, alive.length + (s.tie ? 0 : 1))) + '%"></div></div></div>').join("") + "</div></div>" + open +
-        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>Continuer</button>' : '<p class="wait">L\'hôte continue…</p>'), r => {
+        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>Continuer</button>' : '<p class="wait">L\'hôte lance la suite…</p>'), r => {
         const b = r.querySelector("[data-next]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const st = c.s, al = A(st.alive), ro = st.roles || {};
@@ -305,8 +305,8 @@ SB.register({
       const go = () => {
         if(L.phase === "setup"){
           const st = SB.u.store(), hard = !!st.ucHard, white = !!st.ucWhite, tw = st.ucTw !== false;
-          screen(root, "setup" + hard + white + tw, '<p class="howto">Le téléphone passe de main en main : chacun découvre son mot en secret. Les intrus ne savent pas qu\'ils sont intrus.</p>' +
-            '<div class="packs">' + packBtn("data-w", white, "Mister White", "Un joueur sans mot qui peut gagner en devinant celui des civils") + packBtn("data-t", tw, "Coups de théâtre", "Un tour sur trois environ, une contrainte s'ajoute") +
+          screen(root, "setup" + hard + white + tw, '<p class="howto">Le téléphone passe de main en main : chacun découvre son mot en secret. Les intrus ne savent pas qu\'ils le sont.</p>' +
+            '<div class="packs">' + packBtn("data-w", white, "Mister White", "Un joueur sans mot qui peut gagner en devinant celui des civils") + packBtn("data-t", tw, "Coups de théâtre", "Environ un tour sur trois, une contrainte s'ajoute") +
             packBtn("data-h", hard, "Ajouter le contenu 18+", "Sexe, porno, tabous, humour noir : tout le contenu adulte", true) + "</div>" +
             '<div class="dock"><button class="btn acc" type="button" data-go>Distribuer les mots</button></div>', r => {
             r.querySelector("[data-h]").addEventListener("click", () => { SB.u.persist({ ucHard: !hard }); go(); });
@@ -321,13 +321,13 @@ SB.register({
               r.querySelector("[data-n]").addEventListener("click", () => { L.seen = true; go(); });
             });
           } else {
-            screen(root, "s" + L.i, '<span class="eyebrow">' + esc(nm) + '</span><div class="card acc"><span class="eyebrow">' + (isW ? "Ton rôle" : "Ton mot secret") + '</span><p class="huge">' + (isW ? "Mister White" : esc(L.roles[L.i] === "u" ? L.und : L.civ)) + "</p>" + (isW ? '<p class="sm">Tu n\'as pas de mot. Bluffe ! Si on t\'élimine, devine le mot des civils pour gagner.</p>' : "") + '</div><p class="howto">Retiens-le, puis cache l\'écran.</p><div class="dock"><button class="btn acc" type="button" data-n>J\'ai retenu, cacher</button></div>', r => {
+            screen(root, "s" + L.i, '<span class="eyebrow">' + esc(nm) + '</span><div class="card acc"><span class="eyebrow">' + (isW ? "Ton rôle" : "Ton mot secret") + '</span><p class="huge">' + (isW ? "Mister White" : esc(L.roles[L.i] === "u" ? L.und : L.civ)) + "</p>" + (isW ? '<p class="sm">Tu n\'as pas de mot. Bluffe ! Si on t\'élimine, devine le mot des civils pour gagner.</p>' : "") + '</div><p class="howto">Retiens-le, puis cache l\'écran.</p><div class="dock"><button class="btn acc" type="button" data-n>C\'est retenu, cacher</button></div>', r => {
               r.querySelector("[data-n]").addEventListener("click", () => { L.seen = false; L.i++; if(L.i >= n) talk(); go(); });
             });
           }
         } else if(L.phase === "talk"){
-          const how = L.tw === "deux" ? "un indice de deux mots" : L.tw === "verbe" ? "un verbe à l'infinitif" : L.tw === "emotion" ? "une émotion" : L.tw === "lieu" ? "un lieu" : L.tw === "lettre" ? "un mot qui commence par " + esc(L.tp) : "un mot";
-          screen(root, "t" + L.round, '<span class="eyebrow">Tour ' + L.round + "</span>" + twBanner(L.tw, L.tp) + '<div class="pass"><span class="eyebrow">À vous de jouer</span><div class="who">Indices !</div><p>Chacun son tour, dites ' + how + " sur votre mot sans le dire. Commencez par <b>" + esc(names[L.first]) + "</b>. Puis votez à voix haute." + (L.tw === "double" ? " Le vote de " + esc(names[L.first]) + " compte double." : "") + "</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>On a voté</button></div>", r => {
+          const how = L.tw === "deux" ? "un indice de deux mots" : L.tw === "verbe" ? "un verbe à l'infinitif" : L.tw === "emotion" ? "une émotion" : L.tw === "lieu" ? "un lieu" : L.tw === "lettre" ? "un indice commençant par " + esc(L.tp) : "un indice en un mot";
+          screen(root, "t" + L.round, '<span class="eyebrow">Tour ' + L.round + "</span>" + twBanner(L.tw, L.tp) + '<div class="pass"><span class="eyebrow">À vous de jouer</span><div class="who">Indices !</div><p>Chacun son tour, dites ' + how + " en rapport avec votre mot, sans le dire. C'est <b>" + esc(names[L.first]) + "</b> qui commence. Ensuite, votez à voix haute." + (L.tw === "double" ? " Le vote de " + esc(names[L.first]) + " compte double." : "") + "</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>On a voté</button></div>", r => {
             r.querySelector("[data-n]").addEventListener("click", () => { L.phase = "elim"; go(); });
           });
         } else if(L.phase === "elim"){

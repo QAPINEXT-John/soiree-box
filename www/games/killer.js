@@ -6,46 +6,46 @@ const { esc, A, shuffle, screen, store, persist, dock, armTap, buzz, txt, pick }
 
 const MISSIONS = [
   "Fais dire « ananas » à ta cible","Fais trinquer ta cible avec toi en la regardant dans les yeux","Fais tenir ton verre à ta cible pendant 10 secondes",
-  "Fais chanter une chanson à ta cible, même une seule phrase","Fais dire à ta cible le prénom de son premier crush","Fais en sorte que ta cible te prête son téléphone",
-  "Fais un selfie avec ta cible","Fais dire « c'est pas faux » à ta cible","Fais en sorte que ta cible t'appelle par un surnom","Fais goûter quelque chose à ta cible",
+  "Fais chanter ta cible, ne serait-ce qu'un bout de chanson","Fais dire à ta cible le prénom de son premier crush","Fais en sorte que ta cible te prête son téléphone",
+  "Fais un selfie avec ta cible","Fais dire « c'est pas faux » à ta cible","Fais en sorte que ta cible t'invente un surnom et t'appelle comme ça","Fais goûter quelque chose à ta cible",
   "Fais enlever une chaussure à ta cible","Fais en sorte que ta cible te donne l'heure","Fais imiter un animal à ta cible","Fais en sorte que ta cible te tape dans la main",
-  "Fais dire « je t'aime » à ta cible, à n'importe qui","Fais en sorte que ta cible te donne un conseil amoureux","Fais danser ta cible, même 5 secondes",
-  "Fais en sorte que ta cible te raconte un souvenir d'enfance","Fais dire « parapluie » à ta cible","Fais en sorte que ta cible te montre une photo de son téléphone",
-  "Fais compter ta cible jusqu'à 10","Fais en sorte que ta cible te serve à boire","Fais en sorte que ta cible te fasse un compliment","Fais en sorte que ta cible se lève pour toi",
+  "Fais dire « je t'aime » à ta cible, à n'importe qui","Fais en sorte que ta cible te donne un conseil amoureux","Fais danser ta cible, ne serait-ce que 5 secondes",
+  "Fais en sorte que ta cible te raconte un souvenir d'enfance","Fais dire « parapluie » à ta cible","Fais en sorte que ta cible te montre une photo de sa galerie",
+  "Fais compter ta cible jusqu'à 10","Fais en sorte que ta cible te serve à boire","Fais en sorte que ta cible te fasse un compliment","Fais en sorte que ta cible te cède sa place",
   "Fais en sorte que ta cible te dise son signe astrologique","Fais en sorte que ta cible accepte un pari avec toi","Fais rire ta cible avec une blague nulle",
   "Fais en sorte que ta cible t'explique les règles d'un jeu","Fais répéter à ta cible, mot pour mot, une phrase que tu viens de dire","Fais en sorte que ta cible prenne une photo de toi",
-  "Fais lever le pouce à ta cible","Fais en sorte que ta cible te donne un objet de sa poche","Fais dire « oui » trois fois de suite à ta cible","Fais changer de place à ta cible",
+  "Fais lever le pouce à ta cible","Fais en sorte que ta cible te donne un objet qu'elle a dans sa poche","Fais dire « oui » trois fois de suite à ta cible","Fais changer de place à ta cible",
   "Fais citer à ta cible une ville qui commence par M","Fais imiter quelqu'un de la soirée à ta cible","Fais en sorte que ta cible te montre sa dernière recherche Google",
   "Fais en sorte que ta cible te dise son plat préféré","Fais faire un clin d'œil à ta cible","Fais siffler ta cible","Fais en sorte que ta cible te serre la main",
   "Fais lire un texte à voix haute à ta cible","Fais fredonner le générique d'un dessin animé à ta cible","Fais dire « c'est la vie » à ta cible","Fais en sorte que ta cible te fasse goûter son verre",
-  "Fais en sorte que ta cible t'aide à porter quelque chose","Fais dire « catastrophe » à ta cible","Fais en sorte que ta cible te demande « ça va ? »","Invente un check avec ta cible et fais-le",
-  "Fais en sorte que ta cible t'appelle sur ton téléphone","Fais en sorte que ta cible t'envoie un message","Fais raconter son pire rendez-vous à ta cible","Fais tenir ta cible sur une jambe",
-  "Fais manger à ta cible quelque chose que tu lui tends","Fais dire un mot en anglais à ta cible","Fais en sorte que ta cible te prête un vêtement ou un accessoire",
+  "Fais en sorte que ta cible t'aide à porter quelque chose","Fais dire « catastrophe » à ta cible","Fais en sorte que ta cible te demande « ça va ? »","Invente un check avec ta cible et faites-le ensemble",
+  "Fais en sorte que ta cible t'appelle sur ton portable","Fais en sorte que ta cible t'envoie un message","Fais raconter son pire rendez-vous à ta cible","Fais tenir ta cible en équilibre sur une jambe",
+  "Fais en sorte que ta cible te dise quel métier elle rêvait de faire enfant","Fais dire un mot en anglais à ta cible","Fais en sorte que ta cible te prête un vêtement ou un accessoire",
   "Fais applaudir ta cible","Fais en sorte que ta cible te dise son pire défaut","Fais en sorte que ta cible te recommande une série","Fais dire « incroyable » à ta cible",
-  "Fais en sorte que ta cible te donne son avis sur ta tenue","Fais en sorte que ta cible te dise quel super-pouvoir elle voudrait",
+  "Fais en sorte que ta cible te donne son avis sur ta tenue","Fais en sorte que ta cible te dise quel super-pouvoir elle aimerait avoir",
   "Fais dire « croissant » à ta cible","Fais en sorte que ta cible te montre son fond d'écran","Fais faire un vœu à voix haute à ta cible",
-  "Fais en sorte que ta cible te dise son film préféré","Fais en sorte que ta cible imite ta voix","Fais en sorte que ta cible te donne un surnom",
-  "Fais réciter à ta cible l'alphabet à l'envers, au moins 5 lettres","Fais en sorte que ta cible te fasse une révérence","Fais en sorte que ta cible te dessine quelque chose",
+  "Fais en sorte que ta cible te dise son film préféré","Fais en sorte que ta cible imite ta voix","Fais en sorte que ta cible te dise sa chanson préférée du moment",
+  "Fais réciter l'alphabet à l'envers à ta cible (au moins 5 lettres)","Fais en sorte que ta cible te fasse une révérence","Fais en sorte que ta cible te dessine quelque chose",
   "Fais en sorte que ta cible te raconte le dernier rêve dont elle se souvient","Fais dire « absolument » à ta cible","Fais en sorte que ta cible te prédise ton avenir",
   "Fais en sorte que ta cible te fasse un pronostic sur la fin de la soirée","Fais en sorte que ta cible te pose une question sur ton travail ou tes études","Fais compter à ta cible le nombre de personnes dans la pièce",
   "Fais en sorte que ta cible t'aide à chercher un objet que tu as « perdu »","Fais chuchoter ta cible","Fais en sorte que ta cible te raconte son dernier fou rire",
   "Fais en sorte que ta cible te montre l'appli qu'elle utilise le plus","Fais bâiller ta cible","Fais en sorte que ta cible t'appelle par ton nom de famille",
   "Fais écrire son prénom à ta cible, sur n'importe quoi","Fais en sorte que ta cible te donne une note sur 10 pour quelque chose","Fais dire « bizarre » à ta cible",
   "Fais en sorte que ta cible te dise ce qu'elle a mangé ce midi","Fais en sorte que ta cible pose sa main sur ton épaule","Fais en sorte que ta cible te cite une réplique de film",
-  "Fais en sorte que ta cible te parle avec un accent","Fais en sorte que ta cible te dise le nom de son animal de compagnie, ou celui qu'elle aimerait avoir","Fais en sorte que ta cible te propose de jouer à un jeu",
+  "Fais en sorte que ta cible te parle avec un accent","Fais en sorte que ta cible te parle de son animal de compagnie (ou de celui qu'elle rêve d'avoir)","Fais en sorte que ta cible te propose de jouer à un jeu",
   "Fais dire « à la tienne » à ta cible","Fais en sorte que ta cible t'emprunte un objet","Fais en sorte que ta cible réponde à une devinette","Fais faire une grimace à ta cible"
 ];
 const HOT = [
   "Fais dire « préliminaires » à ta cible","Fais raconter son pire plan d'un soir à ta cible","Fais avouer son nombre de partenaires à ta cible",
   "Fais dire à ta cible qui elle trouve le plus sexy ici","Fais dire « capote » à ta cible","Fais en sorte que ta cible te montre son dernier match sur une appli de rencontre",
   "Fais en sorte que ta cible te fasse un compliment sur ton physique","Fais avouer un fantasme à ta cible","Fais dire « j'ai envie de toi » à ta cible, à n'importe qui",
-  "Fais raconter à ta cible l'endroit le plus bizarre où elle l'a fait","Fais en sorte que ta cible te raconte son premier baiser","Fais mimer une position du Kamasutra à ta cible",
-  "Fais dire « menottes » à ta cible","Fais avouer son crush de la soirée à ta cible","Fais en sorte que ta cible te masse les épaules 10 secondes","Fais en sorte que ta cible t'appelle « mon cœur »",
+  "Fais raconter à ta cible l'endroit le plus insolite où elle a fait l'amour","Fais en sorte que ta cible te raconte son premier baiser","Fais mimer une position du Kamasutra à ta cible",
+  "Fais dire « menottes » à ta cible","Fais avouer à ta cible son plus gros coup de foudre","Fais en sorte que ta cible te masse les épaules pendant 10 secondes","Fais en sorte que ta cible t'appelle « mon cœur »",
   "Fais en sorte que ta cible t'explique sa technique de drague","Fais raconter son pire râteau à ta cible","Fais pousser un soupir langoureux à ta cible","Fais avouer à ta cible si elle a déjà simulé",
   "Fais enlever un vêtement à ta cible (veste, chaussette, ce qu'elle veut)","Fais en sorte que ta cible te fasse un bisou sur la joue","Fais avouer à ta cible la couleur de ses sous-vêtements",
   "Danse un slow avec ta cible","Fais en sorte que ta cible te fasse une fausse déclaration d'amour","Fais dire « oh oui » à ta cible, de la façon la plus suggestive possible",
-  "Fais raconter son rêve le plus chaud à ta cible","Fais avouer à ta cible sur quelle célébrité elle fantasme","Fais avouer à ta cible son record sans coucher avec personne",
-  "Fais avouer à ta cible le pire message qu'elle a envoyé à un ex","Fais dire à ta cible ce qu'elle a dans sa table de nuit","Fais avouer à ta cible son pire nude raté",
+  "Fais raconter son rêve le plus chaud à ta cible","Fais avouer à ta cible sur quelle célébrité elle fantasme","Fais avouer à ta cible sa plus longue période sans sexe",
+  "Fais avouer à ta cible le pire message qu'elle a envoyé à un ex","Fais dire à ta cible ce qu'il y a dans sa table de nuit","Fais avouer à ta cible son nude le plus raté",
   "Fais avouer à ta cible le surnom le plus gênant qu'on lui a donné au lit","Fais dire « lingerie » à ta cible","Fais avouer à ta cible la chose la plus osée qu'elle a faite dans un lieu public",
   "Fais en sorte que ta cible te sorte sa meilleure phrase de drague","Fais dire « strip-poker » à ta cible","Fais avouer à ta cible si elle a déjà embrassé quelqu'un de cette soirée",
   "Fais en sorte que ta cible te murmure quelque chose à l'oreille","Fais avouer à ta cible le prénom de la dernière personne qu'elle a embrassée","Fais avouer à ta cible ce qu'elle regarde en premier chez quelqu'un",
@@ -77,14 +77,14 @@ const CSS = '<style>.kl-m{font-size:22px; font-weight:800; line-height:1.25; ove
 /* ----- Coups de théâtre : des événements qui relancent la chasse ----- */
 const MIN = 60000;
 const EVENTS = [
-  { id: "prime", name: "Prime sur une tête", desc: "Qui élimine {p} gagne 2 points de bonus. La prime court 10 minutes.", ms: 10 * MIN, ok: o => o.n >= 3 },
+  { id: "prime", name: "Prime sur une tête", desc: "Celui qui élimine {p} gagne 2 points de bonus. Prime valable 10 minutes.", ms: 10 * MIN, ok: o => o.n >= 3 },
   { id: "treve", name: "Trêve", desc: "Pendant 3 minutes, aucune mission ne peut être annoncée. Préparez vos coups en douce.", ms: 3 * MIN },
   { id: "express", name: "Contrat express", desc: "Pendant 10 minutes, tu peux aussi éliminer ta cible avec la mission bonus : « {m} ». Elle rapporte 1 point de plus.", ms: 10 * MIN },
   { id: "double", name: "Chasse ouverte", desc: "Pendant 10 minutes, chaque élimination rapporte 2 points.", ms: 10 * MIN },
-  { id: "melange", name: "Grand chambardement", desc: "Les cibles sont redistribuées et chacun reçoit une nouvelle mission. Relisez vite les vôtres !", ok: o => o.n >= 3 },
+  { id: "melange", name: "Grand chambardement", desc: "Les cibles sont redistribuées et chacun reçoit une nouvelle mission. Allez vite voir la vôtre !", ok: o => o.n >= 3 },
   { id: "inverse", name: "Demi-tour", desc: "La chaîne s'inverse : tu chasses maintenant la personne qui te chassait. Nouvelles missions pour tous.", ok: o => o.n >= 3 },
   { id: "ordres", name: "Nouveaux ordres", desc: "Même cible, mais tout le monde reçoit une nouvelle mission.", ok: o => o.n >= 2 },
-  { id: "amnistie", name: "Amnistie", desc: "Les accusations déjà grillées sont rendues : chacun peut de nouveau démasquer son chasseur.", ok: o => o.used > 0 }
+  { id: "amnistie", name: "Amnistie", desc: "Ceux qui ont déjà utilisé leur accusation la récupèrent : chacun peut de nouveau tenter de démasquer son chasseur.", ok: o => o.used > 0 }
 ];
 const RETARGET = { melange: "Coup de théâtre : nouvelle cible et nouvelle mission !", inverse: "Demi-tour : tu chasses la personne qui te chassait. Nouvelle mission !", ordres: "Nouveaux ordres : même cible, nouvelle mission." };
 function evOn(W, now){
@@ -193,13 +193,13 @@ const DEF = {
   tag: "Une cible, une mission secrète. Réussis-la sans te faire griller et récupère la cible de ta victime.",
   min: 4, max: 20,
   rules: [
-    "Chacun reçoit en secret une cible et une mission, par exemple « Fais dire ananas à ta cible ».",
+    "Chacun reçoit en secret une cible et une mission, par exemple : faire dire « ananas » à ta cible.",
     "Le jeu tourne en fond pendant toute la soirée : vous pouvez jouer aux autres jeux en même temps.",
-    "Mission réussie ? Touche « J'ai réussi ». Ta victime confirme, tu marques un point et tu récupères sa cible et sa mission.",
-    "Tu penses savoir qui te chasse ? Tu as une seule accusation : si tu as raison, ton chasseur est éliminé.",
+    "Mission réussie ? Touche « J'ai réussi ma mission ». Ta victime confirme, tu marques un point et tu récupères sa cible et sa mission.",
+    "Tu penses savoir qui te chasse ? Tu n'as droit qu'à une accusation : si tu as raison, ton chasseur est éliminé.",
     "Mission impossible ? Ton joker te donne une nouvelle mission, une seule fois.",
     "Coups de théâtre : après une élimination, ou quand ça traîne, un événement peut tomber. Prime sur une tête, trêve, contrat express, cibles mélangées…",
-    "Le dernier survivant gagne. L'hôte peut arrêter la partie avant : le meilleur score l'emporte."
+    "Le dernier survivant gagne. L'hôte peut arrêter la partie avant la fin : le meilleur score l'emporte alors."
   ],
   options: [
     { id: "packs", label: "Missions", type: "multi", def: ["classique"], values: PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, count: p.list.length })) },
@@ -234,7 +234,7 @@ const DEF = {
         const cl = W.claims[id];
         if(cl && W.phase === "play"){
           if(inp.v.ok){ eliminate(W, id, cl.by, "k", fresh, now, cl.x); W.note[cl.by] = { t: "Bien joué, " + ctx.name(id) + " est hors jeu ! Tu récupères sa cible et sa mission.", at: now }; }
-          else { delete W.claims[id]; W.nope[id] = (W.nope[id] || 0) + 1; W.note[cl.by] = { t: ctx.name(id) + " conteste ta mission. Réglez ça entre vous, puis retente.", at: now }; }
+          else { delete W.claims[id]; W.nope[id] = (W.nope[id] || 0) + 1; W.note[cl.by] = { t: ctx.name(id) + " conteste ta mission. Réglez ça entre vous, puis retente ta chance.", at: now }; }
         }
       }
       if(inp.a && inp.a.n > (sn.a || 0)){
@@ -246,7 +246,7 @@ const DEF = {
           if(hunter && inp.a.w === hunter){
             const g = eliminate(W, hunter, id, "u", fresh, now);
             if(g && g !== id) W.note[g] = { t: "Ta cible a été éliminée par quelqu'un d'autre. Tu as une nouvelle cible et une nouvelle mission.", at: now };
-            W.note[id] = { t: "Bien vu, c'était bien " + ctx.name(hunter) + " ! Ton chasseur est hors jeu.", at: now };
+            W.note[id] = { t: "Bien vu, c'était " + ctx.name(hunter) + " ! Ton chasseur est hors jeu.", at: now };
           } else W.note[id] = { t: "Raté, ce n'était pas " + ctx.name(inp.a.w) + ". Tu n'as plus d'accusation.", at: now };
         }
       }
@@ -330,7 +330,7 @@ const DEF = {
       const q = sel => r.querySelector(sel);
       const n = f => (((ctx.mine() || {})[f] || {}).n || 0) + 1;
       if(q("[data-eye]")) q("[data-eye]").addEventListener("click", () => { UI.open = !UI.open; buzz(8); again(); });
-      if(q("[data-kill]")) armTap(q("[data-kill]"), () => { buzz([30, 40, 30]); ctx.send({ c: { n: n("c"), t: myT } }); }, "Toucher encore : " + nameOf(myT) + " est eu ?");
+      if(q("[data-kill]")) armTap(q("[data-kill]"), () => { buzz([30, 40, 30]); ctx.send({ c: { n: n("c"), t: myT } }); }, "Toucher encore : mission réussie sur " + nameOf(myT) + " ?");
       if(q("[data-killx]")) armTap(q("[data-killx]"), () => { buzz([30, 40, 30]); ctx.send({ c: { n: n("c"), t: myT, x: 1 } }); }, "Toucher encore : contrat express réussi ?");
       if(q("[data-jok]")) armTap(q("[data-jok]"), () => { buzz(20); ctx.send({ j: { n: n("j") } }); }, "Toucher encore : utiliser ton joker ?");
       if(q("[data-acc]")) q("[data-acc]").addEventListener("click", () => { UI.acc = true; again(); });

@@ -13,7 +13,7 @@ const CARDS = [
   ["Cinéma",["Film","Écran","Pop-corn","Salle","Acteur"]],["Mariage",["Alliance","Robe","Époux","Église","Fête"]],
   ["Zombie",["Mort","Vivant","Cerveau","Manger","Apocalypse"]],["Café",["Tasse","Noir","Matin","Boire","Expresso"]],
   ["Licorne",["Corne","Cheval","Arc-en-ciel","Magique","Blanc"]],["Ascenseur",["Étage","Bouton","Monter","Descendre","Immeuble"]],
-  ["Pirate",["Bateau","Trésor","Œil","Perroquet","Capitaine"]],["Hiver",["Froid","Neige","Saison","Décembre","Manteau"]],
+  ["Pirate",["Bateau","Trésor","Bandeau","Perroquet","Capitaine"]],["Hiver",["Froid","Neige","Saison","Décembre","Manteau"]],
   ["Anniversaire",["Gâteau","Bougie","Âge","Cadeau","Fête"]],["Banane",["Jaune","Fruit","Singe","Éplucher","Peau"]],
   ["Police",["Agent","Voleur","Sirène","Commissariat","Arrêter"]],["Guitare",["Cordes","Musique","Jouer","Instrument","Rock"]],
   ["Selfie",["Photo","Téléphone","Visage","Instagram","Prendre"]],["Fantôme",["Drap","Mort","Hanter","Blanc","Peur"]],
@@ -42,20 +42,20 @@ const CARDS = [
   ["Halloween",["Citrouille","Bonbons","Déguisement","Octobre","Peur"]],["Marathon",["Courir","Kilomètres","Course","Sport","Long"]],
   ["Électricité",["Courant","Prise","Lumière","Câble","Ampoule"]],["Fusée",["Espace","Décoller","Lune","Astronaute","Moteur"]],
   ["Ordinateur",["Clavier","Écran","Souris","Internet","Travail"]],["Montgolfière",["Ballon","Air chaud","Voler","Panier","Ciel"]],
-  ["Boulanger",["Pain","Baguette","Four","Croissant","Farine"]],["Igloo",["Glace","Esquimau","Maison","Neige","Froid"]],
+  ["Boulanger",["Pain","Baguette","Four","Croissant","Farine"]],["Igloo",["Glace","Inuit","Maison","Neige","Froid"]],
   ["Cactus",["Épines","Désert","Plante","Piquer","Arroser"]],["Pharaon",["Égypte","Pyramide","Roi","Momie","Tombeau"]],
   ["Trampoline",["Sauter","Rebondir","Toile","Jardin","Haut"]],["Sous-marin",["Mer","Plonger","Bateau","Périscope","Eau"]],
   ["Moustache",["Poils","Lèvre","Visage","Barbe","Homme"]],["Cerf-volant",["Vent","Ficelle","Voler","Plage","Ciel"]],
   ["Chaussette",["Pied","Paire","Laine","Trou","Chaussure"]],["Arbitre",["Sifflet","Match","Carton","Faute","Football"]],
   ["Magicien",["Tour","Chapeau","Lapin","Baguette","Magie"]],["Bougie",["Flamme","Cire","Allumer","Anniversaire","Lumière"]],
-  ["Microbe",["Maladie","Petit","Virus","Microscope","Laver"]],["Cow-boy",["Cheval","Chapeau","Western","Lasso","Far West"]],
+  ["Microbe",["Maladie","Petit","Virus","Microscope","Bactérie"]],["Cow-boy",["Cheval","Chapeau","Western","Lasso","Far West"]],
   ["Échecs",["Roi","Reine","Plateau","Pion","Mat"]],["Hérisson",["Piquants","Animal","Boule","Forêt","Épines"]],
   ["Plombier",["Fuite","Tuyau","Eau","Réparer","Robinet"]],["Tempête",["Vent","Pluie","Orage","Météo","Fort"]],
   ["Mouette",["Oiseau","Mer","Plage","Crier","Blanc"]],["Sapin",["Noël","Arbre","Vert","Aiguilles","Forêt"]],
   ["Chevalier",["Armure","Épée","Cheval","Moyen Âge","Roi"]],["Sieste",["Dormir","Après-midi","Canapé","Repos","Fatigue"]],
   ["Pâtes",["Italie","Spaghetti","Cuire","Sauce","Eau"]],["Sirène",["Poisson","Mer","Queue","Chanter","Femme"]],
-  ["Tornade",["Vent","Tourner","Ouragan","Maison","Météo"]],["Balançoire",["Jardin","Enfant","Pousser","Aller","Corde"]],
-  ["Loup-garou",["Lune","Pleine","Transformer","Poils","Hurler"]],["Fromage",["Lait","Vache","Camembert","Trou","Odeur"]],
+  ["Tornade",["Vent","Tourner","Ouragan","Détruire","Météo"]],["Balançoire",["Jardin","Enfant","Pousser","Parc","Corde"]],
+  ["Loup-garou",["Lune","Griffes","Transformer","Poils","Hurler"]],["Fromage",["Lait","Vache","Camembert","Trou","Odeur"]],
   ["Valise",["Voyage","Vêtements","Roulettes","Aéroport","Partir"]],["Thermomètre",["Température","Fièvre","Degré","Malade","Chaud"]],
   ["Escalier",["Marches","Monter","Descendre","Étage","Rampe"]],["Dragon",["Feu","Cracher","Ailes","Château","Princesse"]],
   ["Coiffeur",["Cheveux","Couper","Ciseaux","Salon","Brushing"]],["Pique-nique",["Herbe","Panier","Manger","Nappe","Dehors"]],
@@ -72,7 +72,7 @@ const HARD_CARDS = [
   ["Gueule de bois",["Alcool","Lendemain","Mal de tête","Soirée","Vomir"]],["Plan cul",["Sexe","Sans lendemain","Appli","Coucher","Relation"]],
   ["Nudes",["Photo","Nu","Envoyer","Téléphone","Snap"]],["Fessée",["Taper","Fesses","Main","Punir","Coquin"]],
   ["Tinder",["Appli","Rencontre","Swipe","Match","Droite"]],["Club libertin",["Échangiste","Couple","Soirée","Sexe","Masque"]],
-  ["Gigolo",["Payer","Homme","Escort","Riche","Femme"]],["Orgasme",["Plaisir","Jouir","Sommet","Sexe","Crier"]],
+  ["Gigolo",["Payer","Homme","Escort","Riche","Femme"]],["Orgasme",["Plaisir","Jouir","Septième ciel","Sexe","Crier"]],
   ["Suçon",["Cou","Bisou","Marque","Aspirer","Rouge"]],["Préliminaires",["Avant","Caresses","Sexe","Bisous","Chauffer"]],
   ["Walk of shame",["Matin","Retour","Honte","Soirée","Vêtements"]],["Lubrifiant",["Glisser","Gel","Sexe","Tube","Huile"]],
   ["Pole dance",["Barre","Danser","Strip","Sport","Club"]],["Cocu",["Tromper","Cornes","Mari","Infidèle","Couple"]],
@@ -82,7 +82,7 @@ const HARD_CARDS = [
   ["Jacuzzi",["Bulles","Eau","Chaud","Bain","Spa"]],["Body shot",["Boire","Corps","Sel","Citron","Tequila"]],
   ["Sugar daddy",["Riche","Vieux","Cadeaux","Payer","Jeune"]],["Infidélité",["Tromper","Couple","Amant","Mensonge","Cocu"]],
   ["Strip-poker",["Cartes","Déshabiller","Perdre","Vêtements","Jeu"]],["Nuisette",["Dentelle","Nuit","Soie","Lingerie","Sexy"]],
-  ["Speed dating",["Rencontre","Minutes","Table","Célibataire","Rapide"]],["Ivresse",["Alcool","Saoul","Boire","Tituber","Vin"]],
+  ["Speed dating",["Rencontre","Minutes","Table","Célibataire","Rapide"]],["Ivresse",["Alcool","Soûl","Boire","Tituber","Vin"]],
   ["Shooter",["Verre","Petit","Cul sec","Alcool","Tequila"]],["Massage",["Huile","Mains","Dos","Détente","Masser"]],
   ["Corbillard",["Voiture","Mort","Cercueil","Enterrement","Noir"]],["Épitaphe",["Tombe","Inscription","Mort","Pierre","Phrase"]],
   ["Fossoyeur",["Creuser","Tombe","Cimetière","Pelle","Mort"]],["Rupture",["Couple","Quitter","Larmes","Ex","Séparer"]],
@@ -100,11 +100,11 @@ const TEAMS = [{ n: "Équipe Rouge", c: "#d23b3b" }, { n: "Équipe Bleue", c: "#
 const TWISTS = [
   { id: "eclair", name: "Manche éclair", desc: "Chrono divisé par deux, mais chaque mot trouvé vaut 2 points." },
   { id: "double", name: "Points doublés", desc: "Mot trouvé : +2. Mot interdit : −2." },
-  { id: "mime", name: "Mime", desc: "Interdit de parler, on mime. Mot trouvé : +2. Un mot prononcé se buzze." },
+  { id: "mime", name: "Mime", desc: "Interdit de parler : on mime. Mot trouvé : +2. Au moindre mot prononcé, buzz !" },
   { id: "sanspasse", name: "Sans filet", desc: "Impossible de passer une carte pendant ce tour." },
   { id: "passe", name: "Passe payante", desc: "Chaque carte passée coûte 1 point." },
   { id: "or", name: "Mot en or", desc: "Le premier mot trouvé du tour vaut 3 points." },
-  { id: "rebond", name: "Rebond", desc: "Un mot interdit donne 1 point à l'équipe adverse." },
+  { id: "rebond", name: "Rebond", desc: "Mot interdit : pas de malus, mais 1 point pour l'équipe adverse." },
   { id: "temps", name: "Prolongations", desc: "Chaque mot trouvé ajoute 5 secondes au chrono." },
   { id: "unmot", name: "Un mot à la fois", desc: "Un seul mot par indice. Une phrase se buzze comme un mot interdit." }
 ];
@@ -137,12 +137,12 @@ function awards(tl, name, who){
   who = who || name;
   const t = A(tl).map(A), out = [], seed = t.reduce((a, x) => a + (+x[2] || 0) * 3 + (+x[3] || 0), 0);
   const best = t.slice().sort((a, b) => b[2] - a[2])[0];
-  if(best && best[2] > 0) out.push([vary(["Langue bien pendue", "Moulin à paroles", "Machine à faire deviner", "Orateur de génie"], seed), name(best), SB.u.plural(best[2], "mot") + " en un tour"]);
+  if(best && best[2] > 0) out.push([vary(["Langue bien pendue", "Moulin à paroles", "Pro de l'indice", "Orateur de génie"], seed), name(best), SB.u.plural(best[2], "mot") + " en un tour"]);
   const agg = {}; t.forEach(x => { const k = who(x); agg[k] = agg[k] || [0, 0]; agg[k][0] += +x[3] || 0; agg[k][1] += +x[4] || 0; });
   const bz = Object.keys(agg).sort((a, b) => agg[b][0] - agg[a][0])[0];
   if(bz && agg[bz][0] > 0) out.push([vary(["Langue qui fourche", "Gaffeur en chef", "Abonné au buzz", "Lapsus ambulant"], seed + 1), bz, SB.u.plural(agg[bz][0], "mot interdit", "mots interdits")]);
   const ps = Object.keys(agg).sort((a, b) => agg[b][1] - agg[a][1])[0];
-  if(ps && agg[ps][1] >= 2) out.push([vary(["Roi de la passe", "Zappeur fou", "Joker permanent", "Esquive olympique"], seed + 2), ps, SB.u.plural(agg[ps][1], "carte passée", "cartes passées")]);
+  if(ps && agg[ps][1] >= 2) out.push([vary(["Passeur compulsif", "Zappeur fou", "Joker permanent", "Esquive olympique"], seed + 2), ps, SB.u.plural(agg[ps][1], "carte passée", "cartes passées")]);
   return out;
 }
 function awardsHTML(a){ return a.length ? '<div class="field"><span class="eyebrow">Trophées</span><ul class="list">' + a.map(x => '<li><span class="t" style="font-size:19px">' + esc(x[0]) + '</span><span class="by">' + esc(x[1]) + " · " + esc(x[2]) + "</span></li>").join("") + "</ul></div>" : ""; }
@@ -154,7 +154,7 @@ SB.register({
   min: 4, max: 20,
   rules: [
     "Deux équipes. À chaque tour, un joueur fait deviner un maximum de mots à son équipe avant la fin du chrono.",
-    "Interdit de dire le mot, ses dérivés, ou les 5 mots interdits de la carte.",
+    "Interdit de dire le mot lui-même, un mot de la même famille ou l'un des 5 mots interdits de la carte.",
     "L'équipe adverse voit la carte et appuie sur « Buzz » si un mot interdit est prononcé : −1 point.",
     "Mot trouvé : +1. On peut passer une carte sans pénalité.",
     "Coups de théâtre : un tour sur trois environ, la règle change (manche éclair, mime, mot en or, sans filet…).",

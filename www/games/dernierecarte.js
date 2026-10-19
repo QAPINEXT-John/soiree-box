@@ -8,6 +8,7 @@ const { esc, A, shuffle, screen, store, persist, dock, buzz } = SB.u;
    Une carte = couleur + valeur : "r7", "gS" (passe), "bR" (inversion), "yD" (+2), "wW" (joker), "wF" (+4). */
 const COLS = ["r", "y", "g", "b"];
 const CNAME = { r: "rouge", y: "jaune", g: "vert", b: "bleu" };
+const CNAME_F = { r: "rouge", y: "jaune", g: "verte", b: "bleue" }; // accord avec « Inversion »
 const CHEX = { r: "#e0393e", y: "#f2a900", g: "#22964a", b: "#1f6fd6" };
 const col = c => c[0], val = c => c.slice(1), wild = c => c[0] === "w";
 function newDeck(){
@@ -19,8 +20,8 @@ function newDeck(){
 function glyph(c){ const v = val(c); return v === "S" ? "⊘" : v === "R" ? "⇄" : v === "D" ? "+2" : v === "F" ? "+4" : v === "W" ? "★" : v; }
 function label(c){
   const v = val(c);
-  const n = v === "S" ? "Passe" : v === "R" ? "Inversion" : v === "D" ? "+2" : v === "F" ? "+4" : v === "W" ? "Joker" : v;
-  return wild(c) ? n : n + " " + CNAME[col(c)];
+  const n = v === "S" ? "Passe-tour" : v === "R" ? "Inversion" : v === "D" ? "+2" : v === "F" ? "+4" : v === "W" ? "Joker" : v;
+  return wild(c) ? n : n + " " + (v === "R" ? CNAME_F : CNAME)[col(c)];
 }
 function points(c){ const v = val(c); return /^\d$/.test(v) ? +v : wild(c) ? 50 : 20; }
 function order(cards){
@@ -95,10 +96,10 @@ function evInfo(E, nameOf){
     case "pluie": return { name: "Pluie de cartes", desc: "Tout le monde pioche une carte." };
     case "sens": return { name: "Demi-tour", desc: "Le sens du jeu s'inverse." };
     case "voisin": return { name: "Mains échangées", desc: "Chacun passe sa main à son voisin, dans le sens du jeu." };
-    case "interdit": return { name: "Couleur interdite", desc: "Plus personne ne pose de " + CNAME[E.evx] + " pendant " + n + " tours, jokers compris." };
+    case "interdit": return { name: "Couleur interdite", desc: "Pendant " + n + " tours, interdit de jouer du " + CNAME[E.evx] + ", même en le choisissant avec un joker." };
     case "double": return { name: "Double tour", desc: nameOf(E.evx) + " joue deux fois de suite." };
     case "x2": return { name: "Pénalités doublées", desc: "Pendant " + n + " tours, les +2 font piocher 4 et les +4 font piocher 8." };
-    case "pouce": return { name: "Coup de pouce", desc: nameOf(E.evx) + " croule sous les cartes : 2 partent à la défausse." };
+    case "pouce": return { name: "Coup de pouce", desc: nameOf(E.evx) + " croule sous les cartes : 2 d'entre elles partent à la défausse." };
   }
   return null;
 }
@@ -142,9 +143,9 @@ function advance(E, steps, nameOf){
 /* ---------- Trophées de fin de partie ---------- */
 const AWARDS = {
   pl: { t: ["Mitraillette à cartes", "Distributeur automatique", "Le bras le plus rapide"], d: v => v + " cartes posées", min: 3 },
-  dr: { t: ["Aspirateur à cartes", "Collectionneur malgré lui", "Main de bridge"], d: v => v + " cartes piochées", min: 4 },
+  dr: { t: ["Aspirateur à cartes", "Collectionneur malgré lui", "Éventail géant"], d: v => v + " cartes piochées", min: 4 },
   pen: { t: ["Cible préférée des +4", "Punching-ball de la table", "Victime désignée"], d: v => v + " cartes de pénalité", min: 2 },
-  ct: { t: ["Œil de lynx", "Douanier de service", "Radar à « Dernière ! »"], d: v => v + " oubli" + (v > 1 ? "s" : "") + " attrapé" + (v > 1 ? "s" : ""), min: 1 },
+  ct: { t: ["Œil de lynx", "Gendarme de la table", "Radar à « Dernière ! »"], d: v => v + " oubli" + (v > 1 ? "s" : "") + " attrapé" + (v > 1 ? "s" : ""), min: 1 },
   jp: { t: ["Intercepteur", "Voleur de tour", "Sniper de la défausse"], d: v => v + " interception" + (v > 1 ? "s" : ""), min: 1 },
   sw: { t: ["Roi du troc", "Pickpocket", "As de l'échange"], d: v => v + " main" + (v > 1 ? "s" : "") + " échangée" + (v > 1 ? "s" : ""), min: 1 }
 };
@@ -187,13 +188,13 @@ function apply(E, id, i, chosen, nameOf, to, jump){
   E.drew = false;
   const v = val(c), n = E.order.length;
   let steps = 1;
-  E.log = nameOf(id) + (jump ? " intercepte avec " : " joue ") + label(c) + (wild(c) ? " et choisit le " + CNAME[E.color] : "");
+  E.log = nameOf(id) + (jump ? " intercepte avec " : " joue ") + (val(c) === "R" ? "une " : "un ") + label(c) + (wild(c) ? " et choisit le " + CNAME[E.color] : "");
   if(v === "S"){ steps = 2; E.log += " · " + nameOf(nextOf(E, 1)) + " passe son tour"; }
-  if(v === "R"){ E.dir *= -1; steps = n === 2 ? 2 : 1; E.log += n === 2 ? " · rejoue" : " · le sens change"; }
+  if(v === "R"){ E.dir *= -1; steps = n === 2 ? 2 : 1; E.log += n === 2 ? " · et rejoue" : " · le sens change"; }
   if(v === "D" || v === "F"){
     const k = (v === "D" ? 2 : 4) * (E.dbl ? 2 : 1);
     if(E.stack){ E.pend += k; E.log += " · " + nameOf(nextOf(E, 1)) + " doit encaisser " + E.pend + " ou renchérir"; }
-    else { const vic = nextOf(E, 1); give(E, vic, k, true); steps = 2; E.log += " · " + nameOf(vic) + " pioche " + k + " et passe"; }
+    else { const vic = nextOf(E, 1); give(E, vic, k, true); steps = 2; E.log += " · " + nameOf(vic) + " pioche " + k + " cartes et passe son tour"; }
   }
   if(!h.length){ roundEnd(E, id, nameOf); return true; }
   if(E.sz && (v === "7" || v === "0")) sevenZero(E, id, v, to, nameOf);
@@ -234,7 +235,7 @@ function doDraw(E, id, nameOf){
   E.called[id] = false;
   E.dc = (E.dc || 0) + 1; E.dby = id; E.dn = got; stat(E, id, "dr", got);
   const what = got > 1 ? " pioche " + got + " cartes" : " pioche";
-  if(canPlay(E, c)){ E.drew = true; E.log = nameOf(id) + what + "… et peut jouer la dernière"; }
+  if(canPlay(E, c)){ E.drew = true; E.log = nameOf(id) + what + (got > 1 ? "… et peut jouer la dernière" : "… et peut la jouer"); }
   else { E.drew = false; E.log = nameOf(id) + what + " et passe"; advance(E, 1, nameOf); }
   return true;
 }
@@ -248,7 +249,7 @@ function doCall(E, id, nameOf){
 }
 function doCatch(E, by, who, nameOf){
   if(E.phase !== "play" || by === who || (E.hands[who] || []).length !== 1 || E.called[who]) return false;
-  give(E, who, 2, true); stat(E, by, "ct"); E.log = nameOf(by) + " attrape " + nameOf(who) + " : « Dernière ! » oubliée, +2 cartes"; return true;
+  give(E, who, 2, true); stat(E, by, "ct"); E.log = nameOf(by) + " prend " + nameOf(who) + " en flagrant délit : oubli de « Dernière ! », +2 cartes"; return true;
 }
 function catchable(E, id){ return E.phase === "play" && (E.hands[id] || []).length === 1 && !E.called[id]; }
 
@@ -483,16 +484,16 @@ let LTOK = 0;
 const DEF = {
   id: "dernierecarte", name: "Dernière carte", glyph: "+4 !", pitch: "Même couleur ou même chiffre, et crie « Dernière ! ».", hot: false,
   accent: { light: "#ff8a4c", dark: "#ff8a4c" },
-  tag: "Même couleur ou même valeur, des +2, des +4, des inversions… Et crie « Dernière ! » avant de poser ta dernière carte.",
+  tag: "Même couleur ou même valeur, des +2, des +4, des inversions… Et n'oublie pas de crier « Dernière ! » quand il ne te reste plus qu'une carte.",
   min: 2, max: 10,
   rules: [
     "Chacun reçoit 7 cartes. À ton tour, pose une carte de la même couleur ou de la même valeur que celle du dessus.",
-    "Passe : le suivant saute son tour. Inversion : le sens change. +2 et +4 : le suivant pioche. Joker et +4 : tu choisis la couleur.",
+    "Passe-tour : le suivant saute son tour. Inversion : le sens change. +2 et +4 : le suivant pioche. Joker et +4 : tu choisis la couleur.",
     "Pas de carte jouable ? Pioche. Si la carte piochée va, tu peux la poser tout de suite.",
-    "Avec le cumul, on peut renvoyer un +2 avec un +2 ou un +4, et un +4 avec un +4. Le dernier qui ne peut pas encaisse tout.",
-    "Quand il te reste 2 cartes, touche « Dernière ! ». Si tu oublies, n'importe qui peut toucher « Contre ! » : tu pioches 2 cartes.",
-    "Le premier qui n'a plus de cartes gagne la manche et marque les points des cartes restantes des autres.",
-    "Règles maison au choix : Sept-zéro (7 = tu échanges ta main avec qui tu veux, 0 = toutes les mains tournent), Interception (pose hors de ton tour une carte identique à celle du dessus), Pioche jusqu'à pouvoir jouer.",
+    "Avec le cumul, on peut renvoyer un +2 avec un +2 ou un +4, et un +4 avec un +4. Celui qui ne peut pas (ou ne veut pas) renchérir encaisse le total.",
+    "Quand il te reste 2 cartes, touche « Dernière ! » avant de poser l'avant-dernière. Si tu te retrouves avec une seule carte sans l'avoir annoncé, n'importe qui peut toucher « Contre ! » : tu pioches 2 cartes.",
+    "Le premier qui n'a plus de cartes gagne la manche et marque la valeur des cartes restées dans la main des autres.",
+    "Règles maison au choix : Sept-zéro (7 = tu échanges ta main avec qui tu veux, 0 = toutes les mains tournent), Interception (pose hors de ton tour une carte identique à celle du dessus), Pioche jusqu'à pouvoir jouer (on continue de piocher tant que la carte ne va pas).",
     "Coups de théâtre : de temps en temps, un événement chamboule la partie (couleur interdite, pluie de cartes, mains échangées, double tour…)."
   ],
   options: [
@@ -500,8 +501,8 @@ const DEF = {
     { id: "stack", label: "Cumul", type: "toggle", text: "Cumul des +2 et +4", desc: "On peut renvoyer la pénalité au suivant", def: true },
     { id: "sz", label: "Sept-zéro", type: "toggle", text: "Sept-zéro", desc: "7 : échange ta main avec qui tu veux. 0 : toutes les mains tournent", def: false },
     { id: "jump", label: "Interception", type: "toggle", text: "Interception", desc: "Pose hors de ton tour une carte identique à celle du dessus", def: false },
-    { id: "dp", label: "Pioche", type: "toggle", text: "Pioche jusqu'à pouvoir jouer", desc: "On ne s'arrête qu'à la première carte qui va", def: false },
-    { id: "twists", label: "Coups de théâtre", type: "toggle", text: "Coups de théâtre", desc: "Événements surprises en cours de manche", def: true }
+    { id: "dp", label: "Pioche", type: "toggle", text: "Pioche jusqu'à pouvoir jouer", desc: "On pioche jusqu'à tomber sur une carte jouable", def: false },
+    { id: "twists", label: "Coups de théâtre", type: "toggle", text: "Coups de théâtre", desc: "Des événements surprises en pleine manche", def: true }
   ],
   start(ctx, o){
     const E = { order: shuffle(ctx.ids), stack: o.stack !== false, sz: !!o.sz, jump: !!o.jump, dp: !!o.dp, tw: o.twists !== false, round: 1, rounds: o.rounds || 1, score: {}, seen: {}, st: {} };
@@ -608,8 +609,8 @@ const DEF = {
       // Règles maison (mêmes réglages que le salon en réseau)
       const R = { stack: st.dcStack !== false, sz: !!st.dcSz, jump: !!st.dcJump, dp: !!st.dcDp, tw: st.dcTw !== false };
       const RULES = [["stack", "dcStack", "Cumul des +2 et +4", "On peut renvoyer la pénalité au suivant"], ["sz", "dcSz", "Sept-zéro", "7 : échange ta main avec qui tu veux. 0 : toutes les mains tournent"],
-        ["jump", "dcJump", "Interception", "Pose hors de ton tour une carte identique à celle du dessus"], ["dp", "dcDp", "Pioche jusqu'à pouvoir jouer", "On ne s'arrête qu'à la première carte qui va"],
-        ["tw", "dcTw", "Coups de théâtre", "Événements surprises en cours de manche"]];
+        ["jump", "dcJump", "Interception", "Pose hors de ton tour une carte identique à celle du dessus"], ["dp", "dcDp", "Pioche jusqu'à pouvoir jouer", "On pioche jusqu'à tomber sur une carte jouable"],
+        ["tw", "dcTw", "Coups de théâtre", "Des événements surprises en pleine manche"]];
       const BOTN = ["Robotte", "Bipbip", "Zorglub"];
       let E = null, viewer = "", sel = null, prevSel = null, timer = null, nameMap = {}, gno = 0, jumpPc = -1;
       const nameOf = id => nameMap[id] || "?";

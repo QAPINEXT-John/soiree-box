@@ -9,22 +9,22 @@ const SOFT = [
   "parler à ses plantes","finir une série en une nuit","se faire virer le premier jour","adopter dix chats","arriver en retard à son propre mariage",
   "croire à une fausse info","devenir président de la République","tomber amoureux en vacances","se battre avec un pigeon","rire à un enterrement",
   "partir vivre au bout du monde","gagner à un jeu télé","casser son téléphone cette année","s'endormir en pleine soirée","inventer une excuse bidon",
-  "rester coincé dans un ascenseur","lancer une start-up qui coule","devenir influenceur","chanter faux au karaoké en y croyant","dépenser tout son salaire en une journée",
+  "rester coincé dans un ascenseur","lancer une start-up qui coule","devenir influenceur","chanter faux au karaoké en y croyant à fond","dépenser tout son salaire en une journée",
   "se faire arnaquer en ligne","oublier un prénom juste après l'avoir entendu","mourir le premier dans un film d'horreur","avoir un compte secret sur les réseaux",
-  "tout raconter après deux verres","faire un selfie dans une situation grave","passer la nuit sur un jeu vidéo","se tromper de destinataire de message",
+  "tout raconter après deux verres","faire un selfie dans une situation grave","passer la nuit sur un jeu vidéo","envoyer un message gênant au mauvais destinataire",
   "parler tout seul dans la rue","se lancer dans un projet complètement fou","pleurer de rire pour rien","avoir une théorie du complot préférée",
   "se faire passer pour quelqu'un d'autre au téléphone","rire de sa propre blague avant la chute","perdre ses clés trois fois dans la même journée","finir la soirée en pyjama chez quelqu'un d'autre",
-  "devenir le meilleur ami d'un inconnu dans le train","s'inscrire à la salle de sport sans jamais y aller","raconter la fin d'un film sans faire exprès","envoyer un vocal de dix minutes",
+  "devenir le meilleur ami d'un inconnu dans le train","s'inscrire à la salle de sport sans jamais y aller","spoiler la fin d'un film sans le faire exprès","envoyer un vocal de dix minutes",
   "tomber dans les escaliers devant tout le monde","oublier son propre anniversaire","se faire adopter par un chat errant","ouvrir un restaurant","pleurer à la fin d'une pub",
   "monter un groupe de musique","se perdre dans un magasin de meubles","gagner un concours de danse improvisé","partir en week-end sans prévenir personne",
-  "tenir une conversation entière en citant des films","devenir accro à un jeu sur téléphone","acheter un objet inutile à 3 h du matin","finir en une du journal local",
+  "tenir une conversation entière en citant des films","devenir accro à un jeu sur téléphone","acheter un objet inutile à 3 h du matin","faire la une du journal local",
   "se tromper de soirée et rester quand même","battre un record du monde absurde","se lancer dans le stand-up","oublier son téléphone dans un taxi",
-  "répondre « vous aussi » au serveur qui dit bon appétit","survivre seul sur une île déserte","se disputer avec un GPS","devenir maire de son village","réveiller tout l'immeuble en rentrant"
+  "répondre « vous aussi » au serveur qui souhaite bon appétit","survivre seul sur une île déserte","se disputer avec un GPS","devenir maire de son village","réveiller tout l'immeuble en rentrant"
 ];
 const HOT = [
-  "envoyer un message coquin à la mauvaise personne","avoir un plan d'un soir ce week-end","recoucher avec son ex","se faire surprendre en pleine action",
+  "envoyer un message coquin à la mauvaise personne","avoir un coup d'un soir ce week-end","recoucher avec son ex","se faire surprendre en pleine action",
   "avoir un fantasme inavouable","draguer quelqu'un de casé sans le savoir","mentir sur son nombre de partenaires","tomber amoureux de son boss",
-  "avoir une appli de rencontre ouverte en ce moment","embrasser quelqu'un de cette pièce ce soir","faire un strip-tease en soirée","avoir un tatouage caché",
+  "avoir une appli de rencontre installée en ce moment","embrasser quelqu'un de cette pièce ce soir","faire un strip-tease en soirée","avoir un tatouage caché",
   "finir la soirée chez un inconnu","avoir déjà envoyé une photo osée","rompre par texto","espionner son ex à 3 h du matin","avoir un crush sur un pote de pote",
   "tester un plan à trois","se réveiller sans savoir où il est","draguer le serveur ou la serveuse","garder une photo compromettante de quelqu'un",
   "faire l'amour dans un lieu public","donner un faux prénom en soirée","retourner avec quelqu'un qu'il a juré de ne plus revoir","avoir un historique de recherche honteux",
@@ -32,10 +32,10 @@ const HOT = [
   "liker par erreur une vieille photo de son crush","avoir un crush sur quelqu'un de cette pièce","envoyer un « tu dors ? » à 2 h du matin","se faire repérer sur une appli de rencontre par un collègue",
   "oublier le prénom de son rencard","donner rendez-vous dans un lieu complètement improbable","embrasser un inconnu à minuit au Nouvel An","garder le pull d'un ex comme trophée",
   "avoir un rendez-vous galant pendant les heures de travail","s'inventer un faux métier pour séduire","faire semblant d'aimer un film pour plaire","espionner le nouveau partenaire de son ex",
-  "se remettre avec quelqu'un après une seule nuit de réflexion","envoyer un compliment osé à la mauvaise personne"
+  "se remettre avec quelqu'un après une seule nuit de réflexion","faire un compliment beaucoup trop osé à son boss"
 ];
-const TRASH = ["avoir déjà regardé du porno au travail", "avoir un dossier secret bien rempli sur son ordi", "avoir déjà fait l'amour dans un lieu public", "avoir couché avec quelqu'un de ce groupe", "avoir le plus de partenaires au compteur", "avoir déjà simulé", "envoyer des nudes ce soir", "avoir un abonnement à un site X", "avoir déjà fait un plan à plusieurs", "finir dans un club libertin ce week-end", "avoir le fétiche le plus bizarre", "avoir déjà été surpris en train de se faire plaisir", "coucher le premier soir", "coucher avec son boss pour une promotion", "avoir une collection de sex toys", "tourner un porno amateur", "avoir déjà fait l'amour au bureau", "oublier le prénom de la personne avec qui il vient de coucher", "faire l'amour sur une musique ridicule", "avoir des menottes dans sa table de nuit", "avoir déjà eu une panne mémorable", "avoir un plan cul avec un voisin", "coucher avec l'ex d'un pote", "faire le premier pas sur une appli à 3 h du matin", "avoir le dirty talk le plus gênant", "avoir un mot de sécurité ridicule", "se faire surprendre par un colocataire", "avoir déjà joué au strip-poker", "avoir une liste de fantasmes rédigée quelque part", "se tromper de prénom au pire moment", "avoir déjà testé un déguisement coquin", "acheter de la lingerie pour une soirée qui n'a jamais eu lieu", "avoir fait l'amour dans le lit de quelqu'un d'autre", "avoir déjà été recalé en plein préliminaire", "avoir un plan régulier que personne ne connaît", "proposer un jeu coquin à la fin de cette soirée", "transformer un massage innocent en tout autre chose"];
-const NOIR = ["mourir de la manière la plus stupide", "finir dans la rubrique faits divers", "oublier l'enterrement de sa propre grand-mère", "rire pendant une minute de silence", "se faire déshériter", "avoir été un tueur en série dans une autre vie", "vendre son âme au diable pour un téléphone", "faire une blague au chevet d'un mourant", "finir dévoré par ses chats", "organiser son propre enterrement en soirée à thème", "survivre seul à l'apocalypse", "léguer ses dettes à ses amis", "se faire virer des pompes funèbres", "tomber amoureux d'un croque-mort", "faire un selfie devant un cercueil", "hanter ses ex après sa mort", "mourir le premier dans un film de zombies", "rédiger son propre éloge funèbre en avance", "se faire virer d'un enterrement pour fou rire", "mourir en essayant de tourner une vidéo virale", "léguer sa collection de chaussettes à un musée", "demander à être enterré avec son téléphone chargé", "survivre à tout le monde dans ce groupe", "finir en fantôme qui fait grincer les portes", "écrire un testament plein de règlements de comptes", "choisir une chanson ridicule pour son enterrement", "se réincarner en plante verte"];
+const TRASH = ["avoir déjà regardé du porno au travail", "avoir un dossier secret bien rempli sur son ordi", "avoir déjà fait l'amour dans une cabine d'essayage", "avoir couché avec quelqu'un de ce groupe", "avoir déjà couché avec deux personnes le même jour", "avoir déjà simulé", "envoyer des nudes ce soir", "avoir un abonnement à un site X", "avoir déjà fait un plan à plusieurs", "finir dans un club libertin ce week-end", "avoir le fétiche le plus bizarre", "avoir déjà été surpris en train de se faire plaisir", "coucher le premier soir", "coucher avec son boss pour une promotion", "avoir une collection de sex toys", "tourner un porno amateur", "avoir déjà fait l'amour au bureau", "oublier le prénom de la personne avec qui il vient de coucher", "faire l'amour sur une musique ridicule", "avoir des menottes dans sa table de nuit", "avoir déjà eu une panne mémorable", "avoir un plan cul avec un voisin", "coucher avec l'ex d'un pote", "faire le premier pas sur une appli à 3 h du matin", "avoir le dirty talk le plus gênant", "avoir un mot de sécurité ridicule", "faire l'amour en sachant que le coloc entend tout", "avoir déjà joué au strip-poker", "avoir une liste de fantasmes rédigée quelque part", "se tromper de prénom au pire moment", "avoir déjà testé un déguisement coquin", "acheter de la lingerie pour une soirée qui n'a jamais eu lieu", "avoir fait l'amour dans le lit de quelqu'un d'autre", "s'être déjà fait recaler en pleins préliminaires", "avoir un plan cul régulier que personne ne connaît", "proposer un jeu coquin à la fin de cette soirée", "transformer un massage innocent en tout autre chose"];
+const NOIR = ["mourir de la manière la plus stupide", "finir dans la rubrique faits divers", "oublier l'enterrement de sa propre grand-mère", "rire pendant une minute de silence", "se faire déshériter", "avoir été un tueur en série dans une autre vie", "vendre son âme au diable pour un téléphone", "faire une blague au chevet d'un mourant", "finir dévoré par ses chats", "transformer son propre enterrement en soirée à thème", "vendre ses amis aux zombies pour survivre", "léguer ses dettes à ses amis", "se faire virer des pompes funèbres", "tomber amoureux d'un croque-mort", "faire un selfie devant un cercueil", "hanter ses ex après sa mort", "mourir bêtement en allant voir d'où vient le bruit", "rédiger son propre éloge funèbre à l'avance", "se faire virer d'un enterrement pour fou rire", "mourir en essayant de tourner une vidéo virale", "léguer sa collection de chaussettes à un musée", "demander à être enterré avec son téléphone chargé", "survivre à tout le monde dans ce groupe", "finir en fantôme qui fait grincer les portes", "écrire un testament plein de règlements de comptes", "choisir une chanson ridicule pour son enterrement", "se réincarner en plante verte"];
 const PREFIX = "Qui est le plus susceptible de…";
 const PACKS = [
   { v: "soft", label: "Classique", desc: "Pour tout le monde", list: SOFT },
@@ -66,7 +66,7 @@ const TW = [
   { id: "moins", name: "Le monde à l'envers", desc: "On vote pour le MOINS susceptible. Ces votes ne comptent pas pour le titre." },
   { id: "duo", name: "Double vote", desc: "Chacun désigne deux joueurs différents.", ok: o => o.n >= 3 },
   { id: "pick", name: "Le désigné choisit", desc: "Le plus désigné choisit la prochaine question parmi trois." },
-  { id: "jackpot", name: "Jackpot", desc: "Si tout le monde désigne la même personne, elle prend 3 votes bonus.", ok: o => o.n >= 3 }
+  { id: "jackpot", name: "Jackpot", desc: "Si tout le monde désigne la même personne, elle gagne 3 votes bonus.", ok: o => o.n >= 3 }
 ];
 // Coups de théâtre (un seul téléphone, sans scores)
 const TWL = [
@@ -79,7 +79,7 @@ const TWL = [
 ];
 const PREFIX_MOINS = "Qui est le MOINS susceptible de…";
 const FL = {
-  champ: ["Titre de la soirée", "Élu par le peuple", "Le portrait craché du groupe", "Suspect numéro un"],
+  champ: ["Titre de la soirée", "Élu par le peuple", "La star du groupe", "Suspect numéro un"],
   mav: ["L'électron libre", "Le franc-tireur", "Jamais d'accord avec personne"],
   self: ["Assume tout", "Lucide sur soi-même", "Autocritique en chef"],
   saint: ["L'insoupçonnable", "Passé sous les radars", "Le saint du groupe"]
@@ -88,7 +88,7 @@ function fl(list, seed, k){ return list[((seed || 0) + k) % list.length]; }
 function awards(ids, s, nameOf){
   const t = s.total || {}, mv = s.mav || {}, sf = s.self || {}, seed = s.fl || 0, out = [];
   const used = [], top = m => { const by = l => l.filter(id => m[id]).sort((a, b) => m[b] - m[a])[0]; const r = by(ids.filter(id => used.indexOf(id) < 0)) || by(ids); if(r) used.push(r); return r; };
-  const m = top(mv); if(m) out.push([fl(FL.mav, seed, 1), nameOf(m), "En dehors de la majorité " + mv[m] + " fois"]);
+  const m = top(mv); if(m) out.push([fl(FL.mav, seed, 1), nameOf(m), "À contre-courant du groupe " + mv[m] + " fois"]);
   const f = top(sf); if(f) out.push([fl(FL.self, seed, 2), nameOf(f), "A voté pour soi " + sf[f] + " fois"]);
   const low = ids.slice().sort((a, b) => ((t[a] || 0) - (t[b] || 0)) || ((used.indexOf(a) >= 0) - (used.indexOf(b) >= 0)))[0];
   if(low && ids.length > 2) out.push([fl(FL.saint, seed, 3), nameOf(low), (t[low] || 0) ? "Seulement " + t[low] + " vote" + (t[low] > 1 ? "s" : "") : "Jamais désigné"]);
@@ -97,15 +97,15 @@ function awards(ids, s, nameOf){
 function nextTw(o, round, last, n){ return o.twists !== false && round > 1 ? SB.u.twist(TW, { last, n, rate: .35 }) : null; }
 
 SB.register({
-  id: "quiplus", name: "Qui est le plus…", glyph: "Qui ?", pitch: "Votez pour qui est le plus susceptible de…", hot: true,
+  id: "quiplus", name: "Qui est le plus…", glyph: "Qui ?", pitch: "Votez pour le joueur le plus susceptible de…", hot: true,
   accent: { light: "#ffb34d", dark: "#ffb34d" },
   tag: "Une question, tout le monde vote pour un joueur. Les résultats tombent d'un coup.",
   min: 3, max: 20,
   rules: [
     "Une question s'affiche : « Qui est le plus susceptible de… ».",
-    "Chacun vote en secret pour un joueur, lui-même compris.",
+    "Chacun vote en secret pour un joueur, y compris pour lui-même.",
     "Les résultats s'affichent quand tout le monde a voté. Défendez-vous !",
-    "Coups de théâtre : de temps en temps, une question change les règles (votes doubles, double vote, monde à l'envers, jackpot…).",
+    "Coups de théâtre : de temps en temps, une question change les règles (question en or, double vote, monde à l'envers, jackpot…).",
     "Les questions déjà vues passent après les nouvelles. À la fin : le titre de la soirée et quelques trophées."
   ],
   options: [
@@ -177,7 +177,7 @@ SB.register({
       }
       screen(root, "r" + s.k + ctx.isHost + pk, lab + qCard + '<span class="eyebrow">' + (top.length > 1 ? "Égalité" : "Le groupe a parlé") + '</span><div class="who">' + esc(top.join(" & ")) + "</div>" +
         bars(ctx.ids, counts, ctx.name, s.voters && Object.keys(s.voters).length ? s.voters : null) + extra +
-        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>' + (s.round >= s.rounds ? "Voir les titres" : "Question suivante") + "</button>" : '<p class="wait">L\'hôte passe à la suite…</p>'), r => {
+        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>' + (s.round >= s.rounds ? "Voir les résultats" : "Question suivante") + "</button>" : '<p class="wait">L\'hôte passe à la suite…</p>'), r => {
         r.querySelectorAll("[data-pk]").forEach(b => b.addEventListener("click", () => ctx.send({ pk: +b.dataset.pk })));
         const b = r.querySelector("[data-next]");
         if(b) b.addEventListener("click", () => ctx.act(c => {

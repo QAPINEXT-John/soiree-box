@@ -85,7 +85,7 @@ function armTap(btn, action, armedText){
   const base = btn.textContent; let t = null;
   btn.addEventListener("click", () => {
     if(btn.dataset.armed){ clearTimeout(t); delete btn.dataset.armed; btn.textContent = base; action(); return; }
-    btn.dataset.armed = "1"; btn.textContent = armedText || "Toucher encore pour confirmer";
+    btn.dataset.armed = "1"; btn.textContent = armedText || "Touche encore pour confirmer";
     t = setTimeout(() => { delete btn.dataset.armed; btn.textContent = base; }, 3000);
   });
 }
@@ -801,7 +801,7 @@ function bugNudge(){
   clearTimeout(b._t); b._t = setTimeout(() => b.classList.remove("on"), 7000);
 }
 const BUGICON = '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="13" rx="5"/><path d="M9.5 7a2.5 2.5 0 015 0M12 11v9M7 12H3m4 5l-3 2m3-9L4 8m13 4h4m-4 5l3 2m-3-9l3-2"/></g></svg>';
-const BUGTYPES = [["plante", "Ça plante / bloqué"], ["reseau", "Réseau"], ["jeu", "Règles du jeu"], ["affichage", "Affichage"], ["autre", "Autre"]];
+const BUGTYPES = [["plante", "Plantage / blocage"], ["reseau", "Réseau"], ["jeu", "Règles du jeu"], ["affichage", "Affichage"], ["autre", "Autre"]];
 function platform(){
   if(window.AndroidShare) return "appli Android";
   try{ if(matchMedia("(display-mode: standalone)").matches || navigator.standalone) return "appli installée (web)"; }catch(e){}
@@ -844,7 +844,7 @@ function openBug(type){
       '<div class="field"><span class="eyebrow">Type de problème</span><div class="filters" id="bg-type">' +
         BUGTYPES.map(t => '<button type="button" data-t="' + t[0] + '" aria-pressed="' + (st.type === t[0]) + '">' + esc(t[1]) + "</button>").join("") + "</div></div>" +
       '<label class="lbl" for="bg-what">Ce qui s\'est passé<textarea class="txt area" id="bg-what" rows="4" maxlength="1500" placeholder="Ex : dans Dernière carte, j\'ai posé un +2 et plus personne ne pouvait jouer."></textarea></label>' +
-      '<label class="lbl" for="bg-how">Comment le refaire (si tu sais)<textarea class="txt area" id="bg-how" rows="3" maxlength="800" placeholder="Ex : 3 joueurs, cumul activé, j\'étais l\'hôte en 4G."></textarea></label>' +
+      '<label class="lbl" for="bg-how">Comment reproduire le problème (si tu sais)<textarea class="txt area" id="bg-how" rows="3" maxlength="800" placeholder="Ex : 3 joueurs, cumul activé, j\'étais l\'hôte en 4G."></textarea></label>' +
       '<label class="chk"><input type="checkbox" id="bg-tech" checked><span>Joindre les infos techniques</span></label>' +
       '<details class="bg-det"><summary>Voir les infos techniques</summary><pre class="bg-pre">' + esc(diag) + "</pre></details>" +
       '<p class="sm">Le rapport s\'ouvre dans ton appli mail, prêt à envoyer à ' + esc(BUG_MAIL) + ". Tu peux aussi le partager ou le copier.</p>" +
@@ -860,7 +860,7 @@ function openBug(type){
     const label = () => (BUGTYPES.find(t => t[0] === st.type) || BUGTYPES[4])[1];
     const subject = () => "[Soirée Box " + VERSION + "] Bug #" + st.id + " · " + label() + (L.def && !N.nr ? " · " + L.def.name : N.nr && G() && G().phase === "game" && SB.byId[G().game] ? " · " + SB.byId[G().game].name : "");
     const body = () => "Rapport de bug #" + st.id + "\nType : " + label() + "\n\nCe qui s'est passé :\n" + clean(what.value, 1500) +
-      (clean(how.value, 800) ? "\n\nPour le refaire :\n" + clean(how.value, 800) : "") +
+      (clean(how.value, 800) ? "\n\nPour le reproduire :\n" + clean(how.value, 800) : "") +
       (tech.checked ? "\n\n— Infos techniques —\n" + diag : "") + "\n";
     const ok = () => {
       if(clean(what.value, 1500).length < 5){ err.textContent = "Décris le problème en quelques mots."; err.hidden = false; buzz([20, 60, 20]); what.focus(); return false; }
@@ -916,7 +916,7 @@ function openRules(def){
   SB.page(def.name, root => {
     accent(def.id);
     root.innerHTML = '<div class="card acc"><span class="gl hand huge">' + esc(def.glyph || "") + '</span><p class="lead">' + esc(def.tag || "") + '</p><span class="sm">' +
-      (def.max ? def.min + " à " + def.max : def.min + " ou plus") + ' joueurs' + (def.local ? " · aussi sur un seul téléphone" : "") + '</span></div>' +
+      (def.max ? def.min + " à " + def.max + " joueurs" : def.min + " joueurs ou plus") + (def.local ? " · aussi sur un seul téléphone" : "") + '</span></div>' +
       '<ol class="howto" style="margin:0; padding-left:30px; display:flex; flex-direction:column; gap:6px">' + A(def.rules).map(x => "<li>" + esc(x) + "</li>").join("") + "</ol>";
   }, () => accent(""));
 }
@@ -935,7 +935,7 @@ function renderHome(){
   if(netLoading){ info.textContent = "Connexion au mode réseau…"; info.hidden = false; }
   else if(!netReady){ info.textContent = window.claude ? "Le mode réseau n'est pas disponible ici. Ouvre la page depuis claude.ai en étant connecté, ou joue sur un seul téléphone." : "Le mode réseau n'a pas pu démarrer. Vérifie ta connexion internet puis relance l'appli, ou joue sur un seul téléphone."; info.hidden = false; }
   else if(N.joining){ info.hidden = false; }
-  else if(hashCode){ info.textContent = "Tu es invité dans le salon " + hashCode + ". Entre ton prénom puis touche Rejoindre."; info.hidden = false; }
+  else if(hashCode){ info.textContent = "Tu es invité dans le salon " + hashCode + ". Entre ton prénom, puis touche « Rejoindre »."; info.hidden = false; }
   else if(!$("#h-err").hidden){ info.hidden = true; }
   else info.hidden = true;
 }
@@ -980,7 +980,7 @@ function updateGate(){
   if(!g){ g = document.createElement("div"); g.id = "sb-gate"; g.className = "gate"; g.setAttribute("role", "dialog"); g.setAttribute("aria-modal", "true"); document.body.append(g); }
   g.hidden = false;
   const box = forced ? updateHTML(u || { t: "checking" }, true) :
-    '<div class="h"><span class="eyebrow">Mise à jour obligatoire</span><b>Ce salon joue avec Soirée Box ' + esc(salonV) + '</b><span class="sm">Tu as la ' + esc(VERSION) + ". Mets à jour pour jouer avec eux.</span></div>" +
+    '<div class="h"><span class="eyebrow">Mise à jour obligatoire</span><b>Ce salon joue avec Soirée Box ' + esc(salonV) + '</b><span class="sm">Tu as la version ' + esc(VERSION) + ". Mets à jour pour jouer avec les autres.</span></div>" +
     (window.AndroidUpdate ? '<button class="btn acc" type="button" data-retry>Chercher la mise à jour</button>' : '<button class="btn acc" type="button" data-reload>Recharger la page</button>') +
     (N.nr ? '<button class="link" type="button" data-leave style="align-self:center">Quitter le salon</button>' : "");
   const html = '<div class="gate-in"><div class="brand-s">Soirée Box</div><div class="upd">' + box + "</div></div>";
@@ -1005,9 +1005,9 @@ function updateHTML(u, forced){
   if(u.t === "checking") h = '<div class="h"><b>Recherche de mises à jour…</b></div>';
   else if(u.t === "avail"){
     const notes = A(u.notes).slice(0, 5);
-    h = '<div class="h"><span class="eyebrow">' + (forced ? "Mise à jour obligatoire" : "Nouvelle version") + '</span><b>Soirée Box ' + esc(u.v) + ' est disponible</b><span class="sm">Tu as la ' + esc(u.cur || VERSION) + "</span></div>" +
+    h = '<div class="h"><span class="eyebrow">' + (forced ? "Mise à jour obligatoire" : "Nouvelle version") + '</span><b>Soirée Box ' + esc(u.v) + ' est disponible</b><span class="sm">Ta version : ' + esc(u.cur || VERSION) + "</span></div>" +
       (notes.length ? "<ul>" + notes.map(n => "<li>" + esc(clean(n, 160)) + "</li>").join("") + "</ul>" : "") +
-      (u.needApk ? '<p class="sm">Cette version change la partie Android : télécharge la nouvelle appli et installe-la par-dessus. Tes réglages et ton historique sont gardés.</p><button class="btn acc" type="button" data-apk>Télécharger la nouvelle appli</button>'
+      (u.needApk ? '<p class="sm">Cette version modifie l\'appli Android elle-même : télécharge la nouvelle appli et installe-la par-dessus l\'ancienne. Tes réglages et ton historique sont conservés.</p><button class="btn acc" type="button" data-apk>Télécharger la nouvelle appli</button>'
         : '<button class="btn acc" type="button" data-go>Mettre à jour maintenant</button>' + (forced ? "" : '<button class="link" type="button" data-later style="align-self:center">Plus tard</button>'));
   } else if(u.t === "progress"){
     const p = u.total ? Math.round(100 * u.done / u.total) : 0;
@@ -1027,7 +1027,7 @@ function bindUpdate(el){
   on("[data-reload]", () => { try{ location.reload(); }catch(e){} });
   on("[data-leave]", () => netLeave());
   on("[data-go]", () => { buzz(16); UP.st = { t: "progress", done: 0, total: 0 }; renderUpdate(); try{ window.AndroidUpdate.apply(); }catch(e){} });
-  on("[data-apk]", () => { try{ window.AndroidUpdate.openApk(); }catch(e){} toast("Le téléchargement s'ouvre : installe le fichier par-dessus l'appli."); });
+  on("[data-apk]", () => { try{ window.AndroidUpdate.openApk(); }catch(e){} toast("Le téléchargement démarre : installe ensuite le fichier par-dessus l'appli."); });
   on("[data-restart]", () => { try{ window.AndroidUpdate.restart(); }catch(e){ location.reload(); } });
   on("[data-retry]", () => checkUpdate(true));
   on("[data-later]", () => { UP.st = null; renderUpdate(); });
@@ -1068,7 +1068,7 @@ async function netEnter(code, asHost){
   const name = clean($("#h-name").value, 16);
   if(!netReady) return;
   if(!name){ homeErr("Entre ton prénom pour que les autres te reconnaissent."); buzz([20, 60, 20]); $("#h-name").focus(); return; }
-  if(!/^[A-Z]{4}$/.test(code)){ homeErr("Le code du salon fait 4 lettres."); buzz([20, 60, 20]); $("#h-code").focus(); return; }
+  if(!/^[A-Z]{4}$/.test(code)){ homeErr("Le code du salon doit faire 4 lettres."); buzz([20, 60, 20]); $("#h-code").focus(); return; }
   homeErr(""); N.joining = true;
   $("#h-netinfo").textContent = asHost ? "Ouverture du salon…" : "Connexion au salon " + code + "…";
   renderHome();
@@ -1082,12 +1082,12 @@ async function netEnter(code, asHost){
     } else nr = FB_ON ? await fbJoin(code) : ROOM ? await roomJoin(code) : await relayRoom(code, false);
   }catch(e){
     N.joining = false; renderHome();
-    homeErr(e && e.code === "not_found" ? "Aucun salon ouvert avec le code " + code + ". Vérifie le code, et que l'hôte a bien l'appli ouverte." :
+    homeErr(e && e.code === "not_found" ? "Aucun salon ouvert avec le code " + code + ". Vérifie le code, et vérifie que l'hôte a toujours l'appli ouverte." :
       e && e.code === "full" ? "Ce salon est complet." :
       e && e.code === "auth_off" ? "Firebase refuse la connexion : active la connexion anonyme dans la console Firebase (voir le guide)." :
       e && e.code === "room_denied" ? "Le mode réseau n'est pas autorisé pour ton compte sur cette page." :
       e && e.code === "rules" ? "La base Firebase refuse l'accès : colle les règles du fichier database.rules.json dans la console (voir le guide)." :
-      e && e.code === "network" ? "Impossible de joindre les serveurs de jeu. Vérifie que tu as internet (wifi ou données mobiles) et réessaie." :
+      e && e.code === "network" ? "Impossible de joindre les serveurs de jeu. Vérifie ta connexion internet (wifi ou données mobiles) et réessaie." :
       "Connexion impossible. Vérifie ta connexion internet et réessaie.");
     return;
   }
@@ -1255,7 +1255,7 @@ function render(){
       ex.dataset.key = exKey;
       ex.innerHTML = '<button class="link warn" type="button">' + (N.host ? "Arrêter" : "Quitter") + "</button>";
       armTap(ex.firstChild, N.host ? () => runHost(c => c.end({ title: def.name, lines: ["Partie arrêtée par l'hôte."] })) : netLeave,
-        N.host ? "Toucher encore : retour au salon" : "Toucher encore pour quitter");
+        N.host ? "Touche encore pour revenir au salon" : "Touche encore pour quitter");
     }
     try{ def.render(ctx, root); }catch(e){ console.error(e); }
     return;
@@ -1299,7 +1299,7 @@ function salonDock(g, np){
   d.dataset.key = key;
   if(!g){ d.innerHTML = '<p class="wait">Connexion à l\'hôte…</p>'; return; }
   if(N.host){
-    d.innerHTML = def ? '<button class="btn acc acc-' + esc(def.id) + '" type="button" data-open>Lancer ' + esc(def.name) + '</button>' : '<p class="wait">Touche un jeu pour le lancer.</p>';
+    d.innerHTML = def ? '<button class="btn acc acc-' + esc(def.id) + '" type="button" data-open>Lancer ' + esc(def.name) + '</button>' : '<p class="wait">Touche un jeu pour le choisir.</p>';
     const b = $("[data-open]", d); if(b) b.addEventListener("click", () => { $("#sa-panel").dataset.key = ""; openSheet(); renderSalon(G()); });
   } else {
     d.innerHTML = def ? '<div class="pick acc-' + esc(def.id) + '"><span class="gl">' + esc(def.glyph || "") + '</span><span class="tx"><span class="eyebrow">L\'hôte a choisi</span><b>' + esc(def.name) + '</b></span><button class="link" type="button" data-rules>Règles</button></div><p class="wait">L\'hôte règle les options et lance la partie…</p>'
@@ -1367,7 +1367,7 @@ function renderSalon(g){
   if(panel.dataset.key === key) return;
   panel.dataset.key = key;
   $("#sheet").className = "sheet" + (sheetOpen ? " on" : "") + " acc-" + def.id;
-  let h = '<div class="sheet-head"><span class="gl">' + esc(def.glyph || "") + '</span><div><h2>' + esc(def.name) + '</h2><span class="sm">' + (def.max ? def.min + " à " + def.max : def.min + " ou plus") + " joueurs</span></div></div>" +
+  let h = '<div class="sheet-head"><span class="gl">' + esc(def.glyph || "") + '</span><div><h2>' + esc(def.name) + '</h2><span class="sm">' + (def.max ? def.min + " à " + def.max + " joueurs" : def.min + " joueurs ou plus") + "</span></div></div>" +
     '<p class="lead">' + esc(def.tag || "") + "</p>" + rulesHTML(def) + optionsHTML(def, ctx, vals);
   h += dock('<p class="err" id="sa-err"' + (ok ? " hidden" : "") + ">" + (ok ? "" : late.length ? esc(late.join(", ")) + (late.length > 1 ? " doivent" : " doit") + " mettre à jour Soirée Box avant de jouer." : (n < def.min ? "Il faut au moins " + def.min + " joueurs dans le salon (" + n + " pour l'instant)." : "Ce jeu se joue à " + def.max + " joueurs maximum.")) + "</p>" +
     '<button class="btn acc" id="sa-go" type="button"' + (ok ? "" : " disabled") + ">Lancer la partie</button>");
@@ -1409,7 +1409,7 @@ function openLocalList(){
   const t = $("#ll-tiles");
   t.innerHTML = SB.games.filter(d => d.local).sort((a, b) => isWip(a) - isWip(b)).map(d => {
     const lp = d.local.players;
-    const meta = (lp ? (lp.min === 1 ? "Seul ou à " + lp.max + " · Bots" : (lp.max ? lp.min + "–" + lp.max : lp.min + "+") + " joueurs") : "Tout le groupe") + (d.hot ? " · 18+" : "");
+    const meta = (lp ? (lp.min === 1 ? "Seul ou jusqu'à " + lp.max + " · robots" : (lp.max ? lp.min + "–" + lp.max : lp.min + "+") + " joueurs") : "Tout le groupe") + (d.hot ? " · 18+" : "");
     return tileHTML(d, { metaHTML: meta });
   }).join("");
   $$(".tile", t).forEach(b => b.addEventListener("click", () => { const d = SB.byId[b.dataset.id]; if(d.local.players) openLocalPlayers(d); else startLocal(d, []); }));
@@ -1454,7 +1454,7 @@ function startLocal(def, names){
   $("#lc-title").textContent = def.name; $("#lc-gl").textContent = def.glyph || "";
   const ex = $("#lc-exit");
   ex.innerHTML = '<button class="link warn" type="button">Quitter</button>';
-  armTap(ex.firstChild, () => api.exit(), "Toucher encore pour quitter");
+  armTap(ex.firstChild, () => api.exit(), "Touche encore pour quitter");
   const root = $("#local-root"); root.innerHTML = ""; root.dataset.key = "";
   show("local");
   let won = false;
@@ -1504,8 +1504,8 @@ SB.boot = function(){
   bindFilter($("#h-filter"), "home", drawHome);
   drawHome();
 
-  armTap($("#sa-quit"), netLeave, "Toucher encore pour quitter");
-  armTap($("#sp-quit"), netLeave, "Toucher encore pour quitter");
+  armTap($("#sa-quit"), netLeave, "Touche encore pour quitter");
+  armTap($("#sp-quit"), netLeave, "Touche encore pour quitter");
   $("#lo-home").addEventListener("click", netLeave);
   $("#sa-share").addEventListener("click", () => {
     const url = SHARE_BASE ? SHARE_BASE + "#" + N.code : "";
