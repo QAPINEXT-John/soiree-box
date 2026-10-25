@@ -244,6 +244,16 @@ const PH = tr({
   full: ["Loyal to the end", "Never gives up", "The rock"],
   first: ["Speed exit", "Shoes always laced", "First one out the door"]
 });
+// Gages. Vote : ceux dont la couleur ne marque pas (si quelqu'un marque). Date : le premier à fuir boit, ceux qui tiennent jusqu'au bout distribuent (si quelqu'un a fui).
+function voteGages(v, tw, ids){
+  const win = scorers(v, tw); if(!win.length) return [];
+  return ids.map((id, i) => (v[i] && v[i] !== "-" && win.indexOf(v[i]) < 0 ? { id, ev: "rate" } : null)).filter(Boolean);
+}
+function dateGages(ids, outAt){
+  const gone = ids.filter(id => outAt[id] !== undefined); if(!gone.length) return [];
+  const m = Math.min.apply(null, gone.map(id => +outAt[id]));
+  return gone.filter(id => +outAt[id] === m).map(id => ({ id, ev: "fuite" })).concat(ids.filter(id => outAt[id] === undefined).map(id => ({ id, ev: "bout" })));
+}
 const PL = SB.u.plural2;
 const ph = (k, seed) => PH[k][(+seed || 0) % PH[k].length];
 function awardCard(title, who, sub){ return '<div class="card"><span class="eyebrow">' + esc(title) + '</span><div class="big">' + esc(who) + "</div>" + (sub ? '<span class="sm">' + esc(sub) + "</span>" : "") + "</div>"; }
@@ -298,6 +308,11 @@ SB.register({
   accent: { light: "#ff5d6c", dark: "#ff5d6c" },
   tag: tr("Red, beige ou green flag ? Et jusqu'où tu restes avec un date parfait… plein de défauts ?", "Red, beige or green flag? And how long will you stay with a perfect date… full of flaws?"),
   min: 2, max: 20,
+  gages: [
+    { ev: "rate", label: tr("Red ou green : ton vote ne marque pas", "Red or green: your vote doesn't score"), kind: "boit", n: 1 },
+    { ev: "fuite", label: tr("Premier à fuir le date", "First to run from the date"), kind: "boit", n: 2 },
+    { ev: "bout", label: tr("Tu restes jusqu'au bout", "You stayed to the end"), kind: "distribue", n: 1 }
+  ],
   rules: tr([
     "Mode « Red ou green ? » : un trait de ton date s'affiche. Chacun vote en secret : red flag, beige flag (bizarre mais ça passe) ou green flag.",
     "Ceux qui votent comme la majorité marquent un point. À la fin, le joueur le plus en phase avec le groupe gagne ; on découvre aussi le plus exigeant, le plus cool, le rebelle et le duo le plus compatible.",
@@ -335,6 +350,7 @@ SB.register({
       if(!live.length || !live.every(id => ok(ctx.input(id)))) return;
       const votes = ctx.ids.map(id => { const i = ctx.input(id); return ok(i) ? i.v : "-"; }).join("");
       ctx.set({ phase: "res", votes, hist: A(s.hist).concat([votes]), th: A(s.th).concat([s.tw || "-"]) });
+      const gl = voteGages(votes, s.tw || "-", ctx.ids); if(gl.length) ctx.gage(gl, "rfv" + s.k);
     } else if(s.mode === "date" && s.phase === "step"){
       const stay = A(s.stay), live = stay.filter(id => ctx.here(id));
       if(!live.length || !live.every(id => { const i = ctx.input(id); return i && (i.d === "s" || i.d === "l"); })) return;
@@ -410,7 +426,7 @@ SB.register({
         const b = r.querySelector("[data-next]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const st = c.s; if(st.phase !== "stepres") return;
-          if(st.step >= (A(st.flags).length || 5) - 1 || !A(st.stay).length) c.set({ phase: "roundend" });
+          if(st.step >= (A(st.flags).length || 5) - 1 || !A(st.stay).length){ c.set({ phase: "roundend" }); const gl = dateGages(c.ids, st.outAt || {}); if(gl.length) c.gage(gl, "rfd" + st.k); }
           else c.set({ phase: "step", step: st.step + 1, left: [], k: c.rid() });
         }));
       });
@@ -483,7 +499,10 @@ SB.register({
               buzz(8); const p = b.dataset.p; if(L.votes[p] === b.dataset.v) delete L.votes[p]; else L.votes[p] = b.dataset.v;
               r.querySelectorAll('[data-p="' + p + '"]').forEach(x => x.setAttribute("aria-pressed", L.votes[p] === x.dataset.v)); upd();
             }));
-            rev.addEventListener("click", () => { L.hist.push(ids.map(id => L.votes[id] || "-").join("")); L.th.push(L.tw); go("res"); });
+            rev.addEventListener("click", () => {
+              const v = ids.map(id => L.votes[id] || "-").join(""); L.hist.push(v); L.th.push(L.tw); go("res");
+              const gl = voteGages(v, L.tw, ids).map(x => ({ id: nameOf(x.id), ev: x.ev })); if(gl.length && api.gage) api.gage(gl, "rfv" + L.seed + "|" + L.round);
+            });
           });
         } else if(ph2 === "res"){
           screen(root, "r" + L.round, CSS + lab() + banner() + resHTML(Object.assign({}, L, { votes: L.hist[L.hist.length - 1] }), ids, nameOf) +
@@ -518,6 +537,7 @@ SB.register({
               if(!last){ L.step++; L.left = []; go("step"); return; }
               Object.assign(L, closeDate(ids, L));
               go("roundend");
+              const gl = dateGages(ids, L.outAt).map(x => ({ id: nameOf(x.id), ev: x.ev })); if(gl.length && api.gage) api.gage(gl, "rfd" + L.seed + "|" + L.round);
             });
           });
         } else if(ph2 === "roundend"){

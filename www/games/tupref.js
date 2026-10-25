@@ -173,6 +173,11 @@ SB.register({
   accent: { light: "#4fd1bf", dark: "#4fd1bf" },
   tag: tr("Deux choix impossibles. Tout le monde vote, puis on découvre qui a choisi quoi.", "Two impossible choices. Everyone votes, then you find out who picked what."),
   min: 2, max: 20, ticks: true,
+  gages: [
+    { ev: "minor", label: tr("Dans le camp minoritaire", "On the minority side"), kind: "boit", n: 1 },
+    { ev: "seul", label: tr("Seul contre tous", "Alone against everyone"), kind: "boit", n: 2 },
+    { ev: "unan", label: tr("Tout le monde d'accord", "Everyone agrees"), kind: "tous", n: 1 }
+  ],
   rules: [
     tr("Deux options s'affichent. Chacun choisit en secret celle qu'il préfère.", "Two options pop up. Everyone secretly picks the one they'd rather."),
     tr("Quand tout le monde a voté, on voit qui a choisi quoi.", "Once everyone has voted, you see who picked what."),
@@ -211,6 +216,10 @@ SB.register({
     if(tw === "rare" && win && a.length && b.length) (win === "a" ? b : a).forEach(id => add(id, 2));
     if(tw === "maj" && win) (win === "a" ? a : b).forEach(id => add(id, 1));
     ctx.set({ phase: "res", a, b, hist: A(s.hist).concat([[a, b]]), pts, got, chg, dev: tw === "devil" && voted.length ? pick(voted) : "" });
+    // Gages : la minorité trinque (sauf « Prime au courage », où elle marque), seul contre tous compte double, unanimité = tout le monde.
+    const mino = win && a.length && b.length ? (win === "a" ? b : a) : [];
+    if(voted.length >= 3 && mino.length && tw !== "rare") ctx.gage(mino.map(id => ({ id, ev: mino.length === 1 ? "seul" : "minor" })), "tp" + s.k);
+    else if(voted.length >= 2 && (!a.length || !b.length)) ctx.gage([{ ev: "unan" }], "tp" + s.k);
   },
   render(ctx, root){
     const s = ctx.s, p = A(s.p), tw = s.tw || "", T = SB.u.byTwist(TW, tw);

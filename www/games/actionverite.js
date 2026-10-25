@@ -1291,7 +1291,7 @@ function settle(E, res, live){
   else if(res === "ok"){
     const p = ((E.kind === "a" ? 2 : 1) + (E.rand ? 1 : 0)) * m;
     E.pts[id] = (E.pts[id] || 0) + p; (E.kind === "a" ? E.did : E.told)[id] = ((E.kind === "a" ? E.did : E.told)[id] || 0) + 1;
-    E.last = { who: id, kind: E.kind, res: "ok", txt: "+" + p + " point" + (p > 1 ? "s" : "") };
+    E.last = { who: id, kind: E.kind, res: "ok", txt: "+" + p + " point" + (p > 1 ? "s" : ""), x2: m > 1 ? 1 : 0 };
   } else {
     const n = pen(E, E.kind);
     E.ref[id] = (E.ref[id] || 0) + 1; if(E.mode === "drink") E.sips[id] = (E.sips[id] || 0) + n;
@@ -1302,6 +1302,9 @@ function settle(E, res, live){
   startTurn(E, live);
 }
 const ranking = E => E.order.slice().sort((a, b) => (E.pts[b] || 0) - (E.pts[a] || 0));
+// Gage du système : seulement pour une action relevée (le refus a déjà sa sanction dans le jeu).
+// À appeler juste après settle(). Renvoie [] si rien à donner.
+function dareGage(E, id){ const l = E.last; return l && l.who === id && l.res === "ok" && l.kind === "a" ? [{ id, ev: "action", x: l.x2 ? 2 : 1 }] : []; }
 
 /* ---------- Affichage ---------- */
 function fillHTML(t, E, nameOf){
@@ -1397,6 +1400,7 @@ const DEF = {
   accent: { light: "#ff3d6e", dark: "#ff3d6e" },
   tag: tr("Chacun son tour choisit : une vérité à avouer devant tout le monde, ou une action à faire tout de suite. Refuser, c'est boire (ou prendre un gage).", "Take turns choosing: a truth to confess in front of everyone, or a dare to do right now. Refuse and you drink (or do a forfeit)."),
   min: 2, max: 16,
+  gages: [{ ev: "action", label: tr("Action relevée", "Dare done"), kind: "distribue", n: 1 }],
   rules: [
     tr("Chacun son tour choisit Vérité (+1 point) ou Action (+2 points). Au hasard : 1 point bonus.", "On your turn, pick Truth (+1 point) or Dare (+2 points). Random: 1 bonus point."),
     tr("Le groupe juge : si tu as répondu franchement ou relevé le défi, tu marques. Tu peux refuser, mais ça coûte des gorgées (ou un gage en mode sans alcool).", "The group judges: if you answered honestly or completed the dare, you score. You can refuse, but it costs you sips (or a forfeit in alcohol-free mode)."),
@@ -1427,7 +1431,7 @@ const DEF = {
       for(const id of ok){ const x = ctx.input(id); if(x && x.c && x.c.n === E.n && /^[vah]$/.test(x.c.v)){ reveal(E, x.c.v); publish(ctx, E); return; } }
     } else if(E.phase === "card"){
       const x = ctx.input(E.cur);
-      if(x && x.r && x.r.n === E.n && /^(ok|jk|no)$/.test(x.r.v)){ settle(E, x.r.v, live); publish(ctx, E); }
+      if(x && x.r && x.r.n === E.n && /^(ok|jk|no)$/.test(x.r.v)){ const cur = E.cur, k = s.k; settle(E, x.r.v, live); publish(ctx, E); const gl = dareGage(E, cur); if(gl.length) ctx.gage(gl, "av" + k); }
     }
   },
   render(ctx, root){
@@ -1450,7 +1454,7 @@ const DEF = {
     const can = { choose: E.phase === "choose" && (E.tw === "group" ? me !== E.cur : me === E.cur || (ctx.isHost && absent)), settle: E.phase === "card" && (me === E.cur || (ctx.isHost && absent)) };
     const act = (t, v) => {
       if(me === E.cur || (t === "c" && E.tw === "group")) ctx.send(t === "c" ? { c: { n: E.n, v } } : { r: { n: E.n, v } });
-      else if(ctx.isHost) ctx.act(c => { const F = fromState(c.s, c.priv()); if(F.n !== E.n) return; if(t === "c" && F.phase === "choose") reveal(F, v); else if(t === "r" && F.phase === "card") settle(F, v, liveIds(c)); publish(c, F); });
+      else if(ctx.isHost) ctx.act(c => { const F = fromState(c.s, c.priv()); if(F.n !== E.n) return; if(t === "c" && F.phase === "choose") reveal(F, v); else if(t === "r" && F.phase === "card"){ const cur = F.cur, k = c.s.k; settle(F, v, liveIds(c)); const gl = dareGage(F, cur); if(gl.length) c.gage(gl, "av" + k); } publish(c, F); });
     };
     screen(root, "at:" + s.k + JSON.stringify(can) + ctx.isHost, turnHTML(E, nameOf, can) +
       (ctx.isHost ? '<button class="link" type="button" data-stop style="align-self:center">' + tr("Terminer la partie", "End the game") + "</button>" : ""), r => {
@@ -1491,7 +1495,14 @@ const DEF = {
       function turn(){
         if(E.phase === "end") return finish();
         screen(root, "t" + E.n + E.phase, turnHTML(E, nameOf, { choose: true, settle: true }) + '<button class="link" type="button" data-stop style="align-self:center">' + tr("Terminer la partie", "End the game") + "</button>", r => {
-          bindTurn(r, (t, v) => { if(t === "c") reveal(E, v); else settle(E, v, ids); turn(); });
+          bindTurn(r, (t, v) => {
+            if(t === "c"){ reveal(E, v); turn(); return; }
+            const cur = E.cur, n = E.n; settle(E, v, ids);
+            // Dernier tour : la feuille de fin de partie (gagnant / perdants) prend le relais.
+            const gl = E.phase === "end" ? [] : dareGage(E, cur).map(x => Object.assign(x, { id: nameOf(x.id) }));
+            turn();
+            if(gl.length && api.gage) api.gage(gl, "avl" + n + "|" + E.order.join(""));
+          });
           armTap(r.querySelector("[data-stop]"), finish, tr("Toucher encore pour terminer", "Tap again to end"));
         });
         if(E.phase === "card" && SB.fx) SB.fx.flip(root.querySelector(".card.acc"));
