@@ -1,14 +1,14 @@
 {
- "version": "4.16.2",
+ "version": "4.16.3",
  "apk": 35,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Grille : début de manche plus clair (« Retourne 2 cartes pour commencer », « Retourne encore 1 carte »)"
+  "Grille : après avoir pioché, toucher la défausse jette la carte piochée"
  ],
  "files": {
   "core.js": {
-   "h": "e4be04ef1e7844182906946318670788598566e52042ca386003c0940e8dc7e4",
+   "h": "ac3d6b7cf6941eb4ee8a1f136da8e8e290e1f6c01740e163c5f44f57784d42a5",
    "s": 261657
   },
   "firebase-app-compat.js": {
@@ -96,8 +96,8 @@
    "s": 63828
   },
   "games/grille.js": {
-   "h": "e96876ad2811a81754a9ea3a1faf3d1eb146ce692c7ce3effbec5971a1c0b8a0",
-   "s": 51640
+   "h": "8ecc0b908ae84a0a2380887ce5b58566690431684460b81d46aaa307acc0bd88",
+   "s": 52057
   },
   "games/killer.js": {
    "h": "b198ef2b9c1d1e320e9350fd30829a4a3bb32a2886d9071ddccba47106104b9a",

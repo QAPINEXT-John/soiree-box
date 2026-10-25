@@ -321,7 +321,9 @@ function tableHTML(V, me, nameOf, ui){
   const canPick = myTurn && V.step === "pick";
   h += '<div class="gr-table"><button type="button" class="gr-pile" data-draw' + (canPick && !ui.take ? "" : " disabled") + ">" + cardHTML("h", "", "", "span") + tr("Pioche", "Draw") + " · " + (V.left || 0) + "</button>";
   if(V.step === "held" && V.held !== "") h += '<div class="gr-pile gr-held">' + cardHTML(V.held, "", "", "span") + tr("Piochée", "Drawn") + "</div>";
-  h += '<button type="button" class="gr-pile' + (ui.take ? " on" : "") + '" data-take' + (canPick && V.top !== "" ? "" : " disabled") + ">" + (V.top !== "" ? cardHTML(V.top, ui.take ? "sel" : "", "", "span") : cardHTML("x", "", "", "span")) + tr("Défausse", "Discard") + "</button></div>";
+  // Avec une carte piochée en main, toucher la défausse la jette (comme le bouton « Défausser »).
+  const canToss = myTurn && V.step === "held";
+  h += '<button type="button" class="gr-pile' + (ui.take || (canToss && ui.toss) ? " on" : "") + '" ' + (canToss ? "data-toss" : "data-take" + (canPick && V.top !== "" ? "" : " disabled")) + ">" + (V.top !== "" ? cardHTML(V.top, ui.take ? "sel" : "", "", "span") : cardHTML("x", "", "", "span")) + tr("Défausse", "Discard") + "</button></div>";
   const hint = hintTxt(V, me, ui);
   h += hint ? '<p class="gr-log gr-hint">' + esc(hint) + "</p></div>" : '<p class="gr-log">' + esc(V.log || "") + "</p></div>";
   if(me && V.cells[me]){
@@ -347,7 +349,7 @@ function tableHTML(V, me, nameOf, ui){
 function hintTxt(V, me, ui){
   if(!me || ui.pend || V.phase !== "play" || V.turn !== me) return "";
   if(V.step === "pick") return ui.take ? tr("Touche la carte à remplacer par le " + fmt(V.top), "Tap the card to replace with the " + fmt(V.top)) : "";
-  if(V.step === "held") return ui.toss ? tr("Touche une carte cachée à retourner", "Tap a hidden card to flip") : tr("Touche une carte pour l'échanger avec le " + fmt(V.held), "Tap a card to swap it with the " + fmt(V.held));
+  if(V.step === "held") return ui.toss ? tr("Le " + fmt(V.held) + " part à la défausse : touche une carte cachée à retourner", "The " + fmt(V.held) + " goes to the discard: tap a hidden card to flip") : tr("Touche une de tes cartes pour l'échanger avec le " + fmt(V.held) + ", ou touche la défausse pour le jeter", "Tap one of your cards to swap it with the " + fmt(V.held) + ", or tap the discard to throw it away");
   if(V.step === "done") return tr("C'est joué. Touche « Fin du tour » pour passer la main.", "Done. Tap “End turn” to pass.");
   return "";
 }
@@ -525,10 +527,10 @@ const DEF = {
         r.querySelectorAll("[data-take]").forEach(b => b.addEventListener("click", () => { buzz(6); UI.take = !UI.take; again(); }));
         r.querySelectorAll("[data-draw]").forEach(b => b.addEventListener("click", () => sendP("draw")));
         r.querySelectorAll("[data-end]").forEach(b => b.addEventListener("click", () => { buzz(10); sendP("end"); }));
-        const ts = r.querySelector("[data-toss]"); if(ts) ts.addEventListener("click", () => {
+        r.querySelectorAll("[data-toss]").forEach(ts => ts.addEventListener("click", () => {
           if(!A(V.cells[me]).some(c => c === "h")){ sendP("toss", -1); return; }
-          UI.toss = true; again();
-        });
+          buzz(6); UI.toss = true; again();
+        }));
         const cn = r.querySelector("[data-cancel]"); if(cn) cn.addEventListener("click", () => { UI.take = false; UI.toss = false; again(); });
         // Hôte : jouer à la place d'un absent pour ne pas bloquer la partie.
         const away = V.phase === "flip" ? V.order.filter(id => !ctx.here(id) && A(V.cells[id]).filter(c => typeof c === "number").length < V.nflip) : V.order.filter(id => id === V.turn && !ctx.here(id));
@@ -652,10 +654,10 @@ const DEF = {
           r.querySelectorAll("[data-take]").forEach(b => b.addEventListener("click", () => { buzz(6); take = !take; draw(me); }));
           r.querySelectorAll("[data-draw]").forEach(b => b.addEventListener("click", () => { clearTimeout(timer); if(doDraw(E, me, nameOf)) buzz(10); draw(me); }));
           r.querySelectorAll("[data-end]").forEach(b => b.addEventListener("click", () => act(() => doEnd(E, me, nameOf))));
-          const ts = r.querySelector("[data-toss]"); if(ts) ts.addEventListener("click", () => {
+          r.querySelectorAll("[data-toss]").forEach(ts => ts.addEventListener("click", () => {
             if(!hiddenIdx(E.up[me]).length){ act(() => doToss(E, me, -1, nameOf)); return; }
-            toss = true; draw(me);
-          });
+            buzz(6); toss = true; draw(me);
+          }));
           const cn = r.querySelector("[data-cancel]"); if(cn) cn.addEventListener("click", () => { take = false; toss = false; draw(me); });
         });
       }
