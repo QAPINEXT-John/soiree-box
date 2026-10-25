@@ -1,4 +1,7 @@
 {
+  "4.14.3": [
+    "En mode Enfant, le profil ne montre plus les modes Hard et Soft : seulement « Quitter le mode Enfant », avec le code"
+  ],
   "4.14.2": [
     "Mode Enfant : c'est l'hôte qui choisit le code en passant le salon en Enfant",
     "Les téléphones qui scannent le QR code ou rejoignent le salon passent en mode Enfant, verrouillés avec le code de l'hôte, sans rien avoir à faire"

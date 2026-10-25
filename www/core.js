@@ -808,7 +808,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.14.2";
+const VERSION = "4.14.3";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -2154,7 +2154,7 @@ function gProfilePage(){
       const k = pinUI.k;
       const body = k === "set" ? '<b>' + tr("Choisis un code à 4 chiffres", "Pick a 4-digit code") + '</b><span class="sm">' + tr("Il servira à sortir du mode Enfant. Ne le donne pas aux enfants.", "You'll need it to leave Kids mode. Don't give it to the kids.") + "</span>" + inp("pf-pin", tr("Code", "Code")) + inp("pf-pin2", tr("Encore une fois", "Once more"))
         : k === "change" ? '<b>' + tr("Changer le code", "Change the code") + "</b>" + inp("pf-pin", tr("Code actuel", "Current code")) + inp("pf-pin2", tr("Nouveau code", "New code")) + inp("pf-pin3", tr("Nouveau code, encore", "New code, again"))
-        : k === "unlock" ? '<b>' + tr("Code du mode Enfant", "Kids mode code") + '</b><span class="sm">' + tr("Pour passer en " + (pinUI.to === "hard" ? "Hard" : "Soft") + ", entre le code.", "To switch to " + (pinUI.to === "hard" ? "Hard" : "Soft") + ", enter the code.") + "</span>" + inp("pf-pin", "• • • •")
+        : k === "unlock" ? '<b>' + tr("Code du mode Enfant", "Kids mode code") + '</b><span class="sm">' + tr("Pour quitter le mode Enfant, entre le code.", "To leave Kids mode, enter the code.") + "</span>" + inp("pf-pin", "• • • •")
         : '<b>' + tr("Question pour les adultes", "Grown-ups question") + '</b><span class="sm">' + tr("Combien font " + pinUI.a + " × " + pinUI.b + " ? La bonne réponse enlève le mode Enfant.", "What is " + pinUI.a + " × " + pinUI.b + "? The right answer turns off Kids mode.") + '</span><input class="txt pin" id="pf-pin" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off">';
       return '<div class="gs-box pinbox">' + body + '<p class="err" data-perr hidden></p><div class="pinbtns"><button class="btn acc" type="button" data-pok>' + (k === "set" ? tr("Activer le mode Enfant", "Turn on Kids mode") : tr("Valider", "Confirm")) + '</button><button class="btn ghost" type="button" data-pcancel>' + tr("Annuler", "Cancel") + "</button></div>" +
         (k === "unlock" ? '<button class="link" type="button" data-pforgot style="align-self:flex-start">' + tr("Code oublié ?", "Forgot the code?") + "</button>" : "") + "</div>";
@@ -2179,9 +2179,10 @@ function gProfilePage(){
           [["hard", "Hard 🔥", tr("Tout le contenu : jeux et paquets 18+, avatars Hot, gages avec alcool. C'est le mode par défaut.", "Everything: 18+ games and packs, Hot avatars, drinking forfeits. This is the default.")],
            ["soft", "Soft", tr("Rien de 18+ : pas de jeux ni de paquets adultes, avatars Hot masqués, gages sans alcool. Pratique en famille ou avec des gens que tu connais peu.", "Nothing 18+: no adult games or packs, Hot avatars hidden, alcohol-free forfeits. Handy with family or people you barely know.")],
            ["kid", tr("Enfant 🔒", "Kids 🔒"), tr("Seulement des jeux tout public, rien sur l'alcool ni le sexe. Verrouillé par un code à 4 chiffres : il faut le code pour en sortir.", "Family-friendly games only, nothing about alcohol or sex. Locked with a 4-digit code: you need it to leave.")]]
+          .filter(m => !myKid() || m[0] === "kid")
           .map(m => '<button type="button" class="pack" data-md="' + m[0] + '" aria-pressed="' + (curMode() === m[0]) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + m[1] + (myKid() && m[0] !== "kid" ? " 🔒" : "") + '</span><span class="ds">' + esc(m[2]) + "</span></span></button>").join("") + "</div>" +
           pinBox() +
-          (myKid() && !pinUI ? '<button class="link" type="button" data-pchg style="align-self:flex-start">' + tr("Changer le code", "Change the code") + "</button>" : "") +
+          (myKid() && !pinUI ? '<button class="btn ghost" type="button" data-pexit>' + tr("Quitter le mode Enfant", "Leave Kids mode") + '</button><button class="link" type="button" data-pchg style="align-self:flex-start">' + tr("Changer le code", "Change the code") + "</button>" : "") +
           '<p class="sm" style="margin:0">' + tr("Dans un salon, c'est le mode de l'hôte qui compte. Un téléphone en mode Enfant ne peut entrer que dans un salon en mode Enfant.", "In a room, the host's mode applies. A phone in Kids mode can only join a room in Kids mode.") + "</p></div>" +
         (roomHard() ? '<p class="howto">' + tr("Ton profil reste sur ton téléphone et te suit dans chaque salon. Il sert à une chose : que les gages des jeux respectent ce que tu bois et ta limite. Une fois ta limite atteinte, tes gages passent automatiquement en sans alcool, sans que les autres sachent pourquoi.", "Your profile stays on your phone and follows you into every room. It does one thing: makes game forfeits respect what you drink and your limit. Once you hit your limit, your forfeits switch to no-alcohol automatically, without the others knowing why.") + "</p>" +
         '<div class="field"><span class="eyebrow">' + tr("Ce soir, je bois…", "Tonight I'm drinking…") + '</span><div class="packs">' +
@@ -2192,7 +2193,7 @@ function gProfilePage(){
           "<li><b>" + tr("1 gorgée", "1 sip") + "</b> " + tr("= une gorgée normale de ta boisson (" + d.sips + " par verre).", "= a normal sip of your drink (" + d.sips + " per drink).") + "</li>" +
           "<li><b>1 shot</b> " + (gp.drink === "fort" ? tr("= un shot (3 cl).", "= one shot (3 cl).") : tr("= 3 gorgées de ta boisson.", "= 3 sips of your drink.")) + "</li>" +
           "<li><b>" + tr("1 cul-sec", "1 chug") + "</b> " + tr("= finir ton verre (" + d.glass + ").", "= finish your drink (" + d.glass + ").") + "</li>" +
-          "<li>" + tr("1 verre standard = 10 g d'alcool pur. Les repères santé conseillent pas plus de 10 par semaine et pas plus de 2 par jour.", "1 standard drink = 10 g of pure alcohol. Health guidelines suggest no more than 10 a week and no more than 2 a day.") + "</li></ul></div>" : "") : '<p class="howto">' + tr("Mode Soft : pas d'alcool. Les gages des jeux sont des défis, des chansons, des pompes…", "Soft mode: no alcohol. Game forfeits are dares, songs, push-ups…") + "</p>") +
+          "<li>" + tr("1 verre standard = 10 g d'alcool pur. Les repères santé conseillent pas plus de 10 par semaine et pas plus de 2 par jour.", "1 standard drink = 10 g of pure alcohol. Health guidelines suggest no more than 10 a week and no more than 2 a day.") + "</li></ul></div>" : "") : '<p class="howto">' + (myKid() ? tr("Mode Enfant : les gages des jeux sont des défis, des chansons, des pompes…", "Kids mode: game forfeits are dares, songs, push-ups…") : tr("Mode Soft : pas d'alcool. Les gages des jeux sont des défis, des chansons, des pompes…", "Soft mode: no alcohol. Game forfeits are dares, songs, push-ups…")) + "</p>") +
         "</div>";
       const save = p => { const g2 = Object.assign(gProf(store().gp), p); g2.alc = g2.drink !== "sans"; persist({ gp: g2 }); CORE_X._gp = g2; SB.refreshExtras(); draw(); };
       $$("[data-gd]", root).forEach(b => b.addEventListener("click", () => { buzz(8); save({ drink: b.dataset.gd }); }));
@@ -2203,6 +2204,7 @@ function gProfilePage(){
         else { setMode(m); pinUI = null; }
         draw(); const f = $("#pf-pin", root); if(f) f.focus();
       }));
+      const pe = $("[data-pexit]", root); if(pe) pe.addEventListener("click", () => { pinUI = { k: "unlock", to: "soft" }; draw(); const f = $("#pf-pin", root); if(f) f.focus(); });
       const pc = $("[data-pchg]", root); if(pc) pc.addEventListener("click", () => { pinUI = { k: "change" }; draw(); const f = $("#pf-pin", root); if(f) f.focus(); });
       const px = $("[data-pcancel]", root); if(px) px.addEventListener("click", () => { pinUI = null; draw(); });
       const pf = $("[data-pforgot]", root); if(pf) pf.addEventListener("click", () => { pinUI = { k: "forgot", to: pinUI && pinUI.to || "soft", a: 12 + Math.floor(Math.random() * 17), b: 13 + Math.floor(Math.random() * 16) }; draw(); const f = $("#pf-pin", root); if(f) f.focus(); });

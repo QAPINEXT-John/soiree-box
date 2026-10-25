@@ -1,16 +1,15 @@
 {
- "version": "4.14.2",
+ "version": "4.14.3",
  "apk": 35,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Mode Enfant : c'est l'hôte qui choisit le code en passant le salon en Enfant",
-  "Les téléphones qui scannent le QR code ou rejoignent le salon passent en mode Enfant, verrouillés avec le code de l'hôte, sans rien avoir à faire"
+  "En mode Enfant, le profil ne montre plus les modes Hard et Soft : seulement « Quitter le mode Enfant », avec le code"
  ],
  "files": {
   "core.js": {
-   "h": "adcde60517c9e42da75feb8db7b0dd80ae6a9ff5c85134b2b01609a6c628b915",
-   "s": 260709
+   "h": "9435532029a857501ca8b50ddda7339a8e83477a5bdaea974f9dd10db7710448",
+   "s": 261136
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
