@@ -62,7 +62,7 @@ const EN_HTML = {
   "Jouer sur un seul téléphone": "Play on one phone", "On se le passe, ou on joue contre des robots": "Pass it around, or play against bots",
   "Les jeux": "Games", "Un bug, un souci ?": "Bug or problem?", "Signale-le": "Report it",
   "Salon": "Room", "Hors ligne…": "Offline…", "Signaler un bug": "Report a bug", "Quitter": "Leave",
-  "Code à partager": "Code to share", "Partager l'invitation": "Share the invite", "QR code du salon": "Room QR code", "Invitation": "Invite", "Choisis un jeu": "Pick a game",
+  "Code à partager": "Code to share", "Partager l'invitation": "Share the invite", "QR code du salon": "Room QR code", "Mon profil": "My profile", "Invitation": "Invite", "Choisis un jeu": "Pick a game",
   "Partie en cours": "Game in progress",
   "Tu es arrivé en cours de partie. Tu pourras jouer à la prochaine, quand l'hôte la lancera depuis le salon.": "You joined mid-game. You can play the next one when the host starts it from the room.",
   "Salon fermé": "Room closed", "L'hôte est parti": "The host left",
@@ -1033,7 +1033,7 @@ SB.openInvite = function(code){
 function homeErr(msg){ const e = $("#h-err"); e.textContent = msg || ""; e.hidden = !msg; }
 let hashCode = null;
 function renderHome(){
-  renderInvite(); renderHomeProfile();
+  renderInvite(); renderMe();
   const nm = clean($("#h-name").value, 16);
   $("#h-create").disabled = !netReady || N.joining;
   $("#h-join").disabled = !netReady || N.joining;
@@ -1428,7 +1428,7 @@ function renderSalon(g){
   const np = namedPeers();
   const hostId = N.host ? N.nr.me() : N.nr.hostId();
   $("#sa-count").textContent = tr(plural(np.length, "joueur") + " dans le salon", plural2(np.length, "joueur", "joueurs", "player") + " in the room");
-  const roster = np.map((p, i) => { const nm = clean(pres(p).name, 16); return '<li' + (p.sameTab ? ' class="me"' : "") + '><span class="av" style="--c:' + AVC[i % AVC.length] + '" aria-hidden="true">' + esc(nm.slice(0, 1).toUpperCase()) + '</span><span class="nm">' + esc(nm) + (p.sameTab ? tr(" · toi", " · you") : "") + "</span>" +
+  const roster = np.map((p, i) => { const nm = clean(pres(p).name, 16); const ph = gPhotoOf(p); return '<li' + (p.sameTab ? ' class="me"' : "") + '><span class="av" style="--c:' + AVC[i % AVC.length] + '" aria-hidden="true">' + (ph ? '<img alt="" src="' + ph + '">' : esc(nm.slice(0, 1).toUpperCase())) + '</span><span class="nm">' + esc(nm) + (p.sameTab ? tr(" · toi", " · you") : "") + "</span>" +
     (p.peer === hostId ? '<span class="pill me">' + tr("Hôte", "Host") + '</span>' : "") + (cmpV(peerV(p) || "0", newestV(np)) < 0 ? '<span class="pill late">' + tr("À mettre à jour", "Needs update") + '</span>' : "") + "</li>"; }).join("");
   if($("#sa-roster").innerHTML !== roster) $("#sa-roster").innerHTML = roster;
   const last = $("#sa-last");
@@ -1771,7 +1771,7 @@ function gLocalApply(gameId, names, list, key, rerender){
 }
 
 /* ---------- Réglages (hôte ou un seul téléphone) et profil ---------- */
-const gRefresh = () => { try{ renderHomeProfile(); if(!$("#s-llist").hidden) gLocalBar(); }catch(e){} };
+const gRefresh = () => { try{ renderMe(); if(!$("#s-llist").hidden) gLocalBar(); }catch(e){} };
 function gSettingsPage(get, set, editable, tally, onReset){
   SB.page(tr("Gages", "Forfeits"), root => {
     let game = (SB.games.find(d => A(d.gages).length) || {}).id || "_fin";
@@ -1822,6 +1822,35 @@ function gSettingsPage(get, set, editable, tally, onReset){
     draw();
   }, gRefresh);
 }
+/* ---------- Photo de profil : petite image carrée gardée sur le téléphone, partagée dans les salons ---------- */
+const PHOTO_RX = /^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/;
+function gPhotoOf(peer){ const x = pres(peer).x || {}; return typeof x._ph === "string" && x._ph.length < 3000 && PHOTO_RX.test(x._ph) ? x._ph : ""; }
+function myPhoto(){ const v = store().photo; return typeof v === "string" && v.length < 3000 && PHOTO_RX.test(v) ? v : ""; }
+function shrinkPhoto(file){
+  return new Promise(res => {
+    if(!file){ res(""); return; }
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      try{
+        const c = document.createElement("canvas"), S2 = 64, m = Math.min(img.naturalWidth, img.naturalHeight);
+        c.width = c.height = S2; const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, S2, S2);
+        g.drawImage(img, (img.naturalWidth - m) / 2, (img.naturalHeight - m) / 2, m, m, 0, 0, S2, S2);
+        let d = c.toDataURL("image/jpeg", .7); if(d.length > 2400) d = c.toDataURL("image/jpeg", .5); if(d.length > 2400) d = c.toDataURL("image/jpeg", .35);
+        res(d.length < 2800 ? d : ""); // petite : la présence d'un joueur doit rester légère
+      }catch(e){ res(""); }
+      URL.revokeObjectURL(url);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); res(""); };
+    img.src = url;
+  });
+}
+// Bouton profil en haut à gauche de l'accueil : la photo, sinon l'initiale du prénom.
+function renderMe(){
+  const el = $("#h-me"); if(!el) return;
+  const ph = myPhoto(), nm = clean(store().name, 16), key = (ph ? ph.length + ph.slice(-24) : "") + "|" + nm;
+  if(el.dataset.key === key) return; el.dataset.key = key;
+  el.innerHTML = ph ? '<img alt="" src="' + ph + '">' : nm ? esc(nm.slice(0, 1).toUpperCase()) : '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+}
 const gProfShort = () => { const gp = gProf(store().gp); return gp.drink === "sans" ? tr("Sans alcool", "No alcohol") : DRINKS[gp.drink].name + " · max " + gVerres(gLim(gp), gp.drink); };
 // Texte d'une limite : « 3 demis (25 cl) ≈ 24 gorgées · environ 3 verres standard ».
 function gLimText(drink, lim){
@@ -1834,7 +1863,15 @@ function gProfilePage(){
       const gp = gProf(store().gp), lim = gLim(gp), d = DRINKS[gp.drink];
       const opts = [["sans", tr("Je ne bois pas d'alcool", "I'm not drinking alcohol"), tr("Tu reçois des gages sans alcool à la place : défis, chansons, pompes…", "You get no-alcohol forfeits instead: dares, songs, push-ups…")]]
         .concat(Object.keys(DRINKS).map(k => [k, DRINKS[k].name, tr("1 verre = ", "1 drink = ") + DRINKS[k].glass + (DRINKS[k].sips > 1 ? tr(" ≈ " + DRINKS[k].sips + " gorgées", " ≈ " + DRINKS[k].sips + " sips") : "")]));
-      root.innerHTML = '<div class="gs"><p class="howto">' + tr("Ton profil reste sur ton téléphone et te suit dans chaque salon. Il sert à une chose : que les gages des jeux respectent ce que tu bois et ta limite. Une fois ta limite atteinte, tes gages passent automatiquement en sans alcool, sans que les autres sachent pourquoi.", "Your profile stays on your phone and follows you into every room. It does one thing: makes game forfeits respect what you drink and your limit. Once you hit your limit, your forfeits switch to no-alcohol automatically, without the others knowing why.") + "</p>" +
+      const ph = myPhoto(), nm = clean(store().name, 16);
+      root.innerHTML = '<div class="gs"><div class="pf-top"><span class="pf-av">' + (ph ? '<img alt="" src="' + ph + '">' : esc((nm || "?").slice(0, 1).toUpperCase())) + '</span><div class="pf-act">' +
+        '<input class="pr-file" type="file" accept="image/*" data-pf-file aria-label="' + tr("Choisir une photo", "Choose a photo") + '">' +
+        '<button class="btn ghost" type="button" data-pf-pick>' + (ph ? tr("Changer la photo", "Change photo") : tr("Ajouter une photo", "Add a photo")) + "</button>" +
+        (ph ? '<button class="link" type="button" data-pf-del>' + tr("Retirer la photo", "Remove photo") + "</button>" : "") + "</div></div>" +
+        '<label class="lbl" for="pf-name">' + tr("Ton prénom", "Your name") + '<input class="txt" id="pf-name" maxlength="16" autocomplete="given-name" value="' + esc(nm) + '" placeholder="' + tr("Léa", "Alex") + '"></label>' +
+        '<p class="sm" style="margin:0">' + tr("Ta photo et ton prénom s'affichent dans les salons que tu rejoins.", "Your photo and name show in the rooms you join.") + "</p>" +
+        '<button type="button" class="gbtn" data-pf-gages><b>' + tr("Mes gages", "My forfeits") + '</b><span class="sm">' + (gLocalSettings().on ? tr("Activés · ", "On · ") + esc({ chill: "Chill", classique: tr("Classique", "Classic"), chaud: tr("Apéro chaud", "Wild night"), perso: "Perso" }[gLocalSettings().level]) : tr("Désactivés", "Off")) + tr(" · réglages utilisés dans tes salons", " · settings used in your rooms") + "</span></button>" +
+        '<p class="howto">' + tr("Ton profil reste sur ton téléphone et te suit dans chaque salon. Il sert à une chose : que les gages des jeux respectent ce que tu bois et ta limite. Une fois ta limite atteinte, tes gages passent automatiquement en sans alcool, sans que les autres sachent pourquoi.", "Your profile stays on your phone and follows you into every room. It does one thing: makes game forfeits respect what you drink and your limit. Once you hit your limit, your forfeits switch to no-alcohol automatically, without the others knowing why.") + "</p>" +
         '<div class="field"><span class="eyebrow">' + tr("Ce soir, je bois…", "Tonight I'm drinking…") + '</span><div class="packs">' +
         opts.map(o => '<button type="button" class="pack" data-gd="' + o[0] + '" aria-pressed="' + (gp.drink === o[0]) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(o[1]) + '</span><span class="ds">' + esc(o[2]) + "</span></span></button>").join("") + "</div></div>" +
         (d ? '<div class="field"><span class="eyebrow">' + tr("Ma limite pour la soirée", "My limit for the night") + '</span><div class="gs-box"><div class="gs-row"><span class="tx"><b>' + esc(gVerres(lim, gp.drink)) + '</b><span class="sm">' + esc(gLimText(gp.drink, lim)) + '</span></span><button type="button" class="gs-b" data-gl="-1" aria-label="' + tr("Moins", "Less") + '">−</button><b class="gs-n">' + lim + '</b><button type="button" class="gs-b" data-gl="1" aria-label="' + tr("Plus", "More") + '">+</button></div></div>' +
@@ -1847,6 +1884,12 @@ function gProfilePage(){
         "</div>";
       const save = p => { const g2 = Object.assign(gProf(store().gp), p); g2.alc = g2.drink !== "sans"; persist({ gp: g2 }); CORE_X._gp = g2; SB.refreshExtras(); draw(); };
       $$("[data-gd]", root).forEach(b => b.addEventListener("click", () => { buzz(8); save({ drink: b.dataset.gd }); }));
+      const fi = $("[data-pf-file]", root);
+      $("[data-pf-pick]", root).addEventListener("click", () => fi.click());
+      fi.addEventListener("change", async () => { const d = await shrinkPhoto(fi.files && fi.files[0]); fi.value = ""; if(!d){ toast(tr("Cette photo n'a pas pu être lue", "Couldn't read that photo")); return; } persist({ photo: d }); CORE_X._ph = d; SB.refreshExtras(); renderMe(); draw(); });
+      const del = $("[data-pf-del]", root); if(del) del.addEventListener("click", () => { persist({ photo: "" }); delete CORE_X._ph; SB.refreshExtras(); renderMe(); draw(); });
+      const ni = $("#pf-name", root); ni.addEventListener("input", () => { const v = clean(ni.value, 16); persist({ name: v }); const hn = $("#h-name"); if(hn) hn.value = v; renderMe(); });
+      $("[data-pf-gages]", root).addEventListener("click", () => gSettingsPage(gLocalSettings, gSaveSettings, true, () => ({}), null));
       $$("[data-gl]", root).forEach(b => b.addEventListener("click", () => { const g2 = gProf(store().gp), l = Object.assign({}, g2.lim); l[g2.drink] = Math.max(1, Math.min(20, gLim(g2) + +b.dataset.gl)); save({ lim: l }); }));
     };
     draw();
@@ -1906,6 +1949,8 @@ function renderLang(){
 /* =================== Démarrage =================== */
 SB.boot = function(){
   CORE_X._gp = Object.assign({ alc: true, cap: 0 }, store().gp || {});
+  if(myPhoto()) CORE_X._ph = myPhoto();
+  const hm = $("#h-me"); if(hm) hm.addEventListener("click", () => { buzz(8); gProfilePage(); });
   if(LANG === "en"){ document.documentElement.lang = "en"; i18nDom(document.body); }
   renderLang();
   if(window.AndroidUpdate){
@@ -1931,7 +1976,7 @@ SB.boot = function(){
   nm.value = store().name || "";
   const m = (location.hash || "").match(/^#([A-Za-z]{4})$/);
   if(m){ hashCode = m[1].toUpperCase(); cd.value = hashCode; }
-  nm.addEventListener("input", () => { persist({ name: clean(nm.value, 16) }); renderHome(); });
+  nm.addEventListener("input", () => { persist({ name: clean(nm.value, 16) }); renderHome(); renderMe(); });
   cd.addEventListener("input", () => { cd.value = cd.value.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 4); renderHome(); });
   cd.addEventListener("keydown", e => { if(e.key === "Enter" && !$("#h-join").disabled) $("#h-join").click(); });
   $("#h-create").addEventListener("click", () => netEnter(makeCode(), true));
