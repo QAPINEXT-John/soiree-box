@@ -1,15 +1,18 @@
 {
- "version": "4.16.10",
+ "version": "4.17.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Profil : plus de petit dé sur le rond, toucher le rond donne toujours un avatar au hasard"
+  "Nouveau : compteur d'alcool. Dans ton profil, touche + à chaque verre ; ce que tu bois dans les jeux est compté tout seul",
+  "Salon : bouton « Compteur d'alcool » pour voir en direct qui a bu quoi ce soir (en verres standard)",
+  "Estimation de ton taux d'alcool (g/L) avec ton poids : très approximative, jamais pour décider de conduire. Ton poids et ton taux restent sur ton téléphone",
+  "Pas de compteur en mode Soft ni en mode Enfant"
  ],
  "files": {
   "core.js": {
-   "h": "066fb6fae5f79dc9142641256b227e2065c2c60bb9405cea82edc58d1f32c2d4",
-   "s": 264457
+   "h": "2b5b79169b6eddc28807bdf56e272e56a31f95639039960ce05c5acad13c0ec4",
+   "s": 276797
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -184,8 +187,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "05b5001b63eaf2afd00aa6198f3884fa3423d231863d95dae368695c3d2e0137",
-   "s": 50913
+   "h": "c97efb06fc22be8aa929f98acb4de95a98015bfe89e84d95e2ad4afa9b07b225",
+   "s": 51336
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",

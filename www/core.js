@@ -808,7 +808,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.16.10";
+const VERSION = "4.17.0";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -1427,6 +1427,7 @@ function renderOffline(){
 let lastPhase = "";
 function render(){
   if(!N.nr) return;
+  try{ alcTrackNet(G()); }catch(e){}
   if(BLOBS.size){ const gb = G(); if(!gb || gb.phase !== "game") BLOBS.clear(); }
   if(current === "page"){
     const g0 = G(), d0 = g0 && g0.phase === "game" ? SB.byId[g0.game] : null;
@@ -1901,12 +1902,12 @@ function gLocalApply(gameId, names, list, key, rerender){
   const S = gLocalSettings(); if(!S.on) return;
   if(key && LGG.key === key) return; LGG.key = key || "";
   const players = names.map(n => { const d = gLocalDrink(n); return { id: n, name: n, alc: d !== "sans", drink: d, lim: d === "sans" ? 0 : DRINKS[d].def }; });
-  const r = gCompute(S, gameId, list, players, LGG.tally); LGG.tally = r.tally;
+  const r = gCompute(S, gameId, list, players, LGG.tally); alcTrackLocal(LGG.tally, r.tally); LGG.tally = r.tally;
   if(!r.items.length) return;
   const q = { id: rid(), game: gameId, items: r.items };
   const show2 = () => gageSheet(q, { S, me: null, players,
     jokerOk: () => false,
-    onGive: (it, to) => { const g2 = gGive(S, gameId, q, it.who, to, players, LGG.tally); if(g2){ LGG.tally = g2.tally; q.items = g2.items; $("#gage-sheet").dataset.key = ""; show2(); } } });
+    onGive: (it, to) => { const g2 = gGive(S, gameId, q, it.who, to, players, LGG.tally); if(g2){ alcTrackLocal(LGG.tally, g2.tally); LGG.tally = g2.tally; q.items = g2.items; $("#gage-sheet").dataset.key = ""; show2(); } } });
   show2();
 }
 
@@ -2199,6 +2200,7 @@ function gProfilePage(){
         (d ? '<div class="field"><span class="eyebrow">' + tr("Ma limite pour la soirée", "My limit for the night") + '</span><div class="gs-box">' + (gp.nolim ? "" : '<div class="gs-row"><span class="tx"><b>' + esc(gVerres(lim, gp.drink)) + '</b><span class="sm">' + esc(gLimText(gp.drink, lim)) + '</span></span><button type="button" class="gs-b" data-gl="-1" aria-label="' + tr("Moins", "Less") + '">−</button><b class="gs-n">' + lim + '</b><button type="button" class="gs-b" data-gl="1" aria-label="' + tr("Plus", "More") + '">+</button></div>') +
           '<div class="gs-row"><span class="tx"><b>' + tr("Sans limite", "No limit") + '</b><span class="sm">' + (gp.nolim ? tr("Pas de limite perso. Le plafond de l'hôte compte quand même s'il en a mis un.", "No personal limit. The host's cap still applies if they set one.") : tr("Pas de limite perso pour la soirée", "No personal limit for the night")) + '</span></span><button type="button" class="gs-sw" data-gnolim aria-pressed="' + !!gp.nolim + '" aria-label="' + tr("Sans limite", "No limit") + '"><i></i></button></div></div>' +
           '<p class="sm" style="margin:0">' + tr("Une limite est gardée pour chaque boisson : si tu passes de la bière au vin, ta limite « vin » reprend.", "A limit is kept for each drink: switch from beer to wine and your “wine” limit comes back.") + "</p></div>" +
+          '<div class="field"><span class="eyebrow">' + tr("Mon compteur d'alcool", "My drink counter") + "</span>" + alcMineHTML() + "</div>" +
           '<div class="field"><span class="eyebrow">' + tr("Comment on compte", "How it's counted") + '</span><ul class="gs-how">' +
           "<li><b>" + tr("1 gorgée", "1 sip") + "</b> " + tr("= une gorgée normale de ta boisson (" + d.sips + " par verre).", "= a normal sip of your drink (" + d.sips + " per drink).") + "</li>" +
           "<li><b>1 shot</b> " + (gp.drink === "fort" ? tr("= un shot (3 cl).", "= one shot (3 cl).") : tr("= 3 gorgées de ta boisson.", "= 3 sips of your drink.")) + "</li>" +
@@ -2257,6 +2259,7 @@ function gProfilePage(){
       const ni = $("#pf-name", root); ni.addEventListener("input", () => { const v = clean(ni.value, 16); persist({ name: v }); const hn = $("#h-name"); if(hn) hn.value = v; renderMe(); });
       $("[data-pf-gages]", root).addEventListener("click", () => gSettingsPage(gLocalSettings, gSaveSettings, true, () => ({}), null));
       const nl = $("[data-gnolim]", root); if(nl) nl.addEventListener("click", () => { buzz(8); save({ nolim: !gProf(store().gp).nolim }); });
+      alcMineBind(root, draw);
       $$("[data-gl]", root).forEach(b => b.addEventListener("click", () => { const g2 = gProf(store().gp), l = Object.assign({}, g2.lim); l[g2.drink] = Math.max(1, Math.min(20, gLim(g2) + +b.dataset.gl)); save({ lim: l }); }));
     };
     draw();
@@ -2273,15 +2276,127 @@ function renderHomeProfile(){
   $("[data-hme]", el).addEventListener("click", () => gProfilePage());
   $("[data-hgs]", el).addEventListener("click", () => gSettingsPage(gLocalSettings, gSaveSettings, true, () => ({}), null));
 }
+/* =================== Compteur d'alcool ===================
+   - Journal perso, gardé sur ce téléphone : les verres notés à la main (k: "v") et ce que tu as bu dans les jeux (k: "j"),
+     avec l'heure, en verres standard (s). Une soirée = les 12 dernières heures.
+   - Les gorgées des jeux viennent de tes verres : le total et l'estimation prennent le plus grand des deux compteurs.
+   - Dans un salon, chacun partage seulement son nombre de verres (jamais son poids ni son estimation).
+   - Estimation du taux (formule de Widmark), très approximative, jamais pour décider de conduire. */
+const ALC_H = 12;
+function alcStore(){
+  const a = store().alc || {}, now = Date.now();
+  return { log: A(a.log).filter(e => e && (e.k === "v" || e.k === "j") && now - (+e.t || 0) < ALC_H * 3600e3 && +e.s > 0).slice(-400),
+    kg: Math.max(0, Math.min(250, +a.kg || 0)), r: a.r === 0.6 ? 0.6 : a.r === 0.7 ? 0.7 : 0, gk: typeof a.gk === "string" ? a.gk : "", gv: +a.gv || 0 };
+}
+function alcSave(p){ persist({ alc: Object.assign(alcStore(), p) }); alcShare(); }
+const alcSum = (log, k) => Math.round(log.filter(e => e.k === k).reduce((a, e) => a + e.s, 0) * 100) / 100;
+function alcTotals(){ const a = alcStore(), v = alcSum(a.log, "v"), j = alcSum(a.log, "j"); return { v, j, n: a.log.filter(e => e.k === "v").length, tot: Math.max(v, j) }; }
+function alcShare(){ const t = alcTotals(); const x = { v: t.v, j: t.j, n: t.n }; if(JSON.stringify(CORE_X._alc) === JSON.stringify(x)) return; CORE_X._alc = x; try{ SB.refreshExtras(); }catch(e){} }
+// Taux estimé (g/L), ou null si le poids et la base de calcul ne sont pas réglés.
+function alcBac(){
+  const a = alcStore(); if(!a.kg || !a.r) return null;
+  const use = a.log.filter(e => e.k === (alcSum(a.log, "v") >= alcSum(a.log, "j") ? "v" : "j")).sort((x, y) => x.t - y.t);
+  if(!use.length) return 0;
+  let b = 0, t0 = use[0].t;
+  use.forEach(e => { b = Math.max(0, b - 0.15 * (e.t - t0) / 3600e3) + e.s * 10 / (a.kg * a.r); t0 = e.t; });
+  return Math.max(0, b - 0.15 * (Date.now() - t0) / 3600e3);
+}
+const alcNum = (n, d) => String(Math.round(n * Math.pow(10, d)) / Math.pow(10, d)).replace(".", tr(",", "."));
+const alcStd = n => alcNum(n, 1) + " " + tr(n > 1 ? "verres standard" : "verre standard", n === 1 ? "standard drink" : "standard drinks");
+// Ce que j'ai bu dans les jeux en réseau : on suit mon compteur du salon et on note chaque hausse avec l'heure.
+function alcTrackNet(g){
+  if(!g || !N.nr || g.hd === false || g.kid === true) return;
+  const me = gPlayers().find(p => p.id === N.nr.me()); if(!me || me.drink === "sans") return;
+  const T = (g.gt || {})[me.name], v = T ? +T.v || 0 : 0, key = N.code + ":" + me.name, a = alcStore();
+  if(a.gk !== key){ alcSave({ gk: key, gv: v }); return; }
+  if(v > a.gv + 1e-6){ const d = DRINKS[me.drink] || DRINKS.biere; a.log.push({ t: Date.now(), k: "j", s: Math.round((v - a.gv) * d.std * 100) / 100 }); alcSave({ log: a.log, gv: v }); }
+  else if(v < a.gv - 1e-6) alcSave({ gv: v });
+}
+// Sur un seul téléphone : si un des joueurs porte mon prénom, ses gorgées vont dans mon compteur.
+function alcTrackLocal(before, after){
+  const nm = clean(store().name, 16); if(!nm || !myHard()) return;
+  const dk = gLocalDrink(nm); if(dk === "sans") return;
+  const b = ((before || {})[nm] || {}).v || 0, a2 = ((after || {})[nm] || {}).v || 0;
+  if(a2 > b + 1e-6){ const a = alcStore(); a.log.push({ t: Date.now(), k: "j", s: Math.round((a2 - b) * DRINKS[dk].std * 100) / 100 }); alcSave({ log: a.log }); }
+}
+// Bloc « Moi » : ajouter un verre, retirer le dernier, total, estimation.
+function alcMineHTML(){
+  const gp = gProf(store().gp), d = DRINKS[gp.drink], t = alcTotals(), a = alcStore(), bac = alcBac();
+  if(!d) return '<p class="sm" style="margin:0">' + tr("Tu as choisi « Je ne bois pas d'alcool » dans ton profil : rien à compter.", "You picked “I'm not drinking alcohol” in your profile: nothing to count.") + "</p>";
+  return '<div class="gs-box"><div class="gs-row"><span class="tx"><b>' + tr(t.n + (t.n > 1 ? " verres" : " verre") + " notés", t.n + (t.n === 1 ? " drink" : " drinks") + " logged") + '</b><span class="sm">' +
+      esc(tr("Ce soir : ", "Tonight: ") + alcStd(t.tot) + (t.j ? tr(" · dont " + alcStd(t.j) + " dans les jeux", " · " + alcStd(t.j) + " in games") : "")) + "</span></span>" +
+      '<button type="button" class="gs-b" data-alc="-1" aria-label="' + tr("Retirer le dernier verre", "Remove the last drink") + '"' + (t.n ? "" : " disabled") + ">−</button>" +
+      '<button type="button" class="gs-b" data-alc="1" aria-label="' + tr("Ajouter un verre", "Add a drink") + '">+</button></div>' +
+    '<p class="sm" style="margin:8px 0 0">' + esc(tr("Touche + à chaque nouveau verre : ", "Tap + for each new drink: ") + d.glass + " (" + alcStd(d.std) + ")." + tr(" Change de boisson dans ton profil.", " Change your drink in your profile.")) + "</p></div>" +
+    '<div class="field"><span class="eyebrow">' + tr("Estimation du taux d'alcool", "Blood alcohol estimate") + "</span>" +
+    (bac == null ? '<p class="sm" style="margin:0">' + tr("Indique ton poids et la base de calcul pour avoir une estimation. Ils restent sur ce téléphone, ils ne sont jamais partagés.", "Enter your weight and the calculation basis to get an estimate. They stay on this phone and are never shared.") + "</p>"
+      : '<div class="alc-bac"><b>≈ ' + alcNum(bac, 2) + " g/L</b><span>" + tr("d'alcool dans le sang", "blood alcohol") + "</span></div>") +
+    '<div class="row" style="gap:8px; align-items:center"><label class="lbl" style="flex:1">' + tr("Poids (kg)", "Weight (kg)") + '<input class="txt" id="alc-kg" type="number" inputmode="numeric" min="35" max="250" value="' + (a.kg || "") + '" placeholder="70"></label>' +
+      '<div class="seg" style="flex:1.4" role="group" aria-label="' + tr("Base de calcul", "Calculation basis") + '">' + [[0.7, tr("Homme", "Male")], [0.6, tr("Femme", "Female")]].map(o => '<button type="button" data-alcr="' + o[0] + '" aria-pressed="' + (a.r === o[0]) + '">' + o[1] + "</button>").join("") + "</div></div>" +
+    '<p class="note-box">' + tr("Estimation très approximative (formule de Widmark) : elle ne tient compte ni de ce que tu as mangé, ni de ta santé, ni de tes médicaments. Ne t'en sers jamais pour décider de conduire : si tu as bu, tu ne prends pas le volant.", "A very rough estimate (Widmark formula): it ignores food, health and medication. Never use it to decide whether to drive: if you've been drinking, don't drive.") + "</p>" +
+    (t.n || t.j ? '<button class="link" type="button" data-alc0 style="align-self:flex-start">' + tr("Remettre mon compteur à zéro", "Reset my counter") + "</button>" : "") + "</div>";
+}
+function alcMineBind(root, redraw){
+  const gp = gProf(store().gp), d = DRINKS[gp.drink];
+  $$("[data-alc]", root).forEach(b => b.addEventListener("click", () => {
+    const a = alcStore();
+    if(+b.dataset.alc > 0){ if(!d) return; a.log.push({ t: Date.now(), k: "v", s: d.std }); buzz(12); toast(tr("+1 verre noté", "+1 drink logged")); }
+    else { for(let i = a.log.length - 1; i >= 0; i--) if(a.log[i].k === "v"){ a.log.splice(i, 1); break; } buzz(6); }
+    alcSave({ log: a.log }); redraw();
+  }));
+  // Redessin différé : « change » arrive pendant que le champ perd le focus.
+  const kg = $("#alc-kg", root); if(kg) kg.addEventListener("change", () => { const v = Math.round(+kg.value || 0); alcSave({ kg: v >= 35 && v <= 250 ? v : 0 }); setTimeout(redraw, 0); });
+  $$("[data-alcr]", root).forEach(b => b.addEventListener("click", () => { buzz(6); alcSave({ r: +b.dataset.alcr }); redraw(); }));
+  const z = $("[data-alc0]", root); if(z) armTap(z, () => { alcSave({ log: [] }); redraw(); }, tr("Touche encore pour tout remettre à zéro", "Tap again to reset everything"));
+}
+// Le tableau de la soirée : rows() -> [{ name, ph, j (verres std dans les jeux), v (verres std notés), me }]
+function alcTablePage(rows){
+  SB.page(tr("Compteur d'alcool", "Drink counter"), root => {
+    const tok = String(Math.random()); root.dataset.alc = tok;
+    let last = "";
+    const draw = force => {
+      const R = rows().map(r => Object.assign({ tot: Math.max(r.v || 0, r.j || 0) }, r)).sort((x, y) => y.tot - x.tot);
+      const key = JSON.stringify([R, alcStore(), store().gp, Math.floor(Date.now() / 60000)]);
+      if(!force && key === last) return; last = key;
+      const max = Math.max(1, ...R.map(r => r.tot));
+      root.innerHTML = '<div class="gs"><div class="field"><span class="eyebrow">' + tr("Moi", "Me") + "</span>" + alcMineHTML() + "</div>" +
+        '<div class="field"><span class="eyebrow">' + tr("La soirée", "Tonight") + '</span><div class="gs-box">' +
+        (R.length ? R.map(r => '<div class="gs-row alc-r"><span class="tx"><b>' + esc(r.name) + (r.me ? tr(" (moi)", " (me)") : "") + '</b><span class="sm">' +
+          (r.sans ? tr("Sans alcool", "No alcohol") : esc(alcStd(r.tot)) + (r.v || r.j ? " · " + esc(tr("jeux " + alcNum(r.j || 0, 1) + " · notés " + alcNum(r.v || 0, 1), "games " + alcNum(r.j || 0, 1) + " · logged " + alcNum(r.v || 0, 1))) : "")) +
+          '</span><span class="alc-bar"><i style="width:' + (r.sans ? 0 : Math.round(r.tot / max * 100)) + '%"></i></span></span></div>').join("")
+          : '<p class="sm" style="padding:12px 0; margin:0">' + tr("Personne pour l'instant.", "Nobody yet.") + "</p>") + "</div>" +
+        '<p class="sm" style="margin:0">' + tr("« Jeux » : ce que les gages ont fait boire. « Notés » : les verres que chacun ajoute avec le +. Les gorgées des jeux viennent des verres : le total prend le plus grand des deux. En verres standard (10 g d'alcool pur). Le taux de chacun n'est jamais partagé.", "“Games”: what forfeits made people drink. “Logged”: drinks everyone adds with +. Game sips come out of those drinks: the total takes the bigger of the two. In standard drinks (10 g of pure alcohol). Nobody's estimate is ever shared.") + "</p></div></div>";
+      alcMineBind(root, () => draw(true));
+    };
+    draw(true);
+    const iv = setInterval(() => { if(root.dataset.alc !== tok || current !== "page"){ clearInterval(iv); return; } if(document.activeElement && document.activeElement.id === "alc-kg") return; try{ if(N.nr) N.peers = N.nr.peers(); draw(false); }catch(e){} }, 1500);
+  }, () => { try{ gRefresh(); }catch(e){} });
+}
+function alcNetRows(){
+  const g = G() || {}, T = g.gt || {};
+  const me = N.nr.me();
+  return gPlayers().map(p => {
+    const x = pres(peerById(p.id)).x || {}, al = x._alc || {}, d = DRINKS[p.drink];
+    const v = p.id === me ? alcTotals().v : Math.max(0, Math.min(99, +al.v || 0));
+    return { name: p.name, me: p.id === me, sans: !d, v, j: p.id === me ? alcTotals().j : d ? Math.round((+((T[p.name] || {}).v) || 0) * d.std * 10) / 10 : 0 };
+  });
+}
+function alcLocalRows(){
+  const me = clean(store().name, 16), names = A(store().localNames).map(n => clean(n, 16)).filter(Boolean);
+  if(me && names.indexOf(me) < 0) names.unshift(me);
+  return names.map(n => { const dk = gLocalDrink(n), d = DRINKS[dk]; return { name: n, me: n === me, sans: !d, v: n === me ? alcTotals().v : 0, j: n === me ? alcTotals().j : d ? Math.round((+(((LGG.tally || {})[n] || {}).v) || 0) * d.std * 10) / 10 : 0 }; });
+}
 // Bandeau « Gages » du salon (tout le monde) et de la liste « un seul téléphone ».
 function gSalonBar(g){
   let el = $("#sa-gages");
   if(!el){ el = document.createElement("div"); el.id = "sa-gages"; el.className = "gbar"; const r = $("#sa-roster"); if(r && r.parentNode) r.parentNode.parentNode.insertBefore(el, r.parentNode.nextSibling); else return; }
   const S = gSettings(g && g.gages), gp = store().gp || {}, hard = roomHard();
-  const key = JSON.stringify([S.on, S.level, S.unit, N.host, gp, hard]);
+  const at = alcTotals(), key = JSON.stringify([S.on, S.level, S.unit, N.host, gp, hard, at]);
   if(el.dataset.key === key) return; el.dataset.key = key;
   el.innerHTML = '<button type="button" data-gset><b>' + tr("Gages", "Forfeits") + '</b><span class="sm">' + (S.on ? (hard ? esc({ chill: "Chill", classique: tr("Classique", "Classic"), chaud: tr("Apéro chaud", "Wild night"), perso: "Perso" }[S.level]) + " · " + gUnit(S, 2).replace(/^2 /, "") : tr("Activés", "On")) : tr("Désactivés", "Off")) + "</span></button>" +
-    '<button type="button" data-gme><b>' + tr("Mon profil", "My profile") + '</b><span class="sm">' + (hard ? esc(gProfShort()) : tr("Photo, prénom, mode", "Photo, name, mode")) + "</span></button>";
+    '<button type="button" data-gme><b>' + tr("Mon profil", "My profile") + '</b><span class="sm">' + (hard ? esc(gProfShort()) : tr("Photo, prénom, mode", "Photo, name, mode")) + "</span></button>" +
+    (hard ? '<button type="button" data-galc style="grid-column:1/-1"><b>' + tr("Compteur d'alcool", "Drink counter") + '</b><span class="sm">' + esc(tr("Qui a bu quoi ce soir · moi : ", "Who drank what tonight · me: ") + alcStd(at.tot)) + "</span></button>" : "");
+  const ga = $("[data-galc]", el); if(ga) ga.addEventListener("click", () => alcTablePage(alcNetRows));
   $("[data-gset]", el).addEventListener("click", () => gSettingsPage(() => gSettings((G() || {}).gages), s => { if(!N.host) return; persist({ gages: s }); hostSetG({ gages: s }); }, N.host, () => (G() || {}).gt || {}, () => { if(N.host) hostSetG({ gt: {} }); }));
   $("[data-gme]", el).addEventListener("click", gProfilePage);
 }
@@ -2292,7 +2407,9 @@ function gLocalBar(){
   const S = gLocalSettings();
   const hard = myHard();
   el.innerHTML = '<button type="button" data-gset><b>' + tr("Gages", "Forfeits") + '</b><span class="sm">' + (S.on ? (hard ? esc({ chill: "Chill", classique: tr("Classique", "Classic"), chaud: tr("Apéro chaud", "Wild night"), perso: "Perso" }[S.level]) : tr("Activés", "On")) : tr("Désactivés", "Off")) + "</span></button>" +
-    (hard ? "" : '<span hidden data-gsob></span>') + (!hard ? "" : '<button type="button" data-gsob><b>' + tr("Qui boit quoi ?", "Who drinks what?") + '</b><span class="sm">' + tr("Boisson et limite de chacun", "Everyone's drink and limit") + "</span></button>");
+    (hard ? "" : '<span hidden data-gsob></span>') + (!hard ? "" : '<button type="button" data-gsob><b>' + tr("Qui boit quoi ?", "Who drinks what?") + '</b><span class="sm">' + tr("Boisson et limite de chacun", "Everyone's drink and limit") + "</span></button>" +
+      '<button type="button" data-galc style="grid-column:1/-1"><b>' + tr("Compteur d'alcool", "Drink counter") + '</b><span class="sm">' + esc(tr("Qui a bu quoi ce soir · moi : ", "Who drank what tonight · me: ") + alcStd(alcTotals().tot)) + "</span></button>");
+  const ga = $("[data-galc]", el); if(ga) ga.addEventListener("click", () => alcTablePage(alcLocalRows));
   $("[data-gset]", el).addEventListener("click", () => gSettingsPage(gLocalSettings, gSaveSettings, true, () => LGG.tally, () => { LGG.tally = {}; }));
   $("[data-gsob]", el).addEventListener("click", () => SB.page(tr("Qui boit quoi ?", "Who drinks what?"), root => {
     const draw = () => {
@@ -2317,6 +2434,7 @@ function renderLang(){
 /* =================== Démarrage =================== */
 SB.boot = function(){
   CORE_X._gp = Object.assign({ alc: true, cap: 0 }, store().gp || {});
+  try{ alcShare(); }catch(e){}
   if(myPhoto()) CORE_X._ph = myPhoto();
   const hm = $("#h-me"); if(hm) hm.addEventListener("click", () => { buzz(8); gProfilePage(); });
   if(LANG === "en"){ document.documentElement.lang = "en"; i18nDom(document.body); }

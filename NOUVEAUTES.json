@@ -1,4 +1,10 @@
 {
+  "4.17.0": [
+    "Nouveau : compteur d'alcool. Dans ton profil, touche + à chaque verre ; ce que tu bois dans les jeux est compté tout seul",
+    "Salon : bouton « Compteur d'alcool » pour voir en direct qui a bu quoi ce soir (en verres standard)",
+    "Estimation de ton taux d'alcool (g/L) avec ton poids : très approximative, jamais pour décider de conduire. Ton poids et ton taux restent sur ton téléphone",
+    "Pas de compteur en mode Soft ni en mode Enfant"
+  ],
   "4.16.10": [
     "Profil : plus de petit dé sur le rond, toucher le rond donne toujours un avatar au hasard"
   ],
