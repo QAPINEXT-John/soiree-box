@@ -242,6 +242,11 @@ SB.register({
   accent: { light: "#c49bff", dark: "#c49bff" },
   tag: tr("Fais deviner un mot à ton équipe sans dire les mots interdits. Chrono en main.", "Get your team to guess a word without saying the forbidden words. Against the clock."),
   min: 4, max: 20,
+  gages: [
+    { ev: "buzz", label: tr("Buzzé (par mot interdit)", "Buzzed (per forbidden word)"), kind: "boit", n: 1 },
+    { ev: "zero", label: tr("Tour sans aucun mot trouvé", "Turn with no word guessed"), kind: "boit", n: 2 },
+    { ev: "top", label: tr("Gros tour : 5 mots trouvés ou plus", "Big turn: 5+ words guessed"), kind: "distribue", n: 2 }
+  ],
   rules: [
     tr("Deux équipes. À chaque tour, un joueur fait deviner un maximum de mots à son équipe avant la fin du chrono.", "Two teams. Each turn, one player gets their team to guess as many words as possible before time runs out."),
     tr("Interdit de dire le mot lui-même, un mot de la même famille ou l'un des 5 mots interdits de la carte.", "You can't say the word itself, any form of it, or any of the 5 forbidden words on the card."),
@@ -269,7 +274,16 @@ SB.register({
       const i = ctx.input(speaker);
       if(i && i.go) ctx.set({ phase: "play", endAt: ctx.now() + turnMs(s.dur, s.tw), card: draw(ctx), log: [], seen: {} });
     } else if(s.phase === "play"){
-      if(ctx.now() >= s.endAt){ const ts = turnSum(s.log); ctx.set({ phase: "turnEnd", tl: A(s.tl).concat([[speaker, s.tt].concat(ts)]) }); return; }
+      if(ctx.now() >= s.endAt){
+        const ts = turnSum(s.log), gl = [];
+        // Gages de celui qui fait deviner, à la fin de son tour.
+        if(speaker){
+          if(ts[1]) gl.push({ id: speaker, ev: "buzz", x: ts[1] });
+          if(!ts[0]) gl.push({ id: speaker, ev: "zero" }); else if(ts[0] >= 5) gl.push({ id: speaker, ev: "top" });
+        }
+        if(gl.length) ctx.gage(gl, s.k + ":te" + s.turnNo);
+        ctx.set({ phase: "turnEnd", tl: A(s.tl).concat([[speaker, s.tt].concat(ts)]) }); return;
+      }
       const card = s.card || {}, seen = Object.assign({}, s.seen || {}), opp = teams[1 - s.tt] || [];
       for(const id of ctx.ids){
         const i = ctx.input(id);

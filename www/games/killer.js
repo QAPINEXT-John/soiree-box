@@ -198,6 +198,16 @@ function eliminate(W, victim, by, how, fresh, now, x){
   if(W.alive.length <= 1){ W.phase = "end"; W.win = W.alive[0] || ""; }
   return hunter;
 }
+// Gages des éliminations ajoutées au journal depuis l'entrée n0 : la victime boit, le tueur distribue.
+// Les accusations ratées ne donnent pas de gage : la feuille, vue par tous, trahirait un secret.
+function klGages(W, n0){
+  const out = [];
+  A(W.log).slice(n0).forEach(x => {
+    out.push(x.how === "u" ? { id: x.on, ev: "mort", why: tr("Démasqué par ta cible", "Unmasked by your target") } : { id: x.on, ev: "mort" });
+    out.push({ id: x.by, ev: "tue" });
+  });
+  return out;
+}
 function work(s){
   const o = { phase: s.phase, win: s.win || "", t0: s.t0 || 0, jk: s.jk !== false, evs: s.evs !== false, alive: A(s.alive).slice(), log: A(s.log).slice(), ev: s.ev || null, evLast: s.evLast || "", lastEv: s.lastEv || 0, fast: s.fast || null };
   ["tgt", "mis", "kills", "pts", "claims", "used", "note", "seen", "jok", "acc", "nope", "since"].forEach(k => { o[k] = Object.assign({}, s[k]); });
@@ -250,6 +260,10 @@ const DEF = {
   accent: { light: "#d6dbe4", dark: "#d6dbe4" },
   tag: tr("Une cible, une mission secrète. Réussis-la sans te faire griller et récupère la cible de ta victime.", "One target, one secret mission. Pull it off without getting caught and inherit your victim's target."),
   min: 4, max: 20,
+  gages: [
+    { ev: "mort", label: tr("Éliminé", "Taken out"), kind: "boit", n: 2 },
+    { ev: "tue", label: tr("Élimine quelqu'un", "Takes someone out"), kind: "distribue", n: 1 }
+  ],
   rules: tr([
     "Chacun reçoit en secret une cible et une mission, par exemple : faire dire « ananas » à ta cible.",
     "Le jeu tourne en fond pendant toute la soirée : vous pouvez jouer aux autres jeux en même temps.",
@@ -334,6 +348,7 @@ const DEF = {
       if(maybeEvent(W, fresh, now, W.log.length === n0)) changed = true;
       else if(W.log.length === n0){ W.lastEv = now; changed = true; }
     }
+    if(W.log.length > n0) ctx.gage(klGages(W, n0), s.k + ":" + W.log.length);
     if(changed) ctx.set(W);
   },
   render(ctx, root){
@@ -408,8 +423,9 @@ const DEF = {
       if(q("[data-no]")) q("[data-no]").addEventListener("click", () => ctx.send({ v: { n: n("v"), ok: false } }));
       r.querySelectorAll("[data-hv]").forEach(b => b.addEventListener("click", () => ctx.act(c => {
         const W2 = work(c.s), v = b.dataset.hv, cl = W2.claims[v]; if(!cl || W2.phase !== "play") return;
-        const fr = freshFrom(c), t = c.now();
+        const fr = freshFrom(c), t = c.now(), n1 = W2.log.length;
         eliminate(W2, v, cl.by, "k", fr, t, cl.x);
+        c.gage(klGages(W2, n1), c.s.k + ":" + W2.log.length);
         if(W2.evs) maybeEvent(W2, fr, t, false);
         c.set(W2);
       })));
@@ -428,6 +444,8 @@ const DEF = {
       const names = api.names, ids = names.map((_, i) => String(i)), nameOf = id => names[+id];
       const st = store();
       let sel = A(st.klPacks).length ? A(st.klPacks).slice() : ["classique"], jk = st.klJk !== false, evs = st.klEv !== false;
+      const gk = "kl" + Math.random().toString(36).slice(2, 8);
+      const gage = n0 => { if(api.gage && W.log.length > n0) api.gage(klGages(W, n0).map(e => Object.assign({}, e, { id: nameOf(e.id) })), gk + ":" + W.log.length); };
       let W = null, deck = [], i = 0, cur = "", open = false, last = null, at = "", arg0 = "", news = null, seed = 0;
       const fresh = () => { if(!deck.length) deck = deckFor(SB.okPacks(sel, PACKS), SB.lang()); return take(deck); };
       const toggle = (k, v, label, desc) => '<button type="button" class="pack" data-t="' + k + '" aria-pressed="' + v + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(label) + '</span><span class="ds">' + esc(desc) + "</span></span></button>";
@@ -496,8 +514,8 @@ const DEF = {
               '<button class="link" type="button" data-back style="align-self:center">' + tr("Cacher et revenir", "Hide and go back") + "</button>"), r => {
             const q = x => r.querySelector(x);
             const kill = x => {
-              const victim = W.tgt[cur], m = x ? W.ev.m : W.mis[cur], now = Date.now();
-              eliminate(W, victim, cur, "k", fresh, now, x); delete W.note[cur];
+              const victim = W.tgt[cur], m = x ? W.ev.m : W.mis[cur], now = Date.now(), n0 = W.log.length;
+              eliminate(W, victim, cur, "k", fresh, now, x); delete W.note[cur]; gage(n0);
               last = { by: cur, on: victim, m, how: "k" }; buzz([40, 60, 40]);
               if(W.evs && maybeEvent(W, fresh, now, false)) news = W.ev;
               go("news");
@@ -509,9 +527,9 @@ const DEF = {
             if(q("[data-acc]")) q("[data-acc]").addEventListener("click", () => go("me", "acc"));
             r.querySelectorAll("[data-w]").forEach(b => armTap(b, () => {
               W.used[cur] = true; W.acc[b.dataset.w] = (W.acc[b.dataset.w] || 0) + 1;
-              const hunter = W.alive.find(h => W.tgt[h] === cur), now = Date.now();
+              const hunter = W.alive.find(h => W.tgt[h] === cur), now = Date.now(), n0 = W.log.length;
               if(hunter === b.dataset.w){
-                const g = eliminate(W, hunter, cur, "u", fresh, now);
+                const g = eliminate(W, hunter, cur, "u", fresh, now); gage(n0);
                 if(g && g !== cur) W.note[g] = noteOf("Ta cible a été éliminée par quelqu'un d'autre. Voici ta nouvelle cible et ta nouvelle mission.", "Your target was taken out by someone else. Here's your new target and your new mission.", now);
                 last = { by: cur, on: hunter, how: "u" }; buzz([40, 60, 40]);
                 if(W.evs && maybeEvent(W, fresh, now, false)) news = W.ev;

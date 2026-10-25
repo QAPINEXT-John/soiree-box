@@ -191,6 +191,10 @@ SB.register({
   accent: { light: "#ffd25e", dark: "#ffd25e" },
   tag: tr("Un joueur classe 5 trucs au hasard, du préféré au plus détesté. Les autres doivent deviner son ordre.", "One player ranks 5 random things, from favorite to most hated. Everyone else has to guess their order."),
   min: 2, max: 16,
+  gages: [
+    { ev: "zero", label: tr("Aucune place juste", "Not a single spot right"), kind: "boit", n: 2 },
+    { ev: "sf", label: tr("Sans-faute", "Perfect guess"), kind: "distribue", n: 2 }
+  ],
   rules: [
     tr("À chaque manche, un joueur reçoit 5 trucs au hasard : la raclette, les pigeons, un saut en parachute…", "Each round, one player gets 5 random things: cheese fondue, pigeons, a skydive…"),
     tr("Il les classe en secret, de ce qu'il préfère (1) à ce qu'il déteste le plus (5).", "They secretly rank them, from what they love most (1) to what they hate most (5)."),
@@ -217,12 +221,14 @@ SB.register({
     if(!validOrder(r, n)) return;
     const guessers = ctx.ids.filter(id => id !== s.ranker && ctx.here(id));
     if(!guessers.every(id => validOrder(ctx.input(id), n))) return;
-    const guesses = {}, pts = {}, scores = Object.assign({}, s.scores || {}), sf = Object.assign({}, s.sf || {}); let sum = 0, sumB = 0, best = 0;
+    const guesses = {}, pts = {}, scores = Object.assign({}, s.scores || {}), sf = Object.assign({}, s.sf || {}), gl = []; let sum = 0, sumB = 0, best = 0;
     guessers.forEach(id => {
       const g = ctx.input(id).o, x = scoreGuess(g, r.o, tw);
       guesses[id] = g; pts[id] = x.pts; sum += x.c; sumB += x.base; best = Math.max(best, x.pts);
       scores[id] = (scores[id] || 0) + x.pts; if(x.c === n) sf[id] = (sf[id] || 0) + 1;
+      if(x.c === 0) gl.push({ id, ev: "zero" }); else if(x.c === n) gl.push({ id, ev: "sf" });
     });
+    if(gl.length) ctx.gage(gl, s.k);
     const avg = guessers.length ? Math.round(sumB / guessers.length) * (tw === "x2" ? 2 : 1) : 0;
     const rk = tw === "ally" ? best : avg;
     pts[s.ranker] = rk; scores[s.ranker] = (scores[s.ranker] || 0) + rk;
@@ -294,6 +300,7 @@ SB.register({
     start(root, api){
       const names = api.names;
       let sel = A(store().prPacks).length ? A(store().prPacks).slice() : ["classique"], twOn = store().prTw !== false;
+      const gk = "pr" + Math.random().toString(36).slice(2, 8);
       let L = { phase: "setup", ri: 0, round: 0, rounds: names.length, deck: [], items: [], order: "", guess: "", score: 0, max: 0, tw: null, gain: 0 };
       const newItems = () => {
         L.tw = twOn && L.round > 1 ? SB.u.twist(TWL, { last: L.tw ? L.tw.id : "", n: names.length, rate: .4 }) : null;
@@ -325,7 +332,10 @@ SB.register({
           });
         } else if(L.phase === "group"){
           screen(root, "gr" + L.round, pickerHTML(lab + '<p class="big">' + tr("À vous : comment " + esc(rn) + " les a classés ?", "Your turn: how did " + esc(rn) + " rank them?") + "</p><p class=\"sm\">" + (tw === "turns" ? tr("Chacun son tour, sans débattre : chaque joueur place un seul truc. ", "Take turns, no debating: each player places just one thing. ") : tr("Discutez, puis touchez les " + n + " trucs dans l'ordre. ", "Talk it over, then tap the " + n + " things in order. ")) + esc(rn) + tr(" ne dit rien !", " stays quiet!") + "</p>", tw, n), r => {
-            orderPicker(r, L.items, o => { L.guess = o; const x = scoreGuess(o, L.order, tw); L.gain = x.pts; L.score += x.pts; L.max += x.max; L.phase = "reveal"; go(); }, tr("Valider notre prédiction", "Lock in our prediction"));
+            orderPicker(r, L.items, o => { L.guess = o; const x = scoreGuess(o, L.order, tw); L.gain = x.pts; L.score += x.pts; L.max += x.max; L.phase = "reveal";
+              // Coopératif : si le groupe n'a aucune place juste, chaque devin a un gage (pas de distribution en local).
+              if(api.gage && x.c === 0) api.gage(names.filter((_, k) => k !== L.ri).map(id => ({ id, ev: "zero" })), gk + ":" + L.round);
+              go(); }, tr("Valider notre prédiction", "Lock in our prediction"));
           });
         } else if(L.phase === "reveal"){
           const c = correct(L.guess, L.order);

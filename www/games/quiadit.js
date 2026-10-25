@@ -154,6 +154,14 @@ function scoreAnswer(aid, voters, right, tw){
   if(tw === "perfect" && voters.length >= 2 && !right.length){ add("pts", aid, 3 * m); add("perf", aid, 1); }
   return d;
 }
+// Gages d'une réponse révélée : l'auteur démasqué par la majorité boit, celui que personne n'a trouvé distribue,
+// ceux qui tombent dans le piège de l'imposteur boivent. ids : joueurs ayant voté (hors auteur).
+function qdGages(aid, voters, right){
+  if(aid === BOT) return voters.filter(v => right.indexOf(v) < 0).map(id => ({ id, ev: "piege" }));
+  if(right.length && right.length * 2 >= voters.length) return [{ id: aid, ev: "demasque" }];
+  if(!right.length && voters.length >= 2) return [{ id: aid, ev: "berne" }];
+  return [];
+}
 function merge(base, d){ const o = {}; Object.keys(d).forEach(k => { o[k] = Object.assign({}, base[k] || {}); Object.keys(d[k]).forEach(id => { o[k][id] = (o[k][id] || 0) + d[k][id]; }); }); return o; }
 const FL = tr({
   win: ["Vainqueur", "Le cerveau de la soirée", "Imbattable", "Le plus fin limier"],
@@ -212,6 +220,7 @@ function toReveal(c){
   c.ids.forEach(id => { const x = c.input(id); if(x && x.g) votes[id] = x.g; });
   const voters = Object.keys(votes).filter(v => v !== a.id), right = voters.filter(v => votes[v] === a.id);
   const d = scoreAnswer(a.id, voters, right, s.tw || "");
+  const gl = qdGages(a.id, voters, right); if(gl.length) c.gage(gl, s.k);
   c.set(Object.assign({ phase: "rev", votes, gain: d.pts }, merge(s, d)));
 }
 
@@ -220,6 +229,11 @@ const DEF = {
   accent: { light: "#6cc3ff", dark: "#6cc3ff" },
   tag: tr("Une question, chacun répond en secret. Les réponses tombent sans les noms : à vous de trouver qui a écrit quoi.", "One question, everyone answers in secret. The answers drop without names: your job is to figure out who wrote what."),
   min: 3, max: 12,
+  gages: [
+    { ev: "demasque", label: tr("Démasqué par la majorité", "Unmasked by most players"), kind: "boit", n: 1 },
+    { ev: "berne", label: tr("Personne ne t'a trouvé", "Nobody guessed you"), kind: "distribue", n: 2 },
+    { ev: "piege", label: tr("Piégé par l'imposteur", "Fooled by the Impostor"), kind: "boit", n: 1 }
+  ],
   rules: tr([
     "Une question s'affiche. Chacun écrit sa réponse en secret sur son téléphone.",
     "Les réponses apparaissent une par une, sans le nom. Tout le monde vote pour désigner l'auteur, y compris l'auteur lui-même, pour brouiller les pistes.",
@@ -342,6 +356,7 @@ const DEF = {
       const names = api.names, ids = names.map((_, i) => String(i)), nameOf = id => id === BOT ? tr("L'imposteur", "The Impostor") : names[+id], lg = SB.lang();
       let sel = A(store().qdPacks).length ? A(store().qdPacks).slice() : ["soft"];
       let rounds = [3, 5, 8].indexOf(store().qdRounds) >= 0 ? store().qdRounds : 3, twOn = store().qdTw !== false;
+      const gk = "qd" + Math.random().toString(36).slice(2, 8);
       let deck = [], round = 0, q = "", w = 0, ans = [], i = 0, found = [], st = {}, tw = null, disg = {}, fk = "", gain = {}, seed = 0;
       const qOf = () => fill(q.t, nameOf(q.p)), t = () => (tw ? tw.id : "");
       function newRound(){
@@ -399,6 +414,8 @@ const DEF = {
               r.querySelector("[data-n]").addEventListener("click", () => {
                 const d = scoreAnswer(a.id, ids.filter(id => id !== a.id), found.slice(), t());
                 st = merge(st, d); gain = d.pts;
+                const gl = qdGages(a.id, ids.filter(id => id !== a.id), found.slice());
+                if(api.gage && gl.length) api.gage(gl.map(x => ({ id: nameOf(x.id), ev: x.ev })), gk + ":" + round + ":" + i);
                 const notes = [];
                 if(t() === "perfect" && a.id !== BOT && !found.length) notes.push(tr("Crime parfait ! " + nameOf(a.id) + " prend 3 points bonus.", "Perfect crime! " + nameOf(a.id) + " gets 3 bonus points."));
                 if(t() === "lone" && a.id !== BOT && found.length === 1) notes.push(tr("Flair solitaire : " + nameOf(found[0]) + " marque 3 points.", "Lone wolf: " + nameOf(found[0]) + " scores 3 points."));
