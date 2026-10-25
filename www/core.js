@@ -1598,22 +1598,42 @@ const GEND = [
 ];
 const GTASKS = { fr: ["Fais 10 squats", "Chante le refrain de ton choix", "Fais un compliment sincère à chaque joueur", "Parle avec un accent pendant 2 minutes", "Imite quelqu'un du groupe, les autres devinent", "Danse 20 secondes sans musique", "Raconte ta pire honte en 30 secondes", "Fais 10 pompes (ou 20 sur les genoux)", "Montre la dernière photo de ta galerie", "Laisse le groupe choisir ta photo de profil pour 1 h", "Fais la planche 30 secondes", "Envoie « tu me manques » au 3e contact de ta liste", "Mange une cuillère de moutarde ou de sauce piquante", "Parle à la 3e personne jusqu'à la prochaine manche"],
   en: ["Do 10 squats", "Sing the chorus of your choice", "Give every player a sincere compliment", "Talk with an accent for 2 minutes", "Impersonate someone in the group, the others guess", "Dance for 20 seconds with no music", "Tell your most embarrassing moment in 30 seconds", "Do 10 push-ups (or 20 on your knees)", "Show the last photo in your camera roll", "Let the group pick your profile picture for 1 hour", "Hold a plank for 30 seconds", "Text “I miss you” to the 3rd contact in your list", "Eat a spoonful of mustard or hot sauce", "Talk about yourself in the third person until next round"] };
+/* Profils de boisson : un « verre » de chaque boisson, combien de gorgées il fait, et la limite proposée par défaut (en verres).
+   Chaque verre listé correspond à peu près à un verre standard (10 g d'alcool), le cocktail à environ deux. */
+const DRINKS = {
+  biere: { name: tr("Bière ou cidre", "Beer or cider"), glass: tr("un demi (25 cl)", "a half pint (25 cl)"), glasses: [tr("demi", "half pint"), tr("demis", "half pints")], sips: 8, std: 1, def: 3 },
+  vin: { name: tr("Vin ou champagne", "Wine or champagne"), glass: tr("un verre de vin (12 cl)", "a glass of wine (12 cl)"), glasses: [tr("verre de vin", "glass of wine"), tr("verres de vin", "glasses of wine")], sips: 5, std: 1, def: 3 },
+  cocktail: { name: tr("Cocktail ou long drink", "Cocktail or mixed drink"), glass: tr("un cocktail", "a cocktail"), glasses: ["cocktail", "cocktails"], sips: 6, std: 2, def: 2 },
+  fort: { name: tr("Alcool fort, en shots", "Spirits, as shots"), glass: tr("un shot (3 cl)", "a shot (3 cl)"), glasses: ["shot", "shots"], sips: 1, std: 1, def: 4 }
+};
+const gProf = gp => { gp = Object.assign({ alc: true, drink: "", lim: {} }, gp || {}); if(gp.alc === false) gp.drink = "sans"; if(!gp.drink) gp.drink = "biere"; gp.lim = Object.assign({}, gp.lim || {}); return gp; };
+const gLim = gp => (gp.drink === "sans" ? 0 : gp.lim[gp.drink] != null ? +gp.lim[gp.drink] : DRINKS[gp.drink].def);
+// Combien de « verres » de sa boisson représente 1 gage dans l'unité de l'hôte.
+function gGlass(S, drink){
+  const d = DRINKS[drink] || DRINKS.biere;
+  if(S.unit === "culsec") return 1;
+  if(S.unit === "shot") return drink === "fort" ? 1 : Math.min(1, 3 / d.sips);
+  return 1 / d.sips;
+}
+const gVerres = (n, drink) => { const d = DRINKS[drink] || DRINKS.biere, v = Math.round(n * 10) / 10; return String(v).replace(".", tr(",", ".")) + " " + (v > 1 ? d.glasses[1] : d.glasses[0]); };
 const gSettings = s => Object.assign({}, GDEF, s && typeof s === "object" ? s : {}, { trig: Object.assign({}, (s && s.trig) || {}), custom: A(s && s.custom).map(x => clean(x, 120)).filter(Boolean).slice(0, 40) });
 const gUnit = (S, n) => { const u = { gorgee: [tr("gorgée", "sip"), tr("gorgées", "sips")], shot: ["shot", "shots"], culsec: [tr("cul-sec", "chug"), tr("culs-secs", "chugs")] }[S.unit] || ["", ""]; return n + " " + (n === 1 ? u[0] : u[1]); };
 function gEvents(gameId){ const d = SB.byId[gameId]; return A(d && d.gages).concat(GEND); }
 function gBase(S, gameId, ev){ const k = gameId + ":" + ev; if(S.trig[k] != null) return Math.max(0, Math.min(10, +S.trig[k] || 0)); const e = gEvents(gameId).find(x => x.ev === ev); return e ? e.n : 0; }
 function gAmount(S, gameId, ev){ const b = gBase(S, gameId, ev); return b > 0 ? Math.max(1, Math.round(b * (GMULT[S.level] || 1))) : 0; }
 function gTask(S){ const pool = A(S.custom).length ? A(S.custom) : GTASKS[LANG === "en" ? "en" : "fr"]; return pool[Math.floor(Math.random() * pool.length)] || "…"; }
-const gT = (t, name) => { t = Object.assign({}, t || {}); t[name] = Object.assign({ s: 0, g: 0, t: 0, w: 0 }, t[name] || {}); return t; };
+const gT = (t, name) => { t = Object.assign({}, t || {}); t[name] = Object.assign({ s: 0, g: 0, t: 0, w: 0, v: 0 }, t[name] || {}); return t; };
 // Calcule les gages d'une liste d'événements. players : [{ id, name, alc, cap }] ; tally : { nom: { s, g, t, w } }.
 function gCompute(S, gameId, list, players, tally){
   const items = []; let T = Object.assign({}, tally || {});
   const P = id => players.find(p => p.id === id);
   const drink = (p, n, why) => {
     if(!p || n <= 0) return;
-    T = gT(T, p.name); const cur = T[p.name].s, cap = Math.min(S.cap, p.cap > 0 ? p.cap : S.cap);
-    if(!p.alc || cur >= cap){ T[p.name].t++; items.push({ t: "task", who: p.id, name: p.name, txt: gTask(S), why }); return; }
-    const nn = Math.min(n, cap - cur); T[p.name].s = cur + nn;
+    T = gT(T, p.name); const cur = T[p.name].s, g1 = gGlass(S, p.drink), v = +T[p.name].v || 0;
+    const byLim = p.lim > 0 ? Math.floor((p.lim - v) / g1 + 1e-9) : Infinity;
+    const nn = !p.alc ? 0 : Math.min(n, S.cap - cur, byLim);
+    if(nn <= 0){ T[p.name].t++; items.push({ t: "task", who: p.id, name: p.name, txt: gTask(S), why }); return; }
+    T[p.name].s = cur + nn; T[p.name].v = Math.round((v + nn * g1) * 100) / 100;
     items.push({ t: "drink", who: p.id, name: p.name, n: nn, why });
     if(S.water > 0 && Math.floor(cur / S.water) < Math.floor((cur + nn) / S.water)) items.push({ t: "water", who: p.id, name: p.name });
   };
@@ -1691,7 +1711,7 @@ const CORE_X = {};
 function gPlayers(){
   const g = G() || {}, list = A(g.players).map(A);
   const ids = list.length ? list.map(r => String(r[0])) : namedPeers().map(p => p.peer);
-  return ids.map(id => { const p = peerById(id), x = pres(p).x || {}, gp = x._gp || {}, r = list.find(r => String(r[0]) === id); return { id, name: clean((r && r[1]) || pres(p).name, 16) || "Joueur", alc: gp.alc !== false, cap: +gp.cap || 0 }; });
+  return ids.map(id => { const p = peerById(id), x = pres(p).x || {}, gp = x._gp || {}, r = list.find(r => String(r[0]) === id); const pf = gProf(gp); return { id, name: clean((r && r[1]) || pres(p).name, 16) || "Joueur", alc: pf.drink !== "sans", drink: pf.drink, lim: gLim(pf) }; });
 }
 function gHostApply(gameId, list, key){
   if(!N.host || !N.g) return;
@@ -1715,6 +1735,7 @@ function gHostTick(){
       const it = A(N.g.gq.items).find(y => y.t === "drink" && y.who === id), used = (N.g.gjk || {})[id] === (N.g.gid || "");
       if(it && !used){
         let T = gT(N.g.gt, it.name); T[it.name].s = Math.max(0, T[it.name].s - it.n); T[it.name].w++;
+        const pp = gPlayers().find(x => x.id === id); if(pp) T[it.name].v = Math.max(0, Math.round((T[it.name].v - it.n * gGlass(S, pp.drink)) * 100) / 100);
         hostSetG({ gq: Object.assign({}, N.g.gq, { items: A(N.g.gq.items).map(y => (y === it ? { t: "joker", who: id, name: it.name } : y)) }), gt: T, gjk: Object.assign({}, N.g.gjk || {}, { [id]: N.g.gid || "" }) });
       }
     }
@@ -1732,13 +1753,14 @@ function gRenderNet(){
 /* ---------- Un seul téléphone ---------- */
 const LGG = { tally: {}, q: null, jk: {} };
 // Un seul jeu de réglages par téléphone : utilisé quand on crée un salon et sur un seul téléphone.
+// Sur un seul téléphone : ce que boit chaque joueur (prénom → boisson). Ancienne liste « sans alcool » reprise.
+function gLocalDrink(n){ const st = store(), m = st.gagesDrinks || {}; if(m[n]) return m[n]; return A(st.gagesSober).indexOf(n) >= 0 ? "sans" : "biere"; }
 function gLocalSettings(){ const st = store(); return gSettings(st.gages || st.gagesLocal); }
 function gSaveSettings(s){ persist({ gages: s }); }
 function gLocalApply(gameId, names, list, key, rerender){
   const S = gLocalSettings(); if(!S.on) return;
   if(key && LGG.key === key) return; LGG.key = key || "";
-  const sober = A(store().gagesSober);
-  const players = names.map(n => ({ id: n, name: n, alc: sober.indexOf(n) < 0, cap: 0 }));
+  const players = names.map(n => { const d = gLocalDrink(n); return { id: n, name: n, alc: d !== "sans", drink: d, lim: d === "sans" ? 0 : DRINKS[d].def }; });
   const r = gCompute(S, gameId, list, players, LGG.tally); LGG.tally = r.tally;
   if(!r.items.length) return;
   const q = { id: rid(), game: gameId, items: r.items };
@@ -1764,13 +1786,15 @@ function gSettingsPage(get, set, editable, tally, onReset){
       let h = '<div class="gs">' +
         '<button type="button" class="pack" data-gon aria-pressed="' + S.on + '"' + dis + '><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Gages activés", "Forfeits on") + '</span><span class="ds">' + tr("Les jeux affichent les gages à la fin des manches. Chacun peut jouer sans alcool.", "Games show forfeits at the end of rounds. Anyone can play without alcohol.") + "</span></span></button>" +
         (editable ? '<p class="sm" style="margin:0">' + tr("Gardés sur ce téléphone : ils servent automatiquement à chaque salon que tu crées et sur un seul téléphone.", "Saved on this phone: used automatically for every room you create and on one phone.") + "</p>" : '<p class="note-box">' + tr("Seul l'hôte modifie ces réglages.", "Only the host can change these settings.") + "</p>") +
-        '<div class="field"><span class="eyebrow">' + tr("Ce qu'on boit", "What we drink") + "</span>" + seg("unit", [["gorgee", tr("Gorgées", "Sips")], ["shot", "Shots"], ["culsec", tr("Culs-secs", "Chugs")]]) + "</div>" +
-        '<div class="field"><span class="eyebrow">' + tr("Intensité", "Intensity") + "</span>" + seg("level", [["chill", "Chill ×½"], ["classique", tr("Classique", "Classic")], ["chaud", tr("Chaud ×2", "Wild ×2")], ["perso", "Perso"]]) + "</div>" +
+        '<div class="field"><span class="eyebrow">' + tr("L'unité des gages", "Forfeit unit") + "</span>" + seg("unit", [["gorgee", tr("Gorgées", "Sips")], ["shot", "Shots"], ["culsec", tr("Culs-secs", "Chugs")]]) +
+          '<p class="sm" style="margin:0">' + ({ gorgee: tr("« Bob boit 2 » = deux gorgées de sa boisson. Le plus doux.", "“Bob drinks 2” = two sips of their drink. The gentlest."), shot: tr("« Bob boit 2 » = deux shots : un vrai shot pour ceux qui boivent de l'alcool fort, sinon 3 gorgées de leur boisson par shot.", "“Bob drinks 2” = two shots: a real shot for spirit drinkers, otherwise 3 sips of their drink per shot."), culsec: tr("« Bob boit 2 » = finir son verre deux fois. Très fort : à garder pour les petites quantités.", "“Bob drinks 2” = finish their drink twice. Very strong: keep amounts small.") }[S.unit] || "") + "</p></div>" +
+        '<div class="field"><span class="eyebrow">' + tr("Intensité", "Intensity") + "</span>" + seg("level", [["chill", "Chill ×½"], ["classique", tr("Classique", "Classic")], ["chaud", tr("Chaud ×2", "Wild ×2")], ["perso", "Perso"]]) +
+          '<p class="sm" style="margin:0">' + ({ chill: tr("Tous les nombres ci-dessous sont divisés par 2 (arrondis, au moins 1).", "All numbers below are halved (rounded, at least 1)."), classique: tr("Les nombres ci-dessous tels quels.", "The numbers below as they are."), chaud: tr("Tous les nombres ci-dessous sont doublés.", "All numbers below are doubled."), perso: tr("Les nombres ci-dessous tels quels : règle-les un par un.", "The numbers below as they are: set them one by one.") }[S.level] || "") + "</p></div>" +
         '<div class="field"><span class="eyebrow">' + tr("Garde-fous", "Safety") + '</span><div class="gs-box">' +
-        step("cap", tr("Plafond par joueur", "Cap per player"), tr("Au-delà, ses gages passent sans alcool", "Past it, their forfeits switch to no-alcohol"), 1, 60) +
-        step("water", tr("Rappel verre d'eau", "Water reminder"), tr("Toutes les N gorgées", "Every N sips"), 0, 30) +
+        step("cap", tr("Plafond par joueur", "Cap per player"), tr("Nombre maximum de gages à boire par joueur pour la soirée (" + gUnit(S, 2).replace(/^2 /, "") + "). Chacun a aussi sa limite dans son profil : la plus basse compte.", "Max forfeits a player drinks tonight (" + gUnit(S, 2).replace(/^2 /, "") + "). Everyone also has a limit in their profile: the lowest wins."), 1, 60) +
+        step("water", tr("Rappel verre d'eau", "Water reminder"), S.water ? tr("Toutes les " + S.water + " " + gUnit(S, 2).replace(/^2 /, "") + " bues, le jeu propose un verre d'eau.", "Every " + S.water + " " + gUnit(S, 2).replace(/^2 /, "") + " drunk, the game suggests a glass of water.") : tr("Jamais", "Never"), 0, 30) +
         '<div class="gs-row"><span class="tx"><b>' + tr("Joker eau", "Water joker") + '</b><span class="sm">' + tr("Une fois par partie, un verre d'eau à la place d'un gage", "Once per game, a glass of water instead of a forfeit") + '</span></span><button type="button" class="gs-sw" data-gjk aria-pressed="' + S.joker + '" aria-label="' + tr("Joker eau", "Water joker") + '"' + dis + "><i></i></button></div></div></div>" +
-        '<div class="field"><span class="eyebrow">' + tr("Déclencheurs, jeu par jeu", "Triggers, game by game") + '</span><div class="filters">' + games.map(x => '<button type="button" data-gg="' + x[0] + '" aria-pressed="' + (x[0] === game) + '">' + esc(x[1]) + "</button>").join("") + '</div><div class="gs-box">' +
+        '<div class="field"><span class="eyebrow">' + tr("Déclencheurs, jeu par jeu", "Triggers, game by game") + '</span><p class="sm" style="margin:0">' + tr("Ce qui donne un gage dans chaque jeu, et combien. « boit » : le joueur boit. « distribue » : il choisit qui boit, en touchant les prénoms. 0 = désactivé.", "What gives a forfeit in each game, and how much. “drinks”: the player drinks. “hands out”: they pick who drinks by tapping names. 0 = off.") + '</p><div class="filters">' + games.map(x => '<button type="button" data-gg="' + x[0] + '" aria-pressed="' + (x[0] === game) + '">' + esc(x[1]) + "</button>").join("") + '</div><div class="gs-box">' +
         evs.map(e => { const b = gBase(S, gid, e.ev), k = (game === "_fin" ? gid : game) + ":" + e.ev; return '<div class="gs-row"><span class="tx"><b>' + esc(e.label) + '</b><span class="sm gk-' + e.kind + '">' + kindTxt(e.kind) + (b && mult !== 1 ? " · " + gUnit(S, Math.max(1, Math.round(b * mult))) : "") + '</span></span><button type="button" class="gs-b" data-gtr="' + esc(e.ev) + '" data-d="-1" aria-label="' + tr("Moins", "Less") + '"' + dis + '>−</button><b class="gs-n">' + b + '</b><button type="button" class="gs-b" data-gtr="' + esc(e.ev) + '" data-d="1" aria-label="' + tr("Plus", "More") + '"' + dis + ">+</button></div>"; }).join("") +
         "</div></div>" +
         '<div class="field"><span class="eyebrow">' + tr("Gages sans alcool", "No-alcohol forfeits") + '</span><p class="sm" style="margin:0">' + tr("Pour ceux qui ne boivent pas ou qui ont atteint leur plafond. Vide = la liste du jeu.", "For players who don't drink or hit their cap. Empty = the built-in list.") + '</p><div class="gs-box">' +
@@ -1780,7 +1804,7 @@ function gSettingsPage(get, set, editable, tally, onReset){
       if(tk.length){
         const T = tally();
         h += '<div class="field"><span class="eyebrow">' + tr("Compteur de la soirée", "Tonight's counter") + '</span><div class="gs-box">' +
-          tk.sort((a, b) => T[b].s - T[a].s).map(n => '<div class="gs-row"><span class="tx"><b>' + esc(n) + '</b><span class="sm">' + tr(T[n].g + " distribuées · " + T[n].t + " gages sans alcool · " + T[n].w + " verres d'eau", T[n].g + " handed out · " + T[n].t + " no-alcohol forfeits · " + T[n].w + " water") + '</span></span><b class="gs-n">' + T[n].s + "</b></div>").join("") + "</div>" +
+          tk.sort((a, b) => T[b].s - T[a].s).map(n => '<div class="gs-row"><span class="tx"><b>' + esc(n) + '</b><span class="sm">' + tr(gUnit(S, T[n].s) + " bues (≈ " + String(Math.round((+T[n].v || 0) * 10) / 10).replace(".", ",") + " verre" + ((+T[n].v || 0) > 1 ? "s" : "") + ") · " + T[n].g + " distribuées · " + T[n].t + " gages sans alcool · " + T[n].w + " verres d'eau", gUnit(S, T[n].s) + " drunk (≈ " + (Math.round((+T[n].v || 0) * 10) / 10) + " drinks) · " + T[n].g + " handed out · " + T[n].t + " no-alcohol forfeits · " + T[n].w + " water") + '</span></span><b class="gs-n">' + T[n].s + "</b></div>").join("") + "</div>" +
           (editable && onReset ? '<button class="link" type="button" data-greset2>' + tr("Remettre le compteur à zéro", "Reset the counter") + "</button>" : "") + "</div>";
       }
       root.innerHTML = h + "</div>";
@@ -1798,16 +1822,32 @@ function gSettingsPage(get, set, editable, tally, onReset){
     draw();
   }, gRefresh);
 }
+const gProfShort = () => { const gp = gProf(store().gp); return gp.drink === "sans" ? tr("Sans alcool", "No alcohol") : DRINKS[gp.drink].name + " · max " + gVerres(gLim(gp), gp.drink); };
+// Texte d'une limite : « 3 demis (25 cl) ≈ 24 gorgées · environ 3 verres standard ».
+function gLimText(drink, lim){
+  const d = DRINKS[drink]; if(!d) return "";
+  return gVerres(lim, drink) + " · " + tr("≈ " + Math.round(lim * d.sips) + " gorgées", "≈ " + Math.round(lim * d.sips) + " sips") + " · " + tr("environ " + lim * d.std + " verre" + (lim * d.std > 1 ? "s" : "") + " standard", "about " + lim * d.std + " standard drink" + (lim * d.std > 1 ? "s" : ""));
+}
 function gProfilePage(){
-  SB.page(tr("Mon profil gages", "My forfeit profile"), root => {
+  SB.page(tr("Mon profil", "My profile"), root => {
     const draw = () => {
-      const gp = Object.assign({ alc: true, cap: 0 }, store().gp || {});
-      root.innerHTML = '<div class="gs"><p class="howto">' + tr("Réglé sur ton téléphone, personne d'autre ne le voit ni ne le change.", "Set on your phone; nobody else sees or changes it.") + "</p>" +
-        '<div class="packs">' + [[true, tr("Je bois de l'alcool", "I drink alcohol"), tr("Les gages des jeux sont en gorgées", "Game forfeits are drinks")], [false, tr("Je joue sans alcool", "I play without alcohol"), tr("Tu reçois des gages sans boire à la place", "You get no-drink forfeits instead")]].map(o => '<button type="button" class="pack" data-ga="' + o[0] + '" aria-pressed="' + (gp.alc === o[0]) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + o[1] + '</span><span class="ds">' + o[2] + "</span></span></button>").join("") + "</div>" +
-        (gp.alc ? '<div class="gs-box"><div class="gs-row"><span class="tx"><b>' + tr("Mon plafond", "My cap") + '</b><span class="sm">' + (gp.cap ? tr("Pas plus de " + gp.cap + " ce soir", "No more than " + gp.cap + " tonight") : tr("Celui de l'hôte", "The host's")) + '</span></span><button type="button" class="gs-b" data-gc="-1" aria-label="' + tr("Moins", "Less") + '">−</button><b class="gs-n">' + (gp.cap || "–") + '</b><button type="button" class="gs-b" data-gc="1" aria-label="' + tr("Plus", "More") + '">+</button></div></div>' : "") + "</div>";
-      const save = p => { persist({ gp: Object.assign(gp, p) }); CORE_X._gp = store().gp; SB.refreshExtras(); draw(); };
-      $$("[data-ga]", root).forEach(b => b.addEventListener("click", () => save({ alc: b.dataset.ga === "true" })));
-      $$("[data-gc]", root).forEach(b => b.addEventListener("click", () => save({ cap: Math.max(0, Math.min(60, (gp.cap || 0) + +b.dataset.gc)) })));
+      const gp = gProf(store().gp), lim = gLim(gp), d = DRINKS[gp.drink];
+      const opts = [["sans", tr("Je ne bois pas d'alcool", "I'm not drinking alcohol"), tr("Tu reçois des gages sans alcool à la place : défis, chansons, pompes…", "You get no-alcohol forfeits instead: dares, songs, push-ups…")]]
+        .concat(Object.keys(DRINKS).map(k => [k, DRINKS[k].name, tr("1 verre = ", "1 drink = ") + DRINKS[k].glass + (DRINKS[k].sips > 1 ? tr(" ≈ " + DRINKS[k].sips + " gorgées", " ≈ " + DRINKS[k].sips + " sips") : "")]));
+      root.innerHTML = '<div class="gs"><p class="howto">' + tr("Ton profil reste sur ton téléphone et te suit dans chaque salon. Il sert à une chose : que les gages des jeux respectent ce que tu bois et ta limite. Une fois ta limite atteinte, tes gages passent automatiquement en sans alcool, sans que les autres sachent pourquoi.", "Your profile stays on your phone and follows you into every room. It does one thing: makes game forfeits respect what you drink and your limit. Once you hit your limit, your forfeits switch to no-alcohol automatically, without the others knowing why.") + "</p>" +
+        '<div class="field"><span class="eyebrow">' + tr("Ce soir, je bois…", "Tonight I'm drinking…") + '</span><div class="packs">' +
+        opts.map(o => '<button type="button" class="pack" data-gd="' + o[0] + '" aria-pressed="' + (gp.drink === o[0]) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(o[1]) + '</span><span class="ds">' + esc(o[2]) + "</span></span></button>").join("") + "</div></div>" +
+        (d ? '<div class="field"><span class="eyebrow">' + tr("Ma limite pour la soirée", "My limit for the night") + '</span><div class="gs-box"><div class="gs-row"><span class="tx"><b>' + esc(gVerres(lim, gp.drink)) + '</b><span class="sm">' + esc(gLimText(gp.drink, lim)) + '</span></span><button type="button" class="gs-b" data-gl="-1" aria-label="' + tr("Moins", "Less") + '">−</button><b class="gs-n">' + lim + '</b><button type="button" class="gs-b" data-gl="1" aria-label="' + tr("Plus", "More") + '">+</button></div></div>' +
+          '<p class="sm" style="margin:0">' + tr("Une limite est gardée pour chaque boisson : si tu passes de la bière au vin, ta limite « vin » reprend.", "A limit is kept for each drink: switch from beer to wine and your “wine” limit comes back.") + "</p></div>" +
+          '<div class="field"><span class="eyebrow">' + tr("Comment on compte", "How it's counted") + '</span><ul class="gs-how">' +
+          "<li><b>" + tr("1 gorgée", "1 sip") + "</b> " + tr("= une gorgée normale de ta boisson (" + d.sips + " par verre).", "= a normal sip of your drink (" + d.sips + " per drink).") + "</li>" +
+          "<li><b>1 shot</b> " + (gp.drink === "fort" ? tr("= un shot (3 cl).", "= one shot (3 cl).") : tr("= 3 gorgées de ta boisson.", "= 3 sips of your drink.")) + "</li>" +
+          "<li><b>" + tr("1 cul-sec", "1 chug") + "</b> " + tr("= finir ton verre (" + d.glass + ").", "= finish your drink (" + d.glass + ").") + "</li>" +
+          "<li>" + tr("1 verre standard = 10 g d'alcool pur. Les repères santé conseillent pas plus de 10 par semaine et pas plus de 2 par jour.", "1 standard drink = 10 g of pure alcohol. Health guidelines suggest no more than 10 a week and no more than 2 a day.") + "</li></ul></div>" : "") +
+        "</div>";
+      const save = p => { const g2 = Object.assign(gProf(store().gp), p); g2.alc = g2.drink !== "sans"; persist({ gp: g2 }); CORE_X._gp = g2; SB.refreshExtras(); draw(); };
+      $$("[data-gd]", root).forEach(b => b.addEventListener("click", () => { buzz(8); save({ drink: b.dataset.gd }); }));
+      $$("[data-gl]", root).forEach(b => b.addEventListener("click", () => { const g2 = gProf(store().gp), l = Object.assign({}, g2.lim); l[g2.drink] = Math.max(1, Math.min(20, gLim(g2) + +b.dataset.gl)); save({ lim: l }); }));
     };
     draw();
   }, gRefresh);
@@ -1818,7 +1858,7 @@ function renderHomeProfile(){
   const S = gLocalSettings(), gp = Object.assign({ alc: true, cap: 0 }, store().gp || {});
   const key = JSON.stringify([S.on, S.level, S.unit, gp, LANG]);
   if(el.dataset.key === key) return; el.dataset.key = key;
-  el.innerHTML = '<button type="button" data-hme><b>' + tr("Mon profil", "My profile") + '</b><span class="sm">' + (gp.alc === false ? tr("Sans alcool", "No alcohol") : gp.cap ? tr("Je bois · max " + gp.cap, "I drink · max " + gp.cap) : tr("Je bois", "I drink")) + "</span></button>" +
+  el.innerHTML = '<button type="button" data-hme><b>' + tr("Mon profil", "My profile") + '</b><span class="sm">' + esc(gProfShort()) + "</span></button>" +
     '<button type="button" data-hgs><b>' + tr("Mes gages", "My forfeits") + '</b><span class="sm">' + (S.on ? esc({ chill: "Chill", classique: tr("Classique", "Classic"), chaud: tr("Apéro chaud", "Wild night"), perso: "Perso" }[S.level]) + " · " + gUnit(S, 2).replace(/^2 /, "") : tr("Désactivés", "Off")) + "</span></button>";
   $("[data-hme]", el).addEventListener("click", () => gProfilePage());
   $("[data-hgs]", el).addEventListener("click", () => gSettingsPage(gLocalSettings, gSaveSettings, true, () => ({}), null));
@@ -1828,10 +1868,10 @@ function gSalonBar(g){
   let el = $("#sa-gages");
   if(!el){ el = document.createElement("div"); el.id = "sa-gages"; el.className = "gbar"; const r = $("#sa-roster"); if(r && r.parentNode) r.parentNode.parentNode.insertBefore(el, r.parentNode.nextSibling); else return; }
   const S = gSettings(g && g.gages), gp = store().gp || {};
-  const key = JSON.stringify([S.on, S.level, S.unit, N.host, gp.alc !== false]);
+  const key = JSON.stringify([S.on, S.level, S.unit, N.host, gp]);
   if(el.dataset.key === key) return; el.dataset.key = key;
   el.innerHTML = '<button type="button" data-gset><b>' + tr("Gages", "Forfeits") + '</b><span class="sm">' + (S.on ? esc({ chill: "Chill", classique: tr("Classique", "Classic"), chaud: tr("Apéro chaud", "Wild night"), perso: "Perso" }[S.level]) + " · " + gUnit(S, 2).replace(/^2 /, "") : tr("Désactivés", "Off")) + "</span></button>" +
-    '<button type="button" data-gme><b>' + tr("Mon profil", "My profile") + '</b><span class="sm">' + (gp.alc === false ? tr("Sans alcool", "No alcohol") : tr("Je bois", "I drink")) + "</span></button>";
+    '<button type="button" data-gme><b>' + tr("Mon profil", "My profile") + '</b><span class="sm">' + esc(gProfShort()) + "</span></button>";
   $("[data-gset]", el).addEventListener("click", () => gSettingsPage(() => gSettings((G() || {}).gages), s => { if(!N.host) return; persist({ gages: s }); hostSetG({ gages: s }); }, N.host, () => (G() || {}).gt || {}, () => { if(N.host) hostSetG({ gt: {} }); }));
   $("[data-gme]", el).addEventListener("click", gProfilePage);
 }
@@ -1841,14 +1881,15 @@ function gLocalBar(){
   if(!el){ el = document.createElement("div"); el.id = "ll-gages"; el.className = "gbar"; box.parentNode.insertBefore(el, box); }
   const S = gLocalSettings();
   el.innerHTML = '<button type="button" data-gset><b>' + tr("Gages", "Forfeits") + '</b><span class="sm">' + (S.on ? esc({ chill: "Chill", classique: tr("Classique", "Classic"), chaud: tr("Apéro chaud", "Wild night"), perso: "Perso" }[S.level]) : tr("Désactivés", "Off")) + "</span></button>" +
-    '<button type="button" data-gsob><b>' + tr("Sans alcool", "No alcohol") + '</b><span class="sm">' + (A(store().gagesSober).length ? esc(A(store().gagesSober).join(", ")) : tr("Personne", "Nobody")) + "</span></button>";
+    '<button type="button" data-gsob><b>' + tr("Qui boit quoi ?", "Who drinks what?") + '</b><span class="sm">' + tr("Boisson et limite de chacun", "Everyone's drink and limit") + "</span></button>";
   $("[data-gset]", el).addEventListener("click", () => gSettingsPage(gLocalSettings, gSaveSettings, true, () => LGG.tally, () => { LGG.tally = {}; }));
-  $("[data-gsob]", el).addEventListener("click", () => SB.page(tr("Qui joue sans alcool ?", "Who plays without alcohol?"), root => {
+  $("[data-gsob]", el).addEventListener("click", () => SB.page(tr("Qui boit quoi ?", "Who drinks what?"), root => {
     const draw = () => {
-      const names = A(store().localNames).map(n => clean(n, 16)).filter(Boolean), sob = A(store().gagesSober);
-      root.innerHTML = '<p class="howto">' + tr("Ces joueurs reçoivent des gages sans alcool à la place des gorgées.", "These players get no-alcohol forfeits instead of drinks.") + '</p><div class="packs">' +
-        (names.length ? names.map(n => '<button type="button" class="pack" data-gn="' + esc(n) + '" aria-pressed="' + (sob.indexOf(n) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(n) + "</span></span></button>").join("") : '<p class="sm">' + tr("Ajoute d'abord les prénoms en lançant un jeu.", "Add player names first by starting a game.") + "</p>") + "</div>";
-      $$("[data-gn]", root).forEach(b => b.addEventListener("click", () => { const s = A(store().gagesSober).slice(), i = s.indexOf(b.dataset.gn); if(i >= 0) s.splice(i, 1); else s.push(b.dataset.gn); persist({ gagesSober: s }); draw(); }));
+      const names = A(store().localNames).map(n => clean(n, 16)).filter(Boolean);
+      root.innerHTML = '<div class="gs"><p class="howto">' + tr("Sur un seul téléphone, choisis ce que boit chaque joueur. Sa limite est celle proposée pour sa boisson ; au-delà, il passe aux gages sans alcool.", "On one phone, pick what each player drinks. Their limit is the default for that drink; past it, they switch to no-alcohol forfeits.") + "</p>" +
+        (names.length ? names.map(n => { const dk = gLocalDrink(n); return '<div class="field"><span class="eyebrow">' + esc(n) + (dk !== "sans" ? " · max " + esc(gVerres(DRINKS[dk].def, dk)) : "") + '</span><div class="filters">' + [["sans", tr("Sans alcool", "No alcohol")]].concat(Object.keys(DRINKS).map(k => [k, DRINKS[k].name])).map(o => '<button type="button" data-gn="' + esc(n) + '" data-gk="' + o[0] + '" aria-pressed="' + (dk === o[0]) + '">' + esc(o[1]) + "</button>").join("") + "</div></div>"; }).join("")
+          : '<p class="sm">' + tr("Ajoute d'abord les prénoms en lançant un jeu.", "Add player names first by starting a game.") + "</p>") + "</div>";
+      $$("[data-gn]", root).forEach(b => b.addEventListener("click", () => { const m = Object.assign({}, store().gagesDrinks || {}); m[b.dataset.gn] = b.dataset.gk; persist({ gagesDrinks: m }); buzz(6); draw(); }));
     };
     draw();
   }, gLocalBar));
