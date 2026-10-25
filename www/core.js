@@ -1033,7 +1033,7 @@ SB.openInvite = function(code){
 function homeErr(msg){ const e = $("#h-err"); e.textContent = msg || ""; e.hidden = !msg; }
 let hashCode = null;
 function renderHome(){
-  renderInvite();
+  renderInvite(); renderHomeProfile();
   const nm = clean($("#h-name").value, 16);
   $("#h-create").disabled = !netReady || N.joining;
   $("#h-join").disabled = !netReady || N.joining;
@@ -1165,7 +1165,7 @@ function pres(p){ return p && p.presence && typeof p.presence === "object" ? p.p
 function peerById(id){ return N.peers.find(p => p.peer === id); }
 function namedPeers(){ return N.peers.filter(p => clean(pres(p).name, 16)); }
 function G(){ if(!N.nr) return null; return N.host ? N.g : N.nr.game(); }
-function freshSalon(){ return { v: 1, code: N.code, phase: "salon", sel: "", game: "", gid: "", players: [], s: null, opts: null, last: null, gages: gSettings(store().gages), gt: {} }; }
+function freshSalon(){ return { v: 1, code: N.code, phase: "salon", sel: "", game: "", gid: "", players: [], s: null, opts: null, last: null, gages: gLocalSettings(), gt: {} }; }
 function makeCode(){ const L = "ABCDEFGHJKLMNPQRSTUVWXYZ"; let s = ""; for(let i = 0; i < 4; i++) s += L[Math.floor(Math.random() * L.length)]; return s; }
 function myExtras(){ const x = Object.assign({}, CORE_X); SB.games.forEach(d => { if(typeof d.presence === "function"){ try{ const v = d.presence(); if(v != null) x[d.id] = v; }catch(e){} } }); return x; }
 SB.refreshExtras = function(){ if(N.nr) N.nr.presence({ x: plain(myExtras()) }); };
@@ -1731,7 +1731,9 @@ function gRenderNet(){
 
 /* ---------- Un seul téléphone ---------- */
 const LGG = { tally: {}, q: null, jk: {} };
-function gLocalSettings(){ return gSettings(store().gagesLocal); }
+// Un seul jeu de réglages par téléphone : utilisé quand on crée un salon et sur un seul téléphone.
+function gLocalSettings(){ const st = store(); return gSettings(st.gages || st.gagesLocal); }
+function gSaveSettings(s){ persist({ gages: s }); }
 function gLocalApply(gameId, names, list, key, rerender){
   const S = gLocalSettings(); if(!S.on) return;
   if(key && LGG.key === key) return; LGG.key = key || "";
@@ -1747,6 +1749,7 @@ function gLocalApply(gameId, names, list, key, rerender){
 }
 
 /* ---------- Réglages (hôte ou un seul téléphone) et profil ---------- */
+const gRefresh = () => { try{ renderHomeProfile(); if(!$("#s-llist").hidden) gLocalBar(); }catch(e){} };
 function gSettingsPage(get, set, editable, tally, onReset){
   SB.page(tr("Gages", "Forfeits"), root => {
     let game = (SB.games.find(d => A(d.gages).length) || {}).id || "_fin";
@@ -1760,7 +1763,7 @@ function gSettingsPage(get, set, editable, tally, onReset){
       const gid = game === "_fin" ? (SB.games[0] || {}).id : game;
       let h = '<div class="gs">' +
         '<button type="button" class="pack" data-gon aria-pressed="' + S.on + '"' + dis + '><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Gages activés", "Forfeits on") + '</span><span class="ds">' + tr("Les jeux affichent les gages à la fin des manches. Chacun peut jouer sans alcool.", "Games show forfeits at the end of rounds. Anyone can play without alcohol.") + "</span></span></button>" +
-        (editable ? "" : '<p class="note-box">' + tr("Seul l'hôte modifie ces réglages.", "Only the host can change these settings.") + "</p>") +
+        (editable ? '<p class="sm" style="margin:0">' + tr("Gardés sur ce téléphone : ils servent automatiquement à chaque salon que tu crées et sur un seul téléphone.", "Saved on this phone: used automatically for every room you create and on one phone.") + "</p>" : '<p class="note-box">' + tr("Seul l'hôte modifie ces réglages.", "Only the host can change these settings.") + "</p>") +
         '<div class="field"><span class="eyebrow">' + tr("Ce qu'on boit", "What we drink") + "</span>" + seg("unit", [["gorgee", tr("Gorgées", "Sips")], ["shot", "Shots"], ["culsec", tr("Culs-secs", "Chugs")]]) + "</div>" +
         '<div class="field"><span class="eyebrow">' + tr("Intensité", "Intensity") + "</span>" + seg("level", [["chill", "Chill ×½"], ["classique", tr("Classique", "Classic")], ["chaud", tr("Chaud ×2", "Wild ×2")], ["perso", "Perso"]]) + "</div>" +
         '<div class="field"><span class="eyebrow">' + tr("Garde-fous", "Safety") + '</span><div class="gs-box">' +
@@ -1793,7 +1796,7 @@ function gSettingsPage(get, set, editable, tally, onReset){
       const rs = $("[data-greset2]", root); if(rs) armTap(rs, () => { onReset(); draw(); }, tr("Touche encore pour remettre à zéro", "Tap again to reset"));
     };
     draw();
-  });
+  }, gRefresh);
 }
 function gProfilePage(){
   SB.page(tr("Mon profil gages", "My forfeit profile"), root => {
@@ -1807,7 +1810,18 @@ function gProfilePage(){
       $$("[data-gc]", root).forEach(b => b.addEventListener("click", () => save({ cap: Math.max(0, Math.min(60, (gp.cap || 0) + +b.dataset.gc)) })));
     };
     draw();
-  });
+  }, gRefresh);
+}
+// Profil de base sur l'accueil : mes gages par défaut (réutilisés dans chaque salon) et mon profil (je bois ou non).
+function renderHomeProfile(){
+  const el = $("#h-prof"); if(!el) return;
+  const S = gLocalSettings(), gp = Object.assign({ alc: true, cap: 0 }, store().gp || {});
+  const key = JSON.stringify([S.on, S.level, S.unit, gp, LANG]);
+  if(el.dataset.key === key) return; el.dataset.key = key;
+  el.innerHTML = '<button type="button" data-hme><b>' + tr("Mon profil", "My profile") + '</b><span class="sm">' + (gp.alc === false ? tr("Sans alcool", "No alcohol") : gp.cap ? tr("Je bois · max " + gp.cap, "I drink · max " + gp.cap) : tr("Je bois", "I drink")) + "</span></button>" +
+    '<button type="button" data-hgs><b>' + tr("Mes gages", "My forfeits") + '</b><span class="sm">' + (S.on ? esc({ chill: "Chill", classique: tr("Classique", "Classic"), chaud: tr("Apéro chaud", "Wild night"), perso: "Perso" }[S.level]) + " · " + gUnit(S, 2).replace(/^2 /, "") : tr("Désactivés", "Off")) + "</span></button>";
+  $("[data-hme]", el).addEventListener("click", () => gProfilePage());
+  $("[data-hgs]", el).addEventListener("click", () => gSettingsPage(gLocalSettings, gSaveSettings, true, () => ({}), null));
 }
 // Bandeau « Gages » du salon (tout le monde) et de la liste « un seul téléphone ».
 function gSalonBar(g){
@@ -1828,7 +1842,7 @@ function gLocalBar(){
   const S = gLocalSettings();
   el.innerHTML = '<button type="button" data-gset><b>' + tr("Gages", "Forfeits") + '</b><span class="sm">' + (S.on ? esc({ chill: "Chill", classique: tr("Classique", "Classic"), chaud: tr("Apéro chaud", "Wild night"), perso: "Perso" }[S.level]) : tr("Désactivés", "Off")) + "</span></button>" +
     '<button type="button" data-gsob><b>' + tr("Sans alcool", "No alcohol") + '</b><span class="sm">' + (A(store().gagesSober).length ? esc(A(store().gagesSober).join(", ")) : tr("Personne", "Nobody")) + "</span></button>";
-  $("[data-gset]", el).addEventListener("click", () => gSettingsPage(gLocalSettings, s => persist({ gagesLocal: s }), true, () => LGG.tally, () => { LGG.tally = {}; }));
+  $("[data-gset]", el).addEventListener("click", () => gSettingsPage(gLocalSettings, gSaveSettings, true, () => LGG.tally, () => { LGG.tally = {}; }));
   $("[data-gsob]", el).addEventListener("click", () => SB.page(tr("Qui joue sans alcool ?", "Who plays without alcohol?"), root => {
     const draw = () => {
       const names = A(store().localNames).map(n => clean(n, 16)).filter(Boolean), sob = A(store().gagesSober);
