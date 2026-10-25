@@ -808,7 +808,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.17.0";
+const VERSION = "4.17.1";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -2175,9 +2175,7 @@ function gProfilePage(){
       root.innerHTML = '<div class="gs"><div class="pf-top"><button type="button" class="pf-av" data-pf-rand aria-label="' + tr("Avatar au hasard", "Random avatar") + '" style="position:relative; overflow:visible; padding:0; color:var(--ink); cursor:pointer">' +
           '<span class="pf-face" style="position:absolute; inset:0; border-radius:50%; overflow:hidden; display:grid; place-items:center">' + (ph ? phHTML(ph) : "?") + "</span>" +
           '</button><div class="pf-act">' +
-        '<input class="pr-file" type="file" accept="image/*" capture="user" data-pf-cam aria-label="' + tr("Prendre une photo", "Take a photo") + '">' +
         '<input class="pr-file" type="file" accept="image/*" data-pf-file aria-label="' + tr("Choisir une photo", "Choose a photo") + '">' +
-        '<button class="btn ghost" type="button" data-pf-snap>' + tr("Prendre une photo", "Take a photo") + "</button>" +
         '<button class="btn ghost" type="button" data-pf-pick>' + tr("Choisir une photo", "Choose a photo") + "</button>" +
         (ph ? '<button class="link" type="button" data-pf-del>' + (avNum(ph) >= 0 ? tr("Retirer l'avatar", "Remove avatar") : tr("Retirer la photo", "Remove photo")) + "</button>" : "") + "</div></div>" +
         '<div class="field"><span class="eyebrow">' + tr("Ou choisis un avatar", "Or pick an avatar") + '</span><div class="avtabs">' + AV_CATS.filter(c => c[0] !== "hot" || myHard()).map(c => '<button type="button" class="avtab' + (c[0] === "hot" ? " hot" : "") + '" data-avc="' + c[0] + '" aria-pressed="' + (c[0] === avTab) + '"><span class="avtab-i">' + avSvg(c[2][AV_TABICON[c[0]] || 0]) + '</span><span class="avtab-t">' + esc(c[1].replace(" 🔥", "")) + '</span><span class="avtab-n">' + c[2].length + "</span></button>").join("") + "</div>" +
@@ -2240,7 +2238,7 @@ function gProfilePage(){
         pinUI = null; draw();
       });
       const setPh = v => { persist({ photo: v }); CORE_X._ph = v; SB.refreshExtras(); renderMe(); draw(); };
-      [["[data-pf-pick]", "[data-pf-file]"], ["[data-pf-snap]", "[data-pf-cam]"]].forEach(x => {
+      [["[data-pf-pick]", "[data-pf-file]"]].forEach(x => {
         const fi = $(x[1], root);
         $(x[0], root).addEventListener("click", () => fi.click());
         fi.addEventListener("change", async () => { const d = await shrinkPhoto(fi.files && fi.files[0]); fi.value = ""; if(!d){ toast(tr("Cette photo n'a pas pu être lue", "Couldn't read that photo")); return; } setPh(d); });

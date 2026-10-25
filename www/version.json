@@ -1,18 +1,15 @@
 {
- "version": "4.17.0",
+ "version": "4.17.1",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Nouveau : compteur d'alcool. Dans ton profil, touche + à chaque verre ; ce que tu bois dans les jeux est compté tout seul",
-  "Salon : bouton « Compteur d'alcool » pour voir en direct qui a bu quoi ce soir (en verres standard)",
-  "Estimation de ton taux d'alcool (g/L) avec ton poids : très approximative, jamais pour décider de conduire. Ton poids et ton taux restent sur ton téléphone",
-  "Pas de compteur en mode Soft ni en mode Enfant"
+  "Profil : le bouton « Prendre une photo » est retiré, il reste « Choisir une photo »"
  ],
  "files": {
   "core.js": {
-   "h": "2b5b79169b6eddc28807bdf56e272e56a31f95639039960ce05c5acad13c0ec4",
-   "s": 276797
+   "h": "ce8f7770025bc3e985d29e872ceeec4f2ed0be7cd3c0b75a8fca91a819b50660",
+   "s": 276485
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",

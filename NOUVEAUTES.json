@@ -1,4 +1,7 @@
 {
+  "4.17.1": [
+    "Profil : le bouton « Prendre une photo » est retiré, il reste « Choisir une photo »"
+  ],
   "4.17.0": [
     "Nouveau : compteur d'alcool. Dans ton profil, touche + à chaque verre ; ce que tu bois dans les jeux est compté tout seul",
     "Salon : bouton « Compteur d'alcool » pour voir en direct qui a bu quoi ce soir (en verres standard)",
