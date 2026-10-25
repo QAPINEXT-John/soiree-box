@@ -1,15 +1,15 @@
 {
- "version": "4.12.3",
+ "version": "4.12.4",
  "apk": 34,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Le QR code et le lien d'un salon Soft font passer le téléphone en Soft dès qu'on les ouvre, même avant de rejoindre ou d'installer l'appli"
+  "Passage en Soft discret : plus de message quand l'appli passe en Soft"
  ],
  "files": {
   "core.js": {
-   "h": "58968db66ca0ad27dc92ab34fe86c678efaefbec3c4d00e200ffa1a62036469d",
-   "s": 248237
+   "h": "f799f4ef6039224fb7a9841ec5d2918fc45c77eb6e663b9a37a25a5c32e7da73",
+   "s": 247819
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
