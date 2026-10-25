@@ -1,16 +1,15 @@
 {
- "version": "4.15",
+ "version": "4.15.1",
  "apk": 35,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Gages dans 11 jeux de plus : Undercover, Loup-garou, Menteurs, Dernière carte, Action ou vérité, Tu préfères, Red Flag, Qui a dit ça ?, Priorités, Mots interdits, Killer",
-  "Chaque jeu a ses propres déclencheurs, réglables dans « Gages »"
+  "Test de pureté : plus de gage « toutes les 5 réponses oui »"
  ],
  "files": {
   "core.js": {
-   "h": "9a15cdeae165f564686974acdf27f0f1abdb544298c5a2be14b0bc48962c8b82",
-   "s": 261627
+   "h": "5f75c92cfbf77475505caed9ecc10f7b8b23805fd5248aa321e51234ca0c1a51",
+   "s": 261629
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -133,8 +132,8 @@
    "s": 113415
   },
   "games/purete.js": {
-   "h": "5c1a6068226b3d7a96cc18b63b8300831e2bcbeb987b13e4770b59648fb0225a",
-   "s": 71107
+   "h": "50976454834faef2f0426cc778b16239ee03ff93dee231bfbe6639696688bea1",
+   "s": 70894
   },
   "games/quiadit.js": {
    "h": "0e828ec83b65cc583396ab909a40750a87e07e3912cf1c7691a0ff1d0a99464e",

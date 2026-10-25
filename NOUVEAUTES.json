@@ -1,4 +1,7 @@
 {
+  "4.15.1": [
+    "Test de pureté : plus de gage « toutes les 5 réponses oui »"
+  ],
   "4.15": [
     "Gages dans 11 jeux de plus : Undercover, Loup-garou, Menteurs, Dernière carte, Action ou vérité, Tu préfères, Red Flag, Qui a dit ça ?, Priorités, Mots interdits, Killer",
     "Chaque jeu a ses propres déclencheurs, réglables dans « Gages »"

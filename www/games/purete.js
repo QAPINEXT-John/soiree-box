@@ -387,7 +387,6 @@ function avgSeries(rows, qi, lg){
 // Gages de fin de test : une gorgée par tranche de 5 « oui », le moins pur boit, le plus pur distribue.
 function puGages(rows, tw){
   const out = [], sc = rows.map(r => ({ id: r.id, p: score(r.a, tw), y: (String(r.a).match(/1/g) || []).length }));
-  sc.forEach(r => { if(r.y >= 5) out.push({ id: r.id, ev: "oui5", x: Math.floor(r.y / 5) }); });
   if(sc.length > 1){
     const mx = Math.max.apply(null, sc.map(r => r.p)), mn = Math.min.apply(null, sc.map(r => r.p));
     if(mx !== mn){ sc.filter(r => r.p === mx).forEach(r => out.push({ id: r.id, ev: "pur" })); sc.filter(r => r.p === mn).forEach(r => out.push({ id: r.id, ev: "impur" })); }
@@ -485,7 +484,6 @@ SB.register({
   min: 1, max: 20,
   gagesEnd: false,
   gages: [
-    { ev: "oui5", label: tr("Toutes les 5 réponses « oui »", "Every 5 “yes” answers"), kind: "boit", n: 1 },
     { ev: "impur", label: tr("Le moins pur de la partie", "The least pure"), kind: "boit", n: 2 },
     { ev: "pur", label: tr("Le plus pur de la partie", "The purest"), kind: "distribue", n: 3 }
   ],
