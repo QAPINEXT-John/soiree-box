@@ -127,13 +127,52 @@ const HOT_EN = [
   "only wants to do it Sundays at 3 p.m.", "has mirrors all over the ceiling", "makes animal noises", "keeps a spreadsheet of their bedroom preferences",
   "won't sleep next to you afterwards", "bursts out laughing at the worst moment", "keeps their sunglasses on in bed", "watches way too much porn"
 ];
-const LISTS = { fr: { cl: CL, kid: KID, love: LOVE, hot: HOT }, en: { cl: CL_EN, kid: KID_EN, love: LOVE_EN, hot: HOT_EN } };
+const TRASH = [
+  "jouit en trente secondes et s'endort direct", "crie « BUT ! » au moment de jouir", "n'a jamais trouvé le clitoris, même avec un GPS",
+  "a un sexe minuscule et l'appelle « le monstre »", "envoie des dick pics à 8 h du matin, avant le bonjour", "a un OnlyFans, et ses parents sont abonnés",
+  "met du porno sur la télé pendant que vous le faites", "veut que tu l'appelles « papa » au lit", "pète en pleine action et continue comme si de rien n'était",
+  "ne le fait qu'en levrette pour pouvoir regarder le match", "a un plan cul dans chaque ville de France", "compte ses coups de reins à voix haute",
+  "a couché avec toute ta bande de potes", "a un historique porno qui ferait rougir un sexologue", "laisse son gode sur la table de chevet, même quand ses parents passent",
+  "propose un plan à quatre avec ses ex", "le fait en chaussettes et en bonnet", "lèche tout, vraiment tout, même les aisselles",
+  "veut tester toutes les catégories d'un site porno, dans l'ordre alphabétique", "a perdu la clé des menottes en peluche… avec toi attaché",
+  "gémit comme une chèvre", "se touche trois fois par jour, bureau compris", "a couché avec son coach de salle, sur le banc de muscu",
+  "envoie des sextos bourrés de fautes d'orthographe", "veut le faire en costume de mascotte", "a un sexe qui part à gauche à 45 degrés",
+  "exige des fellations mais refuse le cunni", "a des bourses qui descendent jusqu'aux genoux", "utilise du beurre comme lubrifiant",
+  "a tourné une sextape et l'a postée par erreur sur son compte pro", "commence le dirty talk dès l'entrée, au resto",
+  "veut que tu portes le costume de son ex", "a un tatouage « open bar » au-dessus des fesses", "veut le faire sur le capot de la voiture de ses parents",
+  "jouit en imitant une sirène de police", "se fait plaisir devant des vidéos de cuisine", "a un string léopard pour les grandes occasions",
+  "connaît toutes les actrices porno par leur prénom", "prend du Viagra… à 25 ans", "a un vibro qui s'est déclenché dans son sac en pleine réunion",
+  "se prend en selfie, lui-même, en pleine action", "couche avec son ex à chaque anniversaire de rupture", "veut un trio avec ton boss",
+  "embrasse avec des bruits de ventouse", "a une liste de fantasmes de 40 pages, illustrée", "va au club libertin tous les vendredis, sans exception",
+  "a un piercing intime qui sonne aux portiques de l'aéroport", "garde ses chaussettes « spéciales » sous le lit", "demande un avis client après chaque partie de jambes en l'air",
+  "a rangé ses sex toys par taille dans une vitrine du salon", "veut le faire pendant le repas de famille, sous la table"
+];
+const TRASH_EN = [
+  "comes in thirty seconds and falls straight asleep", "yells “GOAL!” when they finish", "has never found the clitoris, even with GPS",
+  "has a tiny one and calls it “the beast”", "sends dick pics at 8 a.m., before saying good morning", "has an OnlyFans, and their parents subscribe",
+  "puts porn on the TV while you're doing it", "wants you to call them “daddy” in bed", "farts mid-action and keeps going like nothing happened",
+  "only does doggy style so they can watch the game", "has a hookup in every city", "counts their thrusts out loud", "has slept with your whole friend group",
+  "has a porn history that would make a sex therapist blush", "leaves their dildo on the nightstand, even when their parents visit",
+  "suggests a foursome with their exes", "does it in socks and a beanie", "licks everything, really everything, armpits included",
+  "wants to try every category on a porn site, in alphabetical order", "lost the key to the fluffy handcuffs… with you cuffed",
+  "moans like a goat", "touches themselves three times a day, office included", "slept with their gym coach, on the bench press",
+  "sends sexts full of typos", "wants to do it in a mascot costume", "has one that bends left at 45 degrees", "demands blowjobs but won't go down on you",
+  "uses butter as lube", "made a sex tape and accidentally posted it on their work account", "starts the dirty talk at the restaurant entrance",
+  "wants you to wear their ex's costume", "has an “open bar” tattoo above their butt", "wants to do it on the hood of their parents' car",
+  "finishes doing a police siren impression", "gets off to cooking videos", "has a leopard thong for special occasions", "knows every porn star by first name",
+  "takes Viagra… at 25", "had a vibrator go off in their bag mid-meeting", "takes selfies of themselves mid-action", "sleeps with their ex on every breakup anniversary",
+  "wants a threesome with your boss", "kisses with suction-cup noises", "has a 40-page illustrated list of fantasies", "goes to a swingers' club every Friday, no exceptions",
+  "has an intimate piercing that sets off airport scanners", "keeps their “special” socks under the bed", "asks for a customer review after every hookup",
+  "displays their sex toys by size in a living room cabinet", "wants to do it under the table at a family dinner"
+];
+const LISTS = { fr: { cl: CL, kid: KID, love: LOVE, hot: HOT, trash: TRASH }, en: { cl: CL_EN, kid: KID_EN, love: LOVE_EN, hot: HOT_EN, trash: TRASH_EN } };
 const lists = lg => LISTS[lg === "en" ? "en" : "fr"];
 const PACKS = [
   { v: "cl", label: tr("Classique", "Classic"), desc: tr("Manies, habitudes, petits défauts", "Quirks, habits, little flaws"), list: lists(SB.lang()).cl },
   { v: "kid", label: tr("Copains", "Buddies"), desc: tr("Le pote parfait… ou presque. Tout public", "The perfect buddy… almost. For everyone"), list: lists(SB.lang()).kid, kid: true },
   { v: "love", label: tr("Love & dates", "Love & dates"), desc: tr("Couple, ex, rencards ratés", "Couples, exes, bad dates"), list: lists(SB.lang()).love },
-  { v: "hot", label: tr("Hot", "Hot"), desc: tr("Au lit, ça se complique", "In bed, things get complicated"), list: lists(SB.lang()).hot, hot: true }
+  { v: "hot", label: tr("Hot", "Hot"), desc: tr("Au lit, ça se complique", "In bed, things get complicated"), list: lists(SB.lang()).hot, hot: true },
+  { v: "trash", label: tr("Trash", "Trash"), desc: tr("Sexe sans filtre, porno, kinks, plans foireux", "Unfiltered sex, porn, kinks, messy hookups"), list: lists(SB.lang()).trash, hot: true }
 ];
 const SEEN = "dixmais:q";
 const kidF = l => { if(!(SB.kid && SB.kid())) return l; const k = l.filter(x => SB.kidOk(x)); return k.length ? k : l; };
