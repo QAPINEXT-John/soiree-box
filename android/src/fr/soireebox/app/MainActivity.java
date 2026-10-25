@@ -3,6 +3,8 @@ package fr.soireebox.app;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -16,6 +18,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 
 /** Soirée Box : les jeux tournent dans une WebView servie en https://localhost depuis les assets. */
@@ -25,6 +28,7 @@ public class MainActivity extends Activity {
     private ValueCallback<Uri[]> pick;
     private Gallery gallery;
     private static final int PICK = 41;
+    private static final int SNAP = 42;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -84,6 +88,11 @@ public class MainActivity extends Activity {
             public boolean onShowFileChooser(WebView v, ValueCallback<Uri[]> cb, FileChooserParams p) {
                 if (pick != null) pick.onReceiveValue(null);
                 pick = cb;
+                // « Prendre une photo » (capture) : on ouvre directement l'appareil photo.
+                if (p != null && p.isCaptureEnabled()) {
+                    try { startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE), SNAP); return true; }
+                    catch (Exception e) { /* pas d'appareil photo : on ouvre la galerie */ }
+                }
                 Intent i = new Intent(Intent.ACTION_GET_CONTENT);
                 i.addCategory(Intent.CATEGORY_OPENABLE);
                 i.setType("image/*");
@@ -159,9 +168,24 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onActivityResult(int req, int res, Intent data) {
-        if (req != PICK) { super.onActivityResult(req, res, data); return; }
+        if (req != PICK && req != SNAP) { super.onActivityResult(req, res, data); return; }
         if (pick == null) return;
         Uri[] r = null;
+        if (req == SNAP) {
+            // L'appareil photo renvoie une petite image (largement assez pour une photo de profil).
+            try {
+                Bitmap bm = res == RESULT_OK && data != null && data.getExtras() != null ? (Bitmap) data.getExtras().get("data") : null;
+                if (bm != null) {
+                    File f = new File(getCacheDir(), "photo-profil.jpg");
+                    FileOutputStream o = new FileOutputStream(f);
+                    bm.compress(Bitmap.CompressFormat.JPEG, 92, o); o.close();
+                    r = new Uri[] { SnapProvider.URI };
+                }
+            } catch (Exception e) { r = null; }
+            pick.onReceiveValue(r);
+            pick = null;
+            return;
+        }
         if (res == RESULT_OK && data != null) {
             ClipData c = data.getClipData();
             if (c != null && c.getItemCount() > 0) {

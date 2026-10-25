@@ -1,4 +1,9 @@
 {
+  "4.16.7": [
+    "Profil : touche le rond de ta photo pour un avatar au hasard 🎲",
+    "Profil : deux boutons, « Prendre une photo » (appareil photo) et « Choisir une photo » (galerie)",
+    "Appli Android : « Prendre une photo » ouvre directement l'appareil photo (nouvelle appli à installer)"
+  ],
   "4.16.6": [
     "Gages : nouvelle case « Sans limite » pour le plafond par joueur (réglages de l'hôte) et pour ta limite perso (profil)"
   ],

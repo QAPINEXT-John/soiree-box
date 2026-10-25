@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="fr.soireebox.app"
-    android:versionCode="35"
-    android:versionName="4.16.6">
+    android:versionCode="36"
+    android:versionName="4.16.7">
 
     <uses-sdk android:minSdkVersion="23" android:targetSdkVersion="34" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -20,6 +20,7 @@
         android:usesCleartextTraffic="false"
         android:hardwareAccelerated="true"
         android:theme="@style/AppTheme">
+        <provider android:name=".SnapProvider" android:authorities="fr.soireebox.app.snap" android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

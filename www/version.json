@@ -1,15 +1,17 @@
 {
- "version": "4.16.6",
- "apk": 35,
+ "version": "4.16.7",
+ "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Gages : nouvelle case « Sans limite » pour le plafond par joueur (réglages de l'hôte) et pour ta limite perso (profil)"
+  "Profil : touche le rond de ta photo pour un avatar au hasard 🎲",
+  "Profil : deux boutons, « Prendre une photo » (appareil photo) et « Choisir une photo » (galerie)",
+  "Appli Android : « Prendre une photo » ouvre directement l'appareil photo (nouvelle appli à installer)"
  ],
  "files": {
   "core.js": {
-   "h": "e26b4d8eb07d9c8917b631f63abae91d0f0212370f673fc38262eced78bed152",
-   "s": 263259
+   "h": "b50baf375ed395e283e4ac663b6864a3c87b7882819d5de3652d8a17a243356f",
+   "s": 264268
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -184,8 +186,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "c9d86822986dbc45ab6829f5dc8c763bb6683623e28eaba983a2ad97b0e7f857",
-   "s": 50776
+   "h": "2d3197086cd52ced23b5a39b753c8668544fd1d10bf7eda12f9d07f9c78be2a6",
+   "s": 51157
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
