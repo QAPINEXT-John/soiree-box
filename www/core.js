@@ -808,7 +808,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.16.9";
+const VERSION = "4.16.10";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -2173,7 +2173,7 @@ function gProfilePage(){
       const ph = myPhoto(), nm = clean(store().name, 16);
       root.innerHTML = '<div class="gs"><div class="pf-top"><button type="button" class="pf-av" data-pf-rand aria-label="' + tr("Avatar au hasard", "Random avatar") + '" style="position:relative; overflow:visible; padding:0; color:var(--ink); cursor:pointer">' +
           '<span class="pf-face" style="position:absolute; inset:0; border-radius:50%; overflow:hidden; display:grid; place-items:center">' + (ph ? phHTML(ph) : "?") + "</span>" +
-          '<span class="pf-dice" aria-hidden="true" style="position:absolute; right:-4px; bottom:-4px; width:34px; height:34px; border-radius:50%; background:var(--card); border:2px solid var(--line); display:grid; place-items:center; color:var(--ink)"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="8.5" cy="8.5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.6" fill="currentColor"/></svg></span></button><div class="pf-act">' +
+          '</button><div class="pf-act">' +
         '<input class="pr-file" type="file" accept="image/*" capture="user" data-pf-cam aria-label="' + tr("Prendre une photo", "Take a photo") + '">' +
         '<input class="pr-file" type="file" accept="image/*" data-pf-file aria-label="' + tr("Choisir une photo", "Choose a photo") + '">' +
         '<button class="btn ghost" type="button" data-pf-snap>' + tr("Prendre une photo", "Take a photo") + "</button>" +
