@@ -11,11 +11,22 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: write
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: false
 jobs:
+  # GitHub Pages n'accepte les publications que depuis main : un push sur beta relance donc la publication depuis main
+  # (qui embarque toujours la dernière beta).
+  relay:
+    if: github.ref == 'refs/heads/beta'
+    runs-on: ubuntu-latest
+    steps:
+      - run: gh workflow run pages.yml --ref main --repo "$GITHUB_REPOSITORY"
+        env:
+          GH_TOKEN: ${{ github.token }}
   pages:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
