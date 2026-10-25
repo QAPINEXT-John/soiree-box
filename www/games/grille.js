@@ -649,7 +649,8 @@ const DEF = {
             const i = +b.dataset.i; buzz(8);
             if(E.phase === "flip"){ doFlipStart(E, me, i, nameOf); step(); return; }
             if(E.step === "pick" && take) act(() => doTake(E, me, i, nameOf));
-            else if(E.step === "held") act(() => (toss ? doToss(E, me, i, nameOf) : doSwap(E, me, i, nameOf)));
+            // « toss » est lu AVANT act(), qui le remet à zéro.
+            else if(E.step === "held"){ const t = toss; act(() => (t ? doToss(E, me, i, nameOf) : doSwap(E, me, i, nameOf))); }
           }));
           r.querySelectorAll("[data-take]").forEach(b => b.addEventListener("click", () => { buzz(6); take = !take; draw(me); }));
           r.querySelectorAll("[data-draw]").forEach(b => b.addEventListener("click", () => { clearTimeout(timer); if(doDraw(E, me, nameOf)) buzz(10); draw(me); }));
