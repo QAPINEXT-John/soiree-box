@@ -59,17 +59,20 @@ const LOVE = [
   "laisse ses ex commenter toutes ses photos", "veut qu'on porte des tenues assorties"
 ];
 const HOT = [
-  "simule à chaque fois", "appelle sa mère juste après le sexe", "a un fétiche des pieds très insistant", "parle de son ex au lit",
-  "garde ses chaussettes pendant", "regarde son téléphone pendant l'amour", "crie le prénom de quelqu'un d'autre", "dure deux minutes, montre en main",
-  "veut tout filmer, à chaque fois", "n'embrasse jamais", "n'a pas lavé ses draps depuis des mois", "ronfle trente secondes après",
-  "zappe tous les préliminaires", "veut le faire quand ses potes sont dans la pièce d'à côté", "garde les sex toys de ses ex",
-  "fait du dirty talk avec une voix de dessin animé", "note ta performance sur 10 après", "propose un plan à trois au deuxième rendez-vous",
-  "envoie des nudes à tout le monde, toi compris", "dort dans un lit superposé", "veut la lumière à fond", "met de la musique de fête foraine pendant",
-  "a les mains toujours gelées", "s'endort pendant les préliminaires", "dit « merci » après", "ne veut le faire que dans la voiture",
-  "commente comme un match de foot", "parle de ses exploits passés pendant", "ne se lave pas avant", "mord beaucoup trop fort",
-  "te demande une note sur cinq étoiles après", "ne veut le faire que le dimanche à 15 h", "a des miroirs partout au plafond",
-  "fait des bruits d'animaux", "a un tableur avec toutes ses préférences au lit", "refuse de dormir avec toi après",
-  "éclate de rire au pire moment", "garde ses lunettes de soleil au lit", "veut un mot de sécurité dès le premier soir", "est accro au porno"
+  "simule l'orgasme à chaque fois", "appelle sa mère juste après le sexe", "veut te lécher les pieds à chaque câlin",
+  "parle de son ex pendant que vous couchez ensemble", "garde ses chaussettes pendant le sexe",
+  "regarde son téléphone pendant que vous faites l'amour", "gémit le prénom de quelqu'un d'autre au lit", "dure deux minutes au lit, montre en main",
+  "veut filmer chaque fois que vous couchez ensemble", "n'embrasse jamais pendant le sexe", "n'a pas lavé ses draps depuis des mois",
+  "ronfle trente secondes après avoir joui", "zappe tous les préliminaires", "veut coucher quand ses potes sont dans la pièce d'à côté",
+  "a gardé les sex toys de ses ex", "fait du dirty talk avec une voix de dessin animé", "note ta performance au lit sur 10",
+  "propose un plan à trois au deuxième rendez-vous", "envoie des nudes à tout le monde, toi compris", "baise dans un lit superposé, en haut",
+  "veut toute la lumière allumée pendant le sexe", "met de la musique de fête foraine pendant le sexe", "a les mains gelées pendant les câlins",
+  "s'endort pendant les préliminaires", "dit « merci » après le sexe", "ne veut coucher que dans la voiture",
+  "commente le sexe comme un match de foot", "parle de ses anciens plans cul pendant que vous baisez", "ne se lave jamais avant le sexe",
+  "mord beaucoup trop fort pendant les préliminaires", "te demande une note sur cinq étoiles après le sexe",
+  "ne veut coucher que le dimanche à 15 h", "a des miroirs au plafond, au-dessus du lit", "fait des bruits d'animaux pendant le sexe",
+  "a un tableur avec toutes ses préférences sexuelles", "refuse de dormir avec toi après le sexe", "éclate de rire au moment de jouir",
+  "garde ses lunettes de soleil au lit", "veut un mot de sécurité dès le premier soir", "est accro au porno, plusieurs heures par jour"
 ];
 const CL_EN = [
   "chews with their mouth open", "wears socks with sandals", "replies “k” to all your texts", "calls their mom six times a day",
@@ -116,63 +119,110 @@ const LOVE_EN = [
   "baby-talks when you're alone", "wants matching outfits"
 ];
 const HOT_EN = [
-  "fakes it every time", "calls their mom right after sex", "has a very insistent foot fetish", "talks about their ex in bed",
-  "keeps their socks on", "checks their phone during sex", "moans someone else's name", "lasts two minutes, tops", "wants to film every time",
-  "never kisses", "hasn't washed their sheets in months", "snores thirty seconds after", "skips foreplay entirely",
-  "wants to do it with their friends in the next room", "kept their exes' sex toys", "does dirty talk in a cartoon voice",
-  "rates your performance out of 10 afterwards", "suggests a threesome on the second date", "sends nudes to everyone, you included",
-  "sleeps in a bunk bed", "wants the lights all the way up", "plays carnival music during", "always has freezing hands",
-  "falls asleep during foreplay", "says “thank you” afterwards", "only wants to do it in the car", "narrates like a sports commentator",
-  "brags about past exploits during", "doesn't shower before", "bites way too hard", "asks for a five-star review afterwards",
-  "only wants to do it Sundays at 3 p.m.", "has mirrors all over the ceiling", "makes animal noises", "keeps a spreadsheet of their bedroom preferences",
-  "won't sleep next to you afterwards", "bursts out laughing at the worst moment", "keeps their sunglasses on in bed", "watches way too much porn"
+  "fakes orgasms every time", "calls their mom right after sex", "wants to lick your feet every time you cuddle",
+  "talks about their ex while you're having sex", "keeps their socks on during sex", "checks their phone while you're making love",
+  "moans someone else's name in bed", "lasts two minutes in bed, tops", "wants to film every time you sleep together", "never kisses during sex",
+  "hasn't washed their sheets in months", "snores thirty seconds after coming", "skips foreplay entirely",
+  "wants to have sex with their friends in the next room", "kept their exes' sex toys", "does dirty talk in a cartoon voice",
+  "rates your performance in bed out of 10", "suggests a threesome on the second date", "sends nudes to everyone, you included",
+  "has sex in a bunk bed, top bunk", "wants every light on during sex", "plays carnival music during sex", "has freezing hands when you cuddle",
+  "falls asleep during foreplay", "says “thank you” after sex", "only wants to have sex in the car", "narrates sex like a sports commentator",
+  "talks about past hookups while you're having sex", "never showers before sex", "bites way too hard during foreplay",
+  "asks for a five-star review after sex", "only wants sex on Sundays at 3 p.m.", "has mirrors on the ceiling above the bed",
+  "makes animal noises during sex", "keeps a spreadsheet of their sexual preferences", "won't sleep next to you after sex",
+  "bursts out laughing when they come", "keeps their sunglasses on in bed", "wants a safe word on the first night",
+  "is addicted to porn, hours a day"
 ];
 const TRASH = [
-  "jouit en trente secondes et s'endort direct", "crie « BUT ! » au moment de jouir", "n'a jamais trouvé le clitoris, même avec un GPS",
-  "a un sexe minuscule et l'appelle « le monstre »", "envoie des dick pics à 8 h du matin, avant le bonjour", "a un OnlyFans, et ses parents sont abonnés",
-  "met du porno sur la télé pendant que vous le faites", "veut que tu l'appelles « papa » au lit", "pète en pleine action et continue comme si de rien n'était",
-  "ne le fait qu'en levrette pour pouvoir regarder le match", "a un plan cul dans chaque ville de France", "compte ses coups de reins à voix haute",
-  "a couché avec toute ta bande de potes", "a un historique porno qui ferait rougir un sexologue", "laisse son gode sur la table de chevet, même quand ses parents passent",
-  "propose un plan à quatre avec ses ex", "le fait en chaussettes et en bonnet", "lèche tout, vraiment tout, même les aisselles",
-  "veut tester toutes les catégories d'un site porno, dans l'ordre alphabétique", "a perdu la clé des menottes en peluche… avec toi attaché",
-  "gémit comme une chèvre", "se touche trois fois par jour, bureau compris", "a couché avec son coach de salle, sur le banc de muscu",
-  "envoie des sextos bourrés de fautes d'orthographe", "veut le faire en costume de mascotte", "a un sexe qui part à gauche à 45 degrés",
-  "exige des fellations mais refuse le cunni", "a des bourses qui descendent jusqu'aux genoux", "utilise du beurre comme lubrifiant",
-  "a tourné une sextape et l'a postée par erreur sur son compte pro", "commence le dirty talk dès l'entrée, au resto",
-  "veut que tu portes le costume de son ex", "a un tatouage « open bar » au-dessus des fesses", "veut le faire sur le capot de la voiture de ses parents",
-  "jouit en imitant une sirène de police", "se fait plaisir devant des vidéos de cuisine", "a un string léopard pour les grandes occasions",
-  "connaît toutes les actrices porno par leur prénom", "prend du Viagra… à 25 ans", "a un vibro qui s'est déclenché dans son sac en pleine réunion",
-  "se prend en selfie, lui-même, en pleine action", "couche avec son ex à chaque anniversaire de rupture", "veut un trio avec ton boss",
-  "embrasse avec des bruits de ventouse", "a une liste de fantasmes de 40 pages, illustrée", "va au club libertin tous les vendredis, sans exception",
-  "a un piercing intime qui sonne aux portiques de l'aéroport", "garde ses chaussettes « spéciales » sous le lit", "demande un avis client après chaque partie de jambes en l'air",
-  "a rangé ses sex toys par taille dans une vitrine du salon", "veut le faire pendant le repas de famille, sous la table"
+  "jouit en trente secondes et s'endort direct", "crie « BUT ! » au moment de jouir", "n'a jamais trouvé ton clitoris, même avec un GPS",
+  "a une bite minuscule et l'appelle « le monstre »", "t'envoie des photos de sa bite à 8 h du matin, avant le bonjour",
+  "a un OnlyFans, et ses parents sont abonnés", "met un porno à la télé pendant que vous baisez",
+  "veut que tu l'appelles « papa » pendant qu'il te prend", "pète en pleine levrette et continue comme si de rien n'était",
+  "ne baise qu'en levrette pour pouvoir regarder le match", "a un plan cul dans chaque ville de France", "compte ses coups de reins à voix haute",
+  "a couché avec toute ta bande de potes", "a un historique porno qui ferait rougir un sexologue",
+  "laisse son gode sur la table de chevet, même quand ses parents passent", "veut un plan à quatre avec ses ex", "baise en chaussettes et en bonnet",
+  "te lèche partout, vraiment partout, même les aisselles", "veut tester toutes les catégories de Pornhub, dans l'ordre alphabétique",
+  "a perdu la clé des menottes… pendant que tu étais attaché au lit", "gémit comme une chèvre quand il jouit",
+  "se branle trois fois par jour, y compris aux toilettes du bureau", "s'est tapé son coach de salle, sur le banc de muscu",
+  "t'envoie des sextos bourrés de fautes d'orthographe", "veut baiser déguisé en mascotte", "a une bite qui part à gauche à 45 degrés",
+  "exige des pipes mais refuse de te lécher", "a des couilles qui pendent jusqu'aux genoux", "utilise du beurre comme lubrifiant",
+  "a tourné une sextape et l'a postée par erreur sur son LinkedIn", "te parle de sucer dès l'entrée du resto",
+  "veut que tu portes la lingerie de son ex", "a « open bar » tatoué au-dessus des fesses", "veut baiser sur le capot de la voiture de ses parents",
+  "imite une sirène de police quand il jouit", "se branle devant des vidéos de cuisine", "porte un string léopard pour les grandes occasions",
+  "connaît toutes les actrices porno par leur prénom", "prend du Viagra… à 25 ans",
+  "a son vibro qui s'est mis en marche dans son sac en pleine réunion", "se prend en selfie pendant qu'il te baise",
+  "recouche avec son ex à chaque anniversaire de rupture", "veut un plan à trois avec ton boss", "embrasse avec la langue jusqu'au fond de ta gorge",
+  "a une liste de fantasmes de 40 pages, illustrée", "va dans un club échangiste tous les vendredis, sans exception",
+  "a un piercing au téton qui sonne aux portiques de l'aéroport", "se branle dans ses chaussettes et les garde sous le lit",
+  "te demande un avis client après chaque baise", "expose ses sex toys par taille dans une vitrine du salon",
+  "veut te doigter sous la table pendant le repas de famille", "jouit partout sauf là où il faut"
 ];
 const TRASH_EN = [
-  "comes in thirty seconds and falls straight asleep", "yells “GOAL!” when they finish", "has never found the clitoris, even with GPS",
-  "has a tiny one and calls it “the beast”", "sends dick pics at 8 a.m., before saying good morning", "has an OnlyFans, and their parents subscribe",
-  "puts porn on the TV while you're doing it", "wants you to call them “daddy” in bed", "farts mid-action and keeps going like nothing happened",
-  "only does doggy style so they can watch the game", "has a hookup in every city", "counts their thrusts out loud", "has slept with your whole friend group",
-  "has a porn history that would make a sex therapist blush", "leaves their dildo on the nightstand, even when their parents visit",
-  "suggests a foursome with their exes", "does it in socks and a beanie", "licks everything, really everything, armpits included",
-  "wants to try every category on a porn site, in alphabetical order", "lost the key to the fluffy handcuffs… with you cuffed",
-  "moans like a goat", "touches themselves three times a day, office included", "slept with their gym coach, on the bench press",
-  "sends sexts full of typos", "wants to do it in a mascot costume", "has one that bends left at 45 degrees", "demands blowjobs but won't go down on you",
-  "uses butter as lube", "made a sex tape and accidentally posted it on their work account", "starts the dirty talk at the restaurant entrance",
-  "wants you to wear their ex's costume", "has an “open bar” tattoo above their butt", "wants to do it on the hood of their parents' car",
-  "finishes doing a police siren impression", "gets off to cooking videos", "has a leopard thong for special occasions", "knows every porn star by first name",
-  "takes Viagra… at 25", "had a vibrator go off in their bag mid-meeting", "takes selfies of themselves mid-action", "sleeps with their ex on every breakup anniversary",
-  "wants a threesome with your boss", "kisses with suction-cup noises", "has a 40-page illustrated list of fantasies", "goes to a swingers' club every Friday, no exceptions",
-  "has an intimate piercing that sets off airport scanners", "keeps their “special” socks under the bed", "asks for a customer review after every hookup",
-  "displays their sex toys by size in a living room cabinet", "wants to do it under the table at a family dinner"
+  "comes in thirty seconds and falls straight asleep", "yells “GOAL!” when they come", "has never found your clit, even with GPS",
+  "has a tiny dick and calls it “the beast”", "sends you dick pics at 8 a.m., before good morning", "has an OnlyFans, and their parents subscribe",
+  "puts porn on the TV while you're fucking", "wants you to call them “daddy” while they're inside you",
+  "farts mid-doggy and keeps going like nothing happened", "only fucks doggy style so they can watch the game", "has a fuck buddy in every city",
+  "counts their thrusts out loud", "has slept with your whole friend group", "has a porn history that would make a sex therapist blush",
+  "leaves their dildo on the nightstand, even when their parents visit", "wants a foursome with their exes", "fucks in socks and a beanie",
+  "licks you everywhere, really everywhere, armpits included", "wants to try every Pornhub category, in alphabetical order",
+  "lost the handcuff key… while you were cuffed to the bed", "moans like a goat when they come",
+  "jerks off three times a day, office bathroom included", "hooked up with their gym coach, on the bench press", "sends you sexts full of typos",
+  "wants to fuck in a mascot costume", "has a dick that bends left at 45 degrees", "demands blowjobs but won't go down on you",
+  "has balls that hang down to their knees", "uses butter as lube", "made a sex tape and accidentally posted it on LinkedIn",
+  "talks about blowjobs at the restaurant door", "wants you to wear their ex's lingerie", "has “open bar” tattooed above their ass",
+  "wants to fuck on the hood of their parents' car", "does a police siren impression when they come", "jerks off to cooking videos",
+  "wears a leopard thong for special occasions", "knows every porn star by first name", "takes Viagra… at 25",
+  "had their vibrator switch on in their bag mid-meeting", "takes selfies while fucking you", "sleeps with their ex on every breakup anniversary",
+  "wants a threesome with your boss", "kisses with their tongue down your throat", "has a 40-page illustrated list of fantasies",
+  "goes to a swingers' club every Friday, no exceptions", "has a nipple piercing that sets off airport scanners",
+  "jerks off into their socks and keeps them under the bed", "asks for a customer review after every fuck",
+  "displays their sex toys by size in a living room cabinet", "wants to finger you under the table at a family dinner",
+  "comes everywhere except where they should"
 ];
-const LISTS = { fr: { cl: CL, kid: KID, love: LOVE, hot: HOT, trash: TRASH }, en: { cl: CL_EN, kid: KID_EN, love: LOVE_EN, hot: HOT_EN, trash: TRASH_EN } };
+const HARD = [
+  "a trompé toutes ses ex, et s'en vante", "a un casier judiciaire plus long que son CV", "ne se brosse les dents qu'une fois par semaine",
+  "fait les poches de ses potes pendant les soirées", "a vendu les bijoux de sa grand-mère sur Vinted",
+  "vomit à chaque soirée, et jamais dans les toilettes", "pisse dans l'évier de la cuisine", "mange ses crottes de nez en public",
+  "a des dettes partout et te demande 500 € au deuxième rendez-vous", "ment sur tout, même sur son vrai prénom", "a fait de la prison pour arnaque",
+  "a une deuxième famille dans une autre ville", "ne tire jamais la chasse", "sent la transpiration en permanence et refuse le déo",
+  "garde ses ongles de pieds coupés dans un bocal", "a craché dans le plat de ta mère", "drague ta mère juste devant toi", "a couché avec ton frère",
+  "a couché avec ton père", "parle à sa mère comme à un chien", "poste tes messages privés sur les réseaux", "a vomi dans ta voiture et nie encore",
+  "a une haleine de poubelle matin, midi et soir", "fait caca la porte ouverte en te parlant", "te trompe avec ton ou ta meilleure amie",
+  "te fait payer la moitié de ses courses, au centime", "a des poux depuis trois mois", "offre à son plan cul les cadeaux que tu lui as faits",
+  "boit sa première bière à 9 h du matin", "conduit bourré tous les week-ends", "s'est fait virer pour avoir fait caca dans l'imprimante du bureau",
+  "ne porte jamais de sous-vêtements, et ça se voit", "passe 45 minutes aux toilettes avec son téléphone, à chaque fois",
+  "t'a menti sur son âge : il a quinze ans de plus", "est marié, mais « c'est compliqué »", "a fait faillite trois fois, avec ton argent",
+  "a perdu son appart à cause des paris sportifs", "se gratte les fesses et te serre la main",
+  "a des pieds qui puent tellement que le chat fuit la pièce", "garde un dossier sur tous ses ex : adresses, horaires, nouveaux partenaires",
+  "recycle ses capotes… en les lavant", "ne change de draps qu'une fois par an", "met ses doigts dans le nez puis dans le paquet de chips commun",
+  "t'a volé ta carte bleue pour s'acheter des jeux vidéo"
+];
+const HARD_EN = [
+  "cheated on all their exes, and brags about it", "has a criminal record longer than their résumé", "brushes their teeth once a week",
+  "goes through their friends' pockets at parties", "sold their grandma's jewelry online", "throws up at every party, never in the toilet",
+  "pees in the kitchen sink", "eats their boogers in public", "is in debt everywhere and asks you for $500 on the second date",
+  "lies about everything, even their real name", "did time for fraud", "has a second family in another city", "never flushes",
+  "smells of sweat all the time and refuses deodorant", "keeps their toenail clippings in a jar", "spat in your mom's cooking",
+  "hits on your mom right in front of you", "slept with your brother", "slept with your dad", "talks to their mom like she's a dog",
+  "posts your private messages online", "threw up in your car and still denies it", "has garbage breath morning, noon and night",
+  "poops with the door open while talking to you", "is cheating on you with your best friend", "makes you pay half their groceries, to the cent",
+  "has had lice for three months", "gives their hookup the gifts you gave them", "has their first beer at 9 a.m.", "drives drunk every weekend",
+  "got fired for pooping in the office printer", "never wears underwear, and it shows",
+  "spends 45 minutes on the toilet with their phone, every time", "lied about their age: they're fifteen years older",
+  "is married, but “it's complicated”", "went bankrupt three times, with your money", "lost their apartment to sports betting",
+  "scratches their butt then shakes your hand", "has feet so smelly the cat leaves the room",
+  "keeps a file on all their exes: addresses, schedules, new partners", "reuses condoms… after washing them", "changes their sheets once a year",
+  "picks their nose then digs into the shared bag of chips", "stole your credit card to buy video games"
+];
+const LISTS = { fr: { cl: CL, kid: KID, love: LOVE, hot: HOT, trash: TRASH, hard: HARD }, en: { cl: CL_EN, kid: KID_EN, love: LOVE_EN, hot: HOT_EN, trash: TRASH_EN, hard: HARD_EN } };
 const lists = lg => LISTS[lg === "en" ? "en" : "fr"];
 const PACKS = [
   { v: "cl", label: tr("Classique", "Classic"), desc: tr("Manies, habitudes, petits défauts", "Quirks, habits, little flaws"), list: lists(SB.lang()).cl },
   { v: "kid", label: tr("Copains", "Buddies"), desc: tr("Le pote parfait… ou presque. Tout public", "The perfect buddy… almost. For everyone"), list: lists(SB.lang()).kid, kid: true },
   { v: "love", label: tr("Love & dates", "Love & dates"), desc: tr("Couple, ex, rencards ratés", "Couples, exes, bad dates"), list: lists(SB.lang()).love },
   { v: "hot", label: tr("Hot", "Hot"), desc: tr("Au lit, ça se complique", "In bed, things get complicated"), list: lists(SB.lang()).hot, hot: true },
-  { v: "trash", label: tr("Trash", "Trash"), desc: tr("Sexe sans filtre, porno, kinks, plans foireux", "Unfiltered sex, porn, kinks, messy hookups"), list: lists(SB.lang()).trash, hot: true }
+  { v: "trash", label: tr("Trash", "Trash"), desc: tr("Sexe cru et explicite : porno, kinks, plans cul foireux", "Raw, explicit sex: porn, kinks, messy hookups"), list: lists(SB.lang()).trash, hot: true },
+  { v: "hard", label: tr("Sans filtre", "No filter"), desc: tr("Dégueu, toxique, illégal : le pire du pire, hors du lit", "Gross, toxic, illegal: the worst of the worst, outside the bedroom"), list: lists(SB.lang()).hard, hot: true }
 ];
 const SEEN = "dixmais:q";
 const kidF = l => { if(!(SB.kid && SB.kid())) return l; const k = l.filter(x => SB.kidOk(x)); return k.length ? k : l; };

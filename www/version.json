@@ -1,14 +1,15 @@
 {
- "version": "4.18.1",
+ "version": "4.18.2",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "C'est un 10 mais… : nouveau paquet Trash (18+), sexe sans filtre, porno, kinks et plans foireux"
+  "C'est un 10 mais… : phrases Hot et Trash réécrites, plus explicites (on sait tout de suite de quoi on parle)",
+  "Nouveau paquet Sans filtre (18+) : dégueu, toxique, illégal, le pire du pire hors du lit"
  ],
  "files": {
   "core.js": {
-   "h": "68677f7dffe1375135d2252218c221f1566ab258a4f3972568c03ed26bdcf149",
+   "h": "732b8412c089dd07adede27e116b185ae6a6f866ba90548f38742750f22f74ea",
    "s": 276514
   },
   "firebase-app-compat.js": {
@@ -96,8 +97,8 @@
    "s": 63828
   },
   "games/dixmais.js": {
-   "h": "8175743a38c508b346cd7eaa40777f235537fa6a55855daa719bbb3add461482",
-   "s": 54650
+   "h": "21e5cd474d7406cfd984dccc513e0726f3d15aa9465e67e330e8419a44a1395e",
+   "s": 59827
   },
   "games/grille.js": {
    "h": "7c4314706be865538bafd102483d1fd73e8a695dc9fbdccc201dbd162cb83a95",
