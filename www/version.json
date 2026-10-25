@@ -1,15 +1,16 @@
 {
- "version": "4.14.4",
+ "version": "4.15",
  "apk": 35,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Le numéro de version s'affiche en bas du profil"
+  "Gages dans 11 jeux de plus : Undercover, Loup-garou, Menteurs, Dernière carte, Action ou vérité, Tu préfères, Red Flag, Qui a dit ça ?, Priorités, Mots interdits, Killer",
+  "Chaque jeu a ses propres déclencheurs, réglables dans « Gages »"
  ],
  "files": {
   "core.js": {
-   "h": "eda9273f5a0a5ea017e8ba082bad2895b16f28108ac5614b060cf24b4e9fdbd9",
-   "s": 261629
+   "h": "9a15cdeae165f564686974acdf27f0f1abdb544298c5a2be14b0bc48962c8b82",
+   "s": 261627
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -84,36 +85,36 @@
    "s": 6236
   },
   "games/actionverite.js": {
-   "h": "fcc1eca40bf590b111609be04d6bcca1a735824c356050adb15be82cc374130e",
-   "s": 105521
+   "h": "d1af2bc3a3bfbcbaae7be06c000932ef7b4e2159a48e34066b4927f27e1da45f",
+   "s": 106670
   },
   "games/defis.js": {
    "h": "4d939598885c73acaa9732bcce7ac082ef8f707794ee999a6df5902ecbe06fff",
    "s": 66119
   },
   "games/dernierecarte.js": {
-   "h": "ca4a7089c33db77f400f2b0e7d6408d43be0d0708493f03405921c3d18963d84",
-   "s": 62266
+   "h": "261f6f864598fa19a8be201aa5d3db4559e37b2684bf2f7989871c3be2059c45",
+   "s": 63828
   },
   "games/killer.js": {
-   "h": "0a44bac2ac478ae3b25b3ab49db7c42ee73f8903e44ec7957758ef16ba0a8da5",
-   "s": 65305
+   "h": "b198ef2b9c1d1e320e9350fd30829a4a3bb32a2886d9071ddccba47106104b9a",
+   "s": 66437
   },
   "games/kink.js": {
    "h": "b6e4ee0847acb03e05473b65b5e0a82493c252da2feda0a15d0aebe13be4cee4",
    "s": 28327
   },
   "games/loupgarou.js": {
-   "h": "a1e3a137d7a88bf2b0296ce29d523ec706b46ad34519a779282111c833ce85c9",
-   "s": 69584
+   "h": "0ea2ddcca68d180fd062c29ec62084245d319f711c869f883a1dcb7b627d63e1",
+   "s": 70478
   },
   "games/menteurs.js": {
-   "h": "8fc9156c822ddc2cadf6f2571c67fc7e20cc6dcdfd815f2dd2206a71119ae73f",
-   "s": 43666
+   "h": "feb5a4846cff6c4e3cb22bbc7c485bcc1be7cc6463401c04d91dc6cba1729083",
+   "s": 44488
   },
   "games/motsint.js": {
-   "h": "56de4d03bda39a058ec887322f5f04533fd9892cb01c4c4d9af389ac6e7716e0",
-   "s": 46142
+   "h": "aaa32c1559f8fa3eabdcbe8e06abaf54d5547cb48043476f937299a249dd0686",
+   "s": 46876
   },
   "games/note10.js": {
    "h": "2c9039c4729d25943db9974253fe689aa03e9724d09ffee87e7e7225d1e18e51",
@@ -124,8 +125,8 @@
    "s": 45511
   },
   "games/priorites.js": {
-   "h": "461f59c0578a2520cc8c49157e9273b0ab8028f0089fa2374092c5e40b2f9c51",
-   "s": 39931
+   "h": "ba8d30ed222bc499c8d1cdf940f4752fc0b4f24de087cc482b5046042dde8eb3",
+   "s": 40611
   },
   "games/punchline.js": {
    "h": "f309b85a723f61d699343c3778bed0465837772eb0360d3cac8e96a3c7760811",
@@ -136,24 +137,24 @@
    "s": 71107
   },
   "games/quiadit.js": {
-   "h": "9092f8e5aef43ceb80bcad48be57f202342f38997ec06f3a13a89477674fca0a",
-   "s": 48866
+   "h": "0e828ec83b65cc583396ab909a40750a87e07e3912cf1c7691a0ff1d0a99464e",
+   "s": 50105
   },
   "games/quiplus.js": {
    "h": "a05ddf60cbeec08171b0605147ad7e19ce3ea06a5ea99cc26ebbc2e8ed7c06c6",
    "s": 37677
   },
   "games/redflag.js": {
-   "h": "4dc4035243cfaa9c5589883ef74eb3d6c8e187b44ebc3b44eceba7fb4bfa9de5",
-   "s": 64579
+   "h": "daf2f97fb5197a93642eb15eb388a314975952d44c5d40868eb5dd20050898c1",
+   "s": 66228
   },
   "games/tupref.js": {
-   "h": "b0e6041d9f6e20fb1bfafe61e45a1cef77a3820c895130b7f6aa29fb38bb4cbc",
-   "s": 44674
+   "h": "8ca5d8d2505190eb531a818dc015a45827ac07de1525c63e918c2175e9c13ecb",
+   "s": 45452
   },
   "games/undercover.js": {
-   "h": "436cb75da2b65c0446a7f49339dd308ad9df19670e66f5646701e5ec4dc84022",
-   "s": 49089
+   "h": "87acf5e7bca98ccba3b70c820fd45f616c14d30bb5667fe4fb2eaf8f73ba9f15",
+   "s": 50343
   },
   "icons/apple-touch-icon.png": {
    "h": "c6a8d73afcfb5db146ca68617cea122c1b06465d3a6bde68efe2ecc2d8ece998",

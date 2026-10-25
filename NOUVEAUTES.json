@@ -1,4 +1,8 @@
 {
+  "4.15": [
+    "Gages dans 11 jeux de plus : Undercover, Loup-garou, Menteurs, Dernière carte, Action ou vérité, Tu préfères, Red Flag, Qui a dit ça ?, Priorités, Mots interdits, Killer",
+    "Chaque jeu a ses propres déclencheurs, réglables dans « Gages »"
+  ],
   "4.14.4": [
     "Le numéro de version s'affiche en bas du profil"
   ],

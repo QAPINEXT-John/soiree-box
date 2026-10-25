@@ -1304,7 +1304,8 @@ function settle(E, res, live){
 const ranking = E => E.order.slice().sort((a, b) => (E.pts[b] || 0) - (E.pts[a] || 0));
 // Gage du système : seulement pour une action relevée (le refus a déjà sa sanction dans le jeu).
 // À appeler juste après settle(). Renvoie [] si rien à donner.
-function dareGage(E, id){ const l = E.last; return l && l.who === id && l.res === "ok" && l.kind === "a" ? [{ id, ev: "action", x: l.x2 ? 2 : 1 }] : []; }
+// Action relevée : son auteur distribue des gorgées, seulement si la partie est en mode « Gorgées ».
+function dareGage(E, id){ const l = E.last; return E.mode === "drink" && l && l.who === id && l.res === "ok" && l.kind === "a" ? [{ id, ev: "action", x: l.x2 ? 2 : 1 }] : []; }
 
 /* ---------- Affichage ---------- */
 function fillHTML(t, E, nameOf){
