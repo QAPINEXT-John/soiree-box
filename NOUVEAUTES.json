@@ -1,4 +1,7 @@
 {
+  "4.16.1": [
+    "Grille : un bouton « Fin du tour » pour passer la main au joueur suivant"
+  ],
   "4.16": [
     "Nouveau jeu de cartes : Grille. 12 cartes face cachée, échange, retourne, élimine des colonnes : le plus petit score gagne",
     "Jouable en salon de 2 à 8, ou sur un seul téléphone contre des robots, avec gages et mode Enfant"

@@ -75,7 +75,7 @@ function starter(E){
 function gridScoreVisible(E, id){ let t = 0; for(let i = 0; i < N; i++) if(E.up[id][i] === 1) t += cardPts(E.vals[id][i], E.twi); return t; }
 
 /* ---------- Moteur commun (réseau et un seul téléphone) ----------
-   E = { lg, order, round, goal, tw, twi, nflip, phase ("flip" | "play" | "roundend" | "end"), turn, step ("pick" | "held"),
+   E = { lg, order, round, goal, tw, twi, nflip, phase ("flip" | "play" | "roundend" | "end"), turn, step ("pick" | "held" | "done"),
          held, vals, up, draw, disc, closer, prev, score, rs, raw, dbl, log, mv } */
 /* Gages : le moteur note les événements du coup en cours (GX), l'hôte ou le téléphone les envoie ensuite d'un seul coup. */
 const GX = [];
@@ -155,9 +155,16 @@ function afterMove(E, id, nameOf){
   const cols = clearCols(E.vals[id], E.up[id], E.disc);
   cols.forEach(() => GX.push({ id, ev: "col" }));
   if(cols.length) E.log += L(E, " · colonne éliminée !", " · column cleared!");
-  E.step = "pick"; E.mv++;
+  // Le coup est joué : le joueur le regarde, puis touche « Fin du tour » (doEnd) pour passer la main.
+  E.step = "done"; E.mv++;
   if(!E.closer && allUp(E.up[id])){ E.closer = id; E.log += L(E, " · " + nameOf(id) + " a tout retourné : dernier tour pour les autres !", " · " + nameOf(id) + " has flipped everything: last turn for everyone else!"); }
+  return true;
+}
+// Fin du tour : on passe au joueur suivant (ou on termine la manche après le dernier tour).
+function doEnd(E, id, nameOf){
+  if(E.phase !== "play" || E.turn !== id || E.step !== "done") return false;
   const nx = nextOf(E, id);
+  E.step = "pick"; E.mv++;
   if(E.closer && nx === E.closer){ endRound(E, nameOf); return true; }
   E.turn = nx;
   return true;
@@ -215,9 +222,16 @@ function safeToClose(E, id, v){
   const mine = gridScoreVisible(E, id) + (v == null ? 0 : cardPts(v, E.twi));
   return E.order.every(x => x === id || mine < gridScoreVisible(E, x) + hiddenIdx(E.up[x]).length * 4);
 }
+// Les robots (et l'hôte qui joue pour un absent) finissent leur tour tout seuls.
 function botMove(E, id, nameOf){
   if(E.phase === "flip") return botFlipStart(E, id, nameOf);
   if(E.phase !== "play" || E.turn !== id) return false;
+  if(E.step === "done") return doEnd(E, id, nameOf);
+  const r = botAct(E, id, nameOf);
+  if(E.phase === "play" && E.turn === id && E.step === "done") doEnd(E, id, nameOf);
+  return r;
+}
+function botAct(E, id, nameOf){
   if(E.step === "pick"){
     const t = topOf(E);
     if(t !== ""){
@@ -334,6 +348,7 @@ function hintTxt(V, me, ui){
   if(!me || ui.pend || V.phase !== "play" || V.turn !== me) return "";
   if(V.step === "pick") return ui.take ? tr("Touche la carte à remplacer par le " + fmt(V.top), "Tap the card to replace with the " + fmt(V.top)) : "";
   if(V.step === "held") return ui.toss ? tr("Touche une carte cachée à retourner", "Tap a hidden card to flip") : tr("Touche une carte pour l'échanger avec le " + fmt(V.held), "Tap a card to swap it with the " + fmt(V.held));
+  if(V.step === "done") return tr("C'est joué. Touche « Fin du tour » pour passer la main.", "Done. Tap “End turn” to pass.");
   return "";
 }
 /* Barre du bas : ce qu'il faut faire maintenant. */
@@ -349,6 +364,7 @@ function dockHTML(V, me, ui){
     const hid = A(V.cells[me]).some(c => c === "h");
     return dock('<button class="btn ghost" type="button" data-toss>' + (hid ? tr("Défausser et retourner une carte", "Discard it and flip a card") : tr("Défausser", "Discard it")) + "</button>");
   }
+  if(V.step === "done") return dock('<button class="btn acc" type="button" data-end>' + tr("Fin du tour", "End turn") + "</button>");
   return "";
 }
 /* Met à jour la table sans l'animation d'entrée ni remonter en haut. */
@@ -476,6 +492,7 @@ const DEF = {
         else if(x.p.t === "draw") doDraw(E, id, ctx.name);
         else if(x.p.t === "swap") doSwap(E, id, +x.p.i, ctx.name);
         else if(x.p.t === "toss") doToss(E, id, +x.p.i, ctx.name);
+        else if(x.p.t === "end") doEnd(E, id, ctx.name);
       }
       E.seen[id] = sn;
     });
@@ -507,6 +524,7 @@ const DEF = {
         }));
         r.querySelectorAll("[data-take]").forEach(b => b.addEventListener("click", () => { buzz(6); UI.take = !UI.take; again(); }));
         r.querySelectorAll("[data-draw]").forEach(b => b.addEventListener("click", () => sendP("draw")));
+        r.querySelectorAll("[data-end]").forEach(b => b.addEventListener("click", () => { buzz(10); sendP("end"); }));
         const ts = r.querySelector("[data-toss]"); if(ts) ts.addEventListener("click", () => {
           if(!A(V.cells[me]).some(c => c === "h")){ sendP("toss", -1); return; }
           UI.toss = true; again();
@@ -633,6 +651,7 @@ const DEF = {
           }));
           r.querySelectorAll("[data-take]").forEach(b => b.addEventListener("click", () => { buzz(6); take = !take; draw(me); }));
           r.querySelectorAll("[data-draw]").forEach(b => b.addEventListener("click", () => { clearTimeout(timer); if(doDraw(E, me, nameOf)) buzz(10); draw(me); }));
+          r.querySelectorAll("[data-end]").forEach(b => b.addEventListener("click", () => act(() => doEnd(E, me, nameOf))));
           const ts = r.querySelector("[data-toss]"); if(ts) ts.addEventListener("click", () => {
             if(!hiddenIdx(E.up[me]).length){ act(() => doToss(E, me, -1, nameOf)); return; }
             toss = true; draw(me);
@@ -656,6 +675,6 @@ const DEF = {
     }
   }
 };
-DEF.engine = { newDeck, cardPts, gridScore, visScore, clearCols, applyDouble, gameOver, winners, starter, newRound, beginPlay, doFlipStart, botFlipStart, doTake, doDraw, doSwap, doToss, endRound, botMove, colSlot, cellsOf, viewOf, fromState, TWISTS, GX };
+DEF.engine = { newDeck, cardPts, gridScore, visScore, clearCols, applyDouble, gameOver, winners, starter, newRound, beginPlay, doFlipStart, botFlipStart, doTake, doDraw, doSwap, doToss, doEnd, endRound, botMove, colSlot, cellsOf, viewOf, fromState, TWISTS, GX };
 SB.register(DEF);
 })();
