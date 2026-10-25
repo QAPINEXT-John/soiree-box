@@ -1,4 +1,7 @@
 {
+  "4.14.4": [
+    "Le numéro de version s'affiche en bas du profil"
+  ],
   "4.14.3": [
     "En mode Enfant, le profil ne montre plus les modes Hard et Soft : seulement « Quitter le mode Enfant », avec le code"
   ],

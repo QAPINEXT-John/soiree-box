@@ -808,7 +808,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.14.3";
+const VERSION = "4.14.4";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -1007,6 +1007,8 @@ let netReady = false, netLoading = false;
 const SHARE_BASE = window.SB_SHARE_BASE || ((location.protocol === "https:" && !/^(localhost|127\.|\[::1\])/.test(location.hostname)) ? location.origin + location.pathname : "");
 // Adresse publique du jeu (site + appli) : sert aux liens d'invitation et au QR code, même depuis l'appli Android.
 const PUBLIC_BASE = window.SB_PUBLIC_BASE || "https://qapinext-john.github.io/soiree-box/";
+// Version beta (https://…/soiree-box/beta/) : pour tester une mise à jour avant de l'envoyer à tout le monde.
+const IS_BETA = /\/beta\//.test(location.pathname);
 // Lien d'invitation : « #ABCD », ou « #ABCD-soft » pour un salon Soft (le téléphone invité passe en Soft dès l'ouverture du lien).
 const inviteURL = code => (SHARE_BASE || PUBLIC_BASE) + "#" + code + (roomKid() ? "-kid" + (N.g && N.g.kpin ? "-" + N.g.kpin : "") : roomHard() ? "" : "-soft");
 const APK_URL = PUBLIC_BASE + "SoireeBox.apk";
@@ -2194,6 +2196,7 @@ function gProfilePage(){
           "<li><b>1 shot</b> " + (gp.drink === "fort" ? tr("= un shot (3 cl).", "= one shot (3 cl).") : tr("= 3 gorgées de ta boisson.", "= 3 sips of your drink.")) + "</li>" +
           "<li><b>" + tr("1 cul-sec", "1 chug") + "</b> " + tr("= finir ton verre (" + d.glass + ").", "= finish your drink (" + d.glass + ").") + "</li>" +
           "<li>" + tr("1 verre standard = 10 g d'alcool pur. Les repères santé conseillent pas plus de 10 par semaine et pas plus de 2 par jour.", "1 standard drink = 10 g of pure alcohol. Health guidelines suggest no more than 10 a week and no more than 2 a day.") + "</li></ul></div>" : "") : '<p class="howto">' + (myKid() ? tr("Mode Enfant : les gages des jeux sont des défis, des chansons, des pompes…", "Kids mode: game forfeits are dares, songs, push-ups…") : tr("Mode Soft : pas d'alcool. Les gages des jeux sont des défis, des chansons, des pompes…", "Soft mode: no alcohol. Game forfeits are dares, songs, push-ups…")) + "</p>") +
+        '<p class="sm" style="margin:8px 0 0; text-align:center">Soirée Box ' + VERSION + (IS_BETA ? " · beta" : "") + "</p>" +
         "</div>";
       const save = p => { const g2 = Object.assign(gProf(store().gp), p); g2.alc = g2.drink !== "sans"; persist({ gp: g2 }); CORE_X._gp = g2; SB.refreshExtras(); draw(); };
       $$("[data-gd]", root).forEach(b => b.addEventListener("click", () => { buzz(8); save({ drink: b.dataset.gd }); }));
@@ -2317,6 +2320,7 @@ SB.boot = function(){
     netLoading = true;
     window.claude.use("room").then(r => { ROOM = r || null; }, () => { ROOM = null; }).then(() => { netLoading = false; netReady = !!ROOM || RELAY_OK; renderHome(); });
   }
+  if(IS_BETA){ const br = $("h1.brand"); if(br && !$(".modepill.beta", br)) br.insertAdjacentHTML("beforeend", '<span class="modepill beta">beta</span>'); document.title = "Soirée Box (beta)"; }
   const nm = $("#h-name"), cd = $("#h-code");
   nm.value = store().name || "";
   const m = (location.hash || "").match(/^#([A-Za-z]{4})(-soft|-kid(?:-(k[a-z0-9]{1,12}))?)?$/i);

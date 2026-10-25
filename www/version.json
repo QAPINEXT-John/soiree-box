@@ -1,15 +1,15 @@
 {
- "version": "4.14.3",
+ "version": "4.14.4",
  "apk": 35,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "En mode Enfant, le profil ne montre plus les modes Hard et Soft : seulement « Quitter le mode Enfant », avec le code"
+  "Le numéro de version s'affiche en bas du profil"
  ],
  "files": {
   "core.js": {
-   "h": "9435532029a857501ca8b50ddda7339a8e83477a5bdaea974f9dd10db7710448",
-   "s": 261136
+   "h": "eda9273f5a0a5ea017e8ba082bad2895b16f28108ac5614b060cf24b4e9fdbd9",
+   "s": 261629
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -180,8 +180,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "a7bb1179bae25526e2fd9bf35b2c67e963b2adf3d84576642ef9e7fde4dcdc0d",
-   "s": 50644
+   "h": "d31130aaf0dc5dabb2368cbd4194fb4b2dc6768255bb71d6fd1c90093c0decd2",
+   "s": 50736
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",

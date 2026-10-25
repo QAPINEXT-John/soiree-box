@@ -1,6 +1,6 @@
 // Service worker de Soirée Box : met l'appli en cache pour qu'elle s'ouvre même sans réseau.
 // Change CACHE à chaque mise à jour, et ajoute ici le fichier de chaque nouveau jeu.
-const CACHE = "soireebox-4.14.3";
+const CACHE = "soireebox-4.14.4";
 const FILES = [
   "./",
   "core.js",
@@ -60,6 +60,8 @@ self.addEventListener("fetch", event => {
   const req = event.request;
   if (req.method !== "GET" || new URL(req.url).origin !== self.location.origin) return;
   const path = new URL(req.url).pathname;
+  // La version beta (dossier beta/) a son propre service worker : celui du site principal n'y touche pas.
+  if (/\/beta\//.test(path) && !/\/beta\/$/.test(self.registration.scope)) return;
   // Page, cœur, jeux et config : réseau d'abord pour recevoir les mises à jour, cache si hors ligne.
   if (req.mode === "navigate" || /\/(core|firebase-config)\.js$/.test(path) || /\/games\//.test(path)) {
     event.respondWith(

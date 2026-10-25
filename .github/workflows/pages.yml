@@ -1,14 +1,19 @@
-# Publie la version web (dossier www) et l'APK sur GitHub Pages à chaque push sur main.
-# Les applis Android installées y trouvent version.json et proposent la mise à jour.
+# Publie Soirée Box sur GitHub Pages à chaque push sur main ou sur beta.
+#  - main  -> https://qapinext-john.github.io/soiree-box/       (tout le monde, appli Android comprise)
+#  - beta  -> https://qapinext-john.github.io/soiree-box/beta/  (pour tester avant d'envoyer aux potes)
+# Les deux branches sont reconstruites ensemble : un push sur l'une ne fait pas disparaître l'autre.
 name: Publier Soirée Box
 on:
   push:
-    branches: [main]
+    branches: [main, beta]
   workflow_dispatch:
 permissions:
   contents: read
   pages: write
   id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
 jobs:
   pages:
     runs-on: ubuntu-latest
@@ -17,11 +22,27 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main
+      - uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: beta
+          path: beta
       - uses: actions/configure-pages@v5
-      # L'APK est publié à côté du jeu : l'appli le propose quand une mise à jour Android est nécessaire.
-      - run: cp android/SoireeBox.apk www/SoireeBox.apk
+      # Le site principal, et l'APK à côté du jeu (l'appli le propose quand une mise à jour Android est nécessaire).
+      - run: |
+          mkdir -p _site
+          cp -r main/www/. _site/
+          cp main/android/SoireeBox.apk _site/SoireeBox.apk
+          if [ -d beta/www ]; then
+            mkdir -p _site/beta
+            cp -r beta/www/. _site/beta/
+            cp beta/android/SoireeBox.apk _site/beta/SoireeBox.apk
+          fi
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: www
+          path: _site
       - id: deploy
         uses: actions/deploy-pages@v4
