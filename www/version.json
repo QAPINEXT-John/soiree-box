@@ -1,16 +1,15 @@
 {
- "version": "4.14",
+ "version": "4.14.1",
  "apk": 35,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Le QR code et le lien d'un salon Enfant font passer le téléphone en mode Enfant, comme rejoindre un salon Enfant",
-  "En arrivant en mode Enfant, on choisit tout de suite le code à 4 chiffres"
+  "Les mises à jour arrivent tout de suite dans le navigateur, sans attendre 10 minutes"
  ],
  "files": {
   "core.js": {
-   "h": "8e2a3238fc8697c9be048ccdb1f1d8bea821100e5a7d97d3ed62a45d8f2cba23",
-   "s": 259615
+   "h": "9b346a55f29b44864d7389be7e93a127ff86bae2f843993eb2df31e891a9beee",
+   "s": 259617
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",

@@ -1,4 +1,7 @@
 {
+  "4.14.1": [
+    "Les mises à jour arrivent tout de suite dans le navigateur, sans attendre 10 minutes"
+  ],
   "4.14": [
     "Le QR code et le lien d'un salon Enfant font passer le téléphone en mode Enfant, comme rejoindre un salon Enfant",
     "En arrivant en mode Enfant, on choisit tout de suite le code à 4 chiffres"

@@ -1,6 +1,6 @@
 // Service worker de Soirée Box : met l'appli en cache pour qu'elle s'ouvre même sans réseau.
 // Change CACHE à chaque mise à jour, et ajoute ici le fichier de chaque nouveau jeu.
-const CACHE = "soireebox-4.14";
+const CACHE = "soireebox-4.14.1";
 const FILES = [
   "./",
   "core.js",
@@ -50,7 +50,8 @@ const FILES = [
 ];
 
 self.addEventListener("install", event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES)).then(() => self.skipWaiting()));
+  // « reload » : on télécharge les vrais fichiers du serveur, pas une copie du cache HTTP (GitHub Pages garde 10 min).
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES.map(f => new Request(f, { cache: "reload" })))).then(() => self.skipWaiting()));
 });
 self.addEventListener("activate", event => {
   event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
@@ -62,7 +63,8 @@ self.addEventListener("fetch", event => {
   // Page, cœur, jeux et config : réseau d'abord pour recevoir les mises à jour, cache si hors ligne.
   if (req.mode === "navigate" || /\/(core|firebase-config)\.js$/.test(path) || /\/games\//.test(path)) {
     event.respondWith(
-      fetch(req).then(res => { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req.mode === "navigate" ? "index.html" : req, copy)); return res; })
+      // « no-cache » : toujours demander au serveur si le fichier a changé, sinon une mise à jour peut attendre 10 min.
+      fetch(req.mode === "navigate" ? new Request(req.url, { cache: "no-cache", credentials: "same-origin" }) : new Request(req.url, { cache: "no-cache" })).then(res => { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req.mode === "navigate" ? "index.html" : req, copy)); return res; })
         .catch(() => caches.match(req.mode === "navigate" ? "index.html" : req))
     );
     return;
