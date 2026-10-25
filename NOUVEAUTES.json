@@ -1,4 +1,11 @@
 {
+  "4.12": [
+    "Gages : un système de gages avec ou sans alcool, entièrement réglable (intensité, plafond, rappel d'eau, joker, gages perso)",
+    "Ton profil en haut à gauche : photo ou avatar, ce que tu bois ce soir et ta limite",
+    "Plus de 100 avatars à choisir, rangés par catégories, dont un onglet Hot",
+    "Mode Hard (par défaut) ou Soft : le Soft cache tout le contenu 18+ et l'alcool",
+    "Dans le salon, l'hôte touche le badge Hard / Soft pour changer le mode pour tout le monde"
+  ],
   "4.11": [
     "Nouveau jeu 18+ : Test kink, ton profil d'envies (dominant, soumis, switch…) en secret",
     "Tes réponses restent sur ton téléphone ; tu choisis si tu partages ton top 3"

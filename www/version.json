@@ -1,16 +1,19 @@
 {
- "version": "4.11",
- "apk": 32,
+ "version": "4.12",
+ "apk": 33,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Nouveau jeu 18+ : Test kink, ton profil d'envies (dominant, soumis, switch…) en secret",
-  "Tes réponses restent sur ton téléphone ; tu choisis si tu partages ton top 3"
+  "Gages : un système de gages avec ou sans alcool, entièrement réglable (intensité, plafond, rappel d'eau, joker, gages perso)",
+  "Ton profil en haut à gauche : photo ou avatar, ce que tu bois ce soir et ta limite",
+  "Plus de 100 avatars à choisir, rangés par catégories, dont un onglet Hot",
+  "Mode Hard (par défaut) ou Soft : le Soft cache tout le contenu 18+ et l'alcool",
+  "Dans le salon, l'hôte touche le badge Hard / Soft pour changer le mode pour tout le monde"
  ],
  "files": {
   "core.js": {
-   "h": "bed53eaf72f1c4216bb5ff689c175273a667256374c38216443574de3a158138",
-   "s": 111091
+   "h": "5c6f12aa9a33aedd890021c45c6d46412ee8b972e2973df334233ba1f0618a39",
+   "s": 245588
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -85,24 +88,24 @@
    "s": 6236
   },
   "games/actionverite.js": {
-   "h": "64f9878be131c2ae2e792b6571426e2995566f18bdd5682311bf272213bf8984",
-   "s": 105439
+   "h": "fcc1eca40bf590b111609be04d6bcca1a735824c356050adb15be82cc374130e",
+   "s": 105521
   },
   "games/defis.js": {
-   "h": "07df9e492ffc7fffe6c5cf4b647f2485200c8a107ba340f9f68ef2cc69bfee3e",
-   "s": 66038
+   "h": "4d939598885c73acaa9732bcce7ac082ef8f707794ee999a6df5902ecbe06fff",
+   "s": 66119
   },
   "games/dernierecarte.js": {
    "h": "ca4a7089c33db77f400f2b0e7d6408d43be0d0708493f03405921c3d18963d84",
    "s": 62266
   },
   "games/killer.js": {
-   "h": "477925d1b443e12c3102439d4ce3733c8de29a6d4aeede780bcf41b2713e6d27",
-   "s": 65249
+   "h": "0a44bac2ac478ae3b25b3ab49db7c42ee73f8903e44ec7957758ef16ba0a8da5",
+   "s": 65305
   },
   "games/kink.js": {
-   "h": "ef3341c0865f3348c20e1c41e7088eb0396817cf26ea3ec2a131f98b3d51128d",
-   "s": 28314
+   "h": "b6e4ee0847acb03e05473b65b5e0a82493c252da2feda0a15d0aebe13be4cee4",
+   "s": 28327
   },
   "games/loupgarou.js": {
    "h": "a1e3a137d7a88bf2b0296ce29d523ec706b46ad34519a779282111c833ce85c9",
@@ -113,48 +116,48 @@
    "s": 43666
   },
   "games/motsint.js": {
-   "h": "68addc9e37dc1f7ed34800e08825ca1662e0b832e5fa5290db6cf9d526439527",
-   "s": 45910
+   "h": "b0741d81ecac02955039d4a3d7fbd73de363a69d77ad86a1278fffe38de3b5e5",
+   "s": 45979
   },
   "games/note10.js": {
-   "h": "745f831c7c8b38c7311c409748b0c57981453bade3b9e7e6bf43202e093ecb47",
-   "s": 132889
+   "h": "0b633ede024819f5e32353f4ed66e7b7303e737604acc5c2f769b77fb0c43037",
+   "s": 134167
   },
   "games/photoroulette.js": {
    "h": "0e8a0059665d910547368777d0995b1f1ea14f4ba62f53bbc675cae23fb76dd5",
    "s": 45511
   },
   "games/priorites.js": {
-   "h": "95ff4be6a8a72bbbf1e9a5654732870d1be26ff69b087bf0425c65f8341d3731",
-   "s": 39687
+   "h": "69750ec30ef69f75f7e99e525fb5e5e9eeb3fd3232c67d12e5b7b248ff10de6b",
+   "s": 39743
   },
   "games/punchline.js": {
-   "h": "935b65cb8a84d5b81d68762167791555e7d76a6ba0dcb8064cd743d8cd05c07d",
-   "s": 112723
+   "h": "f309b85a723f61d699343c3778bed0465837772eb0360d3cac8e96a3c7760811",
+   "s": 113415
   },
   "games/purete.js": {
-   "h": "0a5c74641cf344513791741253223514d890db8c0765ee94f5626e9acad7f0e2",
-   "s": 69774
+   "h": "5c1a6068226b3d7a96cc18b63b8300831e2bcbeb987b13e4770b59648fb0225a",
+   "s": 71107
   },
   "games/quiadit.js": {
-   "h": "9b1bdf3534785f9d9a15452da34f75636addc57805ad87c7b82c9a2f0863fdab",
-   "s": 48791
+   "h": "9092f8e5aef43ceb80bcad48be57f202342f38997ec06f3a13a89477674fca0a",
+   "s": 48866
   },
   "games/quiplus.js": {
-   "h": "8a25d76b45e58e44dbccdc636805162210dd113a3667efcefd694e4355247eb5",
-   "s": 37400
+   "h": "a05ddf60cbeec08171b0605147ad7e19ce3ea06a5ea99cc26ebbc2e8ed7c06c6",
+   "s": 37677
   },
   "games/redflag.js": {
-   "h": "5ecbb79bd075bb81bf873911604d6087b79f7ef48752d05cb5e20d5f232478bb",
-   "s": 64523
+   "h": "4dc4035243cfaa9c5589883ef74eb3d6c8e187b44ebc3b44eceba7fb4bfa9de5",
+   "s": 64579
   },
   "games/tupref.js": {
-   "h": "73103de03a46c909afe74d88c403562bff02a364480eaddb16a2495ed52f2db5",
-   "s": 44618
+   "h": "b0e6041d9f6e20fb1bfafe61e45a1cef77a3820c895130b7f6aa29fb38bb4cbc",
+   "s": 44674
   },
   "games/undercover.js": {
-   "h": "94c43fc8fbca9a2d05879071b6812b4b382d4d18efdde48697bae8b147a3e607",
-   "s": 48873
+   "h": "c54e33b32d2585201036e7f75e6e192965b0a4101b34aae2a54294260adb0284",
+   "s": 48924
   },
   "icons/apple-touch-icon.png": {
    "h": "c6a8d73afcfb5db146ca68617cea122c1b06465d3a6bde68efe2ecc2d8ece998",
@@ -181,8 +184,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "e6ab8c32c9bf295e9da5a57efac5dc36e5f2c0ea72503444d1f18a661e02290e",
-   "s": 42991
+   "h": "84203e6987d4a3cacb79f8557d8bc6c2ca84b223a218a9aebbe4e5f004a5d25c",
+   "s": 50372
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
