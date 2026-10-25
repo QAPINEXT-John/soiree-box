@@ -1,15 +1,15 @@
 {
- "version": "4.12.2",
- "apk": 33,
+ "version": "4.12.3",
+ "apk": 34,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Rejoindre un salon Soft fait passer ton appli en Soft, même après avoir quitté le salon (tu peux revenir en Hard dans ton profil)"
+  "Le QR code et le lien d'un salon Soft font passer le téléphone en Soft dès qu'on les ouvre, même avant de rejoindre ou d'installer l'appli"
  ],
  "files": {
   "core.js": {
-   "h": "216850848ded57b7e9d26bdf2a9ef6352f5ee8f9edbb95f32db801d373536b20",
-   "s": 247405
+   "h": "58968db66ca0ad27dc92ab34fe86c678efaefbec3c4d00e200ffa1a62036469d",
+   "s": 248237
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",

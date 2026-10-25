@@ -808,7 +808,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.12.2";
+const VERSION = "4.12.3";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -996,7 +996,8 @@ let netReady = false, netLoading = false;
 const SHARE_BASE = window.SB_SHARE_BASE || ((location.protocol === "https:" && !/^(localhost|127\.|\[::1\])/.test(location.hostname)) ? location.origin + location.pathname : "");
 // Adresse publique du jeu (site + appli) : sert aux liens d'invitation et au QR code, même depuis l'appli Android.
 const PUBLIC_BASE = window.SB_PUBLIC_BASE || "https://qapinext-john.github.io/soiree-box/";
-const inviteURL = code => (SHARE_BASE || PUBLIC_BASE) + "#" + code;
+// Lien d'invitation : « #ABCD », ou « #ABCD-soft » pour un salon Soft (le téléphone invité passe en Soft dès l'ouverture du lien).
+const inviteURL = code => (SHARE_BASE || PUBLIC_BASE) + "#" + code + (roomHard() ? "" : "-soft");
 const APK_URL = PUBLIC_BASE + "SoireeBox.apk";
 /* ---------- QR code du salon (scanné avec l'appareil photo : ouvre le site sur le bon salon) ---------- */
 function qrSVG(text){
@@ -1012,8 +1013,8 @@ function renderQR(){
   const el = $("#sa-qr"); if(!el) return;
   const code = N.code, url = code ? inviteURL(code) : "", svg = code ? qrSVG(url) : "";
   el.hidden = !svg;
-  if(!svg || el.dataset.code === code) return;
-  el.dataset.code = code;
+  if(!svg || el.dataset.code === url) return;
+  el.dataset.code = url;
   el.innerHTML = svg + '<span class="t"><b>' + tr("Scanne pour rejoindre", "Scan to join") + "</b><span>" + tr("Avec l'appareil photo : ça ouvre Soirée Box directement dans ce salon, ou propose d'installer l'appli. Touche pour agrandir.", "With the phone camera: it opens Soirée Box straight into this room, or offers to install the app. Tap to enlarge.") + "</span></span>";
 }
 function openQR(){
@@ -1031,10 +1032,10 @@ function renderInvite(){
   const standalone = !!(window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
   const show = !!hashCode && !window.AndroidShare && !window.claude && !standalone && (android || ios) && !N.nr;
   box.hidden = !show; if(!show){ box.innerHTML = ""; return; }
-  if(box.dataset.code === hashCode) return;
-  box.dataset.code = hashCode;
+  if(box.dataset.code === hashCode + hashSoft) return;
+  box.dataset.code = hashCode + hashSoft;
   if(android){
-    const intent = "intent://join/" + hashCode + "#Intent;scheme=soireebox;package=fr.soireebox.app;S.browser_fallback_url=" + encodeURIComponent(location.href.split("#")[0] + "#" + hashCode) + ";end";
+    const intent = "intent://join/" + hashCode + (hashSoft ? "?soft=1" : "") + "#Intent;scheme=soireebox;package=fr.soireebox.app;S.browser_fallback_url=" + encodeURIComponent(location.href.split("#")[0] + "#" + hashCode + (hashSoft ? "-soft" : "")) + ";end";
     box.innerHTML = "<p>" + tr("Tu as l'appli Soirée Box ? Ouvre le salon dedans. Sinon, installe-la, ou joue directement ici.", "Got the Soirée Box app? Open the room in it. Otherwise install it, or just play right here.") + "</p>" +
       '<a class="btn acc" href="' + esc(intent) + '">' + tr("Ouvrir dans l'appli", "Open in the app") + "</a>" +
       '<a class="btn ghost" href="' + esc(APK_URL) + '">' + tr("Installer l'appli Android", "Install the Android app") + "</a>" +
@@ -1045,15 +1046,23 @@ function renderInvite(){
 }
 // Appelé par l'appli Android quand on l'ouvre avec un lien d'invitation (soireebox://join/CODE).
 SB.openInvite = function(code){
-  code = String(code || "").toUpperCase();
-  if(!/^[A-Z]{4}$/.test(code)) return;
+  const mm = /^([A-Z]{4})(-SOFT)?$/.exec(String(code || "").toUpperCase());
+  if(!mm) return;
+  code = mm[1]; if(mm[2]) inviteSoft();
   if(N.nr){ if(N.code !== code) toast(tr("Quitte d'abord ce salon pour rejoindre " + code, "Leave this room first to join " + code)); return; }
   hashCode = code; const cd = $("#h-code"); if(cd) cd.value = code;
   if(typeof goHome === "function") goHome();
   const nm = $("#h-name"); if(nm && !clean(nm.value, 16)) setTimeout(() => nm.focus(), 200);
 };
 function homeErr(msg){ const e = $("#h-err"); e.textContent = msg || ""; e.hidden = !msg; }
-let hashCode = null;
+let hashCode = null, hashSoft = false;
+// Invitation vers un salon Soft : le téléphone passe en Soft tout de suite, même avant de rejoindre.
+function inviteSoft(){
+  hashSoft = true;
+  if(!myHard()) return;
+  persist({ hard: false }); syncSoftClass(); renderMe(); if(HOME_REDRAW) HOME_REDRAW();
+  toast(tr("Invitation dans un salon Soft : ton appli passe en Soft. Tu peux revenir en Hard dans ton profil.", "Invite to a Soft room: your app switches to Soft. You can go back to Hard in your profile."));
+}
 function renderHome(){
   renderInvite(); renderMe();
   const nm = clean($("#h-name").value, 16);
@@ -2202,8 +2211,8 @@ SB.boot = function(){
   }
   const nm = $("#h-name"), cd = $("#h-code");
   nm.value = store().name || "";
-  const m = (location.hash || "").match(/^#([A-Za-z]{4})$/);
-  if(m){ hashCode = m[1].toUpperCase(); cd.value = hashCode; }
+  const m = (location.hash || "").match(/^#([A-Za-z]{4})(-soft)?$/i);
+  if(m){ hashCode = m[1].toUpperCase(); cd.value = hashCode; if(m[2]) setTimeout(inviteSoft, 0); }
   nm.addEventListener("input", () => { persist({ name: clean(nm.value, 16) }); renderHome(); renderMe(); });
   cd.addEventListener("input", () => { cd.value = cd.value.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 4); renderHome(); });
   cd.addEventListener("keydown", e => { if(e.key === "Enter" && !$("#h-join").disabled) $("#h-join").click(); });

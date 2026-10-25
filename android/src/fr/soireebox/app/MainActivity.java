@@ -106,7 +106,9 @@ public class MainActivity extends Activity {
         Uri u = i.getData();
         if (!"soireebox".equals(u.getScheme()) || !"join".equals(u.getHost())) return null;
         String c = u.getPath() == null ? "" : u.getPath().replace("/", "").toUpperCase(java.util.Locale.ROOT);
-        return c.matches("[A-Z]{4}") ? c : null;
+        if (!c.matches("[A-Z]{4}")) return null;
+        // Salon Soft : soireebox://join/ABCD?soft=1 -> "ABCD-soft" (l'appli passe en Soft).
+        return "1".equals(u.getQueryParameter("soft")) ? c + "-soft" : c;
     }
 
     @Override

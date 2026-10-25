@@ -1,4 +1,7 @@
 {
+  "4.12.3": [
+    "Le QR code et le lien d'un salon Soft font passer le téléphone en Soft dès qu'on les ouvre, même avant de rejoindre ou d'installer l'appli"
+  ],
   "4.12.2": [
     "Rejoindre un salon Soft fait passer ton appli en Soft, même après avoir quitté le salon (tu peux revenir en Hard dans ton profil)"
   ],
