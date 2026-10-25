@@ -1,15 +1,15 @@
 {
- "version": "4.12.1",
+ "version": "4.12.2",
  "apk": 33,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Salon en Soft : gages sans alcool, et plus aucune mention de l'alcool dans les réglages, le profil et les gages de la manche"
+  "Rejoindre un salon Soft fait passer ton appli en Soft, même après avoir quitté le salon (tu peux revenir en Hard dans ton profil)"
  ],
  "files": {
   "core.js": {
-   "h": "5e19ef5be996b3579baf2b0c0828956409a00a2b27e02c70f376e89accd3ac85",
-   "s": 246961
+   "h": "216850848ded57b7e9d26bdf2a9ef6352f5ee8f9edbb95f32db801d373536b20",
+   "s": 247405
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
