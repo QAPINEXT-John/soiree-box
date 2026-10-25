@@ -1,15 +1,17 @@
 {
- "version": "4.17.1",
+ "version": "4.18.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Profil : le bouton « Prendre une photo » est retiré, il reste « Choisir une photo »"
+  "Nouveau jeu : C'est un 10 mais… Un défaut tombe, chacun redonne une note sur 10 en secret ; sois proche de la moyenne du groupe pour marquer des points",
+  "Paquets Classique, Copains (tout public), Love & dates et Hot (18+), coups de théâtre (juge, la plume, notes cachées…) et gages",
+  "Sur un seul téléphone : chacun son tour (points et gages) ou avec les doigts"
  ],
  "files": {
   "core.js": {
-   "h": "ce8f7770025bc3e985d29e872ceeec4f2ed0be7cd3c0b75a8fca91a819b50660",
-   "s": 276485
+   "h": "02d7e26fe92df039aedf3c16845440b3ab933e79938bb1ae83f09070e365b5ba",
+   "s": 276514
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -94,6 +96,10 @@
   "games/dernierecarte.js": {
    "h": "261f6f864598fa19a8be201aa5d3db4559e37b2684bf2f7989871c3be2059c45",
    "s": 63828
+  },
+  "games/dixmais.js": {
+   "h": "ca4bdef951d15a17bc7fcb5b66204caecc7a74e4e647639a14be4f0402244367",
+   "s": 49367
   },
   "games/grille.js": {
    "h": "7c4314706be865538bafd102483d1fd73e8a695dc9fbdccc201dbd162cb83a95",
@@ -184,8 +190,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "c97efb06fc22be8aa929f98acb4de95a98015bfe89e84d95e2ad4afa9b07b225",
-   "s": 51336
+   "h": "87a3c7cf63928843475465f960be4560c5e84528d3797853cce04c006243b5f8",
+   "s": 51377
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
