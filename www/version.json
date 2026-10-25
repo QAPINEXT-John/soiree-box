@@ -1,15 +1,16 @@
 {
- "version": "4.15.1",
+ "version": "4.16",
  "apk": 35,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Test de pureté : plus de gage « toutes les 5 réponses oui »"
+  "Nouveau jeu de cartes : Grille. 12 cartes face cachée, échange, retourne, élimine des colonnes : le plus petit score gagne",
+  "Jouable en salon de 2 à 8, ou sur un seul téléphone contre des robots, avec gages et mode Enfant"
  ],
  "files": {
   "core.js": {
-   "h": "5f75c92cfbf77475505caed9ecc10f7b8b23805fd5248aa321e51234ca0c1a51",
-   "s": 261629
+   "h": "53904ea98ad636d51ff89c2be4864e9c8074ec92f902e71b509ceba1d1e686de",
+   "s": 261655
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -94,6 +95,10 @@
   "games/dernierecarte.js": {
    "h": "261f6f864598fa19a8be201aa5d3db4559e37b2684bf2f7989871c3be2059c45",
    "s": 63828
+  },
+  "games/grille.js": {
+   "h": "8672910649503594a032829a0c6d67025df1120ff5c92fbb03c4e5e404f74783",
+   "s": 50240
   },
   "games/killer.js": {
    "h": "b198ef2b9c1d1e320e9350fd30829a4a3bb32a2886d9071ddccba47106104b9a",
@@ -180,8 +185,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "d31130aaf0dc5dabb2368cbd4194fb4b2dc6768255bb71d6fd1c90093c0decd2",
-   "s": 50736
+   "h": "c9d86822986dbc45ab6829f5dc8c763bb6683623e28eaba983a2ad97b0e7f857",
+   "s": 50776
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
