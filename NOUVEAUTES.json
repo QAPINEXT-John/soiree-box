@@ -1,4 +1,8 @@
 {
+  "4.14": [
+    "Le QR code et le lien d'un salon Enfant font passer le téléphone en mode Enfant, comme rejoindre un salon Enfant",
+    "En arrivant en mode Enfant, on choisit tout de suite le code à 4 chiffres"
+  ],
   "4.13": [
     "Nouveau mode Enfant : seulement des jeux tout public, verrouillé par un code à 4 chiffres (dans « Mon profil »)",
     "Un téléphone en mode Enfant ne peut entrer que dans un salon en mode Enfant",

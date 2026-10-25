@@ -1,17 +1,16 @@
 {
- "version": "4.13",
- "apk": 34,
+ "version": "4.14",
+ "apk": 35,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Nouveau mode Enfant : seulement des jeux tout public, verrouillé par un code à 4 chiffres (dans « Mon profil »)",
-  "Un téléphone en mode Enfant ne peut entrer que dans un salon en mode Enfant",
-  "L'hôte touche le badge du salon pour passer en Hard, Soft ou Enfant"
+  "Le QR code et le lien d'un salon Enfant font passer le téléphone en mode Enfant, comme rejoindre un salon Enfant",
+  "En arrivant en mode Enfant, on choisit tout de suite le code à 4 chiffres"
  ],
  "files": {
   "core.js": {
-   "h": "864c07978e34c7fc91f346a9c05a17e308bbfda54f623376a460a5a76237f4d9",
-   "s": 256970
+   "h": "8e2a3238fc8697c9be048ccdb1f1d8bea821100e5a7d97d3ed62a45d8f2cba23",
+   "s": 259615
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",

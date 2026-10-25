@@ -808,7 +808,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.13";
+const VERSION = "4.14";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -1008,7 +1008,7 @@ const SHARE_BASE = window.SB_SHARE_BASE || ((location.protocol === "https:" && !
 // Adresse publique du jeu (site + appli) : sert aux liens d'invitation et au QR code, même depuis l'appli Android.
 const PUBLIC_BASE = window.SB_PUBLIC_BASE || "https://qapinext-john.github.io/soiree-box/";
 // Lien d'invitation : « #ABCD », ou « #ABCD-soft » pour un salon Soft (le téléphone invité passe en Soft dès l'ouverture du lien).
-const inviteURL = code => (SHARE_BASE || PUBLIC_BASE) + "#" + code + (roomHard() ? "" : "-soft");
+const inviteURL = code => (SHARE_BASE || PUBLIC_BASE) + "#" + code + (roomKid() ? "-kid" : roomHard() ? "" : "-soft");
 const APK_URL = PUBLIC_BASE + "SoireeBox.apk";
 /* ---------- QR code du salon (scanné avec l'appareil photo : ouvre le site sur le bon salon) ---------- */
 function qrSVG(text){
@@ -1043,10 +1043,10 @@ function renderInvite(){
   const standalone = !!(window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
   const show = !!hashCode && !window.AndroidShare && !window.claude && !standalone && (android || ios) && !N.nr;
   box.hidden = !show; if(!show){ box.innerHTML = ""; return; }
-  if(box.dataset.code === hashCode + hashSoft) return;
-  box.dataset.code = hashCode + hashSoft;
+  if(box.dataset.code === hashCode + hashMode) return;
+  box.dataset.code = hashCode + hashMode;
   if(android){
-    const intent = "intent://join/" + hashCode + (hashSoft ? "?soft=1" : "") + "#Intent;scheme=soireebox;package=fr.soireebox.app;S.browser_fallback_url=" + encodeURIComponent(location.href.split("#")[0] + "#" + hashCode + (hashSoft ? "-soft" : "")) + ";end";
+    const intent = "intent://join/" + hashCode + (hashMode ? "?" + hashMode + "=1" : "") + "#Intent;scheme=soireebox;package=fr.soireebox.app;S.browser_fallback_url=" + encodeURIComponent(location.href.split("#")[0] + "#" + hashCode + (hashMode ? "-" + hashMode : "")) + ";end";
     box.innerHTML = "<p>" + tr("Tu as l'appli Soirée Box ? Ouvre le salon dedans. Sinon, installe-la, ou joue directement ici.", "Got the Soirée Box app? Open the room in it. Otherwise install it, or just play right here.") + "</p>" +
       '<a class="btn acc" href="' + esc(intent) + '">' + tr("Ouvrir dans l'appli", "Open in the app") + "</a>" +
       '<a class="btn ghost" href="' + esc(APK_URL) + '">' + tr("Installer l'appli Android", "Install the Android app") + "</a>" +
@@ -1057,21 +1057,48 @@ function renderInvite(){
 }
 // Appelé par l'appli Android quand on l'ouvre avec un lien d'invitation (soireebox://join/CODE).
 SB.openInvite = function(code){
-  const mm = /^([A-Z]{4})(-SOFT)?$/.exec(String(code || "").toUpperCase());
+  const mm = /^([A-Z]{4})(-SOFT|-KID)?$/.exec(String(code || "").toUpperCase());
   if(!mm) return;
-  code = mm[1]; if(mm[2]) inviteSoft();
+  code = mm[1]; if(mm[2] === "-KID") inviteKid(); else if(mm[2]) inviteSoft();
   if(N.nr){ if(N.code !== code) toast(tr("Quitte d'abord ce salon pour rejoindre " + code, "Leave this room first to join " + code)); return; }
   hashCode = code; const cd = $("#h-code"); if(cd) cd.value = code;
   if(typeof goHome === "function") goHome();
   const nm = $("#h-name"); if(nm && !clean(nm.value, 16)) setTimeout(() => nm.focus(), 200);
 };
 function homeErr(msg){ const e = $("#h-err"); e.textContent = msg || ""; e.hidden = !msg; }
-let hashCode = null, hashSoft = false;
+let hashCode = null, hashMode = "";
 // Invitation vers un salon Soft : le téléphone passe en Soft tout de suite, même avant de rejoindre.
 function inviteSoft(){
-  hashSoft = true;
+  if(!hashMode) hashMode = "soft";
   if(!myHard()) return;
   persist({ hard: false }); syncSoftClass(); renderMe(); if(HOME_REDRAW) HOME_REDRAW();
+}
+// Invitation vers un salon Enfant (lien, QR code, ou salon rejoint) : le téléphone passe en mode Enfant et on choisit le code.
+function inviteKid(){
+  hashMode = "kid";
+  if(!myKid()){ persist({ kid: { on: true, pin: null }, hard: false }); syncSoftClass(); renderMe(); if(HOME_REDRAW) HOME_REDRAW(); }
+  kidPinGate();
+}
+// Mode Enfant sans code (arrivé par une invitation) : on demande de choisir le code, impossible à passer.
+function kidPinGate(){
+  const old = document.getElementById("kid-pin"), need = myKid() && !(store().kid || {}).pin;
+  if(!need){ if(old) old.remove(); return; }
+  if(old) return;
+  const el = document.createElement("div"); el.id = "kid-pin"; el.className = "hdgate";
+  const inp = (id, ph) => '<input class="txt pin" id="' + id + '" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="' + ph + '">';
+  el.innerHTML = '<div class="hdgate-in" role="dialog" aria-modal="true" aria-labelledby="kp-t"><span class="modepill kid">' + tr("Mode Enfant", "Kids mode") + '</span><h2 id="kp-t">' + tr("Choisis un code", "Pick a code") + "</h2>" +
+    "<p>" + tr("Ce salon est en mode Enfant : l'appli passe en mode Enfant. Choisis un code à 4 chiffres : il servira à sortir du mode Enfant plus tard, dans ton profil.", "This room is in Kids mode: the app switches to Kids mode. Pick a 4-digit code: you'll need it to leave Kids mode later, in your profile.") + "</p>" +
+    inp("kp-1", tr("Code", "Code")) + inp("kp-2", tr("Encore une fois", "Once more")) + '<p class="err" data-kperr hidden></p>' +
+    '<button class="btn acc" type="button" data-kpok>' + tr("Valider le code", "Save the code") + "</button></div>";
+  document.body.appendChild(el);
+  const a = $("#kp-1", el), b = $("#kp-2", el), er = $("[data-kperr]", el);
+  setTimeout(() => { try{ a.focus(); }catch(e){} }, 100);
+  $("[data-kpok]", el).addEventListener("click", () => {
+    const bad = t => { er.textContent = t; er.hidden = false; buzz([20, 40, 20]); };
+    if(!/^\d{4}$/.test(a.value)) return bad(tr("Le code doit faire 4 chiffres.", "The code must be 4 digits."));
+    if(a.value !== b.value) return bad(tr("Les deux codes ne sont pas pareils.", "The two codes don't match."));
+    persist({ kid: { on: true, pin: pinHash(a.value) } }); buzz(15); el.remove();
+  });
 }
 function renderHome(){
   renderInvite(); renderMe();
@@ -1407,6 +1434,8 @@ function render(){
   N.peers = N.nr.peers();
   renderOffline();
   const g = G();
+  // Rejoindre un salon Enfant fait passer le téléphone en mode Enfant (avec choix du code).
+  if(g && !N.host && g.kid === true && !myKid()) inviteKid();
   // Rejoindre un salon Soft fait passer tout le téléphone en Soft, même après avoir quitté le salon.
   if(g && !N.host && g.hd === false && myHard()){
     persist({ hard: false }); renderMe(); if(HOME_REDRAW) HOME_REDRAW();
@@ -2285,8 +2314,9 @@ SB.boot = function(){
   }
   const nm = $("#h-name"), cd = $("#h-code");
   nm.value = store().name || "";
-  const m = (location.hash || "").match(/^#([A-Za-z]{4})(-soft)?$/i);
-  if(m){ hashCode = m[1].toUpperCase(); cd.value = hashCode; if(m[2]) setTimeout(inviteSoft, 0); }
+  const m = (location.hash || "").match(/^#([A-Za-z]{4})(-soft|-kid)?$/i);
+  if(m){ hashCode = m[1].toUpperCase(); cd.value = hashCode; if(m[2]) setTimeout(m[2].toLowerCase() === "-kid" ? inviteKid : inviteSoft, 0); }
+  setTimeout(kidPinGate, 0);
   nm.addEventListener("input", () => { persist({ name: clean(nm.value, 16) }); renderHome(); renderMe(); });
   cd.addEventListener("input", () => { cd.value = cd.value.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 4); renderHome(); });
   cd.addEventListener("keydown", e => { if(e.key === "Enter" && !$("#h-join").disabled) $("#h-join").click(); });

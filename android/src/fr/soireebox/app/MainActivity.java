@@ -107,7 +107,8 @@ public class MainActivity extends Activity {
         if (!"soireebox".equals(u.getScheme()) || !"join".equals(u.getHost())) return null;
         String c = u.getPath() == null ? "" : u.getPath().replace("/", "").toUpperCase(java.util.Locale.ROOT);
         if (!c.matches("[A-Z]{4}")) return null;
-        // Salon Soft : soireebox://join/ABCD?soft=1 -> "ABCD-soft" (l'appli passe en Soft).
+        // Salon Soft ou Enfant : soireebox://join/ABCD?soft=1 -> "ABCD-soft", ?kid=1 -> "ABCD-kid".
+        if ("1".equals(u.getQueryParameter("kid"))) return c + "-kid";
         return "1".equals(u.getQueryParameter("soft")) ? c + "-soft" : c;
     }
 
