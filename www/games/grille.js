@@ -314,7 +314,7 @@ function tableHTML(V, me, nameOf, ui){
   let turn = "";
   if(V.phase === "flip"){
     const left = me && V.cells[me] ? V.nflip - A(V.cells[me]).filter(c => typeof c === "number").length - (ui.mine || []).length : 0;
-    turn = me && left > 0 ? tr("Retourne " + left + " carte" + (left > 1 ? "s" : ""), "Flip " + left + (left > 1 ? " cards" : " card")) : tr("On attend les autres…", "Waiting for the others…");
+    turn = me && left > 0 ? (left < V.nflip ? tr("Retourne encore " + left + " carte", "Flip " + left + " more card" + (left > 1 ? "s" : "")) : tr("Retourne " + left + " cartes pour commencer", "Flip " + left + " cards to start")) : tr("C'est bon ! On attend que les autres retournent leurs cartes…", "Done! Waiting for the others to flip their cards…");
   } else if(V.phase === "play") turn = V.turn === me ? tr("À toi !", "Your turn!") : tr("Au tour de " + esc(nameOf(V.turn)), esc(nameOf(V.turn)) + "'s turn");
   h += '<div class="gr-mid"><div class="gr-turn">' + turn + (V.closer && V.phase === "play" ? '<span class="gr-last">' + tr("Dernier tour ! " + esc(nameOf(V.closer)) + " a tout retourné", "Last turn! " + esc(nameOf(V.closer)) + " flipped everything") + "</span>" : "") + "</div>";
   // Pioche, carte en main, défausse

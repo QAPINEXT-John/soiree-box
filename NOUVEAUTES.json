@@ -1,4 +1,7 @@
 {
+  "4.16.2": [
+    "Grille : début de manche plus clair (« Retourne 2 cartes pour commencer », « Retourne encore 1 carte »)"
+  ],
   "4.16.1": [
     "Grille : un bouton « Fin du tour » pour passer la main au joueur suivant"
   ],
