@@ -399,9 +399,9 @@ const DECK = {
 const deckOf = lg => DECK[lg === "en" ? "en" : "fr"];
 const catsOf = (p, lg) => deckOf(lg)[p.v] || [];
 const PACKS = [
-  { v: "classique", label: tr("Classique", "Classic"), desc: tr("Pour tout le monde", "For everyone") },
-  { v: "geek", label: "Pop culture & geek", desc: tr("Jeux vidéo, séries, internet", "Video games, TV shows, the internet") },
-  { v: "absurde", label: tr("Situations absurdes", "Absurd situations"), desc: tr("Des situations folles, des réponses à inventer", "Wild scenarios, answers you make up") },
+  { v: "classique", label: tr("Classique", "Classic"), desc: tr("Pour tout le monde", "For everyone"), kid: true },
+  { v: "geek", label: "Pop culture & geek", desc: tr("Jeux vidéo, séries, internet", "Video games, TV shows, the internet"), kid: true },
+  { v: "absurde", label: tr("Situations absurdes", "Absurd situations"), desc: tr("Des situations folles, des réponses à inventer", "Wild scenarios, answers you make up"), kid: true },
   { v: "adulte", label: tr("Adultes", "Adults"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content"), hot: true },
   { v: "perso", label: tr("Catégories perso", "Custom categories"), desc: tr("Les tiennes, et en réseau celles des joueurs du salon", "Yours, plus everyone's in the room when playing online") }
 ];
@@ -414,9 +414,10 @@ function sharedCustom(peers){
   A(peers).forEach(p => { const x = p.presence && p.presence.x; if(x && x.note10) A(x.note10).forEach(add); });
   return out;
 }
+const kidF = l => { if(!(SB.kid && SB.kid())) return l; const k = l.filter(x => SB.kidOk(x)); return k.length ? k : l; }; // mode Enfant : jamais de pool vide
 function buildPool(packs, peers, lg){
   const sel = A(packs);
-  return PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(p => (p.v === "perso" ? sharedCustom(peers) : catsOf(p, lg)).map(c => c.slice()));
+  return kidF(PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(p => (p.v === "perso" ? sharedCustom(peers) : catsOf(p, lg)).map(c => c.slice())));
 }
 /* ---------- Coups de théâtre : une manche sur trois environ, une règle change ---------- */
 const TWISTS = [
@@ -775,7 +776,7 @@ SB.register({
     { id: "mode", label: "Mode", type: "seg", def: "tous", values: [{ v: "tous", label: tr("Tout le monde devine", "Everyone guesses") }, { v: "un", label: tr("Un seul devineur", "Single guesser") }] },
     { id: "rounds", label: tr("Manches", "Rounds"), type: "seg", def: 6, values: [{ v: 4, label: "4" }, { v: 6, label: "6" }, { v: 10, label: "10" }] },
     { id: "packs", label: tr("Catégories", "Categories"), type: "multi", def: ["classique"],
-      values: ctx => PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, count: p.v === "perso" ? sharedCustom(ctx.peers).length : catsOf(p, SB.lang()).length })) },
+      values: ctx => PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, kid: p.kid, count: p.v === "perso" ? sharedCustom(ctx.peers).length : catsOf(p, SB.lang()).length })) },
     { id: "twists", label: tr("Coups de théâtre", "Plot twists"), type: "toggle", text: tr("Coups de théâtre", "Plot twists"), desc: tr("Une manche sur trois environ, une règle change", "About one round in three, a rule changes"), def: true },
     { id: "edit", type: "button", label: tr("Créer mes propres catégories", "Create my own categories"), onClick: () => openEditor() }
   ],

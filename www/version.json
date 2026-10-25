@@ -1,15 +1,17 @@
 {
- "version": "4.12.4",
+ "version": "4.13",
  "apk": 34,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Passage en Soft discret : plus de message quand l'appli passe en Soft"
+  "Nouveau mode Enfant : seulement des jeux tout public, verrouillé par un code à 4 chiffres (dans « Mon profil »)",
+  "Un téléphone en mode Enfant ne peut entrer que dans un salon en mode Enfant",
+  "L'hôte touche le badge du salon pour passer en Hard, Soft ou Enfant"
  ],
  "files": {
   "core.js": {
-   "h": "f799f4ef6039224fb7a9841ec5d2918fc45c77eb6e663b9a37a25a5c32e7da73",
-   "s": 247819
+   "h": "864c07978e34c7fc91f346a9c05a17e308bbfda54f623376a460a5a76237f4d9",
+   "s": 256970
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -112,20 +114,20 @@
    "s": 43666
   },
   "games/motsint.js": {
-   "h": "b0741d81ecac02955039d4a3d7fbd73de363a69d77ad86a1278fffe38de3b5e5",
-   "s": 45979
+   "h": "56de4d03bda39a058ec887322f5f04533fd9892cb01c4c4d9af389ac6e7716e0",
+   "s": 46142
   },
   "games/note10.js": {
-   "h": "0b633ede024819f5e32353f4ed66e7b7303e737604acc5c2f769b77fb0c43037",
-   "s": 134167
+   "h": "2c9039c4729d25943db9974253fe689aa03e9724d09ffee87e7e7225d1e18e51",
+   "s": 134377
   },
   "games/photoroulette.js": {
    "h": "0e8a0059665d910547368777d0995b1f1ea14f4ba62f53bbc675cae23fb76dd5",
    "s": 45511
   },
   "games/priorites.js": {
-   "h": "69750ec30ef69f75f7e99e525fb5e5e9eeb3fd3232c67d12e5b7b248ff10de6b",
-   "s": 39743
+   "h": "461f59c0578a2520cc8c49157e9273b0ab8028f0089fa2374092c5e40b2f9c51",
+   "s": 39931
   },
   "games/punchline.js": {
    "h": "f309b85a723f61d699343c3778bed0465837772eb0360d3cac8e96a3c7760811",
@@ -152,8 +154,8 @@
    "s": 44674
   },
   "games/undercover.js": {
-   "h": "c54e33b32d2585201036e7f75e6e192965b0a4101b34aae2a54294260adb0284",
-   "s": 48924
+   "h": "436cb75da2b65c0446a7f49339dd308ad9df19670e66f5646701e5ec4dc84022",
+   "s": 49089
   },
   "icons/apple-touch-icon.png": {
    "h": "c6a8d73afcfb5db146ca68617cea122c1b06465d3a6bde68efe2ecc2d8ece998",
@@ -180,8 +182,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "84203e6987d4a3cacb79f8557d8bc6c2ca84b223a218a9aebbe4e5f004a5d25c",
-   "s": 50372
+   "h": "a7bb1179bae25526e2fd9bf35b2c67e963b2adf3d84576642ef9e7fde4dcdc0d",
+   "s": 50644
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",

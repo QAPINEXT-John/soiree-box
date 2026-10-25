@@ -179,7 +179,8 @@ const deckOf = lg => DECK[lg === "en" ? "en" : "fr"];
 const BYW = { fr: {}, en: {} };
 ["fr", "en"].forEach(l => DECK[l].base.concat(DECK[l].hard).forEach(c => { BYW[l][c[0]] = c; }));
 // Paquet de mots : ceux jamais vus sur ce téléphone sortent en premier.
-function newDeck(hard, lg){ const d = deckOf(lg); return SB.u.fresh("motsint:cards", (hard ? d.base.concat(d.hard) : d.base).map(c => c[0])); }
+const kidF = l => { if(!(SB.kid && SB.kid())) return l; const k = l.filter(x => SB.kidOk(x)); return k.length ? k : l; }; // mode Enfant : jamais de pool vide
+function newDeck(hard, lg){ const d = deckOf(lg); return SB.u.fresh("motsint:cards", kidF(hard ? d.base.concat(d.hard) : d.base).map(c => c[0])); }
 function cardOf(w, lg){ const l = lg === "en" ? "en" : "fr"; return BYW[l][w] || DECK[l].base[0]; }
 let lastLeft = 99;
 const TEAMS = [{ n: tr("Équipe Rouge", "Red Team"), c: "#d23b3b" }, { n: tr("Équipe Bleue", "Blue Team"), c: "#2f6fd6" }];

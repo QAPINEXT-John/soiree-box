@@ -104,8 +104,9 @@ function cast(n, imp, white){
   if(white) return { imp: Math.max(0, Math.min(imp, cap - 1)), white: 1 };
   return { imp: Math.max(1, Math.min(imp, cap)), white: 0 };
 }
+const kidF = l => { if(!(SB.kid && SB.kid())) return l; const k = l.filter(x => SB.kidOk(x)); return k.length ? k : l; }; // mode Enfant : jamais de pool vide
 function pickPair(hard, lg){
-  const D = deck(lg), pool = hard ? D.n.concat(D.h) : D.n;
+  const D = deck(lg), pool = kidF(hard ? D.n.concat(D.h) : D.n);
   const pair = SB.u.fresh("undercover:pairs", pool).pop();
   SB.u.saw("undercover:pairs", [pair]);
   const flip = Math.random() < .5;

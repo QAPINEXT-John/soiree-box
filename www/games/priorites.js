@@ -94,11 +94,12 @@ const ADULTE_EN = [
 const LISTS = { fr: { classique: CLASSIQUE, adulte: ADULTE }, en: { classique: CLASSIQUE_EN, adulte: ADULTE_EN } };
 const lists = lg => LISTS[lg === "en" ? "en" : "fr"];
 const PACKS = [
-  { v: "classique", label: tr("Tout et n'importe quoi", "Anything goes"), desc: tr("Objets, gens, galères, petits plaisirs", "Things, people, hassles, little pleasures"), list: lists(SB.lang()).classique },
+  { v: "classique", label: tr("Tout et n'importe quoi", "Anything goes"), desc: tr("Objets, gens, galères, petits plaisirs", "Things, people, hassles, little pleasures"), list: lists(SB.lang()).classique, kid: true },
   { v: "adulte", label: tr("Adultes", "Adults"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult stuff"), list: lists(SB.lang()).adulte, hot: true }
 ];
 const SEEN = "priorites:t";
-function pool(packs, lg){ const L = lists(lg), sel = A(packs); const p = PACKS.filter(x => sel.indexOf(x.v) >= 0).flatMap(x => L[x.v]); return p.length ? p : L.classique; }
+const kidF = l => { if(!(SB.kid && SB.kid())) return l; const k = l.filter(x => SB.kidOk(x)); return k.length ? k : l; }; // mode Enfant : jamais de pool vide
+function pool(packs, lg){ const L = lists(lg), sel = A(packs); const p = PACKS.filter(x => sel.indexOf(x.v) >= 0).flatMap(x => L[x.v]); return kidF(p.length ? p : L.classique); }
 // Tire n trucs en tête de paquet (les jamais vus d'abord).
 function drawN(deck, packs, n, lg){
   let d = A(deck).slice(); if(d.length < n) d = SB.u.fresh(SEEN, pool(packs, lg), true);
@@ -198,7 +199,7 @@ SB.register({
     tr("Coups de théâtre : classement à l'envers, manche à six, les extrêmes, invité surprise, complicité, points doublés. Les trucs déjà vus ne reviennent qu'en dernier.", "Twists: worst first, round of six, the extremes, surprise guest, partners in crime, double points. Things you've already seen only come back last.")
   ],
   options: [
-    { id: "packs", label: tr("Paquets", "Packs"), type: "multi", def: ["classique"], values: PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, count: p.list.length })) },
+    { id: "packs", label: tr("Paquets", "Packs"), type: "multi", def: ["classique"], values: PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, kid: p.kid, count: p.list.length })) },
     { id: "laps", label: tr("Manches", "Rounds"), type: "seg", def: 1, values: [{ v: 1, label: tr("1 par joueur", "1 per player") }, { v: 2, label: tr("2 par joueur", "2 per player") }] },
     { id: "twists", label: tr("Coups de théâtre", "Plot twists"), type: "toggle", text: tr("Coups de théâtre", "Plot twists"), desc: tr("De temps en temps, une règle change pour une manche", "Every now and then, a rule changes for one round"), def: true }
   ],
