@@ -1408,7 +1408,7 @@ const DEF = {
   options: [
     { id: "laps", label: tr("Tours de table", "Rounds"), type: "seg", def: 3, values: [{ v: 2, label: "2" }, { v: 3, label: "3" }, { v: 5, label: "5" }, { v: 8, label: "8" }] },
     { id: "packs", label: tr("Niveaux", "Levels"), type: "multi", def: ["soft"], values: LEVELS.map(l => ({ v: l.v, label: l.label, desc: l.desc, hot: l.hot, count: UI.VT[l.v].length + UI.AC[l.v].length })) },
-    { id: "mode", label: tr("Sanctions", "Penalties"), type: "seg", def: "drink", values: [{ v: "drink", label: tr("Gorgées", "Sips") }, { v: "soft", label: tr("Sans alcool", "Alcohol-free") }] },
+    { id: "mode", label: tr("Sanctions", "Penalties"), type: "seg", def: "drink", values: [{ v: "drink", label: tr("Gorgées", "Sips"), hot: true }, { v: "soft", label: tr("Sans alcool", "Alcohol-free") }] },
     { id: "prog", label: tr("Progressif", "Progressive"), type: "toggle", text: tr("Niveau progressif", "Progressive level"), desc: tr("On commence doux, et ça monte au fil des tours", "Start soft, and it heats up as the rounds go by"), def: true },
     { id: "twists", label: tr("Coups de théâtre", "Plot twists"), type: "toggle", text: tr("Coups de théâtre", "Plot twists"), desc: tr("De temps en temps, une règle change pour un tour", "Every now and then, a rule changes for one turn"), def: true }
   ],
@@ -1467,14 +1467,14 @@ const DEF = {
       const names = api.names, ids = names.map((_, i) => String(i)), nameOf = id => names[+id] || "?";
       const S0 = store();
       let sel = A(S0.avPacks).filter(v => VT[v]).length ? A(S0.avPacks).filter(v => VT[v]) : ["soft"];
-      let laps = [2, 3, 5, 8].indexOf(S0.avLaps) >= 0 ? S0.avLaps : 3, mode = S0.avMode === "soft" ? "soft" : "drink", prog = S0.avProg !== false, twOn = S0.avTw !== false;
+      let laps = [2, 3, 5, 8].indexOf(S0.avLaps) >= 0 ? S0.avLaps : 3, mode = S0.avMode === "soft" || !SB.hard() ? "soft" : "drink", prog = S0.avProg !== false, twOn = S0.avTw !== false;
       let E = null;
       function setup(){
         const tog = (k, on, nm, ds) => '<button type="button" class="pack" data-' + k + ' aria-pressed="' + on + '"><span class="box">✓</span><span class="tx"><span class="nm">' + nm + '</span><span class="ds">' + ds + "</span></span></button>";
         screen(root, "su" + sel.join() + laps + mode + prog + twOn, CSS + '<p class="howto">' + tr("Posez le téléphone au milieu. Chacun son tour choisit vérité ou action, le groupe juge, et on passe au suivant.", "Put the phone in the middle. On your turn, pick truth or dare, the group judges, then it's the next player's go.") + "</p>" +
           '<div class="field"><span class="eyebrow">' + tr("Tours de table", "Rounds") + '</span><div class="seg">' + [2, 3, 5, 8].map(n => '<button type="button" data-l="' + n + '" aria-pressed="' + (n === laps) + '">' + n + "</button>").join("") + "</div></div>" +
-          '<div class="field"><span class="eyebrow">' + tr("Niveaux", "Levels") + '</span><div class="packs">' + LEVELS.map(l => '<button type="button" class="pack' + (l.hot ? " hot" : "") + '" data-k="' + l.v + '" aria-pressed="' + (sel.indexOf(l.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(l.label) + (l.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(l.desc) + '</span></span><span class="ct">' + (UI.VT[l.v].length + UI.AC[l.v].length) + "</span></button>").join("") + "</div></div>" +
-          '<div class="field"><span class="eyebrow">' + tr("Sanctions", "Penalties") + '</span><div class="seg"><button type="button" data-m="drink" aria-pressed="' + (mode === "drink") + '">' + tr("Gorgées", "Sips") + '</button><button type="button" data-m="soft" aria-pressed="' + (mode === "soft") + '">' + tr("Sans alcool", "Alcohol-free") + "</button></div></div>" +
+          '<div class="field"><span class="eyebrow">' + tr("Niveaux", "Levels") + '</span><div class="packs">' + LEVELS.filter(SB.packOk).map(l => '<button type="button" class="pack' + (l.hot ? " hot" : "") + '" data-k="' + l.v + '" aria-pressed="' + (sel.indexOf(l.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(l.label) + (l.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(l.desc) + '</span></span><span class="ct">' + (UI.VT[l.v].length + UI.AC[l.v].length) + "</span></button>").join("") + "</div></div>" +
+          (SB.hard() ? '<div class="field"><span class="eyebrow">' + tr("Sanctions", "Penalties") + '</span><div class="seg"><button type="button" data-m="drink" aria-pressed="' + (mode === "drink") + '">' + tr("Gorgées", "Sips") + '</button><button type="button" data-m="soft" aria-pressed="' + (mode === "soft") + '">' + tr("Sans alcool", "Alcohol-free") + "</button></div></div>" : "") +
           '<div class="field"><span class="eyebrow">' + tr("Variantes", "Variants") + '</span><div class="packs">' + tog("pg", prog, tr("Niveau progressif", "Progressive level"), tr("On commence doux, et ça monte au fil des tours", "Start soft, and it heats up as the rounds go by")) + tog("tw", twOn, tr("Coups de théâtre", "Plot twists"), tr("De temps en temps, une règle change pour un tour", "Every now and then, a rule changes for one turn")) + "</div></div>" +
           dock('<button class="btn acc" type="button" data-go>' + tr("Commencer", "Start") + "</button>"), r => {
           r.querySelectorAll("[data-l]").forEach(b => b.addEventListener("click", () => { laps = +b.dataset.l; persist({ avLaps: laps }); setup(); }));
@@ -1484,7 +1484,7 @@ const DEF = {
           r.querySelector("[data-tw]").addEventListener("click", () => { twOn = !twOn; persist({ avTw: twOn }); setup(); });
           r.querySelector("[data-go]").addEventListener("click", () => {
             if(!sel.length){ SB.u.toast(tr("Choisis au moins un niveau", "Pick at least one level")); return; }
-            E = newGame(shuffle(ids), { packs: sel, laps, mode, prog, twists: twOn, lg: SB.lang() }); startTurn(E, ids); turn();
+            E = newGame(shuffle(ids), { packs: SB.okPacks(sel, LEVELS), laps, mode, prog, twists: twOn, lg: SB.lang() }); startTurn(E, ids); turn();
           });
         });
       }

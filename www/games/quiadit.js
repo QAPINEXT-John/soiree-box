@@ -345,22 +345,22 @@ const DEF = {
       let deck = [], round = 0, q = "", w = 0, ans = [], i = 0, found = [], st = {}, tw = null, disg = {}, fk = "", gain = {}, seed = 0;
       const qOf = () => fill(q.t, nameOf(q.p)), t = () => (tw ? tw.id : "");
       function newRound(){
-        if(!deck.length) deck = deckFor(sel, lg);
+        if(!deck.length) deck = deckFor(SB.okPacks(sel, PACKS), lg);
         q = { t: deck.pop(), p: pick(ids) }; SB.u.saw(SEEN, q.t); round++; w = 0; ans = [];
-        tw = pickTw(twOn, round, t()); disg = t() === "disg" ? derange(ids) : {}; fk = t() === "fake" ? fakeFor(sel, lg) : "";
+        tw = pickTw(twOn, round, t()); disg = t() === "disg" ? derange(ids) : {}; fk = t() === "fake" ? fakeFor(SB.okPacks(sel, PACKS), lg) : "";
         go("pass");
       }
       const go = ph => {
         if(ph === "setup"){
           screen(root, "su" + sel.join() + rounds + twOn, CSS + '<p class="howto">' + tr("Chacun à son tour prend le téléphone et écrit sa réponse en secret. Ensuite, les réponses s'affichent une par une : devinez ensemble qui a écrit quoi.", "Take turns with the phone and write your answer in secret. Then the answers appear one by one: guess together who wrote what.") + "</p>" +
             '<div class="field"><span class="eyebrow">Questions</span><div class="seg">' + [3, 5, 8].map(n => '<button type="button" data-r="' + n + '" aria-pressed="' + (n === rounds) + '">' + n + "</button>").join("") + "</div></div>" +
-            '<div class="field"><span class="eyebrow">' + tr("Paquets", "Packs") + '</span><div class="packs">' + PACKS.map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-k="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + p.list.length + "</span></button>").join("") + "</div></div>" +
+            '<div class="field"><span class="eyebrow">' + tr("Paquets", "Packs") + '</span><div class="packs">' + PACKS.filter(SB.packOk).map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-k="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + p.list.length + "</span></button>").join("") + "</div></div>" +
             '<div class="field"><span class="eyebrow">' + tr("Variante", "Variant") + '</span><div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + twOn + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Plot twists") + '</span><span class="ds">' + tr("De temps en temps, une règle change pour une question", "Every now and then, a rule changes for one question") + "</span></span></button></div></div>" +
             dock('<button class="btn acc" type="button" data-go>' + tr("Commencer", "Start") + "</button>"), r => {
             r.querySelectorAll("[data-r]").forEach(b => b.addEventListener("click", () => { rounds = +b.dataset.r; persist({ qdRounds: rounds }); go("setup"); }));
             r.querySelectorAll("[data-k]").forEach(b => b.addEventListener("click", () => { const x = sel.indexOf(b.dataset.k); if(x >= 0) sel.splice(x, 1); else sel.push(b.dataset.k); persist({ qdPacks: sel }); go("setup"); }));
             r.querySelector("[data-tw]").addEventListener("click", () => { twOn = !twOn; persist({ qdTw: twOn }); go("setup"); });
-            r.querySelector("[data-go]").addEventListener("click", () => { if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet", "Pick at least one pack")); return; } deck = deckFor(sel, lg); round = 0; st = {}; tw = null; seed = Math.floor(Math.random() * 12); newRound(); });
+            r.querySelector("[data-go]").addEventListener("click", () => { if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet", "Pick at least one pack")); return; } deck = deckFor(SB.okPacks(sel, PACKS), lg); round = 0; st = {}; tw = null; seed = Math.floor(Math.random() * 12); newRound(); });
           });
         } else if(ph === "pass"){
           screen(root, "pa" + round + "-" + w, '<span class="eyebrow">Question ' + round + " / " + rounds + "</span>" + (w === 0 ? twBanner(tw) : "") + '<div class="pass"><span class="eyebrow">' + tr("Passe le téléphone à", "Pass the phone to") + '</span><div class="who">' + esc(names[w]) + "</div><p>" + tr("Les autres, ne regardez pas l'écran.", "Everyone else, don't look at the screen.") + "</p></div>" +

@@ -477,7 +477,7 @@ const DEF = {
     "Anyone can go to the next card. Drink responsibly: nothing is mandatory."
   ]),
   options: [
-    { id: "mode", label: tr("Sanctions", "Penalties"), type: "seg", def: "drink", values: [{ v: "drink", label: tr("Gorgées", "Sips") }, { v: "soft", label: tr("Sans alcool", "Alcohol-free") }] },
+    { id: "mode", label: tr("Sanctions", "Penalties"), type: "seg", def: "drink", values: [{ v: "drink", label: tr("Gorgées", "Sips"), hot: true }, { v: "soft", label: tr("Sans alcool", "Alcohol-free") }] },
     { id: "len", label: tr("Cartes", "Cards"), type: "seg", def: 50, values: [{ v: 30, label: "30" }, { v: 50, label: "50" }, { v: 80, label: "80" }] },
     { id: "deck", label: tr("Ambiance", "Vibe"), type: "seg", def: "classique", values: DECKS.map(d => ({ v: d.v, label: d.label })) },
     { id: "packs", label: tr("Paquets", "Packs"), type: "multi", def: ["classique"], values: PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, count: p.list.length + p.rules.length })) },
@@ -529,16 +529,16 @@ const DEF = {
     start(root, api){
       const names = api.names, st = store();
       let sel = A(st.dfPacks).length ? A(st.dfPacks).slice() : ["classique"];
-      let mode = st.dfMode === "soft" ? "soft" : "drink", len = [30, 50, 80].indexOf(st.dfLen) >= 0 ? st.dfLen : 50;
+      let mode = st.dfMode === "soft" || !SB.hard() ? "soft" : "drink", len = [30, 50, 80].indexOf(st.dfLen) >= 0 ? st.dfLen : 50;
       let deck = DECKS.some(d => d.v === st.dfDeck) ? st.dfDeck : "classique", twists = st.dfTw !== false;
       let seq = [], i = 0, rules = [];
       const go = ph => {
         if(ph === "setup"){
-          screen(root, "su" + sel.join() + mode + len + deck + twists, '<div class="field"><span class="eyebrow">' + tr("Sanctions", "Penalties") + '</span><div class="seg"><button type="button" data-m="drink" aria-pressed="' + (mode === "drink") + '">' + tr("Gorgées", "Sips") + '</button><button type="button" data-m="soft" aria-pressed="' + (mode === "soft") + '">' + tr("Sans alcool", "Alcohol-free") + "</button></div></div>" +
+          screen(root, "su" + sel.join() + mode + len + deck + twists, (SB.hard() ? '<div class="field"><span class="eyebrow">' + tr("Sanctions", "Penalties") + '</span><div class="seg"><button type="button" data-m="drink" aria-pressed="' + (mode === "drink") + '">' + tr("Gorgées", "Sips") + '</button><button type="button" data-m="soft" aria-pressed="' + (mode === "soft") + '">' + tr("Sans alcool", "Alcohol-free") + "</button></div></div>" : "") +
             '<p class="howto">' + (mode === "drink" ? tr("Posez le téléphone au milieu et lisez chaque carte à voix haute. Buvez avec modération : rien n'est obligatoire.", "Put the phone in the middle and read each card out loud. Drink responsibly: nothing is mandatory.") : tr("Sans alcool : chaque gage, c'est une pompe, un compliment forcé ou ce que le groupe décide.", "Alcohol-free: each forfeit is a push-up, a forced compliment or whatever the group decides.")) + "</p>" +
             '<div class="field"><span class="eyebrow">' + tr("Cartes", "Cards") + '</span><div class="seg">' + [30, 50, 80].map(n => '<button type="button" data-l="' + n + '" aria-pressed="' + (n === len) + '">' + n + "</button>").join("") + "</div></div>" +
             '<div class="field"><span class="eyebrow">' + tr("Ambiance", "Vibe") + '</span><div class="seg">' + DECKS.map(d => '<button type="button" data-d="' + d.v + '" aria-pressed="' + (d.v === deck) + '">' + esc(d.label) + "</button>").join("") + '</div><span class="sm">' + esc(DECKS.find(d => d.v === deck).desc) + "</span></div>" +
-            '<div class="field"><span class="eyebrow">' + tr("Paquets", "Packs") + '</span><div class="packs">' + PACKS.map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-k="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + (p.list.length + p.rules.length) + "</span></button>").join("") +
+            '<div class="field"><span class="eyebrow">' + tr("Paquets", "Packs") + '</span><div class="packs">' + PACKS.filter(SB.packOk).map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-k="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + (p.list.length + p.rules.length) + "</span></button>").join("") +
             '<button type="button" class="pack" data-tw aria-pressed="' + twists + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Cartes chaos", "Chaos cards") + '</span><span class="ds">' + tr("De temps en temps, une carte casse la chaîne", "Every now and then, a card breaks the chain") + "</span></span></button></div></div>" +
             dock('<button class="btn acc" type="button" data-go>' + tr("Commencer", "Start") + "</button>"), r => {
             r.querySelectorAll("[data-d]").forEach(b => b.addEventListener("click", () => { deck = b.dataset.d; persist({ dfDeck: deck }); go("setup"); }));
@@ -548,7 +548,7 @@ const DEF = {
             r.querySelectorAll("[data-k]").forEach(b => b.addEventListener("click", () => { const x = sel.indexOf(b.dataset.k); if(x >= 0) sel.splice(x, 1); else sel.push(b.dataset.k); persist({ dfPacks: sel }); go("setup"); }));
             r.querySelector("[data-go]").addEventListener("click", () => {
               if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet", "Pick at least one pack")); return; }
-              seq = build(names, sel, mode, len, deck, twists, SB.lang()); i = 0; rules = applyRules([], seq[0], 0); go("card");
+              seq = build(names, SB.okPacks(sel, PACKS), mode, len, deck, twists, SB.lang()); i = 0; rules = applyRules([], seq[0], 0); go("card");
             });
           });
         } else if(ph === "card"){

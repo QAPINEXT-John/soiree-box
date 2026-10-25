@@ -118,7 +118,7 @@ function deckFor(packs, lg){
 }
 function take(deck){ const m = deck.pop(); if(m) SB.u.saw(SEEN, m); return m; }
 function packButtons(sel){
-  return '<div class="packs">' + PACKS.map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-k="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + listOf(p, SB.lang()).length + "</span></button>").join("") + "</div>";
+  return '<div class="packs">' + PACKS.filter(SB.packOk).map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-k="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + listOf(p, SB.lang()).length + "</span></button>").join("") + "</div>";
 }
 const CSS = '<style>.kl-m{font-size:22px; font-weight:800; line-height:1.25; overflow-wrap:anywhere}.kl-hid{font-size:15px; color:var(--muted)}' +
   '.kl-chain{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px}.kl-chain li{display:flex; justify-content:space-between; gap:8px; background:var(--card); border:1.5px solid var(--line); border-radius:10px; padding:8px 12px; font-weight:700}' +
@@ -429,7 +429,7 @@ const DEF = {
       const st = store();
       let sel = A(st.klPacks).length ? A(st.klPacks).slice() : ["classique"], jk = st.klJk !== false, evs = st.klEv !== false;
       let W = null, deck = [], i = 0, cur = "", open = false, last = null, at = "", arg0 = "", news = null, seed = 0;
-      const fresh = () => { if(!deck.length) deck = deckFor(sel, SB.lang()); return take(deck); };
+      const fresh = () => { if(!deck.length) deck = deckFor(SB.okPacks(sel, PACKS), SB.lang()); return take(deck); };
       const toggle = (k, v, label, desc) => '<button type="button" class="pack" data-t="' + k + '" aria-pressed="' + v + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(label) + '</span><span class="ds">' + esc(desc) + "</span></span></button>";
       const evNow = () => { const on = evOn(W, Date.now()); return { on, v: on ? evView(W.ev, nameOf) : null }; };
       const bannerL = () => { const e = evNow(); return e.v ? SB.u.twistHTML(e.v) + (W.ev.until ? '<p class="kl-cd" data-cd>' + esc(cdText(W, Date.now())) + "</p>" : "") : ""; };
@@ -451,7 +451,7 @@ const DEF = {
             r.querySelectorAll("[data-t]").forEach(b => b.addEventListener("click", () => { if(b.dataset.t === "jk"){ jk = !jk; persist({ klJk: jk }); } else { evs = !evs; persist({ klEv: evs }); } go("setup"); }));
             r.querySelector("[data-go]").addEventListener("click", () => {
               if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet", "Pick at least one pack")); return; }
-              deck = deckFor(sel, SB.lang()); const order = shuffle(ids), tgt = {}, mis = {}, since = {}, now = Date.now();
+              deck = deckFor(SB.okPacks(sel, PACKS), SB.lang()); const order = shuffle(ids), tgt = {}, mis = {}, since = {}, now = Date.now();
               order.forEach((id, x) => { tgt[id] = order[(x + 1) % order.length]; mis[id] = fresh(); since[id] = now; });
               W = { phase: "play", win: "", t0: now, jk, evs, alive: ids.slice(), tgt, mis, since, kills: {}, pts: {}, log: [], claims: {}, used: {}, note: {}, jok: {}, acc: {}, nope: {}, ev: null, evLast: "", lastEv: 0, fast: null };
               seed = seedOf(String(now)); news = null; i = 0; go("pass");

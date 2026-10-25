@@ -84,7 +84,7 @@ function deckFor(packs, lg){
   return SB.u.fresh(SEEN, pool.length ? pool : L.soft);
 }
 function packButtons(sel){
-  return '<div class="packs">' + PACKS.map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-p="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + p.list.length + "</span></button>").join("") + "</div>";
+  return '<div class="packs">' + PACKS.filter(SB.packOk).map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-p="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + p.list.length + "</span></button>").join("") + "</div>";
 }
 function twToggle(on){
   return '<div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + !!on + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Plot twists") + '</span><span class="ds">' + tr("De temps en temps, une règle change pour une question", "Now and then, a rule changes for one question") + '</span></span></button></div>';
@@ -270,7 +270,7 @@ SB.register({
             '<div class="dock"><button class="btn acc" type="button" data-go>' + tr("Commencer", "Start") + "</button></div>", r => {
             r.querySelectorAll("[data-p]").forEach(b => b.addEventListener("click", () => { const i = sel.indexOf(b.dataset.p); if(i >= 0) sel.splice(i, 1); else sel.push(b.dataset.p); persist({ qpPacks: sel }); go("setup"); }));
             r.querySelector("[data-tw]").addEventListener("click", () => { twOn = !twOn; persist({ qpTw: twOn }); go("setup"); });
-            r.querySelector("[data-go]").addEventListener("click", () => { if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet", "Pick at least one pack")); return; } deck = deckFor(sel, SB.lang()); n = 0; tw = null; next(); });
+            r.querySelector("[data-go]").addEventListener("click", () => { if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet", "Pick at least one pack")); return; } deck = deckFor(SB.okPacks(sel, PACKS), SB.lang()); n = 0; tw = null; next(); });
           });
         } else {
           const t = tw ? tw.id : "";
@@ -287,10 +287,10 @@ SB.register({
       };
       function next(ci){
         if(ch.length && ci != null){ q = ch[ci]; deck = ch.filter((_, j) => j !== ci).concat(deck); }
-        else { if(!deck.length) deck = deckFor(sel, SB.lang()); q = deck.pop(); }
+        else { if(!deck.length) deck = deckFor(SB.okPacks(sel, PACKS), SB.lang()); q = deck.pop(); }
         ch = []; n++; SB.u.saw(SEEN, q);
         tw = twOn && n > 1 ? SB.u.twist(TWL, { last: tw ? tw.id : "", rate: .35 }) : null;
-        if(tw && tw.id === "pick"){ if(deck.length < 3) deck = deckFor(sel, SB.lang()).concat(deck); ch = [deck.pop(), deck.pop(), deck.pop()]; }
+        if(tw && tw.id === "pick"){ if(deck.length < 3) deck = deckFor(SB.okPacks(sel, PACKS), SB.lang()).concat(deck); ch = [deck.pop(), deck.pop(), deck.pop()]; }
         go("q");
       }
       go("setup");

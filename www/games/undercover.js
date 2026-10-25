@@ -340,7 +340,7 @@ SB.register({
       let L;
       function deal(){
         const st = SB.u.store(), cs = cast(n, 0, !!st.ucWhite);
-        const { civ, und } = pickPair(!!st.ucHard, SB.lang());
+        const { civ, und } = pickPair(!!st.ucHard && SB.hard(), SB.lang());
         const sh = shuffle(names.map((_, i) => i)), imps = sh.slice(0, cs.imp), wh = cs.white ? sh[cs.imp] : -1;
         L = { phase: "deal", i: 0, seen: false, civ, und, roles: names.map((_, i) => i === wh ? "w" : imps.indexOf(i) >= 0 ? "u" : "c"), alive: names.map((_, i) => i), out: -1, round: 1, winner: "", tw: "", tp: "", first: -1, outAt: {}, wg: "", twOn: st.ucTw !== false };
       }
@@ -361,9 +361,9 @@ SB.register({
           const st = SB.u.store(), hard = !!st.ucHard, white = !!st.ucWhite, tw = st.ucTw !== false;
           screen(root, "setup" + hard + white + tw, '<p class="howto">' + tr("Le téléphone passe de main en main : chacun découvre son mot en secret. Les intrus ne savent pas qu'ils le sont.", "Pass the phone around: everyone sees their word in secret. The Undercovers don't know they're Undercover.") + "</p>" +
             '<div class="packs">' + packBtn("data-w", white, "Mister White", tr("Un joueur sans mot qui peut gagner en devinant celui des civils", "A player with no word who can win by guessing the Civilians' word")) + packBtn("data-t", tw, tr("Coups de théâtre", "Plot twists"), tr("Environ un tour sur trois, une contrainte s'ajoute", "About one round in three adds a constraint")) +
-            packBtn("data-h", hard, tr("Ajouter le contenu 18+", "Add 18+ content"), tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content"), true) + "</div>" +
+            (SB.hard() ? packBtn("data-h", hard, tr("Ajouter le contenu 18+", "Add 18+ content"), tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content"), true) : "") + "</div>" +
             '<div class="dock"><button class="btn acc" type="button" data-go>' + tr("Distribuer les mots", "Deal the words") + "</button></div>", r => {
-            r.querySelector("[data-h]").addEventListener("click", () => { SB.u.persist({ ucHard: !hard }); go(); });
+            const h = r.querySelector("[data-h]"); if(h) h.addEventListener("click", () => { SB.u.persist({ ucHard: !hard }); go(); });
             r.querySelector("[data-w]").addEventListener("click", () => { SB.u.persist({ ucWhite: !white }); go(); });
             r.querySelector("[data-t]").addEventListener("click", () => { SB.u.persist({ ucTw: !tw }); go(); });
             r.querySelector("[data-go]").addEventListener("click", () => { deal(); go(); });

@@ -562,13 +562,13 @@ SB.register({
       if(!L.packs.length) L.packs = PACKS.map(p => p.v);
       if(!st.puHc){ if(L.packs.indexOf("hardcore") < 0) L.packs.push("hardcore"); persist({ puHc: true, puPacks: L.packs }); } // nouveau thème : coché une fois pour tout le monde
       if(!st.puV2){ ["drogues", "crado"].forEach(v => { if(L.packs.indexOf(v) < 0) L.packs.push(v); }); persist({ puV2: true, puPacks: L.packs }); }
-      const lg = SB.lang(), cnt = () => ALL(lg).filter(x => L.packs.indexOf(x.pack) >= 0).length;
+      const lg = SB.lang(), cnt = () => { const k = SB.okPacks(L.packs, PACKS); return ALL(lg).filter(x => k.indexOf(x.pack) >= 0).length; };
       const go = () => {
         if(L.phase === "setup"){
           screen(root, "setup" + JSON.stringify([L.n, L.anon, L.tw, L.packs]), CSS + '<p class="howto">' + tr("Le téléphone passe de main en main. Chacun répond seul, sans regarder les réponses des autres.", "The phone goes from hand to hand. Everyone answers alone, without looking at anyone else's answers.") + "</p>" +
-            '<p class="sm">' + tr(cnt() + " questions 18+ dans les thèmes choisis. Celles déjà posées sur ce téléphone reviennent en dernier.", cnt() + " 18+ questions in the chosen themes. The ones already asked on this phone come up last.") + "</p>" +
+            '<p class="sm">' + tr(cnt() + (SB.hard() ? " questions 18+" : " questions") + " dans les thèmes choisis. Celles déjà posées sur ce téléphone reviennent en dernier.", cnt() + (SB.hard() ? " 18+" : "") + " questions in the chosen themes. The ones already asked on this phone come up last.") + "</p>" +
             '<div class="field"><span class="eyebrow">' + tr("Longueur", "Length") + '</span><div class="seg">' + [25, 40, 60, 0].map(n => '<button type="button" data-n="' + n + '" aria-pressed="' + (n === L.n) + '">' + (n || tr("Tout", "All")) + "</button>").join("") + "</div></div>" +
-            '<div class="field"><span class="eyebrow">' + tr("Thèmes", "Themes") + '</span><div class="packs">' + PACKS.map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-k="' + p.v + '" aria-pressed="' + (L.packs.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + p.list.length + "</span></button>").join("") + "</div></div>" +
+            '<div class="field"><span class="eyebrow">' + tr("Thèmes", "Themes") + '</span><div class="packs">' + PACKS.filter(SB.packOk).map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-k="' + p.v + '" aria-pressed="' + (L.packs.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + p.list.length + "</span></button>").join("") + "</div></div>" +
             '<div class="field"><span class="eyebrow">' + tr("Réglages", "Settings") + '</span><div class="packs">' +
             (names.length > 1 ? '<button type="button" class="pack" data-an aria-pressed="' + L.anon + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Aveux anonymes", "Anonymous confessions") + '</span><span class="ds">' + tr("Sinon, on voit qui a dit oui à quoi", "Otherwise, everyone sees who said yes to what") + "</span></span></button>" : "") +
             '<button type="button" class="pack" data-tw aria-pressed="' + L.tw + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Plot twists") + '</span><span class="ds">' + tr("Des questions piégées glissées dans le test", "Rigged questions slipped into the test") + "</span></span></button></div></div>" +
@@ -579,7 +579,7 @@ SB.register({
             r.querySelector("[data-tw]").addEventListener("click", () => { L.tw = !L.tw; persist({ puTw: L.tw }); go(); });
             r.querySelector("[data-go]").addEventListener("click", () => {
               if(!L.packs.length){ SB.u.toast(tr("Choisis au moins un thème", "Pick at least one theme")); return; }
-              L.qi = pickQuestions(L.packs, L.n, lg); L.twl = placeTwists(L.qi.length, L.tw, names.length); L.seed = Math.floor(Math.random() * 999);
+              L.qi = pickQuestions(SB.okPacks(L.packs, PACKS), L.n, lg); L.twl = placeTwists(L.qi.length, L.tw, names.length); L.seed = Math.floor(Math.random() * 999);
               L.key = "loc" + Math.random().toString(36).slice(2); L.p = 0; L.ans = []; L.phase = names.length > 1 ? "pass" : "quiz"; go();
             });
           });

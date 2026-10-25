@@ -176,7 +176,7 @@ function pickerHTML(lead, tw, n){
     dock('<button class="btn acc" type="button" data-submit disabled></button><button class="link" type="button" data-reset hidden style="align-self:center">' + tr("Recommencer le classement", "Start the ranking over") + "</button>");
 }
 function orderList(items, ord){ return '<div class="pr-list">' + String(ord).split("").map((x, k) => '<div class="pr-it on"><span class="n">' + (k + 1) + '</span><span class="t">' + esc(items[+x]) + "</span></div>").join("") + "</div>"; }
-function packsHTML(sel){ return '<div class="packs">' + PACKS.map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-p="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + p.list.length + "</span></button>").join("") + "</div>"; }
+function packsHTML(sel){ return '<div class="packs">' + PACKS.filter(SB.packOk).map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-p="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + p.list.length + "</span></button>").join("") + "</div>"; }
 
 function roundOf(c, round, ri, last, lg){
   const t = c.opts.twists !== false && round > 1 ? SB.u.twist(TW, { last, n: c.ids.length, rate: .4 }) : null, tw = t ? t.id : "";
@@ -296,7 +296,7 @@ SB.register({
       let L = { phase: "setup", ri: 0, round: 0, rounds: names.length, deck: [], items: [], order: "", guess: "", score: 0, max: 0, tw: null, gain: 0 };
       const newItems = () => {
         L.tw = twOn && L.round > 1 ? SB.u.twist(TWL, { last: L.tw ? L.tw.id : "", n: names.length, rate: .4 }) : null;
-        const d = itemsFor(sel, L.deck, L.tw ? L.tw.id : "", names.filter((_, i) => i !== L.ri), SB.lang()); L.items = d.five; L.deck = d.deck;
+        const d = itemsFor(SB.okPacks(sel, PACKS), L.deck, L.tw ? L.tw.id : "", names.filter((_, i) => i !== L.ri), SB.lang()); L.items = d.five; L.deck = d.deck;
       };
       const go = () => {
         const rn = names[L.ri], tw = L.tw ? L.tw.id : "", n = L.items.length;
@@ -311,7 +311,7 @@ SB.register({
             r.querySelector("[data-tw]").addEventListener("click", () => { twOn = !twOn; persist({ prTw: twOn }); go(); });
             r.querySelector("[data-go]").addEventListener("click", () => {
               if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet", "Pick at least one pack")); return; }
-              L.deck = SB.u.fresh(SEEN, pool(sel, SB.lang()), true); L.round = 1; L.score = 0; L.max = 0; L.tw = null; L.ri = Math.floor(Math.random() * names.length);
+              L.deck = SB.u.fresh(SEEN, pool(SB.okPacks(sel, PACKS), SB.lang()), true); L.round = 1; L.score = 0; L.max = 0; L.tw = null; L.ri = Math.floor(Math.random() * names.length);
               newItems(); L.phase = "pass"; go();
             });
           });

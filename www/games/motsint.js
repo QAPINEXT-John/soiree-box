@@ -351,7 +351,7 @@ SB.register({
       const st = store();
       let L = { phase: "setup", hard: !!st.miHard, twOn: st.miTw !== false, dur: [45, 60, 90].indexOf(st.miDur) >= 0 ? st.miDur : 60, turns: [2, 3, 4].indexOf(st.miTurns) >= 0 ? st.miTurns : 3, score: [0, 0], tt: 0, turnNo: 0, deck: [], card: null, endAt: 0, log: [], tw: "", tl: [] };
       const lg = SB.lang();
-      const draw = () => { if(!L.deck.length) L.deck = newDeck(L.hard, lg); const w = L.deck.pop(), c = cardOf(w, lg); SB.u.saw("motsint:cards", c[0]); L.card = { id: Math.random().toString(36).slice(2), w: c[0], t: c[1] }; };
+      const draw = () => { if(!L.deck.length) L.deck = newDeck(L.hard && SB.hard(), lg); const w = L.deck.pop(), c = cardOf(w, lg); SB.u.saw("motsint:cards", c[0]); L.card = { id: Math.random().toString(36).slice(2), w: c[0], t: c[1] }; };
       const lab = () => '<span class="eyebrow">' + tr("Tour ", "Turn ") + (L.turnNo + 1) + " / " + L.turns * 2 + "</span>";
       const go = () => {
         if(L.phase === "setup"){
@@ -359,13 +359,13 @@ SB.register({
             '<div class="field"><span class="eyebrow">' + tr("Durée d'un tour", "Turn length") + '</span><div class="seg">' + [45, 60, 90].map(n => '<button type="button" data-d="' + n + '" aria-pressed="' + (n === L.dur) + '">' + n + " s</button>").join("") + "</div></div>" +
             '<div class="field"><span class="eyebrow">' + tr("Tours par équipe", "Turns per team") + '</span><div class="seg">' + [2, 3, 4].map(n => '<button type="button" data-u="' + n + '" aria-pressed="' + (n === L.turns) + '">' + n + "</button>").join("") + "</div></div>" +
             '<div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + L.twOn + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Plot twists") + '</span><span class="ds">' + tr("Un tour sur trois environ, la règle change", "About one turn in three, a rule changes") + "</span></span></button>" +
-            '<button type="button" class="pack hot" data-h aria-pressed="' + L.hard + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Ajouter le contenu 18+", "Add 18+ content") + '<span class="pill hot">18+</span></span><span class="ds">' + tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content") + "</span></span></button></div>" +
+            (SB.hard() ? '<button type="button" class="pack hot" data-h aria-pressed="' + L.hard + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Ajouter le contenu 18+", "Add 18+ content") + '<span class="pill hot">18+</span></span><span class="ds">' + tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content") + "</span></span></button>" : "") + "</div>" +
             '<div class="dock"><button class="btn acc" type="button" data-go>' + tr("Commencer", "Start") + "</button></div>", r => {
-            r.querySelector("[data-h]").addEventListener("click", () => { L.hard = !L.hard; persist({ miHard: L.hard }); go(); });
+            const h = r.querySelector("[data-h]"); if(h) h.addEventListener("click", () => { L.hard = !L.hard; persist({ miHard: L.hard }); go(); });
             r.querySelector("[data-tw]").addEventListener("click", () => { L.twOn = !L.twOn; persist({ miTw: L.twOn }); go(); });
             r.querySelectorAll("[data-d]").forEach(b => b.addEventListener("click", () => { L.dur = +b.dataset.d; persist({ miDur: L.dur }); go(); }));
             r.querySelectorAll("[data-u]").forEach(b => b.addEventListener("click", () => { L.turns = +b.dataset.u; persist({ miTurns: L.turns }); go(); }));
-            r.querySelector("[data-go]").addEventListener("click", () => { L.phase = "ready"; L.deck = newDeck(L.hard, lg); go(); });
+            r.querySelector("[data-go]").addEventListener("click", () => { L.phase = "ready"; L.deck = newDeck(L.hard && SB.hard(), lg); go(); });
           });
         } else if(L.phase === "ready"){
           const sec = Math.round(turnMs(L.dur, L.tw) / 1000);

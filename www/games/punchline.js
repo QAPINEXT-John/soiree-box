@@ -2114,7 +2114,7 @@ const DEF = {
       function setup(){
         screen(root, "su" + sel.join() + target + twOn + blOn, CSS + '<p class="howto">' + tr("Chacun à son tour prend le téléphone et choisit sa carte en secret. Puis on passe le téléphone au juge, qui lit les phrases à voix haute et garde sa préférée.", "Take turns with the phone and secretly pick your card. Then pass the phone to the judge, who reads the sentences out loud and keeps their favorite.") + "</p>" +
           '<div class="field"><span class="eyebrow">' + tr("Points pour gagner", "Points to win") + '</span><div class="seg">' + [3, 5, 8].map(n => '<button type="button" data-t="' + n + '" aria-pressed="' + (n === target) + '">' + n + "</button>").join("") + "</div></div>" +
-          '<div class="field"><span class="eyebrow">' + tr("Paquets", "Packs") + '</span><div class="packs">' + PACKS.map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-k="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + packCount(p.v) + "</span></button>").join("") + "</div></div>" +
+          '<div class="field"><span class="eyebrow">' + tr("Paquets", "Packs") + '</span><div class="packs">' + PACKS.filter(SB.packOk).map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-k="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + packCount(p.v) + "</span></button>").join("") + "</div></div>" +
           '<div class="field"><span class="eyebrow">' + tr("Variantes", "Variants") + '</span><div class="packs">' +
             '<button type="button" class="pack" data-bl aria-pressed="' + blOn + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Cartes blanches", "Blank cards") + '</span><span class="ds">' + tr("Deux réponses libres à écrire soi-même par partie", "Two free answers to write yourself per game") + "</span></span></button>" +
             '<button type="button" class="pack" data-tw aria-pressed="' + twOn + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Plot twists") + '</span><span class="ds">' + tr("De temps en temps, une règle change pour une manche", "Now and then, a rule changes for one round") + "</span></span></button></div></div>" +
@@ -2125,7 +2125,7 @@ const DEF = {
           r.querySelector("[data-tw]").addEventListener("click", () => { twOn = !twOn; persist({ plTw: twOn }); setup(); });
           r.querySelector("[data-go]").addEventListener("click", () => {
             if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet", "Pick at least one pack")); return; }
-            E = newGame(ids, { packs: sel, target, twists: twOn, blank: blOn, lg: SB.lang() });
+            E = newGame(ids, { packs: SB.okPacks(sel, PACKS), target, twists: twOn, blank: blOn, lg: SB.lang() });
             E.judge = ids[ids.length - 1];
             round();
           });
