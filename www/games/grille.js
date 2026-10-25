@@ -312,6 +312,8 @@ function tableHTML(V, me, nameOf, ui){
   h += '<div class="gr-opp">' + others.map(id => '<div class="gr-o' + (V.turn === id ? " on" : "") + '" data-o="' + esc(id) + '"><div class="nm"><span>' + esc(nameOf(id)) + "</span><i>" + visScore(V.cells[id], V.twi) + "</i></div>" + miniHTML(V.cells[id]) + "</div>").join("") + "</div>";
   // À qui le tour
   let turn = "";
+  if(ui.flipDone) turn = tr("Voilà tes " + V.nflip + " cartes ! Mémorise-les, puis touche « Continuer ».", "Here are your " + V.nflip + " cards! Remember them, then tap “Continue”.");
+  else
   if(V.phase === "flip"){
     const left = me && V.cells[me] ? V.nflip - A(V.cells[me]).filter(c => typeof c === "number").length - (ui.mine || []).length : 0;
     turn = me && left > 0 ? (left < V.nflip ? tr("Retourne encore " + left + " carte", "Flip " + left + " more card" + (left > 1 ? "s" : "")) : tr("Retourne " + left + " cartes pour commencer", "Flip " + left + " cards to start")) : tr("C'est bon ! On attend que les autres retournent leurs cartes…", "Done! Waiting for the others to flip their cards…");
@@ -647,7 +649,12 @@ const DEF = {
         paint(root, key, '<span class="eyebrow">' + tr("Manche ", "Round ") + V.round + (V.goal === 1 ? "" : tr(" · objectif ", " · target ") + V.goal) + "</span>" + tableHTML(V, me, nameOf, ui) + dockHTML(V, me, ui), r => {
           r.querySelectorAll(".gr-grid [data-i]").forEach(b => b.addEventListener("click", () => {
             const i = +b.dataset.i; buzz(8);
-            if(E.phase === "flip"){ doFlipStart(E, me, i, nameOf); step(); return; }
+            if(E.phase === "flip"){
+              if(!doFlipStart(E, me, i, nameOf)) return;
+              // Tes 2 cartes sont retournées : on te laisse les regarder avant de passer la main.
+              if(flipped(E, me) >= E.nflip){ flipDone(me); return; }
+              step(); return;
+            }
             if(E.step === "pick" && take) act(() => doTake(E, me, i, nameOf));
             // « toss » est lu AVANT act(), qui le remet à zéro.
             else if(E.step === "held"){ const t = toss; act(() => (t ? doToss(E, me, i, nameOf) : doSwap(E, me, i, nameOf))); }
@@ -661,6 +668,12 @@ const DEF = {
           }));
           const cn = r.querySelector("[data-cancel]"); if(cn) cn.addEventListener("click", () => { take = false; toss = false; draw(me); });
         });
+      }
+      function flipDone(me){
+        clearTimeout(timer);
+        const V = viewOf(E), ui = { take: false, toss: false, mine: [], flipDone: true, fresh: freshCells("local" + tok + "-" + gno + ":" + E.round + ":" + me, V.cells[me] || []) };
+        paint(root, "fd" + E.round + me + E.mv, '<span class="eyebrow">' + tr("Manche ", "Round ") + V.round + (V.goal === 1 ? "" : tr(" · objectif ", " · target ") + V.goal) + "</span>" + tableHTML(V, me, nameOf, ui) +
+          dock('<button class="btn acc" type="button" data-fok>' + tr("Continuer", "Continue") + "</button>"), r => r.querySelector("[data-fok]").addEventListener("click", () => { buzz(8); step(); }));
       }
       function end(){
         clearTimeout(timer);

@@ -1,14 +1,14 @@
 {
- "version": "4.16.4",
+ "version": "4.16.5",
  "apk": 35,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Grille sur un seul téléphone : défausser la carte piochée la jette bien, au lieu de la poser dans ta grille"
+  "Grille : au début de la manche, tu as le temps de voir tes 2 cartes retournées, puis tu touches « Continuer »"
  ],
  "files": {
   "core.js": {
-   "h": "a036e88b87fff5dbbe7bfadd90688da82c6bfef1ef063cf23fd4acdbc03cd008",
+   "h": "3aac91349454f5861db6e6040d916556c94583283fc284287b208bf75667ecba",
    "s": 261657
   },
   "firebase-app-compat.js": {
@@ -96,8 +96,8 @@
    "s": 63828
   },
   "games/grille.js": {
-   "h": "588f5ae4e039d36b18635994bdcc7f1bce00f004b5ac68c46158f98978f51be6",
-   "s": 52142
+   "h": "7c4314706be865538bafd102483d1fd73e8a695dc9fbdccc201dbd162cb83a95",
+   "s": 53234
   },
   "games/killer.js": {
    "h": "b198ef2b9c1d1e320e9350fd30829a4a3bb32a2886d9071ddccba47106104b9a",
