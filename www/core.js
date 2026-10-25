@@ -974,7 +974,7 @@ function rangeLong(d){ return d.max ? tr(d.min + " à " + d.max + " joueurs", d.
 function tileHTML(def, opts){
   opts = opts || {};
   const range = rangeTxt(def);
-  const meta = esc(range) + (def.hot ? " · 18+" : "") + (def.local && def.local.players && def.local.players.min === 1 ? " · solo" : "");
+  const meta = esc(range) + (def.hot && myHard() ? " · 18+" : "") + (def.local && def.local.players && def.local.players.min === 1 ? " · solo" : "");
   return '<button type="button" class="tile acc-' + esc(def.id) + (isWip(def) ? " wip" : "") + '" data-id="' + esc(def.id) + '"' + (opts.disabled ? " disabled" : "") + (opts.pressed ? ' aria-pressed="true"' : "") + '>' +
     '<span class="gl">' + esc(def.glyph || def.name.slice(0, 2)) + '</span><span class="nm">' + esc(def.name) + '</span><span class="ds">' + esc(def.pitch || def.tag || "") + '</span><span class="meta">' + (isWip(def) ? '<b class="wipb">' + tr("En travaux", "Beta") + '</b> · ' : "") + (opts.metaHTML || meta) + "</span>" + CHECK + "</button>";
 }
@@ -1381,7 +1381,6 @@ function render(){
   N.peers = N.nr.peers();
   renderOffline();
   const g = G();
-  if(N.host && N.g && N.g.hd !== myHard()) hostSetG({ hd: myHard() });
   syncSoftClass();
   if(hdGate(g)) return;
   if(!N.host && N.nr.kind === "p2p"){
@@ -1485,7 +1484,14 @@ function renderSalon(g){
   accent("");
   show("salon");
   $("#sa-code").textContent = N.code; renderQR(); gSalonBar(g);
-  { const mp = $("#sa-mode"), hd = roomHard(); if(mp){ mp.className = "modepill " + (hd ? "hard" : "soft"); mp.textContent = hd ? "Hard 🔥" : "Soft"; mp.title = hd ? tr("Salon en mode Hard : contenu 18+ et gages avec alcool", "Hard room: 18+ content and drinking forfeits") : tr("Salon en mode Soft : pas de contenu 18+ ni d'alcool", "Soft room: no 18+ content, no alcohol"); } }
+  { const mp = $("#sa-mode"), hd = roomHard(); if(mp){ mp.className = "modepill " + (hd ? "hard" : "soft") + (N.host ? " can" : ""); mp.textContent = (hd ? "Hard 🔥" : "Soft") + (N.host ? " ⇄" : ""); mp.setAttribute("aria-label", N.host ? tr("Mode du salon : " + (hd ? "Hard" : "Soft") + ". Toucher pour passer en " + (hd ? "Soft" : "Hard"), "Room mode: " + (hd ? "Hard" : "Soft") + ". Tap to switch to " + (hd ? "Soft" : "Hard")) : tr("Mode du salon : ", "Room mode: ") + (hd ? "Hard" : "Soft"));
+    if(!mp.dataset.ok){ mp.dataset.ok = "1"; mp.addEventListener("click", () => {
+      if(!N.nr) return;
+      if(!N.host){ toast(tr("C'est l'hôte qui choisit le mode du salon.", "The host picks the room mode.")); return; }
+      if(!N.g) return; const v = N.g.hd === false; buzz(12); hostSetG({ hd: v });
+      toast(v ? tr("Salon en mode Hard 🔥 : contenu 18+ et gages avec alcool.", "Room in Hard mode 🔥: 18+ content and drinking forfeits.") : tr("Salon en mode Soft : plus de contenu 18+ ni d'alcool.", "Room in Soft mode: no 18+ content, no alcohol."));
+      const pn = $("#sa-panel"); if(pn) pn.dataset.key = ""; const tl = $("#sa-tiles"); if(tl) tl.dataset.key = "";
+    }); } mp.title = hd ? tr("Salon en mode Hard : contenu 18+ et gages avec alcool", "Hard room: 18+ content and drinking forfeits") : tr("Salon en mode Soft : pas de contenu 18+ ni d'alcool", "Soft room: no 18+ content, no alcohol"); } }
   const np = namedPeers();
   const hostId = N.host ? N.nr.me() : N.nr.hostId();
   $("#sa-count").textContent = tr(plural(np.length, "joueur") + " dans le salon", plural2(np.length, "joueur", "joueurs", "player") + " in the room");
@@ -1511,13 +1517,13 @@ function renderSalon(g){
   const tiles = $("#sa-tiles");
   const tKey = (N.host ? "h" : "p") + "|" + sel + "|" + np.length + "|" + FSEL.salon + "|" + roomHard();
   const fb = $("#sa-filter");
-  if(!fb.dataset.ok){ fb.dataset.ok = "1"; bindFilter(fb, "salon", () => { tiles.dataset.key = ""; renderSalon(G()); }); }
+  if(fb.dataset.ok !== String(roomHard())){ fb.dataset.ok = String(roomHard()); bindFilter(fb, "salon", () => { tiles.dataset.key = ""; renderSalon(G()); }); }
   if(tiles.dataset.key !== tKey){
     tiles.dataset.key = tKey;
     tiles.innerHTML = SB.games.filter(d => (inFilter(d, FSEL.salon) && (!d.adult || roomHard())) || d.id === sel).map(d => {
       const n = np.length, ok = n >= d.min && (!d.max || n <= d.max);
       const range = rangeTxt(d);
-      const meta = (ok ? esc(range) : '<span class="bad">' + esc(range) + "</span>") + (d.hot ? " · 18+" : "");
+      const meta = (ok ? esc(range) : '<span class="bad">' + esc(range) + "</span>") + (d.hot && roomHard() ? " · 18+" : "");
       return tileHTML(d, { pressed: d.id === sel, metaHTML: meta });
     }).join("");
     $$(".tile", tiles).forEach(b => b.addEventListener("click", () => {
@@ -1585,7 +1591,7 @@ function openLocalList(){
   const t = $("#ll-tiles");
   t.innerHTML = SB.games.filter(d => d.local && (!d.adult || myHard())).sort((a, b) => isWip(a) - isWip(b)).map(d => {
     const lp = d.local.players;
-    const meta = (lp ? (lp.min === 1 ? tr("Seul ou jusqu'à " + lp.max + " · robots", "Solo or up to " + lp.max + " · bots") : rangeTxt(lp)) : tr("Tout le groupe", "Whole group")) + (d.hot ? " · 18+" : "");
+    const meta = (lp ? (lp.min === 1 ? tr("Seul ou jusqu'à " + lp.max + " · robots", "Solo or up to " + lp.max + " · bots") : rangeTxt(lp)) : tr("Tout le groupe", "Whole group")) + (d.hot && myHard() ? " · 18+" : "");
     return tileHTML(d, { metaHTML: meta });
   }).join("");
   $$(".tile", t).forEach(b => b.addEventListener("click", () => { const d = SB.byId[b.dataset.id]; if(d.local.players) openLocalPlayers(d); else startLocal(d, []); }));
