@@ -105,6 +105,8 @@ function nextRound(E){
   deal(E);
   return true;
 }
+// Gage de la manche, au moment où les cartes sont retournées : le menteur pris, ou l'accusateur qui s'est trompé.
+function gageOf(E){ return { id: E.loser, ev: E.truth ? "accuse" : "bluff" }; }
 function newBullets(ids){ const b = {}; ids.forEach(id => { b[id] = 1 + rnd(6); }); return b; }
 
 /* ---------- Trophées de fin de partie ---------- */
@@ -285,6 +287,10 @@ const DEF = {
   accent: { light: "#e0a479", dark: "#e0a479" },
   tag: tr("Pose tes cartes face cachée en jurant qu'elles correspondent à la table. « Menteur ! » : celui qui a tort appuie sur la détente.", "Play your cards face down, swearing they match the table. “Liar!”: whoever's wrong pulls the trigger."),
   min: 2, max: 6,
+  gages: [
+    { ev: "bluff", label: tr("Pris en train de bluffer", "Caught bluffing"), kind: "boit", n: 2 },
+    { ev: "accuse", label: tr("« Menteur ! » à tort : c'était la vérité", "Called “Liar!” on the truth"), kind: "boit", n: 1 }
+  ],
   rules: tr([
     "À chaque manche, la table impose une valeur : Rois, Dames ou As. Chacun reçoit 5 cartes. Les jokers valent n'importe quelle carte.",
     "À ton tour, pose 1 à 3 cartes face cachée en affirmant qu'elles correspondent à la table. Tu as le droit de mentir.",
@@ -327,6 +333,7 @@ const DEF = {
       E.seen[id] = sn;
     });
     if(changed) ctx.set(E);
+    if(changed && E.phase === "reveal" && s.phase !== "reveal") ctx.gage([gageOf(E)], "lb" + ctx.g.gid + ":" + E.round);
   },
   render(ctx, root){
     const s = ctx.s, me = ctx.me, E = fromState(s), nameOf = ctx.name;
@@ -343,6 +350,7 @@ const DEF = {
         if(F.phase === "play"){ if(canCall(F, F.turn)) doCall(F, F.turn, c.name); else doPlay(F, F.turn, [0], c.name); }
         else doShoot(F, F.loser, bl, c.name);
         c.set(F);
+        if(F.phase === "reveal" && c.s.phase !== "reveal") c.gage([gageOf(F)], "lb" + c.g.gid + ":" + F.round);
       }));
       r.append(b);
     };
@@ -453,6 +461,7 @@ const DEF = {
       }
       function reveal(){
         const L = E.loser, me = isBot(L) ? viewer : L;
+        if(api.gage && !isBot(L)) api.gage([{ id: nameOf(L), ev: E.truth ? "accuse" : "bluff" }], "lb" + tok + "-" + gno + ":" + E.round);
         paint(root, "rv" + E.round + L, revealHTML(E, me, nameOf) + (isBot(L) ? dock('<p class="wait">' + tr(esc(nameOf(L)) + " tient le revolver…", esc(nameOf(L)) + " is holding the revolver…") + "</p>") : dock('<button class="btn bad big-tap" type="button" data-shoot>' + tr(esc(nameOf(L)) + " : appuyer sur la détente", esc(nameOf(L)) + ": pull the trigger") + "</button>")), r => {
           const b = r.querySelector("[data-shoot]"); if(b) armTap(b, () => { buzz(80); doShoot(E, L, bullets, nameOf); step(); }, tr("Touche encore… si tu oses", "Tap again… if you dare"));
           revealFx(r);

@@ -174,6 +174,11 @@ SB.register({
   accent: { light: "#8f9bff", dark: "#8f9bff" },
   tag: tr("Tout le monde a le même mot, sauf les intrus. Démasquez-les avant qu'ils gagnent.", "Everyone has the same word, except the Undercovers. Unmask them before they win."),
   min: 3, max: 16,
+  gages: [
+    { ev: "demasque", label: tr("Démasqué : intrus ou Mister White éliminé", "Unmasked: Undercover or Mister White voted out"), kind: "boit", n: 2 },
+    { ev: "innocent", label: tr("Civil éliminé à tort", "Civilian voted out by mistake"), kind: "boit", n: 1 },
+    { ev: "egalite", label: tr("Égalité au vote, personne ne sort", "Tied vote, nobody's out"), kind: "tous", n: 1 }
+  ],
   rules: tr([
     "Chacun reçoit un mot secret. Les intrus ont un mot proche mais différent, et ne savent pas qu'ils le sont.",
     "Chacun son tour, donnez un indice en un seul mot en rapport avec votre mot secret, sans le prononcer.",
@@ -229,13 +234,15 @@ SB.register({
       let top = Object.keys(tally).filter(k => tally[k] === max);
       if(top.length > 1 && s.tw === "mortsubite") top = [SB.u.pick(top)];
       const vl = Object.keys(votes).map(v => [v, votes[v]]), vh = A(s.vh).concat(vl.map(x => [s.round, x[0], x[1]]));
-      if(top.length > 1){ ctx.set({ phase: "out", out: "", tie: true, tally, vl, vh, wg: "" }); return; }
+      if(top.length > 1){ ctx.set({ phase: "out", out: "", tie: true, tally, vl, vh, wg: "" }); ctx.gage([{ id: "", ev: "egalite" }], "uc" + s.k + ":" + s.round); return; }
       const out = top[0], outAt = Object.assign({}, s.outAt || {}, { [out]: s.round });
       ctx.set({ phase: roles[out] === "w" ? "wguess" : "out", out, tie: false, tally, vl, vh, outAt, wg: "", alive: alive.filter(id => id !== out), k: roles[out] === "w" ? ctx.rid() : s.k });
+      // Gage : l'intrus démasqué ou le civil éliminé à tort. Mister White, lui, attend d'avoir raté sa proposition.
+      if(roles[out] !== "w") ctx.gage([{ id: out, ev: roles[out] === "u" ? "demasque" : "innocent" }], "uc" + s.k + ":" + s.round);
     } else if(s.phase === "wguess"){
       const i = ctx.input(s.out), g = i ? clean(i.g, 30) : "";
-      if(g){ if(norm(g) && norm(g) === norm(s.civ)) ctx.set({ phase: "end", winner: "w", wg: g }); else ctx.set({ phase: "out", wg: g }); }
-      else if(!ctx.here(s.out)) ctx.set({ phase: "out", wg: "" });
+      if(g){ if(norm(g) && norm(g) === norm(s.civ)) ctx.set({ phase: "end", winner: "w", wg: g }); else { ctx.set({ phase: "out", wg: g }); ctx.gage([{ id: s.out, ev: "demasque" }], "uc" + s.k + ":w"); } }
+      else if(!ctx.here(s.out)){ ctx.set({ phase: "out", wg: "" }); ctx.gage([{ id: s.out, ev: "demasque" }], "uc" + s.k + ":w"); }
     }
   },
   render(ctx, root){
@@ -343,7 +350,7 @@ SB.register({
         const st = SB.u.store(), cs = cast(n, 0, !!st.ucWhite);
         const { civ, und } = pickPair(!!st.ucHard && SB.hard(), SB.lang());
         const sh = shuffle(names.map((_, i) => i)), imps = sh.slice(0, cs.imp), wh = cs.white ? sh[cs.imp] : -1;
-        L = { phase: "deal", i: 0, seen: false, civ, und, roles: names.map((_, i) => i === wh ? "w" : imps.indexOf(i) >= 0 ? "u" : "c"), alive: names.map((_, i) => i), out: -1, round: 1, winner: "", tw: "", tp: "", first: -1, outAt: {}, wg: "", twOn: st.ucTw !== false };
+        L = { phase: "deal", i: 0, seen: false, civ, und, roles: names.map((_, i) => i === wh ? "w" : imps.indexOf(i) >= 0 ? "u" : "c"), alive: names.map((_, i) => i), out: -1, round: 1, winner: "", tw: "", tp: "", first: -1, outAt: {}, wg: "", twOn: st.ucTw !== false, gk: Math.random().toString(36).slice(2, 8) };
       }
       function talk(){
         const ok = L.alive.filter(i => L.roles[i] !== "w");
@@ -356,6 +363,8 @@ SB.register({
         else { L.round++; L.tw = rollTwist(L.twOn, L.tw, true); L.tp = L.tw === "lettre" ? SB.u.pick(LETTERS.split("")) : ""; talk(); }
         if(L.phase === "end") api.win(names.filter((_, i) => L.winner === "c" ? L.roles[i] === "c" : L.winner === "w" ? L.roles[i] === "w" : L.roles[i] !== "c"));
       }
+      // Gages sur un seul téléphone : une clé par tour, pour ne jamais compter deux fois.
+      const gage = (i, ev) => { if(api.gage) api.gage([{ id: i < 0 ? "" : names[i], ev }], "uc" + L.gk + ":" + L.round); };
       L = { phase: "setup" };
       const go = () => {
         if(L.phase === "setup"){
@@ -389,14 +398,14 @@ SB.register({
         } else if(L.phase === "elim"){
           const imm = L.tw === "immunite" ? L.first : -1;
           screen(root, "e" + L.round, '<span class="eyebrow">' + tr("Tour ", "Round ") + L.round + '</span><p class="big">' + tr("Qui a été éliminé ?", "Who got voted out?") + '</p><div class="choices">' + L.alive.map(i => '<button type="button" class="opt" data-i="' + i + '"' + (i === imm ? " disabled" : "") + ">" + esc(names[i]) + (i === imm ? tr(" · immunisé", " · immune") : "") + "</button>").join("") + '</div><button class="link" type="button" data-tie style="align-self:center">' + tr("Égalité, personne ne sort", "Tie, nobody's out") + "</button>", r => {
-            r.querySelectorAll("[data-i]").forEach(b => b.addEventListener("click", () => { L.out = +b.dataset.i; L.alive = L.alive.filter(i => i !== L.out); L.outAt[L.out] = L.round; L.wg = ""; L.phase = L.roles[L.out] === "w" ? "wpass" : "out"; go(); }));
-            r.querySelector("[data-tie]").addEventListener("click", () => { L.round++; L.tw = rollTwist(L.twOn, L.tw, true); L.tp = L.tw === "lettre" ? SB.u.pick(LETTERS.split("")) : ""; talk(); go(); });
+            r.querySelectorAll("[data-i]").forEach(b => b.addEventListener("click", () => { L.out = +b.dataset.i; L.alive = L.alive.filter(i => i !== L.out); L.outAt[L.out] = L.round; L.wg = ""; L.phase = L.roles[L.out] === "w" ? "wpass" : "out"; if(L.phase === "out") gage(L.out, L.roles[L.out] === "u" ? "demasque" : "innocent"); go(); }));
+            r.querySelector("[data-tie]").addEventListener("click", () => { gage(-1, "egalite"); L.round++; L.tw = rollTwist(L.twOn, L.tw, true); L.tp = L.tw === "lettre" ? SB.u.pick(LETTERS.split("")) : ""; talk(); go(); });
           });
         } else if(L.phase === "wpass"){
           screen(root, "wp" + L.round, '<span class="eyebrow">' + tr("Éliminé", "Voted out") + '</span><div class="who">' + esc(names[L.out]) + '</div><p style="font-size:18px">' + tr(esc(names[L.out]) + " était <b>Mister White</b>. Donnez-lui le téléphone : s'il devine le mot des civils, il gagne seul.", esc(names[L.out]) + " was <b>Mister White</b>. Hand them the phone: if they guess the Civilians' word, they win alone.") + "</p>" +
             '<div class="card acc"><span class="eyebrow">' + tr("Ta proposition", "Your guess") + '</span><div class="row"><input class="txt" id="uc-wg" maxlength="30" autocomplete="off" placeholder="' + tr("Le mot des civils", "The Civilians' word") + '"><button class="btn acc" type="button" data-wg style="flex:none">' + tr("Tenter", "Guess") + "</button></div></div>", r => {
             const inp = r.querySelector("#uc-wg");
-            const go2 = () => { const g = clean(inp.value, 30); if(!g) return; L.wg = g; if(norm(g) && norm(g) === norm(L.civ)){ L.winner = "w"; L.phase = "end"; api.win([names[L.out]]); } else L.phase = "out"; go(); };
+            const go2 = () => { const g = clean(inp.value, 30); if(!g) return; L.wg = g; if(norm(g) && norm(g) === norm(L.civ)){ L.winner = "w"; L.phase = "end"; api.win([names[L.out]]); } else { L.phase = "out"; gage(L.out, "demasque"); } go(); };
             r.querySelector("[data-wg]").addEventListener("click", go2); inp.addEventListener("keydown", e => { if(e.key === "Enter") go2(); });
           });
         } else if(L.phase === "out"){

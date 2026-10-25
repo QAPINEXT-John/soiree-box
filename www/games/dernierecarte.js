@@ -43,6 +43,8 @@ function order(cards){
          sz (sept-zéro), jump (interception), dp (pioche jusqu'à pouvoir jouer), tw (coups de théâtre),
          tc (tours joués), evAt, ev, evn, evt, evx, ban, banTo, dbl, dblTo, extra, st (stats par joueur), aw (trophées) } */
 const rnd = n => Math.floor(Math.random() * n);
+/* Gages : le moteur note les événements de l'action en cours (GX), l'hôte ou le téléphone les envoie ensuite d'un seul coup. */
+const GX = [];
 function stat(E, id, k, n){ const S = E.st = E.st || {}; const o = S[id] = Object.assign({}, S[id]); o[k] = (o[k] || 0) + (n == null ? 1 : n); S[id] = o; }
 function draw1(E){
   if(!E.draw.length){ E.draw = shuffle(E.disc); E.disc = []; }
@@ -54,6 +56,7 @@ function give(E, id, n, pen){
   if(h.length > 1) E.called[id] = false;
   E.dc = (E.dc || 0) + 1; E.dby = id; E.dn = n; // pour l'animation de pioche
   stat(E, id, "dr", got); if(pen) stat(E, id, "pen", got);
+  if(pen && got >= 4) GX.push({ id, ev: "plus4" });
 }
 function nextFrom(E, from, steps){
   const n = E.order.length, i = E.order.indexOf(from);
@@ -174,6 +177,7 @@ function roundEnd(E, w, nameOf){
   E.score[w] = (E.score[w] || 0) + pts;
   E.winner = w; E.gain = pts; E.extra = ""; E.ban = ""; E.dbl = false;
   E.phase = E.round >= E.rounds ? "end" : "roundend";
+  if(E.phase === "roundend") GX.push({ id: w, ev: "manche" }); // la fin de partie, elle, est gérée par le cœur
   E.log = L(E, nameOf(w) + " pose sa dernière carte et gagne " + pts + " points !", nameOf(w) + " plays their last card and scores " + pts + (pts === 1 ? " point!" : " points!"));
   if(E.phase === "end") E.aw = awards(E);
 }
@@ -259,7 +263,7 @@ function doCall(E, id, nameOf){
 }
 function doCatch(E, by, who, nameOf){
   if(E.phase !== "play" || by === who || (E.hands[who] || []).length !== 1 || E.called[who]) return false;
-  give(E, who, 2, true); stat(E, by, "ct"); E.log = L(E, nameOf(by) + " prend " + nameOf(who) + " en flagrant délit : oubli de « Dernière ! », +2 cartes", nameOf(by) + " catches " + nameOf(who) + " red-handed: forgot to call “Last card!”, +2 cards"); return true;
+  give(E, who, 2, true); stat(E, by, "ct"); GX.push({ id: who, ev: "contre" }); E.log = L(E, nameOf(by) + " prend " + nameOf(who) + " en flagrant délit : oubli de « Dernière ! », +2 cartes", nameOf(by) + " catches " + nameOf(who) + " red-handed: forgot to call “Last card!”, +2 cards"); return true;
 }
 function catchable(E, id){ return E.phase === "play" && (E.hands[id] || []).length === 1 && !E.called[id]; }
 
@@ -403,6 +407,11 @@ function fromState(s, priv){
   E.evt = s.evt == null ? -99 : +s.evt;
   return E;
 }
+// Envoie les gages notés pendant l'action (une clé unique par coup : manche, cartes posées, pioches, phase).
+function flushNet(c, E){
+  const list = GX.splice(0);
+  if(list.length) c.gage(list, "dc" + c.g.gid + ":" + E.round + ":" + (E.pc || 0) + ":" + (E.dc || 0) + ":" + E.phase);
+}
 function publish(c, E){
   c.setPriv({ draw: E.draw, disc: E.disc });
   const o = Object.assign({}, E); delete o.draw; delete o.disc; o.left = E.draw.length;
@@ -496,6 +505,11 @@ const DEF = {
   accent: { light: "#ff8a4c", dark: "#ff8a4c" },
   tag: tr("Même couleur ou même valeur, des +2, des +4, des inversions… Et n'oublie pas de crier « Dernière ! » quand il ne te reste plus qu'une carte.", "Match the color or the value, with +2s, +4s, Reverses… And don't forget to shout “Last card!” when you're down to one card."),
   min: 2, max: 10,
+  gages: [
+    { ev: "contre", label: tr("Pris sans avoir crié « Dernière ! »", "Caught without calling “Last card!”"), kind: "boit", n: 1 },
+    { ev: "plus4", label: tr("Encaisse 4 cartes ou plus d'un coup", "Takes 4 or more cards at once"), kind: "boit", n: 1 },
+    { ev: "manche", label: tr("Gagne une manche (avant la dernière)", "Wins a round (before the last one)"), kind: "distribue", n: 2 }
+  ],
   rules: tr([
     "Chacun reçoit 7 cartes. À ton tour, pose une carte de la même couleur ou de la même valeur que celle du dessus.",
     "Passe-tour : le suivant saute son tour. Inversion : le sens change. +2 et +4 : le suivant pioche. Joker et +4 : tu choisis la couleur.",
@@ -535,6 +549,7 @@ const DEF = {
     if(s.phase !== "play") return;
     const E = fromState(s, ctx.priv());
     let changed = false;
+    GX.length = 0;
     ctx.ids.forEach(id => {
       const x = ctx.input(id); if(!x) return;
       const sn = Object.assign({}, E.seen[id] || {});
@@ -551,7 +566,7 @@ const DEF = {
       }
       E.seen[id] = sn;
     });
-    if(changed) publish(ctx, E);
+    if(changed){ publish(ctx, E); flushNet(ctx, E); }
   },
   render(ctx, root){
     const s = ctx.s, me = ctx.me, E = tableView(s);
@@ -591,8 +606,9 @@ const DEF = {
           box.textContent = tr("Faire jouer " + ctx.name(E.turn) + " (absent)", "Play for " + ctx.name(E.turn) + " (away)");
           box.addEventListener("click", () => ctx.act(c => {
             const F = fromState(c.s, c.priv());
+            GX.length = 0;
             if(F.drew) doPass(F, F.turn, c.name); else { doDraw(F, F.turn, c.name); if(F.drew) doPass(F, F.turn, c.name); }
-            publish(c, F);
+            publish(c, F); flushNet(c, F);
           }));
           r.append(box);
         }
@@ -654,7 +670,7 @@ const DEF = {
             nameMap = {}; const ids = names.map((nm, i) => { nameMap["h" + i] = nm; return "h" + i; });
             for(let i = 0; i < bots; i++){ nameMap["b" + i] = BOTN[i] + " 🤖"; ids.push("b" + i); }
             E = { lg: SB.lang(), order: shuffle(ids), stack: R.stack, sz: R.sz, jump: R.jump, dp: R.dp, tw: R.tw, round: 1, rounds, score: {}, st: {} };
-            newRound(E); viewer = humans().length === 1 ? humans()[0] : ""; sel = null; prevSel = null; gno++; jumpPc = E.pc || 0;
+            GX.length = 0; newRound(E); viewer = humans().length === 1 ? humans()[0] : ""; sel = null; prevSel = null; gno++; jumpPc = E.pc || 0;
             step();
           });
         });
@@ -665,7 +681,13 @@ const DEF = {
         const vic = humans().find(id => catchable(E, id));
         if(vic) later(() => { if(catchable(E, vic) && E.phase === "play"){ doCatch(E, bs[Math.floor(Math.random() * bs.length)], vic, nameOf); buzz([40, 40, 40]); } step(); }, 2600);
       }
+      // Gages sur un seul téléphone : seulement pour les humains (les robots ne boivent pas).
+      function flushLocal(){
+        const list = GX.splice(0).filter(x => !isBot(x.id)).map(x => ({ id: nameOf(x.id), ev: x.ev }));
+        if(list.length && api.gage) api.gage(list, "dc" + tok + "-" + gno + ":" + E.round + ":" + (E.pc || 0) + ":" + (E.dc || 0) + ":" + E.phase);
+      }
       function step(){
+        flushLocal();
         if(E.phase !== "play"){ end(); return; }
         // Interception : un robot qui a la même carte que celle du dessus saute parfois sur l'occasion.
         if(E.jump && E.pc !== jumpPc){

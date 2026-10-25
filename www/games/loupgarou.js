@@ -191,6 +191,8 @@ function dawn(c, W, heal, poison){
     if(c.s.ev === "couvrefeu") W.dl = c.now() + CURFEW;
   }
   W.phase = "day"; W.k = c.rid();
+  // Gages : les morts de la nuit (loups, poison, chagrin). Rien de caché : leur mort est annoncée à l'aube.
+  if(W.deaths.length) c.gage(W.deaths.map(d => ({ id: d.id, ev: "nuit" })), "lg" + W.k);
   settle(c, W);
 }
 function shoot(c, target){
@@ -220,6 +222,7 @@ function countVotes(c){
   const line = lg => (W.elim ? (W.lot ? T(lg, "égalité, le sort désigne ", "tie, fate picks ") : T(lg, "le village élimine ", "the village eliminates ")) + c.name(W.elim) + (s.reveal ? " · " + rn(roles[W.elim], lg) : "") : T(lg, "égalité, personne n'est éliminé", "tie, nobody is eliminated")) + (extra(lg).length ? " · " + extra(lg).join(", ") : "");
   W.log.push({ t: "Jour " + s.day + " : " + line("fr"), en: "Day " + s.day + ": " + line("en") });
   W.phase = "verdict"; W.k = c.rid();
+  c.gage(W.elim ? [{ id: W.elim, ev: "vote" }] : [{ id: "", ev: "egalite" }], "lg" + W.k);
   settle(c, W);
 }
 
@@ -228,6 +231,11 @@ const DEF = {
   accent: { light: "#7bd88f", dark: "#7bd88f" },
   tag: tr("Rôles secrets, nuits sanglantes, votes sans pitié. L'appli fait le narrateur : personne n'a besoin d'être meneur.", "Secret roles, bloody nights, ruthless votes. The app narrates, so nobody has to sit out as game master."),
   min: 5, max: 18,
+  gages: [
+    { ev: "nuit", label: tr("Mort pendant la nuit", "Died during the night"), kind: "boit", n: 1 },
+    { ev: "vote", label: tr("Éliminé par le vote du village", "Voted out by the village"), kind: "boit", n: 2 },
+    { ev: "egalite", label: tr("Égalité au vote, personne ne sort", "Tied vote, nobody's out"), kind: "tous", n: 1 }
+  ],
   rules: tr([
     "Chacun découvre son rôle en secret : loup-garou, villageois, ou un rôle spécial.",
     "La nuit, tout le monde touche son écran pour ne pas se trahir. Les loups choisissent une victime ensemble, la voyante découvre le rôle d'un joueur.",
@@ -562,6 +570,7 @@ const DEF = {
         if(poison) G.pot.poison = false;
         if(G.wv && !heal) fallL(G.wv, dead);
         if(poison) fallL(poison, dead);
+        if(dead.length && api.gage) api.gage(dead.map(id => ({ id: nameOf(id), ev: "nuit" })), "lg" + seed + ":n" + G.night);
         G.day++;
         if(evType(G.ev) === "day"){
           if(G.ev === "maire" || G.ev === "corbeau") G.evP = pick(G.alive);
@@ -577,6 +586,7 @@ const DEF = {
         const ev = evType(G.ev) === "day" ? G.ev : "", tip = ev === "maire" ? '<p class="sm">' + tr("La voix de " + esc(nameOf(G.evP)) + " compte double.", esc(nameOf(G.evP)) + "'s vote counts double.") + "</p>" : ev === "corbeau" ? '<p class="sm">' + tr("Compte une voix de plus contre " + esc(nameOf(G.evP)) + " (corbeau).", "Count one extra vote against " + esc(nameOf(G.evP)) + " (Raven).") + "</p>" : "";
         pickScreen("vo" + G.day, CSS + '<span class="eyebrow">' + tr("Jour " + G.day + " · le vote", "Day " + G.day + " · the vote") + "</span>" + bannerL("day") + (G.dl ? '<p class="lg-cd" data-cd></p>' : "") + say(tr((G.dl ? "Une minute de débat, puis votez à main levée." : "Débattez, puis votez à main levée.") + " Qui le village élimine-t-il ?", (G.dl ? "One minute of debate, then vote by show of hands." : "Debate, then vote by show of hands.") + " Who does the village eliminate?")) + tip, G.alive, t => {
           G.dl = 0;
+          if(api.gage) api.gage([t ? { id: nameOf(t), ev: "vote" } : { id: "", ev: "egalite" }], "lg" + seed + ":d" + G.day);
           if(!t){ G.log.push(tr("Jour " + G.day + " : égalité, personne n'est éliminé", "Day " + G.day + ": tie, nobody is eliminated")); night(); return; }
           G.hq = [];
           const dead = fallL(t, []);
