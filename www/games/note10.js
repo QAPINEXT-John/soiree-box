@@ -594,6 +594,9 @@ function revealTous(ctx){
   const ip = indPts(res), sc = Object.assign({}, s.sc);
   res.forEach(x => { sc[x[0]] = (sc[x[0]] || 0) + x[2]; });
   sc[s.ind] = (sc[s.ind] || 0) + ip;
+  const gl = res.map(x => { const d = Math.abs(s.note - x[1]); return d === 0 ? { id: x[0], ev: "pile" } : d >= 3 ? { id: x[0], ev: "rate" } : null; }).filter(Boolean);
+  if(res.length && !ip) gl.push({ id: s.ind, ev: "flop" });
+  ctx.gage(gl, s.k);
   ctx.set({ phase: "result", res, ip, sc,
     hist: A(s.hist).concat(res.map(x => [s.round, cat, s.note, x[1], x[2], ctx.name(x[0]), s.tw || "", [iname]])),
     rh: A(s.rh).concat([[s.round, cat, s.note, iname, s.tw || "", res.map(x => [ctx.name(x[0]), x[1], x[2]]), ip]]) });
@@ -754,6 +757,11 @@ SB.register({
   accent: { light: "#ff7b5c", dark: "#ff7b5c" },
   tag: tr("Une catégorie, une note secrète. Faites-la deviner avec des exemples.", "One category, one secret number. Get it guessed with examples."),
   min: 2, max: 12,
+  gages: [
+    { ev: "rate", label: tr("Note ratée (à 3 ou plus)", "Missed the score (by 3 or more)"), kind: "boit", n: 2 },
+    { ev: "pile", label: tr("Note pile", "Spot on"), kind: "distribue", n: 2 },
+    { ev: "flop", label: tr("Indicateur : personne n'a marqué", "Clue giver: nobody scored"), kind: "boit", n: 2 }
+  ],
   rules: [
     tr("Tout le monde devine (par défaut) : à chaque manche, un indicateur voit une catégorie et une note secrète de 1 à 10. Il donne 1 à 3 exemples qui valent cette note pour lui, sans chiffre.", "Everyone guesses (default): each round, a clue-giver sees a category and a secret number from 1 to 10. They give 1 to 3 examples that are worth that number to them, with no digits."),
     tr("Tous les autres proposent une note en secret, chacun pour soi. Pile : 3 points. À 1 près : 2. À 2 près : 1.", "Everyone else secretly guesses a number, each on their own. Spot on: 3 points. Off by 1: 2. Off by 2: 1."),
@@ -789,7 +797,8 @@ SB.register({
     } else if(s.phase === "guess"){
       const i = ctx.input(s.guesser);
       if(i && Number.isInteger(i.n) && i.n >= 1 && i.n <= 10){
-        const pts = points(s.note, i.n, s.tw);
+        const pts = points(s.note, i.n, s.tw), dd = Math.abs(s.note - i.n);
+        if(dd === 0 || dd >= 3) ctx.gage([{ id: s.guesser, ev: dd === 0 ? "pile" : "rate" }], s.k);
         ctx.set({ phase: "result", guess: i.n, pts, score: s.score + pts, max: (+s.max || 0) + rmax(s.tw), hist: A(s.hist).concat([histRow(ctx, i.n, pts)]) });
       }
     }
@@ -947,6 +956,9 @@ SB.register({
               L.res.forEach(x => L.hist.push([L.round, c[0], L.note, x[1], x[2], x[0], L.tw, [g]]));
               L.rh.push([L.round, c[0], L.note, g, L.tw, L.res.slice(), ip]);
               L.phase = "tres"; go();
+              const gl = L.res.map(x => { const d = Math.abs(L.note - x[1]); return d === 0 ? { id: x[0], ev: "pile" } : d >= 3 ? { id: x[0], ev: "rate" } : null; }).filter(Boolean);
+              if(L.res.length && !ip) gl.push({ id: g, ev: "flop" });
+              if(api.gage) api.gage(gl, "n10t" + L.round + "|" + g);
             });
           });
         } else if(L.phase === "tres"){
@@ -978,6 +990,7 @@ SB.register({
             r.querySelectorAll("[data-n]").forEach(b => b.addEventListener("click", () => { L.guess = +b.dataset.n; r.querySelectorAll("[data-n]").forEach(x => x.setAttribute("aria-pressed", +x.dataset.n === L.guess)); r.querySelector("[data-v]").disabled = false; }));
             r.querySelector("[data-v]").addEventListener("click", () => {
               if(!L.guess) return; const pts = points(L.note, L.guess, L.tw); L.score += pts; L.max += rmax(L.tw); L.hist.push([L.round, c[0], L.note, L.guess, pts, g, L.tw, []]); L.phase = "result"; go();
+              const dd = Math.abs(L.note - L.guess); if(api.gage && (dd === 0 || dd >= 3)) api.gage([{ id: g, ev: dd === 0 ? "pile" : "rate" }], "n10u" + L.round + "|" + g);
             });
           });
         } else if(L.phase === "result"){

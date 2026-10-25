@@ -1824,6 +1824,8 @@ function decide(E, chosen){
   });
   E.subs.forEach(s => { if(authors.indexOf(s.id) < 0) E.miss[s.id] = (E.miss[s.id] || 0) + 1; });
   E.win = w; E.gain = gain; E.phase = "rev";
+  // Gages de la manche : les gagnants distribuent, les autres auteurs boivent.
+  E.gl = authors.map(id => ({ id, ev: "gagne" })).concat(E.subs.map(s => s.id).filter((id, i, a) => a.indexOf(id) === i && authors.indexOf(id) < 0).map(id => ({ id, ev: "perd" })));
   return true;
 }
 // Vote du public : la ou les réponses avec le plus de voix (on ne vote pas pour soi).
@@ -1959,7 +1961,7 @@ function view(root, ph, key, html, bind){
 
 /* ---------- Réseau ---------- */
 function fromState(s, p){ const E = JSON.parse(JSON.stringify(s)); delete E.k; E.qd = A(p.qd).slice(); E.ad = A(p.ad).slice(); E.order = A(E.order); E.subs = A(E.subs).map(x => Object.assign({}, x, { a: A(x.a) })); E.win = A(E.win); E.duel = A(E.duel); Object.keys(E.hands || {}).forEach(id => { E.hands[id] = A(E.hands[id]); }); return E; }
-function publish(c, E){ c.setPriv({ qd: E.qd, ad: E.ad }); const o = Object.assign({}, E); delete o.qd; delete o.ad; o.k = c.rid(); c.set(o); }
+function publish(c, E){ if(E.phase === "rev" && E.gl && c.gage) c.gage(E.gl, "pl" + E.round); c.setPriv({ qd: E.qd, ad: E.ad }); const o = Object.assign({}, E); delete o.qd; delete o.ad; delete o.gl; o.k = c.rid(); c.set(o); }
 const UI = { k: "", sel: [], blankOpen: false, blank: "", js: null };
 function liveIds(ctx){ return ctx.ids.filter(id => ctx.here(id)); }
 
@@ -1968,6 +1970,10 @@ const DEF = {
   accent: { light: "#ff4fd8", dark: "#ff4fd8" },
   tag: tr("Une phrase à trous, sept cartes en main : complète-la avec la réponse la plus drôle (ou la plus horrible). Le juge garde sa préférée.", "A fill-in-the-blank sentence, seven cards in hand: complete it with the funniest (or most horrible) answer. The judge keeps their favorite."),
   min: 3, max: 12,
+  gages: [
+    { ev: "perd", label: tr("Perdre la manche", "Lose the round"), kind: "boit", n: 1 },
+    { ev: "gagne", label: tr("Gagner la manche", "Win the round"), kind: "distribue", n: 2 }
+  ],
   rules: tr([
     "Chacun reçoit 7 cartes réponses. À chaque manche, une phrase à trous s'affiche et un juge est désigné (chacun son tour).",
     "Les autres complètent la phrase avec une carte de leur main (deux pour les phrases à deux trous), en secret.",
@@ -2153,7 +2159,7 @@ const DEF = {
         view(root, "ju" + E.round, "ju" + E.round + js, head(E, nameOf) + '<span class="eyebrow">' + esc(verb) + "</span>" + subsHTML(E, nameOf, { sel: js }) +
           dock('<button class="btn acc" type="button" data-pick' + (js == null ? " disabled" : "") + ">" + tr("Elle gagne !", "This one wins!") + "</button>"), r => {
           r.querySelectorAll("[data-s]").forEach(b => b.addEventListener("click", () => { js = +b.dataset.s; buzz(8); judge(); }));
-          r.querySelector("[data-pick]").addEventListener("click", () => { if(js == null) return; buzz(24); decide(E, [js]); reveal(); });
+          r.querySelector("[data-pick]").addEventListener("click", () => { if(js == null) return; buzz(24); decide(E, [js]); reveal(); if(api.gage && E.gl) api.gage(E.gl.map(x => ({ id: nameOf(x.id), ev: x.ev })), "pl" + E.round + Math.random()); });
         });
       }
       function reveal(){

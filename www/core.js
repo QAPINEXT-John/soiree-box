@@ -1046,7 +1046,7 @@ function renderHome(){
   else if(!$("#h-err").hidden){ info.hidden = true; }
   else info.hidden = true;
 }
-function goHome(){ accent(""); keepAwake(false); show("home"); renderHome(); }
+function goHome(){ accent(""); keepAwake(false); const gs0 = document.getElementById("gage-sheet"); if(gs0) gs0.remove(); show("home"); renderHome(); }
 
 /* =================== Mises à jour sans réinstaller (appli Android) ===================
    L'appli vérifie en ligne (version.json) s'il y a une nouvelle version. Les nouveautés se téléchargent
@@ -1165,9 +1165,9 @@ function pres(p){ return p && p.presence && typeof p.presence === "object" ? p.p
 function peerById(id){ return N.peers.find(p => p.peer === id); }
 function namedPeers(){ return N.peers.filter(p => clean(pres(p).name, 16)); }
 function G(){ if(!N.nr) return null; return N.host ? N.g : N.nr.game(); }
-function freshSalon(){ return { v: 1, code: N.code, phase: "salon", sel: "", game: "", gid: "", players: [], s: null, opts: null, last: null }; }
+function freshSalon(){ return { v: 1, code: N.code, phase: "salon", sel: "", game: "", gid: "", players: [], s: null, opts: null, last: null, gages: gSettings(store().gages), gt: {} }; }
 function makeCode(){ const L = "ABCDEFGHJKLMNPQRSTUVWXYZ"; let s = ""; for(let i = 0; i < 4; i++) s += L[Math.floor(Math.random() * L.length)]; return s; }
-function myExtras(){ const x = {}; SB.games.forEach(d => { if(typeof d.presence === "function"){ try{ const v = d.presence(); if(v != null) x[d.id] = v; }catch(e){} } }); return x; }
+function myExtras(){ const x = Object.assign({}, CORE_X); SB.games.forEach(d => { if(typeof d.presence === "function"){ try{ const v = d.presence(); if(v != null) x[d.id] = v; }catch(e){} } }); return x; }
 SB.refreshExtras = function(){ if(N.nr) N.nr.presence({ x: plain(myExtras()) }); };
 
 async function netEnter(code, asHost){
@@ -1292,6 +1292,8 @@ function makeCtx(){
     setPriv(o){ if(N.host && N.nr) N.nr.setPriv(o); },
     now: () => (N.nr ? N.nr.now() : Date.now()),
     act(fn){ runHost(fn); },
+    // Gages : [{ id, ev }] (ev déclaré dans def.gages), clé = une par manche pour ne pas compter deux fois.
+    gage(list, key){ if(N.host) gHostApply(g.game, list, key); },
     rid, u: SB.u
   };
   return ctx;
@@ -1304,6 +1306,7 @@ function runHost(fn){
   inHost = false;
   if(pendingEnd){
     const sum = pendingEnd; pendingEnd = null; pending = null;
+    if(N.g.game && (SB.byId[N.g.game] || {}).gagesEnd !== false){ const w = A(sum.win).map(String), ids = A(N.g.players).map(A).map(r => String(r[0])); if(w.length) gHostApply(N.g.game, w.map(id => ({ id, ev: "_win" })).concat(ids.filter(id => w.indexOf(id) < 0).map(id => ({ id, ev: "_lose" }))), "end" + (N.g.gid || "")); }
     trail("Fin de partie : " + clean(sum.title, 80));
     const who = {}; A(N.g.players).map(A).forEach(p => { who[p[0]] = p[1]; });
     const tally = addTally(N.g.tally, A(sum.win).map(id => who[id]));
@@ -1365,9 +1368,13 @@ function render(){
         N.host ? tr("Touche encore pour revenir au salon", "Tap again to go back to the room") : tr("Touche encore pour quitter", "Tap again to leave"));
     }
     try{ def.render(ctx, root); }catch(e){ console.error(e); }
+    if(N.host) gHostTick();
+    gRenderNet();
     return;
   }
   renderSalon(g);
+  if(N.host) gHostTick();
+  gRenderNet();
 }
 
 function optList(def){ return A(def.options); }
@@ -1417,7 +1424,7 @@ function salonDock(g, np){
 function renderSalon(g){
   accent("");
   show("salon");
-  $("#sa-code").textContent = N.code; renderQR();
+  $("#sa-code").textContent = N.code; renderQR(); gSalonBar(g);
   const np = namedPeers();
   const hostId = N.host ? N.nr.me() : N.nr.hostId();
   $("#sa-count").textContent = tr(plural(np.length, "joueur") + " dans le salon", plural2(np.length, "joueur", "joueurs", "player") + " in the room");
@@ -1513,6 +1520,7 @@ function launch(def){
 const L = { def: null, tick: null };
 function openLocalList(){
   accent(""); keepAwake(false); L.def = null; L.tick = null;
+  const gs0 = $("#gage-sheet"); if(gs0) gs0.remove();
   const t = $("#ll-tiles");
   t.innerHTML = SB.games.filter(d => d.local).sort((a, b) => isWip(a) - isWip(b)).map(d => {
     const lp = d.local.players;
@@ -1522,6 +1530,7 @@ function openLocalList(){
   $$(".tile", t).forEach(b => b.addEventListener("click", () => { const d = SB.byId[b.dataset.id]; if(d.local.players) openLocalPlayers(d); else startLocal(d, []); }));
   const lt = $("#ll-tally"), th = tallyHTML(LT.tally, LT.played);
   if(lt){ lt.hidden = !th; lt.innerHTML = th; }
+  gLocalBar();
   show("llist");
 }
 let LP = { def: null, names: [] };
@@ -1567,8 +1576,268 @@ function startLocal(def, names){
   let won = false;
   const api = { names: names.slice(), u: SB.u, exit: openLocalList, onTick(fn){ L.tick = fn; }, again(){ startLocal(def, names); },
     // Le jeu signale les gagnants de la partie (noms) : ça alimente le classement de la soirée.
-    win(list){ if(won) return; won = true; LT.tally = addTally(LT.tally, list); LT.played++; } };
+    win(list){ if(won) return; won = true; LT.tally = addTally(LT.tally, list); LT.played++;
+      const w = A(list); if(def.gagesEnd !== false) gLocalApply(def.id, names, w.map(n => ({ id: n, ev: "_win" })).concat(names.filter(n => w.indexOf(n) < 0).map(n => ({ id: n, ev: "_lose" }))), "end" + rid()); },
+    // Gages d'une manche : [{ id: prénom, ev }], clé unique par manche.
+    gage(list, key){ gLocalApply(def.id, names, list, key); } };
   try{ def.local.start(root, api); }catch(e){ console.error(e); }
+}
+
+/* =================== Gages (alcool ou sans alcool, entièrement réglables) ===================
+   - L'hôte règle les gages du salon (unité, intensité, plafond, rappel d'eau, joker, déclencheurs par jeu, gages perso).
+   - Chaque téléphone a son profil : « je bois » ou « sans alcool », et son propre plafond.
+   - Les jeux déclarent leurs déclencheurs (def.gages = [{ ev, label, kind: "boit"|"distribue"|"tous", n }]) et appellent
+     ctx.gage([{ id, ev }], clé) en réseau (chez l'hôte) ou api.gage([{ id: nom, ev }], clé) sur un seul téléphone.
+   - Fin de partie : tous les jeux, le gagnant distribue et les autres boivent (réglable).
+   - Un panneau « Gages de la manche » s'affiche alors sur chaque téléphone. */
+const GDEF = { on: false, unit: "gorgee", level: "classique", cap: 15, water: 8, joker: true, trig: {}, custom: [] };
+const GMULT = { chill: .5, classique: 1, chaud: 2, perso: 1 };
+const GEND = [
+  { ev: "_win", label: tr("Gagnant de la partie", "Game winner"), kind: "distribue", n: 3 },
+  { ev: "_lose", label: tr("Tous les autres joueurs", "Everyone else"), kind: "boit", n: 1 }
+];
+const GTASKS = { fr: ["Fais 10 squats", "Chante le refrain de ton choix", "Fais un compliment sincère à chaque joueur", "Parle avec un accent pendant 2 minutes", "Imite quelqu'un du groupe, les autres devinent", "Danse 20 secondes sans musique", "Raconte ta pire honte en 30 secondes", "Fais 10 pompes (ou 20 sur les genoux)", "Montre la dernière photo de ta galerie", "Laisse le groupe choisir ta photo de profil pour 1 h", "Fais la planche 30 secondes", "Envoie « tu me manques » au 3e contact de ta liste", "Mange une cuillère de moutarde ou de sauce piquante", "Parle à la 3e personne jusqu'à la prochaine manche"],
+  en: ["Do 10 squats", "Sing the chorus of your choice", "Give every player a sincere compliment", "Talk with an accent for 2 minutes", "Impersonate someone in the group, the others guess", "Dance for 20 seconds with no music", "Tell your most embarrassing moment in 30 seconds", "Do 10 push-ups (or 20 on your knees)", "Show the last photo in your camera roll", "Let the group pick your profile picture for 1 hour", "Hold a plank for 30 seconds", "Text “I miss you” to the 3rd contact in your list", "Eat a spoonful of mustard or hot sauce", "Talk about yourself in the third person until next round"] };
+const gSettings = s => Object.assign({}, GDEF, s && typeof s === "object" ? s : {}, { trig: Object.assign({}, (s && s.trig) || {}), custom: A(s && s.custom).map(x => clean(x, 120)).filter(Boolean).slice(0, 40) });
+const gUnit = (S, n) => { const u = { gorgee: [tr("gorgée", "sip"), tr("gorgées", "sips")], shot: ["shot", "shots"], culsec: [tr("cul-sec", "chug"), tr("culs-secs", "chugs")] }[S.unit] || ["", ""]; return n + " " + (n === 1 ? u[0] : u[1]); };
+function gEvents(gameId){ const d = SB.byId[gameId]; return A(d && d.gages).concat(GEND); }
+function gBase(S, gameId, ev){ const k = gameId + ":" + ev; if(S.trig[k] != null) return Math.max(0, Math.min(10, +S.trig[k] || 0)); const e = gEvents(gameId).find(x => x.ev === ev); return e ? e.n : 0; }
+function gAmount(S, gameId, ev){ const b = gBase(S, gameId, ev); return b > 0 ? Math.max(1, Math.round(b * (GMULT[S.level] || 1))) : 0; }
+function gTask(S){ const pool = A(S.custom).length ? A(S.custom) : GTASKS[LANG === "en" ? "en" : "fr"]; return pool[Math.floor(Math.random() * pool.length)] || "…"; }
+const gT = (t, name) => { t = Object.assign({}, t || {}); t[name] = Object.assign({ s: 0, g: 0, t: 0, w: 0 }, t[name] || {}); return t; };
+// Calcule les gages d'une liste d'événements. players : [{ id, name, alc, cap }] ; tally : { nom: { s, g, t, w } }.
+function gCompute(S, gameId, list, players, tally){
+  const items = []; let T = Object.assign({}, tally || {});
+  const P = id => players.find(p => p.id === id);
+  const drink = (p, n, why) => {
+    if(!p || n <= 0) return;
+    T = gT(T, p.name); const cur = T[p.name].s, cap = Math.min(S.cap, p.cap > 0 ? p.cap : S.cap);
+    if(!p.alc || cur >= cap){ T[p.name].t++; items.push({ t: "task", who: p.id, name: p.name, txt: gTask(S), why }); return; }
+    const nn = Math.min(n, cap - cur); T[p.name].s = cur + nn;
+    items.push({ t: "drink", who: p.id, name: p.name, n: nn, why });
+    if(S.water > 0 && Math.floor(cur / S.water) < Math.floor((cur + nn) / S.water)) items.push({ t: "water", who: p.id, name: p.name });
+  };
+  A(list).forEach(e => {
+    const ed = gEvents(gameId).find(x => x.ev === e.ev); if(!ed) return;
+    const times = e.x != null ? Math.max(0, Math.floor(+e.x || 0)) : 1;
+    const n = (e.n != null ? Math.max(0, Math.round(+e.n * (GMULT[S.level] || 1))) : gAmount(S, gameId, e.ev)) * times; if(!n) return;
+    const why = e.why || ed.label;
+    if(ed.kind === "tous") players.forEach(p => drink(p, n, why));
+    else if(ed.kind === "distribue"){ const p = P(e.id); if(p && players.length > 1) items.push({ t: "give", who: p.id, name: p.name, n, why, done: 0 }); }
+    else drink(P(e.id), n, why);
+  });
+  return { items, tally: T };
+}
+// Distribution faite par un joueur : chaque destinataire boit (ou fait un gage s'il ne boit pas).
+function gGive(S, gameId, q, giverId, to, players, tally){
+  const it = A(q.items).find(x => x.t === "give" && x.who === giverId && !x.done); if(!it) return null;
+  let sum = 0; const list = [];
+  Object.keys(to || {}).forEach(id => { const k = Math.max(0, Math.floor(+to[id] || 0)); if(k && id !== giverId && players.some(p => p.id === id)){ sum += k; list.push([id, k]); } });
+  if(sum !== it.n) return null;
+  const r = gCompute(Object.assign({}, S, { level: "perso" }), gameId, [], players, tally); let T = r.tally;
+  const items = A(q.items).map(x => (x === it ? Object.assign({}, x, { done: 1 }) : x));
+  list.forEach(([id, k]) => { const c = gCompute(Object.assign({}, S, { level: "perso", trig: Object.assign({}, S.trig, { [gameId + ":_give"]: k }) }), gameId, [{ id, ev: "_give", n: k, why: tr("de la part de ", "from ") + it.name }], players, T); T = c.tally; c.items.forEach(x => items.push(x)); });
+  T = gT(T, it.name); T[it.name].g += it.n;
+  return { items, tally: T };
+}
+GEND.push({ ev: "_give", label: "", kind: "boit", n: 1, hidden: true });
+
+/* ---------- Panneau « Gages de la manche » (commun réseau / un seul téléphone) ---------- */
+const GSEEN = {}, GDIST = {};
+function gageSheet(q, opts){
+  let el = $("#gage-sheet");
+  if(!q || !A(q.items).length || GSEEN[q.id]){ if(el) el.remove(); return; }
+  const S = opts.S, me = opts.me, items = A(q.items);
+  const myGive = items.find(x => x.t === "give" && !x.done && (me == null || x.who === me));
+  const dist = myGive ? (GDIST[q.id + myGive.who] = GDIST[q.id + myGive.who] || {}) : null;
+  const used = dist ? Object.keys(dist).reduce((a, k) => a + dist[k], 0) : 0;
+  const key = JSON.stringify([q.id, items, dist, me, opts.jokerOk && opts.jokerOk(q)]);
+  if(!el){ el = document.createElement("div"); el.id = "gage-sheet"; el.className = "gsheet"; document.body.append(el); }
+  if(el.dataset.key === key) return;
+  el.dataset.key = key;
+  const line = x => {
+    const mine = me != null && x.who === me;
+    let t = "", sub = esc(x.why || "");
+    if(x.t === "drink") t = tr(esc(x.name) + " boit " + gUnit(S, x.n), esc(x.name) + " drinks " + gUnit(S, x.n));
+    else if(x.t === "task"){ t = esc(x.name) + " : " + esc(x.txt); sub = tr("Gage sans alcool", "No-alcohol forfeit") + (x.why ? " · " + esc(x.why) : ""); }
+    else if(x.t === "give") t = x.done ? tr(esc(x.name) + " a distribué " + gUnit(S, x.n), esc(x.name) + " handed out " + gUnit(S, x.n)) : tr(esc(x.name) + " distribue " + gUnit(S, x.n), esc(x.name) + " hands out " + gUnit(S, x.n));
+    else if(x.t === "water"){ t = tr(esc(x.name) + " : petit verre d'eau ?", esc(x.name) + ": time for a glass of water?"); sub = tr("Rappel", "Reminder"); }
+    else if(x.t === "joker"){ t = tr(esc(x.name) + " utilise son joker : un verre d'eau", esc(x.name) + " uses their joker: a glass of water"); sub = ""; }
+    return '<li class="g-' + x.t + (mine ? " gme" : "") + '"><span class="av">' + esc(String(x.name || "?").slice(0, 1).toUpperCase()) + '</span><span class="tx"><b>' + t + "</b>" + (sub ? '<span class="sm">' + sub + "</span>" : "") + "</span>" +
+      (x.t === "drink" ? '<span class="n">' + x.n + "</span>" : "") + "</li>";
+  };
+  let h = '<div class="gsheet-card" role="dialog" aria-label="' + tr("Gages de la manche", "Round forfeits") + '"><div class="gsheet-h"><b>' + tr("Gages de la manche", "Round forfeits") + "</b><span class=\"sm\">" + esc({ chill: "Chill", classique: tr("Classique", "Classic"), chaud: tr("Apéro chaud", "Wild night"), perso: tr("Perso", "Custom") }[S.level] || "") + "</span></div>" +
+    '<ul class="gsheet-l">' + items.map(line).join("") + "</ul>";
+  if(myGive){
+    const others = A(opts.players).filter(p => p.id !== myGive.who);
+    h += '<div class="gsheet-give"><b>' + (me == null ? tr(esc(myGive.name) + " distribue " + gUnit(S, myGive.n), esc(myGive.name) + " hands out " + gUnit(S, myGive.n)) : tr("Tu distribues " + gUnit(S, myGive.n), "You hand out " + gUnit(S, myGive.n))) + '</b><span class="sm">' +
+      (used < myGive.n ? tr("Touche les prénoms, une par appui. Il en reste " + (myGive.n - used) + ".", "Tap names, one per tap. " + (myGive.n - used) + " left.") : tr("Tout est distribué.", "All handed out.")) + '</span><div class="gsheet-pp">' +
+      others.map(p => '<button type="button" data-gp="' + esc(p.id) + '"' + (dist[p.id] ? ' class="on"' : "") + "><span>" + esc(p.name) + "</span><b>" + (dist[p.id] ? "+" + dist[p.id] : "") + "</b></button>").join("") + "</div>" +
+      '<button class="link" type="button" data-greset>' + tr("Recommencer", "Start over") + "</button></div>";
+  }
+  const canJoker = opts.jokerOk && opts.jokerOk(q);
+  h += (canJoker ? '<button class="btn ghost" type="button" data-gjoker>' + tr("Joker eau : un verre d'eau à la place", "Water joker: a glass of water instead") + "</button>" : "") +
+    (myGive ? '<button class="btn acc" type="button" data-gok' + (used === myGive.n ? "" : " disabled") + ">" + tr("Valider la distribution", "Confirm") + "</button>" : '<button class="btn acc" type="button" data-gclose>OK</button>') + "</div>";
+  el.innerHTML = h;
+  $$("[data-gp]", el).forEach(b => b.addEventListener("click", () => { if(used >= myGive.n) return; buzz(8); dist[b.dataset.gp] = (dist[b.dataset.gp] || 0) + 1; el.dataset.key = ""; gageSheet(q, opts); }));
+  const rs = $("[data-greset]", el); if(rs) rs.addEventListener("click", () => { Object.keys(dist).forEach(k => delete dist[k]); el.dataset.key = ""; gageSheet(q, opts); });
+  const ok = $("[data-gok]", el); if(ok) ok.addEventListener("click", () => { buzz(15); opts.onGive(myGive, Object.assign({}, dist)); });
+  const cl = $("[data-gclose]", el); if(cl) cl.addEventListener("click", () => { GSEEN[q.id] = 1; el.remove(); });
+  const jk = $("[data-gjoker]", el); if(jk) jk.addEventListener("click", () => { buzz(15); opts.onJoker(q); });
+}
+
+/* ---------- Réseau : l'hôte applique, chacun affiche ---------- */
+const CORE_X = {};
+function gPlayers(){
+  const g = G() || {}, list = A(g.players).map(A);
+  const ids = list.length ? list.map(r => String(r[0])) : namedPeers().map(p => p.peer);
+  return ids.map(id => { const p = peerById(id), x = pres(p).x || {}, gp = x._gp || {}, r = list.find(r => String(r[0]) === id); return { id, name: clean((r && r[1]) || pres(p).name, 16) || "Joueur", alc: gp.alc !== false, cap: +gp.cap || 0 }; });
+}
+function gHostApply(gameId, list, key){
+  if(!N.host || !N.g) return;
+  const S = gSettings(N.g.gages); if(!S.on) return;
+  if(key && N.g.gqk === key) return;
+  const r = gCompute(S, gameId, list, gPlayers(), N.g.gt);
+  if(!r.items.length){ hostSetG({ gqk: key || "", gt: r.tally }); return; }
+  hostSetG({ gq: { id: rid(), game: gameId, items: r.items }, gqk: key || "", gt: r.tally });
+}
+// Chez l'hôte, à chaque rendu : distributions et jokers envoyés par les joueurs.
+function gHostTick(){
+  if(!N.host || !N.g || !N.g.gq) return;
+  const S = gSettings(N.g.gages), q = N.g.gq;
+  namedPeers().forEach(p => {
+    const x = pres(p).x || {}, id = p.peer;
+    if(x._gd && x._gd.q === q.id){
+      const r = gGive(S, q.game, N.g.gq, id, x._gd.to, gPlayers(), N.g.gt);
+      if(r) hostSetG({ gq: Object.assign({}, N.g.gq, { items: r.items }), gt: r.tally });
+    }
+    if(x._gj && x._gj === q.id){
+      const it = A(N.g.gq.items).find(y => y.t === "drink" && y.who === id), used = (N.g.gjk || {})[id] === (N.g.gid || "");
+      if(it && !used){
+        let T = gT(N.g.gt, it.name); T[it.name].s = Math.max(0, T[it.name].s - it.n); T[it.name].w++;
+        hostSetG({ gq: Object.assign({}, N.g.gq, { items: A(N.g.gq.items).map(y => (y === it ? { t: "joker", who: id, name: it.name } : y)) }), gt: T, gjk: Object.assign({}, N.g.gjk || {}, { [id]: N.g.gid || "" }) });
+      }
+    }
+  });
+}
+function gRenderNet(){
+  const g = G(); if(!g || !g.gq){ gageSheet(null); return; }
+  const S = gSettings(g.gages), me = N.nr.me();
+  gageSheet(g.gq, { S, me, players: gPlayers(),
+    jokerOk: q => S.joker && A(q.items).some(y => y.t === "drink" && y.who === me) && (g.gjk || {})[me] !== (g.gid || ""),
+    onGive: (it, to) => { CORE_X._gd = { q: g.gq.id, to }; SB.refreshExtras(); },
+    onJoker: q => { CORE_X._gj = q.id; SB.refreshExtras(); } });
+}
+
+/* ---------- Un seul téléphone ---------- */
+const LGG = { tally: {}, q: null, jk: {} };
+function gLocalSettings(){ return gSettings(store().gagesLocal); }
+function gLocalApply(gameId, names, list, key, rerender){
+  const S = gLocalSettings(); if(!S.on) return;
+  if(key && LGG.key === key) return; LGG.key = key || "";
+  const sober = A(store().gagesSober);
+  const players = names.map(n => ({ id: n, name: n, alc: sober.indexOf(n) < 0, cap: 0 }));
+  const r = gCompute(S, gameId, list, players, LGG.tally); LGG.tally = r.tally;
+  if(!r.items.length) return;
+  const q = { id: rid(), game: gameId, items: r.items };
+  const show2 = () => gageSheet(q, { S, me: null, players,
+    jokerOk: () => false,
+    onGive: (it, to) => { const g2 = gGive(S, gameId, q, it.who, to, players, LGG.tally); if(g2){ LGG.tally = g2.tally; q.items = g2.items; $("#gage-sheet").dataset.key = ""; show2(); } } });
+  show2();
+}
+
+/* ---------- Réglages (hôte ou un seul téléphone) et profil ---------- */
+function gSettingsPage(get, set, editable, tally, onReset){
+  SB.page(tr("Gages", "Forfeits"), root => {
+    let game = (SB.games.find(d => A(d.gages).length) || {}).id || "_fin";
+    const draw = () => {
+      const S = get(), mult = GMULT[S.level] || 1, dis = editable ? "" : " disabled";
+      const seg = (k, opts) => '<div class="seg">' + opts.map(o => '<button type="button" data-gs="' + k + '" data-v="' + o[0] + '" aria-pressed="' + (S[k] === o[0]) + '"' + dis + ">" + o[1] + "</button>").join("") + "</div>";
+      const step = (k, label, sub, min, max) => '<div class="gs-row"><span class="tx"><b>' + label + '</b><span class="sm">' + sub + '</span></span><button type="button" class="gs-b" data-gst="' + k + '" data-d="-1" aria-label="' + tr("Moins", "Less") + '"' + dis + '>−</button><b class="gs-n">' + S[k] + '</b><button type="button" class="gs-b" data-gst="' + k + '" data-d="1" aria-label="' + tr("Plus", "More") + '"' + dis + ">+</button></div>";
+      const games = SB.games.filter(d => A(d.gages).length).map(d => [d.id, d.name]).concat([["_fin", tr("Fin de partie (tous les jeux)", "End of game (all games)")]]);
+      const evs = (game === "_fin" ? GEND : A((SB.byId[game] || {}).gages)).filter(e => !e.hidden);
+      const kindTxt = k => (k === "distribue" ? tr("distribue", "hands out") : k === "tous" ? tr("tout le monde boit", "everyone drinks") : tr("boit", "drinks"));
+      const gid = game === "_fin" ? (SB.games[0] || {}).id : game;
+      let h = '<div class="gs">' +
+        '<button type="button" class="pack" data-gon aria-pressed="' + S.on + '"' + dis + '><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Gages activés", "Forfeits on") + '</span><span class="ds">' + tr("Les jeux affichent les gages à la fin des manches. Chacun peut jouer sans alcool.", "Games show forfeits at the end of rounds. Anyone can play without alcohol.") + "</span></span></button>" +
+        (editable ? "" : '<p class="note-box">' + tr("Seul l'hôte modifie ces réglages.", "Only the host can change these settings.") + "</p>") +
+        '<div class="field"><span class="eyebrow">' + tr("Ce qu'on boit", "What we drink") + "</span>" + seg("unit", [["gorgee", tr("Gorgées", "Sips")], ["shot", "Shots"], ["culsec", tr("Culs-secs", "Chugs")]]) + "</div>" +
+        '<div class="field"><span class="eyebrow">' + tr("Intensité", "Intensity") + "</span>" + seg("level", [["chill", "Chill ×½"], ["classique", tr("Classique", "Classic")], ["chaud", tr("Chaud ×2", "Wild ×2")], ["perso", "Perso"]]) + "</div>" +
+        '<div class="field"><span class="eyebrow">' + tr("Garde-fous", "Safety") + '</span><div class="gs-box">' +
+        step("cap", tr("Plafond par joueur", "Cap per player"), tr("Au-delà, ses gages passent sans alcool", "Past it, their forfeits switch to no-alcohol"), 1, 60) +
+        step("water", tr("Rappel verre d'eau", "Water reminder"), tr("Toutes les N gorgées", "Every N sips"), 0, 30) +
+        '<div class="gs-row"><span class="tx"><b>' + tr("Joker eau", "Water joker") + '</b><span class="sm">' + tr("Une fois par partie, un verre d'eau à la place d'un gage", "Once per game, a glass of water instead of a forfeit") + '</span></span><button type="button" class="gs-sw" data-gjk aria-pressed="' + S.joker + '" aria-label="' + tr("Joker eau", "Water joker") + '"' + dis + "><i></i></button></div></div></div>" +
+        '<div class="field"><span class="eyebrow">' + tr("Déclencheurs, jeu par jeu", "Triggers, game by game") + '</span><div class="filters">' + games.map(x => '<button type="button" data-gg="' + x[0] + '" aria-pressed="' + (x[0] === game) + '">' + esc(x[1]) + "</button>").join("") + '</div><div class="gs-box">' +
+        evs.map(e => { const b = gBase(S, gid, e.ev), k = (game === "_fin" ? gid : game) + ":" + e.ev; return '<div class="gs-row"><span class="tx"><b>' + esc(e.label) + '</b><span class="sm gk-' + e.kind + '">' + kindTxt(e.kind) + (b && mult !== 1 ? " · " + gUnit(S, Math.max(1, Math.round(b * mult))) : "") + '</span></span><button type="button" class="gs-b" data-gtr="' + esc(e.ev) + '" data-d="-1" aria-label="' + tr("Moins", "Less") + '"' + dis + '>−</button><b class="gs-n">' + b + '</b><button type="button" class="gs-b" data-gtr="' + esc(e.ev) + '" data-d="1" aria-label="' + tr("Plus", "More") + '"' + dis + ">+</button></div>"; }).join("") +
+        "</div></div>" +
+        '<div class="field"><span class="eyebrow">' + tr("Gages sans alcool", "No-alcohol forfeits") + '</span><p class="sm" style="margin:0">' + tr("Pour ceux qui ne boivent pas ou qui ont atteint leur plafond. Vide = la liste du jeu.", "For players who don't drink or hit their cap. Empty = the built-in list.") + '</p><div class="gs-box">' +
+        A(S.custom).map((t, i) => '<div class="gs-row"><span class="tx"><b>' + esc(t) + '</b></span>' + (editable ? '<button type="button" class="gs-b" data-gdel="' + i + '" aria-label="' + tr("Retirer", "Remove") + '">×</button>' : "") + "</div>").join("") +
+        (editable ? '<div class="gs-row"><input class="txt" id="gs-new" maxlength="120" placeholder="' + tr("Ex. : fais 10 pompes", "E.g. do 10 push-ups") + '"><button type="button" class="gs-b" data-gadd aria-label="' + tr("Ajouter", "Add") + '">+</button></div>' : "") + "</div></div>";
+      const tk = Object.keys(tally() || {});
+      if(tk.length){
+        const T = tally();
+        h += '<div class="field"><span class="eyebrow">' + tr("Compteur de la soirée", "Tonight's counter") + '</span><div class="gs-box">' +
+          tk.sort((a, b) => T[b].s - T[a].s).map(n => '<div class="gs-row"><span class="tx"><b>' + esc(n) + '</b><span class="sm">' + tr(T[n].g + " distribuées · " + T[n].t + " gages sans alcool · " + T[n].w + " verres d'eau", T[n].g + " handed out · " + T[n].t + " no-alcohol forfeits · " + T[n].w + " water") + '</span></span><b class="gs-n">' + T[n].s + "</b></div>").join("") + "</div>" +
+          (editable && onReset ? '<button class="link" type="button" data-greset2>' + tr("Remettre le compteur à zéro", "Reset the counter") + "</button>" : "") + "</div>";
+      }
+      root.innerHTML = h + "</div>";
+      const upd = p => { set(Object.assign(get(), p)); draw(); };
+      $$("[data-gs]", root).forEach(b => b.addEventListener("click", () => upd({ [b.dataset.gs]: b.dataset.v })));
+      $$("[data-gst]", root).forEach(b => b.addEventListener("click", () => { const k = b.dataset.gst, lim = k === "cap" ? [1, 60] : [0, 30]; upd({ [k]: Math.max(lim[0], Math.min(lim[1], (+get()[k] || 0) + +b.dataset.d)) }); }));
+      $$("[data-gtr]", root).forEach(b => b.addEventListener("click", () => { const S2 = get(), k = (game === "_fin" ? gid : game) + ":" + b.dataset.gtr, t = Object.assign({}, S2.trig); t[k] = Math.max(0, Math.min(10, gBase(S2, game === "_fin" ? gid : game, b.dataset.gtr) + +b.dataset.d)); if(game === "_fin") SB.games.forEach(d => { t[d.id + ":" + b.dataset.gtr] = t[k]; }); upd({ trig: t }); }));
+      $$("[data-gg]", root).forEach(b => b.addEventListener("click", () => { game = b.dataset.gg; draw(); }));
+      const on = $("[data-gon]", root); if(on && editable) on.addEventListener("click", () => upd({ on: !get().on }));
+      const jk = $("[data-gjk]", root); if(jk && editable) jk.addEventListener("click", () => upd({ joker: !get().joker }));
+      $$("[data-gdel]", root).forEach(b => b.addEventListener("click", () => { const c = A(get().custom).slice(); c.splice(+b.dataset.gdel, 1); upd({ custom: c }); }));
+      const add = $("[data-gadd]", root); if(add) add.addEventListener("click", () => { const v = clean($("#gs-new", root).value, 120); if(v) upd({ custom: A(get().custom).concat([v]) }); });
+      const rs = $("[data-greset2]", root); if(rs) armTap(rs, () => { onReset(); draw(); }, tr("Touche encore pour remettre à zéro", "Tap again to reset"));
+    };
+    draw();
+  });
+}
+function gProfilePage(){
+  SB.page(tr("Mon profil gages", "My forfeit profile"), root => {
+    const draw = () => {
+      const gp = Object.assign({ alc: true, cap: 0 }, store().gp || {});
+      root.innerHTML = '<div class="gs"><p class="howto">' + tr("Réglé sur ton téléphone, personne d'autre ne le voit ni ne le change.", "Set on your phone; nobody else sees or changes it.") + "</p>" +
+        '<div class="packs">' + [[true, tr("Je bois de l'alcool", "I drink alcohol"), tr("Les gages des jeux sont en gorgées", "Game forfeits are drinks")], [false, tr("Je joue sans alcool", "I play without alcohol"), tr("Tu reçois des gages sans boire à la place", "You get no-drink forfeits instead")]].map(o => '<button type="button" class="pack" data-ga="' + o[0] + '" aria-pressed="' + (gp.alc === o[0]) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + o[1] + '</span><span class="ds">' + o[2] + "</span></span></button>").join("") + "</div>" +
+        (gp.alc ? '<div class="gs-box"><div class="gs-row"><span class="tx"><b>' + tr("Mon plafond", "My cap") + '</b><span class="sm">' + (gp.cap ? tr("Pas plus de " + gp.cap + " ce soir", "No more than " + gp.cap + " tonight") : tr("Celui de l'hôte", "The host's")) + '</span></span><button type="button" class="gs-b" data-gc="-1" aria-label="' + tr("Moins", "Less") + '">−</button><b class="gs-n">' + (gp.cap || "–") + '</b><button type="button" class="gs-b" data-gc="1" aria-label="' + tr("Plus", "More") + '">+</button></div></div>' : "") + "</div>";
+      const save = p => { persist({ gp: Object.assign(gp, p) }); CORE_X._gp = store().gp; SB.refreshExtras(); draw(); };
+      $$("[data-ga]", root).forEach(b => b.addEventListener("click", () => save({ alc: b.dataset.ga === "true" })));
+      $$("[data-gc]", root).forEach(b => b.addEventListener("click", () => save({ cap: Math.max(0, Math.min(60, (gp.cap || 0) + +b.dataset.gc)) })));
+    };
+    draw();
+  });
+}
+// Bandeau « Gages » du salon (tout le monde) et de la liste « un seul téléphone ».
+function gSalonBar(g){
+  let el = $("#sa-gages");
+  if(!el){ el = document.createElement("div"); el.id = "sa-gages"; el.className = "gbar"; const r = $("#sa-roster"); if(r && r.parentNode) r.parentNode.parentNode.insertBefore(el, r.parentNode.nextSibling); else return; }
+  const S = gSettings(g && g.gages), gp = store().gp || {};
+  const key = JSON.stringify([S.on, S.level, S.unit, N.host, gp.alc !== false]);
+  if(el.dataset.key === key) return; el.dataset.key = key;
+  el.innerHTML = '<button type="button" data-gset><b>' + tr("Gages", "Forfeits") + '</b><span class="sm">' + (S.on ? esc({ chill: "Chill", classique: tr("Classique", "Classic"), chaud: tr("Apéro chaud", "Wild night"), perso: "Perso" }[S.level]) + " · " + gUnit(S, 2).replace(/^2 /, "") : tr("Désactivés", "Off")) + "</span></button>" +
+    '<button type="button" data-gme><b>' + tr("Mon profil", "My profile") + '</b><span class="sm">' + (gp.alc === false ? tr("Sans alcool", "No alcohol") : tr("Je bois", "I drink")) + "</span></button>";
+  $("[data-gset]", el).addEventListener("click", () => gSettingsPage(() => gSettings((G() || {}).gages), s => { if(!N.host) return; persist({ gages: s }); hostSetG({ gages: s }); }, N.host, () => (G() || {}).gt || {}, () => { if(N.host) hostSetG({ gt: {} }); }));
+  $("[data-gme]", el).addEventListener("click", gProfilePage);
+}
+function gLocalBar(){
+  const box = $("#ll-tiles"); if(!box) return;
+  let el = $("#ll-gages");
+  if(!el){ el = document.createElement("div"); el.id = "ll-gages"; el.className = "gbar"; box.parentNode.insertBefore(el, box); }
+  const S = gLocalSettings();
+  el.innerHTML = '<button type="button" data-gset><b>' + tr("Gages", "Forfeits") + '</b><span class="sm">' + (S.on ? esc({ chill: "Chill", classique: tr("Classique", "Classic"), chaud: tr("Apéro chaud", "Wild night"), perso: "Perso" }[S.level]) : tr("Désactivés", "Off")) + "</span></button>" +
+    '<button type="button" data-gsob><b>' + tr("Sans alcool", "No alcohol") + '</b><span class="sm">' + (A(store().gagesSober).length ? esc(A(store().gagesSober).join(", ")) : tr("Personne", "Nobody")) + "</span></button>";
+  $("[data-gset]", el).addEventListener("click", () => gSettingsPage(gLocalSettings, s => persist({ gagesLocal: s }), true, () => LGG.tally, () => { LGG.tally = {}; }));
+  $("[data-gsob]", el).addEventListener("click", () => SB.page(tr("Qui joue sans alcool ?", "Who plays without alcohol?"), root => {
+    const draw = () => {
+      const names = A(store().localNames).map(n => clean(n, 16)).filter(Boolean), sob = A(store().gagesSober);
+      root.innerHTML = '<p class="howto">' + tr("Ces joueurs reçoivent des gages sans alcool à la place des gorgées.", "These players get no-alcohol forfeits instead of drinks.") + '</p><div class="packs">' +
+        (names.length ? names.map(n => '<button type="button" class="pack" data-gn="' + esc(n) + '" aria-pressed="' + (sob.indexOf(n) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(n) + "</span></span></button>").join("") : '<p class="sm">' + tr("Ajoute d'abord les prénoms en lançant un jeu.", "Add player names first by starting a game.") + "</p>") + "</div>";
+      $$("[data-gn]", root).forEach(b => b.addEventListener("click", () => { const s = A(store().gagesSober).slice(), i = s.indexOf(b.dataset.gn); if(i >= 0) s.splice(i, 1); else s.push(b.dataset.gn); persist({ gagesSober: s }); draw(); }));
+    };
+    draw();
+  }, gLocalBar));
 }
 
 /* ---------- Choix de la langue (accueil) ---------- */
@@ -1581,6 +1850,7 @@ function renderLang(){
 }
 /* =================== Démarrage =================== */
 SB.boot = function(){
+  CORE_X._gp = Object.assign({ alc: true, cap: 0 }, store().gp || {});
   if(LANG === "en"){ document.documentElement.lang = "en"; i18nDom(document.body); }
   renderLang();
   if(window.AndroidUpdate){

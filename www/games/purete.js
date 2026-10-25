@@ -384,6 +384,16 @@ function avgSeries(rows, qi, lg){
   return { name: tr("Le groupe", "The group"), st: sum, pc: pcOf(sum), c: "var(--acc)" };
 }
 
+// Gages de fin de test : une gorgée par tranche de 5 « oui », le moins pur boit, le plus pur distribue.
+function puGages(rows, tw){
+  const out = [], sc = rows.map(r => ({ id: r.id, p: score(r.a, tw), y: (String(r.a).match(/1/g) || []).length }));
+  sc.forEach(r => { if(r.y >= 5) out.push({ id: r.id, ev: "oui5", x: Math.floor(r.y / 5) }); });
+  if(sc.length > 1){
+    const mx = Math.max.apply(null, sc.map(r => r.p)), mn = Math.min.apply(null, sc.map(r => r.p));
+    if(mx !== mn){ sc.filter(r => r.p === mx).forEach(r => out.push({ id: r.id, ev: "pur" })); sc.filter(r => r.p === mn).forEach(r => out.push({ id: r.id, ev: "impur" })); }
+  }
+  return out;
+}
 function hsh(x){ let h = 7; String(x).split("").forEach(c => { h = (h * 31 + c.charCodeAt(0)) >>> 0; }); return h; }
 const AW = {
   pure: [tr("Le plus pur", "The purest"), tr("L'ange de la bande", "The group's angel"), tr("Casier vierge", "Spotless record")],
@@ -473,6 +483,12 @@ SB.register({
   accent: { light: "#ff8fc8", dark: "#ff8fc8" },
   tag: tr("Un questionnaire secret et sans filtre. Qui est l'ange de la bande, et qui est le démon ?", "A secret, no-filter questionnaire. Who's the angel of the group, and who's the demon?"),
   min: 1, max: 20,
+  gagesEnd: false,
+  gages: [
+    { ev: "oui5", label: tr("Toutes les 5 réponses « oui »", "Every 5 “yes” answers"), kind: "boit", n: 1 },
+    { ev: "impur", label: tr("Le moins pur de la partie", "The least pure"), kind: "boit", n: 2 },
+    { ev: "pur", label: tr("Le plus pur de la partie", "The purest"), kind: "distribue", n: 3 }
+  ],
   rules: [
     tr("Chacun répond en secret, sur son téléphone, à une série de « As-tu déjà… ? » 100 % adultes, tirés au hasard dans les thèmes choisis : soirées, sexe, interdits, cœur, boulot, voyages, moments gênants, drogues, hygiène, hardcore.", "Everyone secretly answers, on their own phone, a series of 100% adult “Have you ever…?” questions, drawn at random from the chosen themes: parties, sex, off-limits, love, work, travel, cringe moments, drugs, hygiene, hardcore."),
     tr("Chaque test est différent : les questions déjà posées sur ce téléphone reviennent en dernier.", "Every test is different: questions already asked on this phone come up last."),
@@ -497,6 +513,7 @@ SB.register({
     const n = A(s.qi).length, live = ctx.ids.filter(id => ctx.here(id));
     if(!live.length || !live.every(id => { const i = ctx.input(id); return i && typeof i.a === "string" && i.a.length === n; })) return;
     const res = live.map(id => [id, ctx.input(id).a.replace(/[^01]/g, "0")]);
+    ctx.gage(puGages(res.map(r => ({ id: r[0], a: r[1] })), s.tw), s.k);
     ctx.set({ phase: "res", res });
   },
   render(ctx, root){
@@ -572,7 +589,7 @@ SB.register({
         } else if(L.phase === "quiz"){
           runQuiz(root, L.key + "-" + L.p, L.qi, a => {
             L.ans.push(a);
-            if(names.length > 1 && L.p < names.length - 1){ L.phase = "done1"; } else L.phase = "res";
+            if(names.length > 1 && L.p < names.length - 1){ L.phase = "done1"; } else { L.phase = "res"; if(api.gage) api.gage(puGages(names.map((n, i) => ({ id: n, a: L.ans[i] || "" })), L.twl), "pu" + L.key); }
             go();
           }, '<span class="eyebrow">' + esc(names[L.p]) + "</span>", tr("Réponds honnêtement, personne ne regarde.", "Answer honestly, nobody's looking."), L.twl, lg);
         } else if(L.phase === "done1"){

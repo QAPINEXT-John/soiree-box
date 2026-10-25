@@ -142,6 +142,7 @@ SB.register({
   accent: { light: "#ffb34d", dark: "#ffb34d" },
   tag: tr("Une question, tout le monde vote pour un joueur. Les résultats tombent d'un coup.", "One question, everyone votes for a player. The results drop all at once."),
   min: 3, max: 20,
+  gages: [{ ev: "top", label: tr("Le plus désigné de la question", "Most voted on a question"), kind: "boit", n: 2 }],
   rules: tr([
     "Une question s'affiche : « Qui est le plus susceptible de… ».",
     "Chacun vote en secret pour un joueur, y compris pour lui-même.",
@@ -182,6 +183,7 @@ SB.register({
     Object.keys(votes).forEach(v => votes[v].forEach(t => { counts[t] = (counts[t] || 0) + 1; (voters[t] = voters[t] || []).push(v); total[t] = (total[t] || 0) + w; }));
     const max = Math.max.apply(null, Object.keys(counts).map(k => counts[k]).concat([0])), top = Object.keys(counts).filter(k => counts[k] === max);
     Object.keys(votes).forEach(v => { if(votes[v].indexOf(v) >= 0) self[v] = (self[v] || 0) + 1; if(!votes[v].some(t => top.indexOf(t) >= 0)) mav[v] = (mav[v] || 0) + 1; });
+    if(top.length && max > 0) ctx.gage(top.map(id => ({ id, ev: "top" })), s.k);
     const patch = { phase: "res", counts, voters: s.anon && tw !== "open" ? {} : voters, total, mav, self, jack: "" };
     if(tw === "jackpot" && top.length === 1 && Object.keys(votes).length >= 3 && counts[top[0]] === Object.keys(votes).length){ total[top[0]] += 3; patch.jack = top[0]; }
     if(tw === "pick" && s.round < s.rounds){

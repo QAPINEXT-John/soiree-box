@@ -107,6 +107,25 @@ button{font:inherit; color:inherit; cursor:pointer}
 .sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:10px}
 .filters{display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; margin-inline:-2px; padding:2px}
 .filters::-webkit-scrollbar{display:none}
+.gsheet{position:fixed; inset:0; z-index:55; background:rgba(10,8,14,.55); display:flex; align-items:flex-end; justify-content:center}
+.gsheet-card{width:100%; max-width:560px; max-height:88vh; overflow-y:auto; box-sizing:border-box; background:var(--card); border-top:1.5px solid var(--line); border-radius:26px 26px 0 0; padding:18px 16px calc(16px + env(safe-area-inset-bottom,0px)); display:flex; flex-direction:column; gap:12px; animation:sbIn .22s ease-out}
+.gsheet-h{display:flex; align-items:baseline; justify-content:space-between; gap:10px}.gsheet-h b{font-family:var(--f-disp); font-size:24px; font-weight:800}
+.gsheet-l{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px}
+.gsheet-l li{display:flex; align-items:center; gap:12px; background:var(--soft); border-radius:16px; padding:10px 12px; border:1.5px solid transparent}
+.gsheet-l li.gme{border-color:var(--acc)}.gsheet-l .av{flex:none; width:36px; height:36px; border-radius:99px; background:var(--acc); color:var(--dark); display:grid; place-items:center; font-weight:800}
+.gsheet-l li.g-task .av{background:#8b7bff}.gsheet-l li.g-give .av{background:var(--ok)}.gsheet-l li.g-water .av,.gsheet-l li.g-joker .av{background:#5bc0ff}
+.gsheet-l .tx{flex:1; min-width:0; display:flex; flex-direction:column}.gsheet-l .tx b{font-size:16px}.gsheet-l .n{font-family:var(--f-disp); font-weight:800; font-size:26px; color:var(--acc)}
+.gsheet-give{display:flex; flex-direction:column; gap:8px; border:2px solid var(--ok); border-radius:18px; padding:12px}
+.gsheet-pp{display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:8px}
+.gsheet-pp button{display:flex; justify-content:space-between; align-items:center; min-height:48px; padding:0 14px; border-radius:14px; border:1.5px solid var(--line); background:transparent; color:var(--ink); font-weight:800; font-size:15px}
+.gsheet-pp button.on{border:2px solid var(--ok); background:rgba(127,211,163,.14)}
+.gbar{display:grid; grid-template-columns:1fr 1fr; gap:8px}.gbar button{display:flex; flex-direction:column; align-items:flex-start; gap:2px; text-align:left; min-height:58px; padding:10px 14px; border-radius:16px; border:1.5px solid var(--line); background:var(--card); color:var(--ink)}.gbar button b{font-size:16px}
+.gs{display:flex; flex-direction:column; gap:16px}.gs-box{background:var(--card); border:1.5px solid var(--line); border-radius:18px; padding:2px 14px; display:flex; flex-direction:column}
+.gs-row{display:flex; align-items:center; gap:10px; min-height:58px; border-bottom:1px solid var(--line)}.gs-row:last-child{border-bottom:0}.gs-row .tx{flex:1; min-width:0; display:flex; flex-direction:column}.gs-row .tx b{font-size:15px}.gs-row .txt{flex:1; min-height:44px}
+.gs-b{flex:none; width:38px; height:38px; border-radius:12px; border:1.5px solid var(--line); background:transparent; color:var(--ink); font-size:20px; font-weight:800}.gs-b:disabled{opacity:.4}
+.gs-n{min-width:32px; text-align:center; font-size:18px; font-variant-numeric:tabular-nums}
+.gs-sw{flex:none; width:56px; height:32px; border-radius:99px; border:0; padding:3px; display:flex; background:var(--line)}.gs-sw i{width:26px; height:26px; border-radius:99px; background:var(--ink)}.gs-sw[aria-pressed="true"]{background:var(--acc); justify-content:flex-end}
+.gk-distribue{color:var(--ok) !important}.gk-boit,.gk-tous{color:#ffb39f !important}
 .qrbox{display:flex; align-items:center; gap:14px; width:100%; border:1.5px solid var(--line); background:var(--card); border-radius:18px; padding:10px 14px; color:var(--ink); text-align:left}
 .qrbox svg{flex:none; width:96px; height:96px; border-radius:8px; background:#fff}
 .qrbox .t{display:flex; flex-direction:column; gap:3px}.qrbox .t b{font-size:16px}.qrbox .t span{font-size:13px; color:var(--muted)}
