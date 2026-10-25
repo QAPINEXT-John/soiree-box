@@ -935,10 +935,32 @@ const CATS = { note10: "votes", photoroulette: "wip", kink: "votes", quiplus: "v
 const FILTERS = [["all", tr("Tous", "All")], ["votes", tr("Votes", "Voting")], ["bluff", "Bluff"], ["cartes", tr("Cartes", "Cards")], ["hot", "18+"], ["wip", tr("En travaux", "Beta")]];
 // Jeux « en travaux » : jouables pour les tester, mais rangés à part, seulement dans leur filtre.
 const isWip = d => CATS[d.id] === "wip";
+/* ---------- Mode Hard / Soft ----------
+   Hard par défaut. Le Soft (réglé dans le profil) cache le contenu 18+ : jeux pour adultes, paquets et options 18+,
+   avatars Hot et gages avec alcool. En salon, c'est le mode de l'hôte qui compte pour les jeux et les gages ;
+   pour les avatars, chacun garde le sien. */
+const myHard = () => store().hard !== false;
+const roomHard = () => { const g = N.nr ? G() : null; return g ? g.hd !== false : myHard(); };
+const HD_OK = {};
+let HOME_REDRAW = null;
+SB.hard = () => roomHard();
+// Pour les jeux : un paquet est-il permis dans le mode actuel ?
+SB.packOk = p => !p || !p.hot || roomHard();
+// Pour les jeux : garde de la sélection sel les paquets permis (packs = liste { v, hot }). Jamais vide si un paquet soft existe.
+SB.okPacks = (sel, packs) => {
+  const ps = A(packs), hot = ps.filter(p => p.hot).map(p => p.v);
+  if(roomHard() || !hot.length) return A(sel);
+  const out = A(sel).filter(v => hot.indexOf(v) < 0);
+  if(out.length) return out;
+  const f = ps.find(p => !p.hot && p.count !== 0); return f ? [f.v] : [];
+};
+function syncSoftClass(){ document.documentElement.classList.toggle("soft", !roomHard()); }
 const FSEL = { home: "all", salon: "all" };
 function inFilter(d, f){ if(isWip(d)) return f === "wip"; return f === "all" || (f === "hot" ? !!d.hot : CATS[d.id] === f); }
 function filterHTML(which){
-  return FILTERS.map(f => '<button type="button" data-f="' + f[0] + '" aria-pressed="' + (FSEL[which] === f[0]) + '"' + (f[0] === "hot" ? ' class="hot"' : "") + ">" + f[1] + "</button>").join("");
+  const hard = which === "salon" ? roomHard() : myHard();
+  if(!hard && FSEL[which] === "hot") FSEL[which] = "all";
+  return FILTERS.filter(f => hard || f[0] !== "hot").map(f => '<button type="button" data-f="' + f[0] + '" aria-pressed="' + (FSEL[which] === f[0]) + '"' + (f[0] === "hot" ? ' class="hot"' : "") + ">" + f[1] + "</button>").join("");
 }
 function bindFilter(box, which, redraw){
   box.innerHTML = filterHTML(which);
@@ -1165,7 +1187,7 @@ function pres(p){ return p && p.presence && typeof p.presence === "object" ? p.p
 function peerById(id){ return N.peers.find(p => p.peer === id); }
 function namedPeers(){ return N.peers.filter(p => clean(pres(p).name, 16)); }
 function G(){ if(!N.nr) return null; return N.host ? N.g : N.nr.game(); }
-function freshSalon(){ return { v: 1, code: N.code, phase: "salon", sel: "", game: "", gid: "", players: [], s: null, opts: null, last: null, gages: gLocalSettings(), gt: {} }; }
+function freshSalon(){ return { v: 1, code: N.code, phase: "salon", sel: "", game: "", gid: "", players: [], s: null, opts: null, last: null, gages: gLocalSettings(), gt: {}, hd: myHard() }; }
 function makeCode(){ const L = "ABCDEFGHJKLMNPQRSTUVWXYZ"; let s = ""; for(let i = 0; i < 4; i++) s += L[Math.floor(Math.random() * L.length)]; return s; }
 function myExtras(){ const x = Object.assign({}, CORE_X); SB.games.forEach(d => { if(typeof d.presence === "function"){ try{ const v = d.presence(); if(v != null) x[d.id] = v; }catch(e){} } }); return x; }
 SB.refreshExtras = function(){ if(N.nr) N.nr.presence({ x: plain(myExtras()) }); };
@@ -1222,8 +1244,24 @@ async function netEnter(code, asHost){
   $("#sa-tiles").dataset.key = ""; $("#sa-panel").dataset.key = ""; $("#sa-dock").dataset.key = "";
   render();
 }
+// Salon en mode Hard rejoint par quelqu'un réglé en Soft : on prévient avant d'entrer.
+function hdGate(g){
+  const old = document.getElementById("hd-gate");
+  if(!g || N.host || g.hd === false || myHard() || HD_OK[N.code]){ if(old) old.remove(); return false; }
+  if(old) return true;
+  const el = document.createElement("div"); el.id = "hd-gate"; el.className = "hdgate";
+  el.innerHTML = '<div class="hdgate-in" role="dialog" aria-modal="true" aria-labelledby="hdg-t"><span class="modepill hard">Hard 🔥</span><h2 id="hdg-t">' + tr("Ce salon est en mode Hard", "This room is in Hard mode") + "</h2>" +
+    '<p>' + tr("L'hôte joue avec le contenu 18+ : questions et défis trash, sexe, gages avec alcool. Toi, tu es réglé en Soft.", "The host plays with 18+ content: trashy questions and dares, sex, drinking forfeits. You're set to Soft.") + "</p>" +
+    '<p class="sm">' + tr("Si tu rejoins, tu joues en Hard pour ce salon seulement. Ton appli reste en Soft après.", "If you join, you play in Hard for this room only. Your app stays in Soft afterwards.") + "</p>" +
+    '<button class="btn acc" type="button" data-hdok>' + tr("Rejoindre en Hard", "Join in Hard") + '</button><button class="btn ghost" type="button" data-hdno>' + tr("Quitter le salon", "Leave the room") + "</button></div>";
+  document.body.appendChild(el);
+  $("[data-hdok]", el).addEventListener("click", () => { HD_OK[N.code] = 1; el.remove(); buzz(15); scheduleRender(); });
+  $("[data-hdno]", el).addEventListener("click", () => { el.remove(); netLeave(); });
+  return true;
+}
 async function netLeave(){
   BLOBS.clear();
+  { const hg = document.getElementById("hd-gate"); if(hg) hg.remove(); }
   N.unsubs.forEach(u => { try{ u(); }catch(e){} }); N.unsubs = [];
   clearTimeout(N.lostTimer); N.lostTimer = null;
   if(N.nr){ try{ await N.nr.leave(); }catch(e){} }
@@ -1343,6 +1381,9 @@ function render(){
   N.peers = N.nr.peers();
   renderOffline();
   const g = G();
+  if(N.host && N.g && N.g.hd !== myHard()) hostSetG({ hd: myHard() });
+  syncSoftClass();
+  if(hdGate(g)) return;
   if(!N.host && N.nr.kind === "p2p"){
     if(g){ N.seenHost = true; clearTimeout(N.lostTimer); N.lostTimer = null; }
     else if(N.seenHost && !N.lostTimer) N.lostTimer = setTimeout(() => { if(N.nr && !G()) show("lost"); }, 4000);
@@ -1382,7 +1423,25 @@ function optValues(def){
   const saved = (store().opts || {})[def.id] || {};
   const o = {};
   optList(def).forEach(op => { if(op.type === "button") return; o[op.id] = saved[op.id] !== undefined ? saved[op.id] : op.def; });
+  if(!roomHard()) softOpts(def, o);
   return o;
+}
+// Mode Soft : options 18+ coupées, paquets 18+ retirés (avec un paquet sans risque si plus rien n'est choisi).
+function softOpts(def, o){
+  let ctx = null;
+  const valsOf = op => typeof op.values === "function" ? A(op.values(ctx || (ctx = makeCtx()))) : A(op.values);
+  optList(def).forEach(op => {
+    if(op.type === "toggle"){ if(op.hot) o[op.id] = false; return; }
+    if(op.type !== "multi" && op.type !== "seg") return;
+    const vals = valsOf(op), hot = vals.filter(v => v.hot).map(v => JSON.stringify(v.v));
+    if(!hot.length) return;
+    const ok = v => hot.indexOf(JSON.stringify(v)) < 0;
+    if(op.type === "seg"){ if(!ok(o[op.id])){ const f = vals.find(v => !v.hot); if(f) o[op.id] = f.v; } return; }
+    let sel = A(o[op.id]).filter(ok);
+    if(!sel.length) sel = A(op.def).filter(ok);
+    if(!sel.length){ const f = vals.find(v => !v.hot && v.count !== 0); if(f) sel = [f.v]; }
+    o[op.id] = sel;
+  });
 }
 function saveOpt(def, id, v){
   const all = store().opts || {}; all[def.id] = Object.assign({}, all[def.id] || {}, { [id]: v }); persist({ opts: all });
@@ -1390,7 +1449,8 @@ function saveOpt(def, id, v){
 function optionsHTML(def, ctx, vals){
   return optList(def).map((op, i) => {
     if(op.type === "button") return '<button class="link" type="button" data-ob="' + i + '" style="align-self:flex-start">' + esc(op.label) + "</button>";
-    const values = typeof op.values === "function" ? op.values(ctx) : A(op.values);
+    if(op.hot && !roomHard()) return "";
+    const values = (typeof op.values === "function" ? A(op.values(ctx)) : A(op.values)).filter(v => !v.hot || roomHard());
     let h = '<div class="field"><span class="eyebrow">' + esc(op.label) + "</span>";
     if(op.type === "seg"){
       h += '<div class="seg">' + values.map(v => '<button type="button" data-o="' + i + '" data-v="' + esc(JSON.stringify(v.v)) + '" aria-pressed="' + (JSON.stringify(v.v) === JSON.stringify(vals[op.id])) + '">' + esc(v.label) + "</button>").join("") + "</div>";
@@ -1425,6 +1485,7 @@ function renderSalon(g){
   accent("");
   show("salon");
   $("#sa-code").textContent = N.code; renderQR(); gSalonBar(g);
+  { const mp = $("#sa-mode"), hd = roomHard(); if(mp){ mp.className = "modepill " + (hd ? "hard" : "soft"); mp.textContent = hd ? "Hard 🔥" : "Soft"; mp.title = hd ? tr("Salon en mode Hard : contenu 18+ et gages avec alcool", "Hard room: 18+ content and drinking forfeits") : tr("Salon en mode Soft : pas de contenu 18+ ni d'alcool", "Soft room: no 18+ content, no alcohol"); } }
   const np = namedPeers();
   const hostId = N.host ? N.nr.me() : N.nr.hostId();
   $("#sa-count").textContent = tr(plural(np.length, "joueur") + " dans le salon", plural2(np.length, "joueur", "joueurs", "player") + " in the room");
@@ -1448,12 +1509,12 @@ function renderSalon(g){
 
   const sel = g ? g.sel : "";
   const tiles = $("#sa-tiles");
-  const tKey = (N.host ? "h" : "p") + "|" + sel + "|" + np.length + "|" + FSEL.salon;
+  const tKey = (N.host ? "h" : "p") + "|" + sel + "|" + np.length + "|" + FSEL.salon + "|" + roomHard();
   const fb = $("#sa-filter");
   if(!fb.dataset.ok){ fb.dataset.ok = "1"; bindFilter(fb, "salon", () => { tiles.dataset.key = ""; renderSalon(G()); }); }
   if(tiles.dataset.key !== tKey){
     tiles.dataset.key = tKey;
-    tiles.innerHTML = SB.games.filter(d => inFilter(d, FSEL.salon) || d.id === sel).map(d => {
+    tiles.innerHTML = SB.games.filter(d => (inFilter(d, FSEL.salon) && (!d.adult || roomHard())) || d.id === sel).map(d => {
       const n = np.length, ok = n >= d.min && (!d.max || n <= d.max);
       const range = rangeTxt(d);
       const meta = (ok ? esc(range) : '<span class="bad">' + esc(range) + "</span>") + (d.hot ? " · 18+" : "");
@@ -1522,7 +1583,7 @@ function openLocalList(){
   accent(""); keepAwake(false); L.def = null; L.tick = null;
   const gs0 = $("#gage-sheet"); if(gs0) gs0.remove();
   const t = $("#ll-tiles");
-  t.innerHTML = SB.games.filter(d => d.local).sort((a, b) => isWip(a) - isWip(b)).map(d => {
+  t.innerHTML = SB.games.filter(d => d.local && (!d.adult || myHard())).sort((a, b) => isWip(a) - isWip(b)).map(d => {
     const lp = d.local.players;
     const meta = (lp ? (lp.min === 1 ? tr("Seul ou jusqu'à " + lp.max + " · robots", "Solo or up to " + lp.max + " · bots") : rangeTxt(lp)) : tr("Tout le groupe", "Whole group")) + (d.hot ? " · 18+" : "");
     return tileHTML(d, { metaHTML: meta });
@@ -1564,7 +1625,7 @@ function renderLocalPlayers(){
   $("#lp-add").hidden = !!lp.max && LP.names.length >= lp.max;
 }
 function startLocal(def, names){
-  L.def = def; L.tick = null;
+  L.def = def; L.tick = null; syncSoftClass();
   trail("Un seul téléphone : " + def.id + " · " + plural(A(names).length, "joueur"));
   accent(def.id); keepAwake(true);
   $("#lc-title").textContent = def.name; $("#lc-gl").textContent = def.glyph || "";
@@ -1643,7 +1704,7 @@ function gCompute(S, gameId, list, players, tally){
     const n = (e.n != null ? Math.max(0, Math.round(+e.n * (GMULT[S.level] || 1))) : gAmount(S, gameId, e.ev)) * times; if(!n) return;
     const why = e.why || ed.label;
     if(ed.kind === "tous") players.forEach(p => drink(p, n, why));
-    else if(ed.kind === "distribue"){ const p = P(e.id); if(p && players.length > 1) items.push({ t: "give", who: p.id, name: p.name, n, why, done: 0 }); }
+    else if(ed.kind === "distribue"){ const p = P(e.id); if(p && players.length > 1 && players.some(x => x.alc && x.id !== p.id)) items.push({ t: "give", who: p.id, name: p.name, n, why, done: 0 }); }
     else drink(P(e.id), n, why);
   });
   return { items, tally: T };
@@ -1711,7 +1772,7 @@ const CORE_X = {};
 function gPlayers(){
   const g = G() || {}, list = A(g.players).map(A);
   const ids = list.length ? list.map(r => String(r[0])) : namedPeers().map(p => p.peer);
-  return ids.map(id => { const p = peerById(id), x = pres(p).x || {}, gp = x._gp || {}, r = list.find(r => String(r[0]) === id); const pf = gProf(gp); return { id, name: clean((r && r[1]) || pres(p).name, 16) || "Joueur", alc: pf.drink !== "sans", drink: pf.drink, lim: gLim(pf) }; });
+  return ids.map(id => { const p = peerById(id), x = pres(p).x || {}, gp = x._gp || {}, r = list.find(r => String(r[0]) === id); const pf = gProf(gp); return { id, name: clean((r && r[1]) || pres(p).name, 16) || "Joueur", alc: roomHard() && pf.drink !== "sans", drink: roomHard() ? pf.drink : "sans", lim: gLim(pf) }; });
 }
 function gHostApply(gameId, list, key){
   if(!N.host || !N.g) return;
@@ -1754,7 +1815,7 @@ function gRenderNet(){
 const LGG = { tally: {}, q: null, jk: {} };
 // Un seul jeu de réglages par téléphone : utilisé quand on crée un salon et sur un seul téléphone.
 // Sur un seul téléphone : ce que boit chaque joueur (prénom → boisson). Ancienne liste « sans alcool » reprise.
-function gLocalDrink(n){ const st = store(), m = st.gagesDrinks || {}; if(m[n]) return m[n]; return A(st.gagesSober).indexOf(n) >= 0 ? "sans" : "biere"; }
+function gLocalDrink(n){ if(!myHard()) return "sans"; const st = store(), m = st.gagesDrinks || {}; if(m[n]) return m[n]; return A(st.gagesSober).indexOf(n) >= 0 ? "sans" : "biere"; }
 function gLocalSettings(){ const st = store(); return gSettings(st.gages || st.gagesLocal); }
 function gSaveSettings(s){ persist({ gages: s }); }
 function gLocalApply(gameId, names, list, key, rerender){
@@ -1963,7 +2024,9 @@ const AV_RX = /^av:(\d{1,3})$/;
 const avNum = v => { const m = AV_RX.exec(v || ""); return m && AVATARS[+m[1]] ? +m[1] : -1; };
 const avSvg = n => '<svg class="avsvg" viewBox="0 0 64 64" aria-hidden="true"><g stroke-linecap="round" stroke-linejoin="round"><rect width="64" height="64" fill="' + AVATARS[n][0] + '"/>' + AVATARS[n][1] + "</g></svg>";
 // Ce qu'on affiche pour une photo : soit une vraie photo, soit un avatar intégré.
-const phHTML = ph => { const n = avNum(ph); return n >= 0 ? avSvg(n) : '<img alt="" src="' + ph + '">'; };
+const AV_HOT = new Set((AV_CATS.find(c => c[0] === "hot") || [0, 0, []])[2]);
+const AV_MASK = '<svg class="avsvg" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="#3a3346"/><text x="32" y="38.5" text-anchor="middle" font-size="16" font-weight="800" font-family="sans-serif" fill="#b9afc6">18+</text></svg>';
+const phHTML = ph => { const n = avNum(ph); return n >= 0 ? (AV_HOT.has(n) && !myHard() ? AV_MASK : avSvg(n)) : '<img alt="" src="' + ph + '">'; };
 const okPhoto = v => typeof v === "string" && (avNum(v) >= 0 || (v.length < 3000 && PHOTO_RX.test(v)));
 function gPhotoOf(peer){ const x = pres(peer).x || {}; return okPhoto(x._ph) ? x._ph : ""; }
 function myPhoto(){ const v = store().photo; return okPhoto(v) ? v : ""; }
@@ -1988,7 +2051,7 @@ function shrinkPhoto(file){
 // Bouton profil en haut à gauche de l'accueil : la photo, sinon l'initiale du prénom.
 function renderMe(){
   const el = $("#h-me"); if(!el) return;
-  const ph = myPhoto(), nm = clean(store().name, 16), key = (ph ? ph.length + ph.slice(-24) : "") + "|" + nm;
+  const ph = myPhoto(), nm = clean(store().name, 16), key = (ph ? ph.length + ph.slice(-24) : "") + "|" + nm + "|" + myHard();
   if(el.dataset.key === key) return; el.dataset.key = key;
   el.innerHTML = ph ? phHTML(ph) : nm ? esc(nm.slice(0, 1).toUpperCase()) : '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 }
@@ -2002,6 +2065,7 @@ function gProfilePage(){
   SB.page(tr("Mon profil", "My profile"), root => {
     const cur = avNum(store().photo); let avTab = (AV_CATS.find(c => c[2].includes(cur)) || AV_CATS[0])[0];
     const draw = () => {
+      if(avTab === "hot" && !myHard()) avTab = AV_CATS[0][0];
       const gp = gProf(store().gp), lim = gLim(gp), d = DRINKS[gp.drink];
       const opts = [["sans", tr("Je ne bois pas d'alcool", "I'm not drinking alcohol"), tr("Tu reçois des gages sans alcool à la place : défis, chansons, pompes…", "You get no-alcohol forfeits instead: dares, songs, push-ups…")]]
         .concat(Object.keys(DRINKS).map(k => [k, DRINKS[k].name, tr("1 verre = ", "1 drink = ") + DRINKS[k].glass + (DRINKS[k].sips > 1 ? tr(" ≈ " + DRINKS[k].sips + " gorgées", " ≈ " + DRINKS[k].sips + " sips") : "")]));
@@ -2010,11 +2074,16 @@ function gProfilePage(){
         '<input class="pr-file" type="file" accept="image/*" data-pf-file aria-label="' + tr("Choisir une photo", "Choose a photo") + '">' +
         '<button class="btn ghost" type="button" data-pf-pick>' + (ph && avNum(ph) < 0 ? tr("Changer la photo", "Change photo") : tr("Prendre une photo", "Add a photo")) + "</button>" +
         (ph ? '<button class="link" type="button" data-pf-del>' + (avNum(ph) >= 0 ? tr("Retirer l'avatar", "Remove avatar") : tr("Retirer la photo", "Remove photo")) + "</button>" : "") + "</div></div>" +
-        '<div class="field"><span class="eyebrow">' + tr("Ou choisis un avatar", "Or pick an avatar") + '</span><div class="avtabs">' + AV_CATS.map(c => '<button type="button" class="avtab' + (c[0] === "hot" ? " hot" : "") + '" data-avc="' + c[0] + '" aria-pressed="' + (c[0] === avTab) + '"><span class="avtab-i">' + avSvg(c[2][AV_TABICON[c[0]] || 0]) + '</span><span class="avtab-t">' + esc(c[1].replace(" 🔥", "")) + '</span><span class="avtab-n">' + c[2].length + "</span></button>").join("") + "</div>" +
-        '<div class="avgrid">' + AV_CATS.find(c => c[0] === avTab)[2].map(i => '<button type="button" class="avpick" data-av="' + i + '" aria-pressed="' + (ph === "av:" + i) + '" aria-label="Avatar ' + (i + 1) + '">' + avSvg(i) + "</button>").join("") + "</div>" + "</div>" +
+        '<div class="field"><span class="eyebrow">' + tr("Ou choisis un avatar", "Or pick an avatar") + '</span><div class="avtabs">' + AV_CATS.filter(c => c[0] !== "hot" || myHard()).map(c => '<button type="button" class="avtab' + (c[0] === "hot" ? " hot" : "") + '" data-avc="' + c[0] + '" aria-pressed="' + (c[0] === avTab) + '"><span class="avtab-i">' + avSvg(c[2][AV_TABICON[c[0]] || 0]) + '</span><span class="avtab-t">' + esc(c[1].replace(" 🔥", "")) + '</span><span class="avtab-n">' + c[2].length + "</span></button>").join("") + "</div>" +
+        '<div class="avgrid">' + (AV_CATS.find(c => c[0] === avTab) || AV_CATS[0])[2].map(i => '<button type="button" class="avpick" data-av="' + i + '" aria-pressed="' + (ph === "av:" + i) + '" aria-label="Avatar ' + (i + 1) + '">' + avSvg(i) + "</button>").join("") + "</div>" + "</div>" +
         '<label class="lbl" for="pf-name">' + tr("Ton prénom", "Your name") + '<input class="txt" id="pf-name" maxlength="16" autocomplete="given-name" value="' + esc(nm) + '" placeholder="' + tr("Léa", "Alex") + '"></label>' +
         '<p class="sm" style="margin:0">' + tr("Ta photo et ton prénom s'affichent dans les salons que tu rejoins.", "Your photo and name show in the rooms you join.") + "</p>" +
         '<button type="button" class="gbtn" data-pf-gages><b>' + tr("Mes gages", "My forfeits") + '</b><span class="sm">' + (gLocalSettings().on ? tr("Activés · ", "On · ") + esc({ chill: "Chill", classique: tr("Classique", "Classic"), chaud: tr("Apéro chaud", "Wild night"), perso: "Perso" }[gLocalSettings().level]) : tr("Désactivés", "Off")) + tr(" · réglages utilisés dans tes salons", " · settings used in your rooms") + "</span></button>" +
+        '<div class="field"><span class="eyebrow">' + tr("Mode de jeu", "Game mode") + '</span><div class="packs">' +
+          [[true, "Hard 🔥", tr("Tout le contenu : jeux et paquets 18+, avatars Hot, gages avec alcool. C'est le mode par défaut.", "Everything: 18+ games and packs, Hot avatars, drinking forfeits. This is the default.")],
+           [false, "Soft", tr("Rien de 18+ : pas de jeux ni de paquets adultes, avatars Hot masqués, gages sans alcool. Pratique en famille ou avec des gens que tu connais peu.", "Nothing 18+: no adult games or packs, Hot avatars hidden, alcohol-free forfeits. Handy with family or people you barely know.")]]
+          .map(m => '<button type="button" class="pack" data-hd="' + m[0] + '" aria-pressed="' + (myHard() === m[0]) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + m[1] + '</span><span class="ds">' + esc(m[2]) + "</span></span></button>").join("") + "</div>" +
+          '<p class="sm" style="margin:0">' + tr("Dans un salon, c'est le mode de l'hôte qui compte. Si tu es en Soft et que tu rejoins un salon Hard, on te demande d'abord ton accord.", "In a room, the host's mode applies. If you're in Soft and join a Hard room, you're asked first.") + "</p></div>" +
         '<p class="howto">' + tr("Ton profil reste sur ton téléphone et te suit dans chaque salon. Il sert à une chose : que les gages des jeux respectent ce que tu bois et ta limite. Une fois ta limite atteinte, tes gages passent automatiquement en sans alcool, sans que les autres sachent pourquoi.", "Your profile stays on your phone and follows you into every room. It does one thing: makes game forfeits respect what you drink and your limit. Once you hit your limit, your forfeits switch to no-alcohol automatically, without the others knowing why.") + "</p>" +
         '<div class="field"><span class="eyebrow">' + tr("Ce soir, je bois…", "Tonight I'm drinking…") + '</span><div class="packs">' +
         opts.map(o => '<button type="button" class="pack" data-gd="' + o[0] + '" aria-pressed="' + (gp.drink === o[0]) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(o[1]) + '</span><span class="ds">' + esc(o[2]) + "</span></span></button>").join("") + "</div></div>" +
@@ -2028,6 +2097,7 @@ function gProfilePage(){
         "</div>";
       const save = p => { const g2 = Object.assign(gProf(store().gp), p); g2.alc = g2.drink !== "sans"; persist({ gp: g2 }); CORE_X._gp = g2; SB.refreshExtras(); draw(); };
       $$("[data-gd]", root).forEach(b => b.addEventListener("click", () => { buzz(8); save({ drink: b.dataset.gd }); }));
+      $$("[data-hd]", root).forEach(b => b.addEventListener("click", () => { const v = b.dataset.hd === "true"; if(v === myHard()) return; buzz(10); persist({ hard: v }); if(N.host && N.g) hostSetG({ hd: v }); syncSoftClass(); renderMe(); if(HOME_REDRAW) HOME_REDRAW(); draw(); }));
       const fi = $("[data-pf-file]", root);
       $("[data-pf-pick]", root).addEventListener("click", () => fi.click());
       fi.addEventListener("change", async () => { const d = await shrinkPhoto(fi.files && fi.files[0]); fi.value = ""; if(!d){ toast(tr("Cette photo n'a pas pu être lue", "Couldn't read that photo")); return; } persist({ photo: d }); CORE_X._ph = d; SB.refreshExtras(); renderMe(); draw(); });
@@ -2128,14 +2198,16 @@ SB.boot = function(){
   $("#h-create").addEventListener("click", () => netEnter(makeCode(), true));
   $("#h-join").addEventListener("click", () => netEnter(clean(cd.value, 4).toUpperCase(), false));
   $("#h-local").addEventListener("click", openLocalList);
-  $("#h-count").textContent = plural2(SB.games.filter(d => !isWip(d)).length, "jeu", "jeux", "game");
   const ht = $("#h-tiles");
   const drawHome = () => {
-    ht.innerHTML = SB.games.filter(d => inFilter(d, FSEL.home)).map(d => tileHTML(d)).join("");
+    $("#h-count").textContent = plural2(SB.games.filter(d => !isWip(d) && (!d.adult || myHard())).length, "jeu", "jeux", "game");
+    ht.innerHTML = SB.games.filter(d => inFilter(d, FSEL.home) && (!d.adult || myHard())).map(d => tileHTML(d)).join("");
     $$(".tile", ht).forEach(b => b.addEventListener("click", () => openRules(SB.byId[b.dataset.id])));
   };
   bindFilter($("#h-filter"), "home", drawHome);
   drawHome();
+  // Changement Hard / Soft dans le profil : l'accueil se met à jour.
+  HOME_REDRAW = () => { bindFilter($("#h-filter"), "home", drawHome); drawHome(); };
 
   armTap($("#sa-quit"), netLeave, tr("Touche encore pour quitter", "Tap again to leave"));
   armTap($("#sp-quit"), netLeave, tr("Touche encore pour quitter", "Tap again to leave"));

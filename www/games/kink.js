@@ -163,7 +163,7 @@ const top3 = p => { const o = {}; ranked(cleanP(p)).slice(0, 3).forEach(x => { o
 const cleanP = p => { const o = {}; Object.keys(ARCH).forEach(k => { const v = Math.round(+(p && p[k]) || 0); o[k] = Math.max(0, Math.min(100, v)); }); return o; };
 
 SB.register({
-  id: "kink", name: tr("Test kink", "Kink Test"), glyph: "Kink", pitch: tr("Dominant, soumis, switch… Découvre ton profil, en secret.", "Dominant, submissive, switch… Find out your profile, in secret."), hot: true,
+  id: "kink", adult: true, name: tr("Test kink", "Kink Test"), glyph: "Kink", pitch: tr("Dominant, soumis, switch… Découvre ton profil, en secret.", "Dominant, submissive, switch… Find out your profile, in secret."), hot: true,
   accent: { light: "#e0245e", dark: "#ff5c8a" },
   tag: tr("Un questionnaire secret sur tes envies, entre adultes consentants. Ton profil reste privé, sauf si tu choisis de le partager.", "A secret questionnaire about what you're into, between consenting adults. Your profile stays private unless you choose to share it."),
   min: 1, max: 20,
