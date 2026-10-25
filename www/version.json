@@ -1,17 +1,15 @@
 {
- "version": "4.16.7",
+ "version": "4.16.8",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Profil : touche le rond de ta photo pour un avatar au hasard 🎲",
-  "Profil : deux boutons, « Prendre une photo » (appareil photo) et « Choisir une photo » (galerie)",
-  "Appli Android : « Prendre une photo » ouvre directement l'appareil photo (nouvelle appli à installer)"
+  "Profil : le rond de la photo s'affiche bien (avatar en entier, petit dé dans le coin)"
  ],
  "files": {
   "core.js": {
-   "h": "b50baf375ed395e283e4ac663b6864a3c87b7882819d5de3652d8a17a243356f",
-   "s": 264268
+   "h": "a3c6762f6912be223dc771461541c9fb749befc96c3c239a19ca11b3d9c1b455",
+   "s": 264735
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -186,8 +184,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "2d3197086cd52ced23b5a39b753c8668544fd1d10bf7eda12f9d07f9c78be2a6",
-   "s": 51157
+   "h": "ce31f27dba5d081a0c2526aa1c312340936d9539e9da058157d8d1f247346d71",
+   "s": 51128
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",

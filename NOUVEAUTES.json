@@ -1,4 +1,7 @@
 {
+  "4.16.8": [
+    "Profil : le rond de la photo s'affiche bien (avatar en entier, petit dé dans le coin)"
+  ],
   "4.16.7": [
     "Profil : touche le rond de ta photo pour un avatar au hasard 🎲",
     "Profil : deux boutons, « Prendre une photo » (appareil photo) et « Choisir une photo » (galerie)",

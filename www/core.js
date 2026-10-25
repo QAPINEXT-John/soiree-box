@@ -808,7 +808,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.16.7";
+const VERSION = "4.16.8";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -2171,7 +2171,9 @@ function gProfilePage(){
       const opts = [["sans", tr("Je ne bois pas d'alcool", "I'm not drinking alcohol"), tr("Tu reçois des gages sans alcool à la place : défis, chansons, pompes…", "You get no-alcohol forfeits instead: dares, songs, push-ups…")]]
         .concat(Object.keys(DRINKS).map(k => [k, DRINKS[k].name, tr("1 verre = ", "1 drink = ") + DRINKS[k].glass + (DRINKS[k].sips > 1 ? tr(" ≈ " + DRINKS[k].sips + " gorgées", " ≈ " + DRINKS[k].sips + " sips") : "")]));
       const ph = myPhoto(), nm = clean(store().name, 16);
-      root.innerHTML = '<div class="gs"><div class="pf-top"><button type="button" class="pf-av" data-pf-rand aria-label="' + tr("Avatar au hasard", "Random avatar") + '">' + (ph ? phHTML(ph) : "?") + '<span class="pf-dice" aria-hidden="true">🎲</span></button><div class="pf-act">' +
+      root.innerHTML = '<div class="gs"><div class="pf-top"><button type="button" class="pf-av" data-pf-rand aria-label="' + tr("Avatar au hasard", "Random avatar") + '" style="position:relative; overflow:visible; padding:0; color:var(--ink); cursor:pointer">' +
+          '<span class="pf-face" style="position:absolute; inset:0; border-radius:50%; overflow:hidden; display:grid; place-items:center">' + (ph ? phHTML(ph) : "?") + "</span>" +
+          '<span class="pf-dice" aria-hidden="true" style="position:absolute; right:-4px; bottom:-4px; width:34px; height:34px; border-radius:50%; background:var(--card); border:2px solid var(--line); display:grid; place-items:center; font-size:18px; line-height:1">🎲</span></button><div class="pf-act">' +
         '<input class="pr-file" type="file" accept="image/*" capture="user" data-pf-cam aria-label="' + tr("Prendre une photo", "Take a photo") + '">' +
         '<input class="pr-file" type="file" accept="image/*" data-pf-file aria-label="' + tr("Choisir une photo", "Choose a photo") + '">' +
         '<button class="btn ghost" type="button" data-pf-snap>📷 ' + tr("Prendre une photo", "Take a photo") + "</button>" +
