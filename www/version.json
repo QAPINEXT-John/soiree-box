@@ -1,15 +1,15 @@
 {
- "version": "4.16.5",
+ "version": "4.16.6",
  "apk": 35,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Grille : au début de la manche, tu as le temps de voir tes 2 cartes retournées, puis tu touches « Continuer »"
+  "Gages : nouvelle case « Sans limite » pour le plafond par joueur (réglages de l'hôte) et pour ta limite perso (profil)"
  ],
  "files": {
   "core.js": {
-   "h": "3aac91349454f5861db6e6040d916556c94583283fc284287b208bf75667ecba",
-   "s": 261657
+   "h": "e26b4d8eb07d9c8917b631f63abae91d0f0212370f673fc38262eced78bed152",
+   "s": 263259
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",

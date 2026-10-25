@@ -1,4 +1,7 @@
 {
+  "4.16.6": [
+    "Gages : nouvelle case « Sans limite » pour le plafond par joueur (réglages de l'hôte) et pour ta limite perso (profil)"
+  ],
   "4.16.5": [
     "Grille : au début de la manche, tu as le temps de voir tes 2 cartes retournées, puis tu touches « Continuer »"
   ],
