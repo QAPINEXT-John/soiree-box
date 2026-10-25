@@ -1,15 +1,15 @@
 {
- "version": "4.16.8",
+ "version": "4.16.9",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Profil : le rond de la photo s'affiche bien (avatar en entier, petit dé dans le coin)"
+  "Profil : plus d'emojis sur les boutons photo, le dé est une petite icône"
  ],
  "files": {
   "core.js": {
-   "h": "a3c6762f6912be223dc771461541c9fb749befc96c3c239a19ca11b3d9c1b455",
-   "s": 264735
+   "h": "5af088274ed4a267aa0861bbf3c0b02f6f6daee4e097c94bdba8a039dd6b8877",
+   "s": 265049
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
