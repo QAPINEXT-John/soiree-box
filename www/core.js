@@ -808,7 +808,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.14.1";
+const VERSION = "4.14.2";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -1008,7 +1008,7 @@ const SHARE_BASE = window.SB_SHARE_BASE || ((location.protocol === "https:" && !
 // Adresse publique du jeu (site + appli) : sert aux liens d'invitation et au QR code, même depuis l'appli Android.
 const PUBLIC_BASE = window.SB_PUBLIC_BASE || "https://qapinext-john.github.io/soiree-box/";
 // Lien d'invitation : « #ABCD », ou « #ABCD-soft » pour un salon Soft (le téléphone invité passe en Soft dès l'ouverture du lien).
-const inviteURL = code => (SHARE_BASE || PUBLIC_BASE) + "#" + code + (roomKid() ? "-kid" : roomHard() ? "" : "-soft");
+const inviteURL = code => (SHARE_BASE || PUBLIC_BASE) + "#" + code + (roomKid() ? "-kid" + (N.g && N.g.kpin ? "-" + N.g.kpin : "") : roomHard() ? "" : "-soft");
 const APK_URL = PUBLIC_BASE + "SoireeBox.apk";
 /* ---------- QR code du salon (scanné avec l'appareil photo : ouvre le site sur le bon salon) ---------- */
 function qrSVG(text){
@@ -1074,30 +1074,31 @@ function inviteSoft(){
   persist({ hard: false }); syncSoftClass(); renderMe(); if(HOME_REDRAW) HOME_REDRAW();
 }
 // Invitation vers un salon Enfant (lien, QR code, ou salon rejoint) : le téléphone passe en mode Enfant et on choisit le code.
-function inviteKid(){
+// Invitation vers un salon Enfant (lien, QR code ou salon rejoint) : le téléphone passe en mode Enfant,
+// verrouillé avec le code choisi par l'hôte. Celui qui scanne n'a rien à faire.
+function inviteKid(pin){
   hashMode = "kid";
-  if(!myKid()){ persist({ kid: { on: true, pin: null }, hard: false }); syncSoftClass(); renderMe(); if(HOME_REDRAW) HOME_REDRAW(); }
-  kidPinGate();
+  const k = store().kid || {};
+  if(!myKid() || (!k.pin && pin)){ persist({ kid: { on: true, pin: pin || k.pin || null }, hard: false }); syncSoftClass(); renderMe(); if(HOME_REDRAW) HOME_REDRAW(); }
 }
-// Mode Enfant sans code (arrivé par une invitation) : on demande de choisir le code, impossible à passer.
-function kidPinGate(){
-  const old = document.getElementById("kid-pin"), need = myKid() && !(store().kid || {}).pin;
-  if(!need){ if(old) old.remove(); return; }
-  if(old) return;
+// L'hôte passe son salon en mode Enfant : il choisit le code qui verrouillera les téléphones des enfants.
+function hostKidPrompt(onOk){
+  const old = document.getElementById("kid-pin"); if(old) old.remove();
   const el = document.createElement("div"); el.id = "kid-pin"; el.className = "hdgate";
   const inp = (id, ph) => '<input class="txt pin" id="' + id + '" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="' + ph + '">';
-  el.innerHTML = '<div class="hdgate-in" role="dialog" aria-modal="true" aria-labelledby="kp-t"><span class="modepill kid">' + tr("Mode Enfant", "Kids mode") + '</span><h2 id="kp-t">' + tr("Choisis un code", "Pick a code") + "</h2>" +
-    "<p>" + tr("Ce salon est en mode Enfant : l'appli passe en mode Enfant. Choisis un code à 4 chiffres : il servira à sortir du mode Enfant plus tard, dans ton profil.", "This room is in Kids mode: the app switches to Kids mode. Pick a 4-digit code: you'll need it to leave Kids mode later, in your profile.") + "</p>" +
-    inp("kp-1", tr("Code", "Code")) + inp("kp-2", tr("Encore une fois", "Once more")) + '<p class="err" data-kperr hidden></p>' +
-    '<button class="btn acc" type="button" data-kpok>' + tr("Valider le code", "Save the code") + "</button></div>";
+  el.innerHTML = '<div class="hdgate-in" role="dialog" aria-modal="true" aria-labelledby="kp-t"><span class="modepill kid">' + tr("Mode Enfant", "Kids mode") + '</span><h2 id="kp-t">' + tr("Choisis le code du mode Enfant", "Pick the Kids mode code") + "</h2>" +
+    "<p>" + tr("Les téléphones qui rejoignent ce salon, ou qui scannent son QR code, passent en mode Enfant, verrouillés avec ce code. Il faudra ce code pour leur faire quitter le mode Enfant. Ne le donne pas aux enfants.", "Phones that join this room, or scan its QR code, switch to Kids mode, locked with this code. You'll need it to take them out of Kids mode. Don't give it to the kids.") + "</p>" +
+    inp("kp-1", tr("Code à 4 chiffres", "4-digit code")) + inp("kp-2", tr("Encore une fois", "Once more")) + '<p class="err" data-kperr hidden></p>' +
+    '<button class="btn acc" type="button" data-kpok>' + tr("Passer le salon en mode Enfant", "Switch the room to Kids mode") + '</button><button class="btn ghost" type="button" data-kpno>' + tr("Annuler", "Cancel") + "</button></div>";
   document.body.appendChild(el);
   const a = $("#kp-1", el), b = $("#kp-2", el), er = $("[data-kperr]", el);
   setTimeout(() => { try{ a.focus(); }catch(e){} }, 100);
+  $("[data-kpno]", el).addEventListener("click", () => el.remove());
   $("[data-kpok]", el).addEventListener("click", () => {
     const bad = t => { er.textContent = t; er.hidden = false; buzz([20, 40, 20]); };
     if(!/^\d{4}$/.test(a.value)) return bad(tr("Le code doit faire 4 chiffres.", "The code must be 4 digits."));
     if(a.value !== b.value) return bad(tr("Les deux codes ne sont pas pareils.", "The two codes don't match."));
-    persist({ kid: { on: true, pin: pinHash(a.value) } }); buzz(15); el.remove();
+    el.remove(); buzz(15); onOk(pinHash(a.value));
   });
 }
 function renderHome(){
@@ -1233,7 +1234,7 @@ function pres(p){ return p && p.presence && typeof p.presence === "object" ? p.p
 function peerById(id){ return N.peers.find(p => p.peer === id); }
 function namedPeers(){ return N.peers.filter(p => clean(pres(p).name, 16)); }
 function G(){ if(!N.nr) return null; return N.host ? N.g : N.nr.game(); }
-function freshSalon(){ return { v: 1, code: N.code, phase: "salon", sel: "", game: "", gid: "", players: [], s: null, opts: null, last: null, gages: gLocalSettings(), gt: {}, hd: myHard(), kid: myKid() }; }
+function freshSalon(){ return { v: 1, code: N.code, phase: "salon", sel: "", game: "", gid: "", players: [], s: null, opts: null, last: null, gages: gLocalSettings(), gt: {}, hd: myHard(), kid: myKid(), kpin: myKid() ? (store().kid || {}).pin || null : null }; }
 function makeCode(){ const L = "ABCDEFGHJKLMNPQRSTUVWXYZ"; let s = ""; for(let i = 0; i < 4; i++) s += L[Math.floor(Math.random() * L.length)]; return s; }
 function myExtras(){ const x = Object.assign({}, CORE_X); SB.games.forEach(d => { if(typeof d.presence === "function"){ try{ const v = d.presence(); if(v != null) x[d.id] = v; }catch(e){} } }); return x; }
 SB.refreshExtras = function(){ if(N.nr) N.nr.presence({ x: plain(myExtras()) }); };
@@ -1435,7 +1436,7 @@ function render(){
   renderOffline();
   const g = G();
   // Rejoindre un salon Enfant fait passer le téléphone en mode Enfant (avec choix du code).
-  if(g && !N.host && g.kid === true && !myKid()) inviteKid();
+  if(g && !N.host && g.kid === true && (!myKid() || (!(store().kid || {}).pin && g.kpin))) inviteKid(typeof g.kpin === "string" ? g.kpin : null);
   // Rejoindre un salon Soft fait passer tout le téléphone en Soft, même après avoir quitté le salon.
   if(g && !N.host && g.hd === false && myHard()){
     persist({ hard: false }); renderMe(); if(HOME_REDRAW) HOME_REDRAW();
@@ -1551,7 +1552,9 @@ function renderSalon(g){
       if(!N.g) return;
       if(myKid()){ toast(tr("Mode Enfant : le salon reste en Enfant. Pour changer, va dans ton profil avec le code.", "Kids mode: the room stays in Kids. To change it, go to your profile with the code.")); return; }
       const cur = N.g.kid === true ? "kid" : N.g.hd === false ? "soft" : "hard", nx = { hard: "soft", soft: "kid", kid: "hard" }[cur]; buzz(12);
-      hostSetG({ hd: nx === "hard", kid: nx === "kid" });
+      const after = () => { const pn = $("#sa-panel"); if(pn) pn.dataset.key = ""; const tl = $("#sa-tiles"); if(tl) tl.dataset.key = ""; renderQR(); };
+      if(nx === "kid"){ hostKidPrompt(pin => { hostSetG({ hd: false, kid: true, kpin: pin }); toast(tr("Salon en mode Enfant : seulement les jeux tout public.", "Room in Kids mode: family-friendly games only.")); after(); }); return; }
+      hostSetG({ hd: nx === "hard", kid: false, kpin: null });
       toast({ hard: tr("Salon en mode Hard 🔥 : contenu 18+ et gages avec alcool.", "Room in Hard mode 🔥: 18+ content and drinking forfeits."), soft: tr("Salon en mode Soft : plus de contenu 18+ ni d'alcool.", "Room in Soft mode: no 18+ content, no alcohol."), kid: tr("Salon en mode Enfant : seulement les jeux tout public.", "Room in Kids mode: family-friendly games only.") }[nx]);
       const pn = $("#sa-panel"); if(pn) pn.dataset.key = ""; const tl = $("#sa-tiles"); if(tl) tl.dataset.key = "";
     }); } mp.title = hd ? tr("Salon en mode Hard : contenu 18+ et gages avec alcool", "Hard room: 18+ content and drinking forfeits") : tr("Salon en mode Soft : pas de contenu 18+ ni d'alcool", "Soft room: no 18+ content, no alcohol"); } }
@@ -2141,7 +2144,7 @@ function gProfilePage(){
     const curMode = () => (myKid() ? "kid" : myHard() ? "hard" : "soft");
     const setMode = (m, pin) => {
       persist(m === "kid" ? { kid: { on: true, pin }, hard: false } : { kid: null, hard: m === "hard" });
-      if(N.host && N.g) hostSetG({ hd: m === "hard", kid: m === "kid" });
+      if(N.host && N.g) hostSetG({ hd: m === "hard", kid: m === "kid", kpin: m === "kid" ? pin : null });
       syncSoftClass(); renderMe(); if(HOME_REDRAW) HOME_REDRAW();
       toast({ hard: tr("Mode Hard activé.", "Hard mode on."), soft: tr("Mode Soft activé.", "Soft mode on."), kid: tr("Mode Enfant activé et verrouillé.", "Kids mode on and locked.") }[m]);
     };
@@ -2314,9 +2317,8 @@ SB.boot = function(){
   }
   const nm = $("#h-name"), cd = $("#h-code");
   nm.value = store().name || "";
-  const m = (location.hash || "").match(/^#([A-Za-z]{4})(-soft|-kid)?$/i);
-  if(m){ hashCode = m[1].toUpperCase(); cd.value = hashCode; if(m[2]) setTimeout(m[2].toLowerCase() === "-kid" ? inviteKid : inviteSoft, 0); }
-  setTimeout(kidPinGate, 0);
+  const m = (location.hash || "").match(/^#([A-Za-z]{4})(-soft|-kid(?:-(k[a-z0-9]{1,12}))?)?$/i);
+  if(m){ hashCode = m[1].toUpperCase(); cd.value = hashCode; if(m[2]) setTimeout(() => (/^-kid/i.test(m[2]) ? inviteKid(m[3] ? m[3].toLowerCase() : null) : inviteSoft()), 0); }
   nm.addEventListener("input", () => { persist({ name: clean(nm.value, 16) }); renderHome(); renderMe(); });
   cd.addEventListener("input", () => { cd.value = cd.value.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 4); renderHome(); });
   cd.addEventListener("keydown", e => { if(e.key === "Enter" && !$("#h-join").disabled) $("#h-join").click(); });

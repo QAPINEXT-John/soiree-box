@@ -1,4 +1,8 @@
 {
+  "4.14.2": [
+    "Mode Enfant : c'est l'hôte qui choisit le code en passant le salon en Enfant",
+    "Les téléphones qui scannent le QR code ou rejoignent le salon passent en mode Enfant, verrouillés avec le code de l'hôte, sans rien avoir à faire"
+  ],
   "4.14.1": [
     "Les mises à jour arrivent tout de suite dans le navigateur, sans attendre 10 minutes"
   ],
