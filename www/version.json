@@ -1,19 +1,15 @@
 {
- "version": "4.12",
+ "version": "4.12.1",
  "apk": 33,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Gages : un système de gages avec ou sans alcool, entièrement réglable (intensité, plafond, rappel d'eau, joker, gages perso)",
-  "Ton profil en haut à gauche : photo ou avatar, ce que tu bois ce soir et ta limite",
-  "Plus de 100 avatars à choisir, rangés par catégories, dont un onglet Hot",
-  "Mode Hard (par défaut) ou Soft : le Soft cache tout le contenu 18+ et l'alcool",
-  "Dans le salon, l'hôte touche le badge Hard / Soft pour changer le mode pour tout le monde"
+  "Salon en Soft : gages sans alcool, et plus aucune mention de l'alcool dans les réglages, le profil et les gages de la manche"
  ],
  "files": {
   "core.js": {
-   "h": "5c6f12aa9a33aedd890021c45c6d46412ee8b972e2973df334233ba1f0618a39",
-   "s": 245588
+   "h": "5e19ef5be996b3579baf2b0c0828956409a00a2b27e02c70f376e89accd3ac85",
+   "s": 246961
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
