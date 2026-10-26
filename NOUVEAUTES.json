@@ -1,4 +1,8 @@
 {
+  "4.25.0": [
+    "Salon : votez pour le prochain jeu ! Les joueurs touchent un jeu pour voter (encore une fois pour retirer leur vote), chaque tuile affiche son nombre de votes",
+    "L'hôte voit les votes et peut lancer « le plus voté » en un appui. Il garde le dernier mot. Les votes repartent à zéro après chaque partie"
+  ],
   "4.24.1": [
     "7 secondes : les 9 paquets sont regroupés en 4 (Classique, Pop & soirée, Hot & trash, Enfants), les thèmes restent les mêmes"
   ],

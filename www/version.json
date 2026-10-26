@@ -1,15 +1,16 @@
 {
- "version": "4.24.1",
+ "version": "4.25.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "7 secondes : les 9 paquets sont regroupés en 4 (Classique, Pop & soirée, Hot & trash, Enfants), les thèmes restent les mêmes"
+  "Salon : votez pour le prochain jeu ! Les joueurs touchent un jeu pour voter (encore une fois pour retirer leur vote), chaque tuile affiche son nombre de votes",
+  "L'hôte voit les votes et peut lancer « le plus voté » en un appui. Il garde le dernier mot. Les votes repartent à zéro après chaque partie"
  ],
  "files": {
   "core.js": {
-   "h": "3d9a030729f8bc4c668c958bf4878366898b777b52a97076ffebd6a9182ef3ff",
-   "s": 282656
+   "h": "dfa8468cf1fc26ff8a1bfb3191714c75897a2a9bdaad4afb4dceb1d4d2150fff",
+   "s": 285593
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -208,8 +209,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "4e18f60a5af457152e52120348f58e8c351a4aff0715a636d8c77b41d107399b",
-   "s": 53084
+   "h": "bbc9bf5b0f934cefd7bc199ec968583ee2c0c49bcf7eb7444f448020ab16dcac",
+   "s": 53296
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",

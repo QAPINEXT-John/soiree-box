@@ -808,7 +808,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.24.1";
+const VERSION = "4.25.0";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -1530,19 +1530,35 @@ function optionsHTML(def, ctx, vals){
     return h + "</div>";
   }).join("");
 }
+/* Vote du prochain jeu : chaque joueur touche un jeu dans le salon, l'hôte voit les votes et garde le dernier mot.
+   Le vote est dans la présence du joueur (CORE_X._vote = { id, r }) ; r = la partie d'avant, donc les votes s'effacent à chaque nouvelle partie. */
+const voteRound = g => (g && g.gid) || "";
+function voteCounts(g){
+  const r = voteRound(g), c = {};
+  namedPeers().forEach(p => { const v = (pres(p).x || {})._vote; if(v && v.r === r && SB.byId[v.id] && gameOk(SB.byId[v.id], roomKid(), roomHard()) && !isWip(SB.byId[v.id])) c[v.id] = (c[v.id] || 0) + 1; });
+  return c;
+}
+const myVote = g => { const v = CORE_X._vote; return v && v.r === voteRound(g) ? v.id : ""; };
+const topVote = c => { const ks = Object.keys(c).sort((a, b) => c[b] - c[a]); return ks.length && (ks.length < 2 || c[ks[0]] !== c[ks[1]]) ? ks[0] : ""; };
 function salonDock(g, np){
   const d = $("#sa-dock"), def = g ? SB.byId[g.sel] : null;
-  const key = JSON.stringify([!!g, N.host, def ? def.id : "", np.length]);
+  const vc = voteCounts(g), mv = myVote(g), tv = topVote(vc);
+  const key = JSON.stringify([!!g, N.host, def ? def.id : "", np.length, vc, mv]);
   if(d.dataset.key === key) return;
   d.dataset.key = key;
   if(!g){ d.innerHTML = '<p class="wait">' + tr("Connexion à l'hôte…", "Connecting to the host…") + '</p>'; return; }
   if(N.host){
-    d.innerHTML = def ? '<button class="btn acc acc-' + esc(def.id) + '" type="button" data-open>' + tr("Lancer " + esc(def.name), "Play " + esc(def.name)) + '</button>' : '<p class="wait">' + tr("Touche un jeu pour le choisir.", "Tap a game to pick it.") + '</p>';
+    d.innerHTML = def ? '<button class="btn acc acc-' + esc(def.id) + '" type="button" data-open>' + tr("Lancer " + esc(def.name), "Play " + esc(def.name)) + '</button>'
+      : tv ? '<button class="btn acc acc-' + esc(tv) + '" type="button" data-top>' + tr("Choisir le plus voté : " + esc(SB.byId[tv].name) + " (" + vc[tv] + ")", "Pick the top vote: " + esc(SB.byId[tv].name) + " (" + vc[tv] + ")") + '</button><p class="wait">' + tr("Ou touche un autre jeu.", "Or tap another game.") + "</p>"
+      : '<p class="wait">' + (Object.keys(vc).length ? tr("Égalité dans les votes : à toi de trancher !", "Tied votes: your call!") : tr("Touche un jeu pour le choisir. Les autres peuvent voter.", "Tap a game to pick it. The others can vote.")) + '</p>';
+    const tp = $("[data-top]", d); if(tp) tp.addEventListener("click", () => { buzz(10); if(N.g && N.g.phase === "salon"){ $("#sa-panel").dataset.key = ""; hostSetG({ sel: tv }); renderSalon(G()); openSheet(); } });
     const b = $("[data-open]", d); if(b) b.addEventListener("click", () => { $("#sa-panel").dataset.key = ""; openSheet(); renderSalon(G()); });
   } else {
     d.innerHTML = def ? '<div class="pick acc-' + esc(def.id) + '"><span class="gl">' + esc(def.glyph || "") + '</span><span class="tx"><span class="eyebrow">' + tr("L'hôte a choisi", "The host picked") + '</span><b>' + esc(def.name) + '</b></span><button class="link" type="button" data-rules>' + tr("Règles", "Rules") + '</button></div><p class="wait">' + tr("L'hôte règle les options et lance la partie…", "The host is setting the options and starting the game…") + '</p>'
-      : '<p class="wait">' + tr("L'hôte choisit le jeu…", "The host is picking the game…") + '</p>';
+      : (mv ? '<div class="pick acc-' + esc(mv) + '"><span class="gl">' + esc(SB.byId[mv].glyph || "") + '</span><span class="tx"><span class="eyebrow">' + tr("Ton vote", "Your vote") + " · " + (vc[mv] || 1) + " vote" + ((vc[mv] || 1) > 1 ? "s" : "") + '</span><b>' + esc(SB.byId[mv].name) + '</b></span><button class="link" type="button" data-vrules>' + tr("Règles", "Rules") + "</button></div>" : "") +
+        '<p class="wait">' + (mv ? tr("L'hôte choisit le jeu, il voit les votes.", "The host picks the game and sees the votes.") : tr("Touche un jeu pour voter. L'hôte voit les votes et choisit.", "Tap a game to vote. The host sees the votes and picks.")) + '</p>';
     const r = $("[data-rules]", d); if(r) r.addEventListener("click", () => openRules(def));
+    const vr = $("[data-vrules]", d); if(vr) vr.addEventListener("click", () => openRules(SB.byId[mv]));
   }
 }
 function renderSalon(g){
@@ -1585,7 +1601,8 @@ function renderSalon(g){
 
   const sel = g ? g.sel : "";
   const tiles = $("#sa-tiles");
-  const tKey = (N.host ? "h" : "p") + "|" + sel + "|" + np.length + "|" + FSEL.salon + "|" + roomHard() + roomKid();
+  const vc = voteCounts(g), mv = myVote(g);
+  const tKey = (N.host ? "h" : "p") + "|" + sel + "|" + np.length + "|" + FSEL.salon + "|" + roomHard() + roomKid() + JSON.stringify(vc) + mv;
   const fb = $("#sa-filter");
   if(fb.dataset.ok !== String(roomHard()) + roomKid()){ fb.dataset.ok = String(roomHard()) + roomKid(); bindFilter(fb, "salon", () => { tiles.dataset.key = ""; renderSalon(G()); }); }
   if(tiles.dataset.key !== tKey){
@@ -1593,11 +1610,17 @@ function renderSalon(g){
     tiles.innerHTML = SB.games.filter(d => (inFilter(d, FSEL.salon) && gameOk(d, roomKid(), roomHard())) || d.id === sel).sort((a, b) => isWip(a) - isWip(b)).map(d => {
       const n = np.length, ok = n >= d.min && (!d.max || n <= d.max);
       const range = rangeTxt(d);
-      const meta = (ok ? esc(range) : '<span class="bad">' + esc(range) + "</span>") + (d.hot && roomHard() ? " · 18+" : "");
-      return tileHTML(d, { pressed: d.id === sel, metaHTML: meta });
+      const meta = (ok ? esc(range) : '<span class="bad">' + esc(range) + "</span>") + (d.hot && roomHard() ? " · 18+" : "") + (vc[d.id] ? ' <b class="vcount">' + vc[d.id] + " vote" + (vc[d.id] > 1 ? "s" : "") + "</b>" : "");
+      return tileHTML(d, { pressed: N.host ? d.id === sel : d.id === mv, metaHTML: meta });
     }).join("");
     $$(".tile", tiles).forEach(b => b.addEventListener("click", () => {
-      if(!N.host){ openRules(SB.byId[b.dataset.id]); return; }
+      if(!N.host){
+        // Vote pour le prochain jeu (toucher encore pour retirer son vote).
+        const id = b.dataset.id, gg = G(), cur = myVote(gg);
+        if(cur === id){ delete CORE_X._vote; toast(tr("Vote retiré", "Vote removed")); }
+        else { CORE_X._vote = { id, r: voteRound(gg) }; toast(tr("Tu votes pour " + SB.byId[id].name, "You voted for " + SB.byId[id].name)); }
+        buzz(8); SB.refreshExtras(); tiles.dataset.key = ""; $("#sa-dock").dataset.key = ""; renderSalon(gg); return;
+      }
       buzz(8);
       if(N.g && N.g.phase === "salon"){ $("#sa-panel").dataset.key = ""; hostSetG({ sel: b.dataset.id }); renderSalon(G()); openSheet(); }
     }));
