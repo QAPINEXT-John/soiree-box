@@ -1,4 +1,7 @@
 {
+  "4.31.0": [
+    "Compteur d'alcool : le + demande ce que tu viens de boire (demi, pinte, bière forte, cidre, vin, champagne, cocktail, long drink, shot) et compte chaque verre à sa vraie valeur en verres standard. Plus besoin de changer de boisson dans le profil"
+  ],
   "4.30.1": [
     "Profil : « Terminé » sur l'écran Avatar ou Taux d'alcool ramène au profil (avant, il fermait tout et renvoyait à l'accueil). La barre du haut affiche le nom de l'écran"
   ],

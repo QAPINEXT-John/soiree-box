@@ -757,7 +757,7 @@ function stopSounds(){ try{ if(SB.music && SB.music.pause) SB.music.pause(); }ca
 function show(name){
   if(current === name) return;
   closeSheet();
-  if(name !== "game" && name !== "local"){ closeRulesOv(); closeQuitOv(); stopSounds(); }
+  if(name !== "game" && name !== "local"){ closeRulesOv(); closeQuitOv(); closeGlassOv(); stopSounds(); }
   SCREENS.forEach(s => { $("#s-" + s).hidden = s !== name; });
   const el = $("#s-" + name); if(el){ el.scrollTop = 0; enter(el); }
   current = name; trail("Écran " + name);
@@ -783,6 +783,7 @@ function armedBack(msg, action){
   backArm = Date.now(); toast(msg); return true;
 }
 SB.back = function(){
+  if(closeGlassOv()) return true;
   if(closeQuitOv()) return true;
   if(closeRulesOv()) return true;
   if(sheetOpen){ closeSheet(); return true; }
@@ -814,7 +815,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.30.1";
+const VERSION = "4.31.0";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -2470,7 +2471,7 @@ function alcMineHTML(){
       esc(tr("Ce soir : ", "Tonight: ") + alcStd(t.tot) + (t.j ? tr(" · dont " + alcStd(t.j) + " dans les jeux", " · " + alcStd(t.j) + " in games") : "")) + "</span></span>" +
       '<button type="button" class="gs-b" data-alc="-1" aria-label="' + tr("Retirer le dernier verre", "Remove the last drink") + '"' + (t.n ? "" : " disabled") + ">−</button>" +
       '<button type="button" class="gs-b" data-alc="1" aria-label="' + tr("Ajouter un verre", "Add a drink") + '">+</button></div>' +
-    '<p class="sm" style="margin:8px 0 0">' + esc(tr("Touche + à chaque nouveau verre : ", "Tap + for each new drink: ") + d.glass + " (" + alcStd(d.std) + ")." + tr(" Change de boisson dans ton profil.", " Change your drink in your profile.")) + "</p></div>" +
+    '<p class="sm" style="margin:8px 0 0">' + esc(tr("Touche + à chaque nouveau verre et choisis ce que tu bois : demi, pinte, vin, cocktail, shot… Chaque verre compte à sa vraie valeur.", "Tap + for each new drink and pick what it is: half pint, pint, wine, cocktail, shot… Each one counts at its real value.")) + "</p></div>" +
     '<div class="field"><span class="eyebrow">' + tr("Estimation du taux d'alcool", "Blood alcohol estimate") + "</span>" +
     (bac == null ? '<p class="sm" style="margin:0">' + tr("Indique ton poids et la base de calcul pour avoir une estimation. Ils restent sur ce téléphone, ils ne sont jamais partagés.", "Enter your weight and the calculation basis to get an estimate. They stay on this phone and are never shared.") + "</p>"
       : '<div class="alc-bac"><b>≈ ' + alcNum(bac, 2) + " g/L</b><span>" + tr("d'alcool dans le sang", "blood alcohol") + "</span></div>") +
@@ -2479,12 +2480,39 @@ function alcMineHTML(){
     '<p class="note-box">' + tr("Estimation très approximative (formule de Widmark) : elle ne tient compte ni de ce que tu as mangé, ni de ta santé, ni de tes médicaments. Ne t'en sers jamais pour décider de conduire : si tu as bu, tu ne prends pas le volant.", "A very rough estimate (Widmark formula): it ignores food, health and medication. Never use it to decide whether to drive: if you've been drinking, don't drive.") + "</p>" +
     (t.n || t.j ? '<button class="link" type="button" data-alc0 style="align-self:flex-start">' + tr("Remettre mon compteur à zéro", "Reset my counter") + "</button>" : "") + "</div>";
 }
+/* Le + du compteur : on choisit le verre qu'on vient de boire, compté à sa vraie valeur en verres standard (10 g d'alcool pur). */
+const GLASSES = [
+  ["demi", tr("Demi de bière", "Half pint of beer"), "25 cl · 5 %", 1], ["pinte", tr("Pinte de bière", "Pint of beer"), "50 cl · 5 %", 2],
+  ["forte", tr("Bière forte", "Strong beer"), "33 cl · 8 %", 2], ["cidre", tr("Cidre", "Cider"), "25 cl · 5 %", 1],
+  ["vin", tr("Verre de vin", "Glass of wine"), "12 cl · 12 %", 1], ["champ", tr("Coupe de champagne", "Glass of champagne"), "10 cl · 12 %", 1],
+  ["cocktail", "Cocktail", tr("≈ 2 doses d'alcool", "≈ 2 shots of spirits"), 2], ["long", tr("Long drink", "Mixed drink"), tr("4 cl d'alcool fort", "4 cl of spirits"), 1.3],
+  ["shot", "Shot", "3 cl · 40 %", 1]
+];
+const GLASS_OF = { biere: "demi", vin: "vin", cocktail: "cocktail", fort: "shot" };
+function closeGlassOv(){ const o = document.getElementById("glass-ov"); if(!o) return false; o.classList.remove("on"); setTimeout(() => o.remove(), 200); return true; }
+function openGlassOv(onPick){
+  closeGlassOv();
+  const habit = GLASS_OF[gProf(store().gp).drink] || "demi";
+  const x = document.createElement("div"); x.id = "glass-ov"; x.className = "rules-ov";
+  x.innerHTML = '<div class="rules-in quit-in glass-in" role="dialog" aria-modal="true" aria-labelledby="gl-t"><b id="gl-t" class="quit-t">' + tr("Qu'est-ce que tu bois ?", "What are you drinking?") + "</b>" +
+    '<div class="glass-grid">' + GLASSES.map(g => '<button type="button" class="glass-b" data-glass="' + g[0] + '" aria-pressed="' + (g[0] === habit) + '"><b>' + esc(g[1]) + "</b><span>" + esc(g[2]) + "</span><i>" + alcStd(g[3]) + "</i></button>").join("") + "</div>" +
+    '<button class="btn ghost" type="button" data-glno>' + tr("Annuler", "Cancel") + "</button></div>";
+  document.body.appendChild(x);
+  x.addEventListener("click", e => { if(e.target === x || e.target.closest("[data-glno]")) closeGlassOv(); });
+  x.querySelectorAll("[data-glass]").forEach(b => b.addEventListener("click", () => { const g = GLASSES.find(y => y[0] === b.dataset.glass); closeGlassOv(); if(g) onPick(g); }));
+  requestAnimationFrame(() => x.classList.add("on"));
+}
+SB.glassOv = openGlassOv;
 function alcMineBind(root, redraw){
   const gp = gProf(store().gp), d = DRINKS[gp.drink];
   $$("[data-alc]", root).forEach(b => b.addEventListener("click", () => {
     const a = alcStore();
-    if(+b.dataset.alc > 0){ if(!d) return; a.log.push({ t: Date.now(), k: "v", s: d.std }); buzz(12); toast(tr("+1 verre noté", "+1 drink logged")); }
-    else { for(let i = a.log.length - 1; i >= 0; i--) if(a.log[i].k === "v"){ a.log.splice(i, 1); break; } buzz(6); }
+    if(+b.dataset.alc > 0){
+      if(!d) return; buzz(8);
+      openGlassOv(g => { const a2 = alcStore(); a2.log.push({ t: Date.now(), k: "v", s: g[3], g: g[0] }); alcSave({ log: a2.log }); buzz(12); toast(tr("+1 noté : ", "+1 logged: ") + g[1].toLowerCase() + " (" + alcStd(g[3]) + ")"); redraw(); });
+      return;
+    }
+    for(let i = a.log.length - 1; i >= 0; i--) if(a.log[i].k === "v"){ a.log.splice(i, 1); break; } buzz(6);
     alcSave({ log: a.log }); redraw();
   }));
   // Redessin différé : « change » arrive pendant que le champ perd le focus.

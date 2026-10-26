@@ -1,15 +1,15 @@
 {
- "version": "4.30.1",
+ "version": "4.31.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Profil : « Terminé » sur l'écran Avatar ou Taux d'alcool ramène au profil (avant, il fermait tout et renvoyait à l'accueil). La barre du haut affiche le nom de l'écran"
+  "Compteur d'alcool : le + demande ce que tu viens de boire (demi, pinte, bière forte, cidre, vin, champagne, cocktail, long drink, shot) et compte chaque verre à sa vraie valeur en verres standard. Plus besoin de changer de boisson dans le profil"
  ],
  "files": {
   "core.js": {
-   "h": "7ba4c54c7bdd3d79169aed550989d49b92f1049737739d28ad584ca47d049126",
-   "s": 293806
+   "h": "a88a2581be9451c54538d275c1878d97da5f98830ce4cee22e7b15ee6e2b3539",
+   "s": 296310
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -216,8 +216,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "fca249c124ef95cb8eb39707a0f0b2724e6672a44a34c3d243afea137c11eb24",
-   "s": 58157
+   "h": "b37d58c32ba67a52c19abe0df89ee06c618a43a83619b6d51c07c1e5996f8e0a",
+   "s": 58742
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
