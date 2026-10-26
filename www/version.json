@@ -1,15 +1,17 @@
 {
- "version": "4.22.2",
+ "version": "4.23.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Qui est le plus… : nouveau paquet « Amis de merde », 51 questions méchantes sur vos potes (radins, traîtres, boulets…)"
+  "Nouveau jeu : Rouge, noir ou violet. Parie sur la prochaine carte : rouge, noir, ou violet (deux cartes de couleurs différentes, ça compte double)",
+  "Option Ride the bus : 4 étapes par tour (couleur, plus ou moins, entre ou dehors, enseigne), chaque étape vaut plus que la précédente",
+  "Coups de théâtre : tour en or, le monde à l'envers, tout le monde parie. En ligne et sur un seul téléphone, avec gages"
  ],
  "files": {
   "core.js": {
-   "h": "083503e4a682816ea5f465772445b42d35296a849381914a37e515085afac2c9",
-   "s": 282598
+   "h": "8bbdddcd0251cd7dfa1595fcbf8d3941e3c71b4b246efd097fcb23b57b025c52",
+   "s": 282632
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -167,6 +169,10 @@
    "h": "daf2f97fb5197a93642eb15eb388a314975952d44c5d40868eb5dd20050898c1",
    "s": 66228
   },
+  "games/rougenoir.js": {
+   "h": "9aa9c2a9c3b0eba0a4647df77e44fc1b6463ab4b408b90f863a375c76b43a92e",
+   "s": 26740
+  },
   "games/tupref.js": {
    "h": "8ca5d8d2505190eb531a818dc015a45827ac07de1525c63e918c2175e9c13ecb",
    "s": 45452
@@ -200,8 +206,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "8e71a3592116f14c5f33f7477c1567d76ae9d728fb6c96130e9def596fce1c8a",
-   "s": 53003
+   "h": "9f4df7374a68821ae4c232bee868b8b7a9b3d817588c35cda6105fa71ebf8331",
+   "s": 53046
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
