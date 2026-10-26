@@ -1,16 +1,15 @@
 {
- "version": "4.22.0",
+ "version": "4.22.1",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Un seul téléphone : entre les prénoms des joueurs dès la première page. Ensuite, toucher un jeu le lance directement avec ces joueurs",
-  "Si un jeu demande plus ou moins de joueurs, sa tuile l'indique, et l'appli te propose d'ajuster la liste"
+  "Un seul téléphone, « Qui boit quoi ? » : la limite de chaque joueur se règle avec − et +, avec une case « Sans limite ». Tous les choix de boisson sont visibles"
  ],
  "files": {
   "core.js": {
-   "h": "5c2fd965bc503d36c5eac7dadab40cf66a2b2da7eb28056698afdae7816aa2c1",
-   "s": 280446
+   "h": "cf412bf772567f75918f6f2c708d25f9626650b61bf3e786bac62ff60edb9568",
+   "s": 282598
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",

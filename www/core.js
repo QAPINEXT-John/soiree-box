@@ -808,7 +808,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.22.0";
+const VERSION = "4.22.1";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -1935,12 +1935,16 @@ const LGG = { tally: {}, q: null, jk: {} };
 // Un seul jeu de réglages par téléphone : utilisé quand on crée un salon et sur un seul téléphone.
 // Sur un seul téléphone : ce que boit chaque joueur (prénom → boisson). Ancienne liste « sans alcool » reprise.
 function gLocalDrink(n){ if(!myHard()) return "sans"; const st = store(), m = st.gagesDrinks || {}; if(m[n]) return m[n]; return A(st.gagesSober).indexOf(n) >= 0 ? "sans" : "biere"; }
+// Sur un seul téléphone : la limite de chaque joueur (par boisson), ou « sans limite ». 0 = pas de limite.
+function gLocalLimCfg(n){ const m = (store().gagesLims || {})[n]; return { lim: Object.assign({}, m && m.lim), nolim: !!(m && m.nolim) }; }
+function gLocalLim(n, dk){ if(dk === "sans" || !DRINKS[dk]) return 0; const c = gLocalLimCfg(n); if(c.nolim) return 0; return c.lim[dk] != null ? Math.max(1, Math.min(20, +c.lim[dk] || 1)) : DRINKS[dk].def; }
+function gLocalLimSave(n, patch){ const all = Object.assign({}, store().gagesLims || {}); all[n] = Object.assign(gLocalLimCfg(n), patch); persist({ gagesLims: all }); }
 function gLocalSettings(){ const st = store(); return gSettings(st.gages || st.gagesLocal); }
 function gSaveSettings(s){ persist({ gages: s }); }
 function gLocalApply(gameId, names, list, key, rerender){
   const S = gLocalSettings(); if(!S.on) return;
   if(key && LGG.key === key) return; LGG.key = key || "";
-  const players = names.map(n => { const d = gLocalDrink(n); return { id: n, name: n, alc: d !== "sans", drink: d, lim: d === "sans" ? 0 : DRINKS[d].def }; });
+  const players = names.map(n => { const d = gLocalDrink(n); return { id: n, name: n, alc: d !== "sans", drink: d, lim: gLocalLim(n, d) }; });
   const r = gCompute(S, gameId, list, players, LGG.tally); alcTrackLocal(LGG.tally, r.tally); LGG.tally = r.tally;
   if(!r.items.length) return;
   const q = { id: rid(), game: gameId, items: r.items };
@@ -2451,10 +2455,18 @@ function gLocalBar(){
   $("[data-gsob]", el).addEventListener("click", () => SB.page(tr("Qui boit quoi ?", "Who drinks what?"), root => {
     const draw = () => {
       const names = A(store().localNames).map(n => clean(n, 16)).filter(Boolean);
-      root.innerHTML = '<div class="gs"><p class="howto">' + tr("Sur un seul téléphone, choisis ce que boit chaque joueur. Sa limite est celle proposée pour sa boisson ; au-delà, il passe aux gages sans alcool.", "On one phone, pick what each player drinks. Their limit is the default for that drink; past it, they switch to no-alcohol forfeits.") + "</p>" +
-        (names.length ? names.map(n => { const dk = gLocalDrink(n); return '<div class="field"><span class="eyebrow">' + esc(n) + (dk !== "sans" ? " · max " + esc(gVerres(DRINKS[dk].def, dk)) : "") + '</span><div class="filters">' + [["sans", tr("Sans alcool", "No alcohol")]].concat(Object.keys(DRINKS).map(k => [k, DRINKS[k].name])).map(o => '<button type="button" data-gn="' + esc(n) + '" data-gk="' + o[0] + '" aria-pressed="' + (dk === o[0]) + '">' + esc(o[1]) + "</button>").join("") + "</div></div>"; }).join("")
-          : '<p class="sm">' + tr("Ajoute d'abord les prénoms en lançant un jeu.", "Add player names first by starting a game.") + "</p>") + "</div>";
+      root.innerHTML = '<div class="gs"><p class="howto">' + tr("Sur un seul téléphone, choisis ce que boit chaque joueur et sa limite pour la soirée. Au-delà de sa limite, il passe aux gages sans alcool.", "On one phone, pick what each player drinks and their limit for the night. Past their limit, they switch to no-alcohol forfeits.") + "</p>" +
+        (names.length ? names.map(n => {
+          const dk = gLocalDrink(n), cfg = gLocalLimCfg(n), lim = gLocalLim(n, dk);
+          return '<div class="field"><span class="eyebrow">' + esc(n) + (dk === "sans" ? "" : cfg.nolim ? tr(" · sans limite", " · no limit") : " · max " + esc(gVerres(lim, dk))) + '</span>' +
+            '<div class="filters" style="flex-wrap:wrap; overflow:visible">' + [["sans", tr("Sans alcool", "No alcohol")]].concat(Object.keys(DRINKS).map(k => [k, DRINKS[k].name])).map(o => '<button type="button" data-gn="' + esc(n) + '" data-gk="' + o[0] + '" aria-pressed="' + (dk === o[0]) + '">' + esc(o[1]) + "</button>").join("") + "</div>" +
+            (dk === "sans" ? "" : '<div class="gs-box">' + (cfg.nolim ? "" : '<div class="gs-row"><span class="tx"><b>' + esc(gVerres(lim, dk)) + '</b><span class="sm">' + esc(gLimText(dk, lim)) + '</span></span><button type="button" class="gs-b" data-gln="' + esc(n) + '" data-d="-1" aria-label="' + tr("Moins", "Less") + '">−</button><b class="gs-n">' + lim + '</b><button type="button" class="gs-b" data-gln="' + esc(n) + '" data-d="1" aria-label="' + tr("Plus", "More") + '">+</button></div>') +
+              '<div class="gs-row"><span class="tx"><b>' + tr("Sans limite", "No limit") + '</b><span class="sm">' + tr("Pas de limite pour " + esc(n), "No limit for " + esc(n)) + '</span></span><button type="button" class="gs-sw" data-gnl="' + esc(n) + '" aria-pressed="' + cfg.nolim + '" aria-label="' + tr("Sans limite", "No limit") + '"><i></i></button></div></div>') + "</div>";
+        }).join("")
+          : '<p class="sm">' + tr("Ajoute d'abord les prénoms en haut de la page « Un seul téléphone ».", "First add the names at the top of the “One phone” page.") + "</p>") + "</div>";
       $$("[data-gn]", root).forEach(b => b.addEventListener("click", () => { const m = Object.assign({}, store().gagesDrinks || {}); m[b.dataset.gn] = b.dataset.gk; persist({ gagesDrinks: m }); buzz(6); draw(); }));
+      $$("[data-gln]", root).forEach(b => b.addEventListener("click", () => { const n = b.dataset.gln, dk = gLocalDrink(n), c = gLocalLimCfg(n); c.lim[dk] = Math.max(1, Math.min(20, gLocalLim(n, dk) + +b.dataset.d)); gLocalLimSave(n, { lim: c.lim }); buzz(6); draw(); }));
+      $$("[data-gnl]", root).forEach(b => b.addEventListener("click", () => { const n = b.dataset.gnl; gLocalLimSave(n, { nolim: !gLocalLimCfg(n).nolim }); buzz(8); draw(); }));
     };
     draw();
   }, gLocalBar));
