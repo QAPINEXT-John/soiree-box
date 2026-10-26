@@ -1,18 +1,17 @@
 {
- "version": "4.35.0",
+ "version": "4.36.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Nouveau jeu : Course de défis. Un défi tombe sur tous les téléphones après un compte à rebours, la première équipe qui réussit touche « On l'a ! » et l'hôte valide. En équipes (2 à 4) ou chacun pour soi",
-  "7 paquets de défis comme dans les autres jeux : chasse aux objets, défis physiques, créatif et malin, toute l'équipe, soirée, pimenté (18+) et enfants, plus vos propres défis",
-  "Coups de théâtre : défi en or, en silence, une seule main, express. Marche aussi sur un seul téléphone",
-  "Nouveau filtre « Action » : Course de défis, Action ou vérité et Défis en chaîne"
+  "Nouveau jeu : Puissance 4. À 2 c'est un duel, à plus de 2 Rouges contre Jaunes en équipes (le joueur qui pose change à chaque coup). Manches (1, 2 ou 3 gagnantes), grille classique ou géante (5 à aligner), chrono par coup en option",
+  "Sur un seul téléphone : duel, équipes, ou contre un bot (facile, moyen, difficile)",
+  "Coups de théâtre : manche en or, chrono éclair, dernier coup caché. Gages : le perdant boit, le gagnant distribue"
  ],
  "files": {
   "core.js": {
-   "h": "50b86ad051ace59733b9f4219ead97de3e3987802b11995bf934336eefe311dc",
-   "s": 308413
+   "h": "efa3015a2a3721f622c83f9191f5383c55addb335400829b44c528346b03956b",
+   "s": 308449
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -162,6 +161,10 @@
    "h": "ba8d30ed222bc499c8d1cdf940f4752fc0b4f24de087cc482b5046042dde8eb3",
    "s": 40611
   },
+  "games/puissance4.js": {
+   "h": "7af30030d173aa11856418556f46d112969f920b990c0d0f7cecca7410478804",
+   "s": 29897
+  },
   "games/punchline.js": {
    "h": "f309b85a723f61d699343c3778bed0465837772eb0360d3cac8e96a3c7760811",
    "s": 113415
@@ -231,8 +234,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "9bd4e0541cfa30fb08daef8a6419f1881714e6a3dd2e4c38b7624503e3fd58fb",
-   "s": 61607
+   "h": "fcae8d77587be48c0bf81e84aeb36b0c03f53aa2711d3e305442f51eb0b4e987",
+   "s": 61651
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
