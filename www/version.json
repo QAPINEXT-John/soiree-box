@@ -1,17 +1,17 @@
 {
- "version": "4.23.0",
+ "version": "4.24.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Nouveau jeu : Rouge, noir ou violet. Parie sur la prochaine carte : rouge, noir, ou violet (deux cartes de couleurs différentes, ça compte double)",
-  "Option Ride the bus : 4 étapes par tour (couleur, plus ou moins, entre ou dehors, enseigne), chaque étape vaut plus que la précédente",
-  "Coups de théâtre : tour en or, le monde à l'envers, tout le monde parie. En ligne et sur un seul téléphone, avec gages"
+  "Nouveau jeu : 7 secondes. Un thème tombe, le chrono démarre : 7 secondes pour citer 3 choses. Les autres valident ou non",
+  "Paquets Classique, Bouffe, Pop culture, Sport, Soirée, Galères, Hot, Trash et Enfants (10 secondes) ; vos propres thèmes en option",
+  "Coups de théâtre : 5 secondes, 4 réponses, thème imposé, duel. Bip de fin, gages et classement"
  ],
  "files": {
   "core.js": {
-   "h": "8bbdddcd0251cd7dfa1595fcbf8d3941e3c71b4b246efd097fcb23b57b025c52",
-   "s": 282632
+   "h": "4a83cdbb2c78965d44d5956502b60a9c52287d7de5d1ea0f146a9e12651b8713",
+   "s": 282656
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -173,6 +173,10 @@
    "h": "9aa9c2a9c3b0eba0a4647df77e44fc1b6463ab4b408b90f863a375c76b43a92e",
    "s": 26740
   },
+  "games/sept.js": {
+   "h": "5fa60036f7a48a775eef7bb6a0c99c3cb52b562367ed7c8f2ddfd428f5fca3cb",
+   "s": 48608
+  },
   "games/tupref.js": {
    "h": "8ca5d8d2505190eb531a818dc015a45827ac07de1525c63e918c2175e9c13ecb",
    "s": 45452
@@ -206,8 +210,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "9f4df7374a68821ae4c232bee868b8b7a9b3d817588c35cda6105fa71ebf8331",
-   "s": 53046
+   "h": "4e18f60a5af457152e52120348f58e8c351a4aff0715a636d8c77b41d107399b",
+   "s": 53084
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
