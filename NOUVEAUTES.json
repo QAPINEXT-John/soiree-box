@@ -1,4 +1,7 @@
 {
+  "4.36.1": [
+    "Puissance 4 : plus de tremblement quand on pose un pion (la grille reste en place au lieu d'être redessinée), et le pion tombe maintenant du haut de la grille jusqu'à sa case avec un petit rebond"
+  ],
   "4.36.0": [
     "Nouveau jeu : Puissance 4. À 2 c'est un duel, à plus de 2 Rouges contre Jaunes en équipes (le joueur qui pose change à chaque coup). Manches (1, 2 ou 3 gagnantes), grille classique ou géante (5 à aligner), chrono par coup en option",
     "Sur un seul téléphone : duel, équipes, ou contre un bot (facile, moyen, difficile)",

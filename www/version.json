@@ -1,16 +1,14 @@
 {
- "version": "4.36.0",
+ "version": "4.36.1",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Nouveau jeu : Puissance 4. À 2 c'est un duel, à plus de 2 Rouges contre Jaunes en équipes (le joueur qui pose change à chaque coup). Manches (1, 2 ou 3 gagnantes), grille classique ou géante (5 à aligner), chrono par coup en option",
-  "Sur un seul téléphone : duel, équipes, ou contre un bot (facile, moyen, difficile)",
-  "Coups de théâtre : manche en or, chrono éclair, dernier coup caché. Gages : le perdant boit, le gagnant distribue"
+  "Puissance 4 : plus de tremblement quand on pose un pion (la grille reste en place au lieu d'être redessinée), et le pion tombe maintenant du haut de la grille jusqu'à sa case avec un petit rebond"
  ],
  "files": {
   "core.js": {
-   "h": "efa3015a2a3721f622c83f9191f5383c55addb335400829b44c528346b03956b",
+   "h": "c99a65313fc40ce4c02067eb74f900b244f9fc10bf98b6063d9e97f0c1f8421b",
    "s": 308449
   },
   "firebase-app-compat.js": {
@@ -162,8 +160,8 @@
    "s": 40611
   },
   "games/puissance4.js": {
-   "h": "7af30030d173aa11856418556f46d112969f920b990c0d0f7cecca7410478804",
-   "s": 29897
+   "h": "10e1252e7bd52f0f81a1f48ddfbc61441e67f4aff2e3258f256f70ffb5a41aa9",
+   "s": 31527
   },
   "games/punchline.js": {
    "h": "f309b85a723f61d699343c3778bed0465837772eb0360d3cac8e96a3c7760811",

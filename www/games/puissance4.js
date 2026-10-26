@@ -13,11 +13,11 @@ const TW = [
 ];
 const CSS = '<style data-p4>' +
   '.p4-wrap{display:flex; flex-direction:column; gap:10px; align-items:center}' +
-  '.p4{position:relative; display:grid; gap:5px; padding:8px; border-radius:18px; background:#2a4fd1; box-shadow:inset 0 -6px 0 rgba(0,0,0,.25); width:100%; max-width:420px; box-sizing:border-box}' +
-  '.p4 .col{display:grid; gap:5px; border:0; padding:0; background:transparent; border-radius:10px; cursor:pointer}.p4 .col:disabled{cursor:default}.p4 .col:not(:disabled):active{background:rgba(255,255,255,.12)}' +
-  '.p4 .h{aspect-ratio:1; border-radius:50%; background:#141032; box-shadow:inset 0 3px 6px rgba(0,0,0,.55); position:relative; overflow:hidden}' +
+  '.p4{position:relative; display:grid; gap:5px; padding:8px; border-radius:18px; background:#2a4fd1; box-shadow:inset 0 -6px 0 rgba(0,0,0,.25); width:100%; max-width:420px; box-sizing:border-box; overflow:hidden; touch-action:manipulation}' +
+  '.p4 .col{display:grid; gap:5px; border:0; padding:0; background:transparent; border-radius:10px; cursor:pointer; transform:none !important; transition:background-color .15s}.p4 .col:disabled{cursor:default; opacity:1}.p4 .col:not(:disabled):active{background:rgba(255,255,255,.14)}' +
+  '.p4 .h{aspect-ratio:1; border-radius:50%; background:#141032; box-shadow:inset 0 3px 6px rgba(0,0,0,.55); position:relative}' +
   '.p4 .h i{position:absolute; inset:0; border-radius:50%; box-shadow:inset 0 -4px 0 rgba(0,0,0,.22)}.p4 .h i.s1{background:#e8414e}.p4 .h i.s2{background:#f2c230}' +
-  '.p4 .h i.drop{animation:p4drop .38s cubic-bezier(.4,0,.6,1)}@keyframes p4drop{from{transform:translateY(var(--dy))}to{transform:translateY(0)}}' +
+  '.p4 .h i.drop{z-index:3; animation:p4drop .4s linear both}@keyframes p4drop{0%{transform:translateY(var(--dy)); animation-timing-function:cubic-bezier(.55,0,1,.45)}72%{transform:translateY(0); animation-timing-function:cubic-bezier(0,.55,.45,1)}86%{transform:translateY(-12%); animation-timing-function:cubic-bezier(.55,0,1,.45)}100%{transform:translateY(0)}}' +
   '.p4 .h i.win{box-shadow:inset 0 0 0 4px #fff, 0 0 14px #fff}.p4 .h i.last::after{content:""; position:absolute; inset:36%; border-radius:50%; background:rgba(255,255,255,.55)}' +
   '.p4-turn{display:flex; align-items:center; gap:8px; justify-content:center; font-weight:800; min-height:30px}.p4-turn i{width:22px; height:22px; border-radius:50%; display:inline-block; box-shadow:inset 0 -3px 0 rgba(0,0,0,.25)}' +
   '.p4-score{display:flex; gap:10px; justify-content:center; font-family:var(--f-disp); font-size:22px}.p4-score span{display:flex; align-items:center; gap:6px}.p4-score i{width:16px; height:16px; border-radius:50%}' +
@@ -79,21 +79,46 @@ function botMove(b, cols, rows, need, me, level){
   return minimax(b, cols, rows, need, depth, -Infinity, Infinity, true, me, -1).c;
 }
 
-/* ---------- Plateau ---------- */
-function boardHTML(o){
-  // o : { b, cols, rows, line, last, hideLast, can, drop }
-  const winSet = new Set(A(o.line));
-  let h = '<div class="p4" style="grid-template-columns:repeat(' + o.cols + ',1fr)">';
-  for(let c = 0; c < o.cols; c++){
-    h += '<button type="button" class="col" data-col="' + c + '" style="grid-template-rows:repeat(' + o.rows + ',1fr)"' + (o.can && dropRow(o.b, o.cols, o.rows, c) >= 0 ? "" : " disabled") + ' aria-label="' + tr("Colonne ", "Column ") + (c + 1) + '">';
-    for(let r = 0; r < o.rows; r++){
-      const i = r * o.cols + c, v = o.b[i], isLast = i === o.last && !o.hideLast;
-      h += '<span class="h">' + (v ? '<i class="s' + v + (winSet.has(i) ? " win" : "") + (isLast ? " last" : "") + (isLast && o.drop ? " drop" : "") + '" style="--dy:' + (-(r + 1) * 110) + '%"></i>' : "") + "</span>";
-    }
+/* ---------- Plateau ----------
+   La grille est construite une fois par manche ; ensuite on ne touche qu'aux pions (pas de redessin de l'écran,
+   donc rien ne tremble). Un nouveau pion tombe du haut de la grille jusqu'à sa case, avec un petit rebond. */
+function boardHTML(cols, rows){
+  let h = '<div class="p4" style="grid-template-columns:repeat(' + cols + ',1fr)">';
+  for(let c = 0; c < cols; c++){
+    h += '<button type="button" class="col" data-col="' + c + '" style="grid-template-rows:repeat(' + rows + ',1fr)" disabled aria-label="' + tr("Colonne ", "Column ") + (c + 1) + '">';
+    for(let r = 0; r < rows; r++) h += '<span class="h"></span>';
     h += "</button>";
   }
   return h + "</div>";
 }
+// o : { b, cols, rows, line, last, hideLast, can }
+function paint(root, o){
+  const B = root.querySelector(".p4"); if(!B) return;
+  const prev = B._b, winSet = new Set(A(o.line));
+  B.querySelectorAll(".col").forEach((col, c) => {
+    col.disabled = !(o.can && dropRow(o.b, o.cols, o.rows, c) >= 0);
+    col.querySelectorAll(".h").forEach((h, r) => {
+      const i = r * o.cols + c, v = o.b[i]; let d = h.firstElementChild;
+      if(!v){ if(d) d.remove(); return; }
+      if(!d || d.dataset.v !== String(v)){
+        if(d) d.remove();
+        d = document.createElement("i"); d.className = "s" + v; d.dataset.v = String(v);
+        if(prev && !prev[i] && !o.hideLast){
+          d.classList.add("drop");
+          d.style.setProperty("--dy", "calc(" + (-(r + 1)) + " * (100% + 5px) - 8px)");
+          d.style.animationDuration = (0.32 + r * 0.07).toFixed(2) + "s";
+          d.addEventListener("animationend", () => d.classList.remove("drop"), { once: true });
+        }
+        h.appendChild(d);
+      }
+      d.classList.toggle("win", winSet.has(i));
+      d.classList.toggle("last", i === o.last && !o.hideLast);
+    });
+  });
+  B._b = o.b.slice();
+}
+// Remplace le contenu d'une zone seulement s'il a changé (et rebranche ses boutons).
+function put(root, sel, html, bind){ const el = root.querySelector(sel); if(!el || el._h === html) return; el._h = html; el.innerHTML = html; if(bind) bind(el); }
 const scoreHTML = (sc, n1, n2) => '<div class="p4-score"><span>' + disc(1).replace("<i", '<i class="d"') + esc(n1) + " " + (sc[1] || 0) + "</span><span>–</span><span>" + (sc[2] || 0) + " " + esc(n2) + disc(2) + "</span></div>";
 
 SB.register({
@@ -164,27 +189,27 @@ SB.register({
       });
       return;
     }
-    const head = CSS + '<span class="eyebrow">' + (s.rounds > 1 ? tr("Manche ", "Round ") + s.round : tr("Manche unique", "Single round")) + (mySide ? " · " + tr("tu joues les ", "you play ") + SIDE[mySide].name.toLowerCase() : "") + "</span>" + SB.u.twistHTML(T) + scoreHTML(s.sc, n1, n2);
-    if(s.phase === "play"){
-      const who = curPlayer(s), mine = who === me, lim = s.tw === "eclair" ? 8 : s.clock, left = lim && s.startAt ? Math.max(0, Math.ceil((s.startAt + lim * 1000 - ctx.now()) / 1000)) : 0;
-      const turn = '<div class="p4-turn">' + disc(s.turn) + (mine ? tr("À toi de jouer !", "Your turn!") : esc(tr("Au tour de ", "Turn: ") + ctx.name(who) + (s.sides[s.turn].length > 1 ? " (" + SIDE[s.turn].name + ")" : ""))) + "</div>";
-      const drop = root.dataset.p4last !== String(s.last) + s.round; root.dataset.p4last = String(s.last) + s.round;
-      screen(root, "pl" + s.round + ":" + s.b.join("") + mine, head + turn + '<div class="p4-wrap">' + boardHTML({ b: s.b, cols: s.cols, rows: s.rows, last: s.last, hideLast: s.tw === "aveugle", can: mine, drop }) + "</div>" +
-        (lim ? '<div class="p4-t" data-t>' + left + "</div>" : "") + SB.u.dock('<p class="wait">' + esc(mine ? tr("Touche une colonne", "Tap a column") : tr("Attends ton tour…", "Wait for your turn…")) + "</p>"), r => {
-        r.querySelectorAll("[data-col]").forEach(b => b.addEventListener("click", () => { buzz(12); ctx.send({ c: +b.dataset.col }); r.querySelectorAll("[data-col]").forEach(x => { x.disabled = true; }); }));
+    const headIn = '<span class="eyebrow">' + (s.rounds > 1 ? tr("Manche ", "Round ") + s.round : tr("Manche unique", "Single round")) + (mySide ? " · " + tr("tu joues les ", "you play ") + SIDE[mySide].name.toLowerCase() : "") + "</span>" + SB.u.twistHTML(T) + scoreHTML(s.sc, n1, n2), head = CSS + headIn;
+    if(s.phase === "play" || s.phase === "res"){
+      const play = s.phase === "play", who = curPlayer(s), mine = play && who === me, sent = mine && ctx.mine() && ctx.mine().c != null;
+      const lim = s.tw === "eclair" ? 8 : s.clock, left = play && lim && s.startAt ? Math.max(0, Math.ceil((s.startAt + lim * 1000 - ctx.now()) / 1000)) : 0;
+      screen(root, "rd" + s.round + ":" + s.cols, CSS + '<div data-head></div><div data-mid></div><div class="p4-wrap">' + boardHTML(s.cols, s.rows) + '</div><div class="p4-t" data-t></div><div class="dock" data-dock></div>', r => {
+        r.querySelectorAll("[data-col]").forEach(b => b.addEventListener("click", () => {
+          const c = SB.ctx(); if(c.s.phase !== "play" || curPlayer(c.s) !== c.me) return;
+          c.send({ c: +b.dataset.col }); r.querySelectorAll("[data-col]").forEach(x => { x.disabled = true; });
+        }));
       });
-      const t = root.querySelector("[data-t]"); if(t){ t.textContent = String(left); t.classList.toggle("low", left <= 5); }
-      if(mine && root.dataset.p4me !== s.k){ root.dataset.p4me = s.k; buzz([20, 40, 20]); }
-      return;
-    }
-    if(s.phase === "res"){
-      const R = s.res || {}, done = matchOver(s);
-      const msg = R.draw ? tr("Match nul : la grille est pleine !", "Draw: the grid is full!") : tr("Les ", "") + "";
-      screen(root, "rs" + s.round + ctx.isHost, head + (R.draw ? '<div class="who" style="text-align:center">' + tr("Match nul", "Draw") + "</div>" : '<span class="eyebrow" style="text-align:center">' + tr("Manche gagnée par", "Round won by") + '</span><div class="who" style="text-align:center; color:' + SIDE[R.side].c + '">' + esc(R.side === 1 ? n1 : n2) + "</div>") +
-        '<div class="p4-wrap">' + boardHTML({ b: s.b, cols: s.cols, rows: s.rows, last: s.last, line: s.line, can: false }) + "</div>" + (R.draw ? '<p class="sm" style="text-align:center">' + esc(msg) + "</p>" : "") +
-        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>' + (done ? tr("Voir le résultat", "See the result") : tr("Manche suivante", "Next round")) + "</button>" : '<p class="wait">' + tr("L'hôte passe à la suite…", "Waiting for the host…") + "</p>"), r => {
-        const b = r.querySelector("[data-next]"); if(b) b.addEventListener("click", () => ctx.act(c => { if(c.s.phase !== "res") return; if(matchOver(c.s)) c.set({ phase: "end" }); else nextRound(c); }));
+      put(root, "[data-head]", headIn);
+      const R = s.res || {};
+      put(root, "[data-mid]", play ? '<div class="p4-turn">' + disc(s.turn) + (mine ? tr("À toi de jouer !", "Your turn!") : esc(tr("Au tour de ", "Turn: ") + ctx.name(who) + (s.sides[s.turn].length > 1 ? " (" + SIDE[s.turn].name + ")" : ""))) + "</div>"
+        : R.draw ? '<div class="who" style="text-align:center">' + tr("Match nul", "Draw") + "</div>" : '<span class="eyebrow" style="display:block; text-align:center">' + tr("Manche gagnée par", "Round won by") + '</span><div class="who" style="text-align:center; color:' + SIDE[R.side].c + '">' + esc(R.side === 1 ? n1 : n2) + "</div>");
+      paint(root, { b: s.b, cols: s.cols, rows: s.rows, last: s.last, line: play ? null : s.line, hideLast: play && s.tw === "aveugle", can: mine && !sent });
+      const t = root.querySelector("[data-t]"); if(t){ t.textContent = lim && play ? String(left) : ""; t.classList.toggle("low", left <= 5); }
+      put(root, "[data-dock]", play ? '<p class="wait">' + esc(mine ? tr("Touche une colonne", "Tap a column") : tr("Attends ton tour…", "Wait for your turn…")) + "</p>"
+        : ctx.isHost ? '<button class="btn acc" type="button" data-next>' + (matchOver(s) ? tr("Voir le résultat", "See the result") : tr("Manche suivante", "Next round")) + "</button>" : '<p class="wait">' + tr("L'hôte passe à la suite…", "Waiting for the host…") + "</p>", el => {
+        const b = el.querySelector("[data-next]"); if(b) b.addEventListener("click", () => SB.ctx().act(c => { if(c.s.phase !== "res") return; if(matchOver(c.s)) c.set({ phase: "end" }); else nextRound(c); }));
       });
+      if(!play && root.dataset.p4end !== s.k){ root.dataset.p4end = s.k; buzz([40, 30, 40]); }
       return;
     }
     if(s.phase === "end"){
@@ -241,17 +266,22 @@ SB.register({
       function newRound(){ round++; b = empty(S.cols, S.rows); turn = first; last = -1; idx = { 1: 0, 2: 0 }; busy = false; draw(); }
       const who = () => sides[turn][idx[turn] % sides[turn].length];
       const isBot = () => mode === "bot" && turn === 2;
-      function head(){ return CSS + '<span class="eyebrow">' + (rounds > 1 ? tr("Manche ", "Round ") + round : tr("Manche unique", "Single round")) + "</span>" + scoreHTML(sc, nm(1), nm(2)); }
+      let overNow = false;
+      const headIn = () => '<span class="eyebrow">' + (rounds > 1 ? tr("Manche ", "Round ") + round : tr("Manche unique", "Single round")) + "</span>" + scoreHTML(sc, nm(1), nm(2));
+      function head(){ return CSS + headIn(); }
       function draw(line, over){
-        const drop = true;
-        screen(root, "pl" + gno + ":" + round + ":" + b.join("") + (over ? "o" : ""), head() + (over ? "" : '<div class="p4-turn">' + disc(turn) + esc(isBot() ? tr("Le bot réfléchit…", "The bot is thinking…") : tr("Au tour de ", "Turn: ") + who() + (mode === "equipes" ? " (" + SIDE[turn].name + ")" : "")) + "</div>") +
-          '<div class="p4-wrap">' + boardHTML({ b, cols: S.cols, rows: S.rows, last, line, can: !over && !isBot() && !busy, drop }) + "</div>" +
-          (over ? over : SB.u.dock('<button class="link" type="button" data-q style="align-self:center">' + tr("Choisir un autre jeu", "Choose another game") + "</button>")), r => {
-          r.querySelectorAll("[data-col]").forEach(x => x.addEventListener("click", () => { if(busy) return; buzz(12); move(+x.dataset.col); }));
-          const q = r.querySelector("[data-q]"); if(q) q.addEventListener("click", api.exit);
-          const nx = r.querySelector("[data-nx]"); if(nx) nx.addEventListener("click", () => { if(over && matchDone()) end(); else newRound(); });
+        screen(root, "pl" + gno + ":" + round, CSS + '<div data-head></div><div data-mid></div><div class="p4-wrap">' + boardHTML(S.cols, S.rows) + '</div><div class="dock" data-dock></div>', r => {
+          r.querySelectorAll("[data-col]").forEach(x => x.addEventListener("click", () => { if(busy || isBot() || overNow) return; move(+x.dataset.col); }));
         });
-        if(!over && isBot()){ busy = true; setTimeout(() => { const c = botMove(b, S.cols, S.rows, S.need, 2, level); busy = false; move(c); }, 650); }
+        overNow = !!over;
+        put(root, "[data-head]", headIn());
+        put(root, "[data-mid]", over ? over.msg : '<div class="p4-turn">' + disc(turn) + esc(isBot() ? tr("Le bot réfléchit…", "The bot is thinking…") : tr("Au tour de ", "Turn: ") + who() + (mode === "equipes" ? " (" + SIDE[turn].name + ")" : "")) + "</div>");
+        paint(root, { b, cols: S.cols, rows: S.rows, last, line, can: !over && !isBot() && !busy });
+        put(root, "[data-dock]", over ? over.dock : '<button class="link" type="button" data-q style="align-self:center">' + tr("Choisir un autre jeu", "Choose another game") + "</button>", el => {
+          const q = el.querySelector("[data-q]"); if(q) q.addEventListener("click", api.exit);
+          const nx = el.querySelector("[data-nx]"); if(nx) nx.addEventListener("click", () => { if(matchDone()) end(); else newRound(); });
+        });
+        if(!over && isBot()){ busy = true; setTimeout(() => { const c = botMove(b, S.cols, S.rows, S.need, 2, level); busy = false; move(c); }, 700); }
       }
       function move(c){
         const i = place(b, S.cols, S.rows, c, turn); if(i < 0) return;
@@ -260,9 +290,9 @@ SB.register({
           const w = line ? turn : 0, key = "p4" + tok + "-" + gno + ":" + round;
           if(w){ sc[w] = (sc[w] || 0) + 1; first = 3 - w; if(api.gage){ const L = sides[3 - w].filter(n => n !== BOT); api.gage(L.map(n => ({ id: n, ev: "perdu" })).concat(sides[w][0] !== BOT ? [{ id: sides[w][0], ev: "gagne" }] : []), key); } }
           else if(api.gage) api.gage([{ id: names[0] || me1, ev: "nul" }], key);
-          buzz([60, 40, 60]);
+          buzz([40, 30, 40]);
           const msg = (w ? '<span class="eyebrow" style="text-align:center">' + tr("Manche gagnée par", "Round won by") + '</span><div class="who" style="text-align:center; color:' + SIDE[w].c + '">' + esc(nm(w)) + "</div>" : '<div class="who" style="text-align:center">' + tr("Match nul", "Draw") + "</div>");
-          draw(line, msg + SB.u.dock('<button class="btn acc" type="button" data-nx>' + (matchDone() ? tr("Voir le résultat", "See the result") : tr("Manche suivante", "Next round")) + "</button>"));
+          draw(line, { msg, dock: '<button class="btn acc" type="button" data-nx>' + (matchDone() ? tr("Voir le résultat", "See the result") : tr("Manche suivante", "Next round")) + "</button>" });
           return;
         }
         idx[turn]++; turn = 3 - turn; draw();
