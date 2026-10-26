@@ -19,7 +19,7 @@ function jsonp(url, ms){
   });
 }
 const API = "https://api.deezer.com/";
-const trackOf = x => (x && x.preview && x.title && x.artist ? { id: x.id, t: clean(x.title_short || x.title, 80), a: clean(x.artist.name, 60), p: x.preview, c: (x.album && (x.album.cover_medium || x.album.cover)) || "", e: x.explicit_lyrics ? 1 : 0 } : null);
+const trackOf = x => (x && x.preview && x.title && x.artist ? { id: x.id, t: clean(String(x.title_short || x.title).replace(/\s*[(\[](de|du film|from|tir[ée]e? d)[^)\]]*[)\]]\s*$/i, ""), 80), a: clean(x.artist.name, 60), p: x.preview, c: (x.album && (x.album.cover_medium || x.album.cover)) || "", e: x.explicit_lyrics ? 1 : 0 } : null);
 const norm = s => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]/g, "");
 
 /* ---------- Les thèmes ---------- */
@@ -32,7 +32,15 @@ const THEMES = [
   { v: "variete", label: tr("Variété française", "French classics"), desc: "Johnny, Piaf, Goldman, Céline Dion…", artists: ["Johnny Hallyday", "Edith Piaf", "Charles Aznavour", "Joe Dassin", "Claude François", "Michel Sardou", "France Gall", "Céline Dion", "Francis Cabrel", "Renaud", "Michel Berger", "Dalida", "Serge Gainsbourg", "Mylène Farmer", "Patrick Bruel"] },
   { v: "dance", label: tr("Soirée dance", "Dance party"), desc: "Guetta, Avicii, Daft Punk, Dua Lipa…", artists: ["David Guetta", "Calvin Harris", "Avicii", "Bob Sinclar", "Daft Punk", "Martin Garrix", "Dua Lipa", "The Black Eyed Peas", "Pitbull", "LMFAO", "Major Lazer", "Kygo", "Lady Gaga", "Rihanna"] },
   { v: "rock", label: "Rock", desc: "Queen, AC/DC, Nirvana, Muse…", artists: ["Queen", "AC/DC", "Nirvana", "Red Hot Chili Peppers", "Muse", "Arctic Monkeys", "Linkin Park", "The Rolling Stones", "U2", "Green Day", "The Beatles", "Guns N' Roses", "Metallica", "Coldplay"] },
-  { v: "disney", label: tr("Disney & dessins animés", "Disney & cartoons"), desc: tr("Tout public, parfait avec des enfants", "For everyone, great with kids"), kid: true, songs: ["Libérée délivrée", "Hakuna Matata", "Ce rêve bleu", "Sous l'océan", "Je voudrais déjà être roi", "Prince Ali", "Il en faut peu pour être heureux", "L'histoire de la vie", "Je suis ton ami", "Bibbidi bobbidi boo", "Le bleu lumière", "Ne parlons pas de Bruno", "Comme un homme", "Je veux y croire", "Prends le large", "Un jour mon prince viendra", "Je ne suis qu'un ours", "Soyez prêtes"] },
+  { v: "disney", label: tr("Disney & dessins animés", "Disney & cartoons"), desc: tr("Les chansons des films, en français. On devine le film (ou le titre).", "Songs from the movies, in French. Guess the movie (or the title)."), kid: true, songs: [
+    ["Libérée, délivrée", "La Reine des neiges"], ["Je voudrais un bonhomme de neige", "La Reine des neiges"], ["L'histoire de la vie", "Le Roi lion"], ["Hakuna Matata", "Le Roi lion"],
+    ["Je voudrais déjà être roi", "Le Roi lion"], ["Soyez prêtes", "Le Roi lion"], ["Sous l'océan", "La Petite Sirène"], ["Partir là-bas", "La Petite Sirène"],
+    ["Ce rêve bleu", "Aladdin"], ["Prince Ali", "Aladdin"], ["Je suis ton meilleur ami", "Aladdin"], ["Il en faut peu pour être heureux", "Le Livre de la jungle"],
+    ["Être un homme comme vous", "Le Livre de la jungle"], ["Bibbidi-Bobbidi-Boo", "Cendrillon"], ["Je suis ton ami", "Toy Story"], ["Ne parlons pas de Bruno", "Encanto"],
+    ["Sous pression", "Encanto"], ["Comme un homme", "Mulan"], ["Le bleu lumière", "Vaiana"], ["Un jour mon prince viendra", "Blanche-Neige"],
+    ["Où est la vraie vie", "Raiponce"], ["Histoire éternelle", "La Belle et la Bête"], ["C'est la fête", "La Belle et la Bête"], ["L'air du vent", "Pocahontas"],
+    ["Un morceau de sucre", "Mary Poppins"], ["Tout le monde veut devenir un cat", "Les Aristochats"]
+  ] },
   { v: "perso", label: tr("Ma playlist Deezer", "My Deezer playlist"), desc: tr("Colle le lien d'une playlist Deezer publique", "Paste a public Deezer playlist link"), perso: 1 }
 ];
 const myPlaylist = () => String(store().dzPlaylist || "");
@@ -45,7 +53,18 @@ async function buildPool(themes, need){
     if(t.chart) jobs.push(jsonp(API + "chart/0/tracks?limit=100").then(d => A(d && d.data).map(trackOf)));
     if(t.perso) jobs.push(jsonp(API + "playlist/" + playlistId(myPlaylist()) + "/tracks?limit=300").then(d => A(d && d.data).map(trackOf)));
     if(t.artists) shuffle(t.artists).slice(0, 12).forEach(a => jobs.push(jsonp(API + "search?q=" + encodeURIComponent('artist:"' + a + '"') + "&limit=8").then(d => A(d && d.data).filter(x => x && x.artist && norm(x.artist.name).indexOf(norm(a)) >= 0).map(trackOf)).catch(() => [])));
-    if(t.songs) shuffle(t.songs).slice(0, 14).forEach(q => jobs.push(jsonp(API + "search?q=" + encodeURIComponent(q) + "&limit=3").then(d => A(d && d.data).slice(0, 1).map(trackOf)).catch(() => [])));
+    // Disney : on cherche le titre et on ne garde que la version du film (album ou artiste qui citent le film ou Disney),
+    // jamais une reprise, une version karaoké ou instrumentale. L'« artiste » affiché devient le nom du film.
+    if(t.songs) shuffle(t.songs).slice(0, 16).forEach(x => jobs.push(jsonp(API + "search?q=" + encodeURIComponent(x[0]) + "&limit=25").then(d => {
+      const film = norm(x[1]).replace(/^(la|le|les)/, ""), want = norm(x[0]).slice(0, 12);
+      const hit = A(d && d.data).find(y => {
+        if(!y || !y.preview || !y.title) return false;
+        const meta = norm((y.album && y.album.title) + " " + (y.artist && y.artist.name)), tt = norm(y.title);
+        if(/karaok|instrumental|cover|piano|lullab|berceuse|remix|acoustic|guitar|reprise/.test(tt + meta)) return false;
+        return tt.indexOf(want) >= 0 && (meta.indexOf(film) >= 0 || meta.indexOf("disney") >= 0);
+      });
+      const tk = trackOf(hit); if(tk){ tk.a = x[1]; tk.f = 1; } return tk ? [tk] : [];
+    }).catch(() => [])));
   });
   const all = [].concat(...(await Promise.all(jobs.map(j => j.catch(() => [])))));
   const seen = new Set(), out = [];
@@ -124,14 +143,14 @@ SB.register({
     "L'hôte lance l'extrait : le son sort de son téléphone, mettez-le sur une enceinte si vous pouvez.",
     "Mode QCM : 4 réponses s'affichent sur chaque téléphone. Touche la bonne au plus vite. Le premier qui trouve marque 3 points, le deuxième 2, les suivants 1.",
     "Mode buzzer : le premier qui buzze répond à voix haute. L'hôte voit la réponse et valide (+2) ou non (le joueur ne peut plus buzzer sur cette chanson, l'hôte non plus puisqu'il a vu la réponse).",
-    "Thèmes : top du moment, tubes français, rap, années 80, 90-2000, variété, dance, rock, Disney, ou ta propre playlist Deezer.",
+    "Thèmes : top du moment, tubes français, rap, années 80, 90-2000, variété, dance, rock, Disney (là, on devine le film), ou ta propre playlist Deezer.",
     "Coups de théâtre : chanson en or, extrait éclair de 5 secondes, à l'envers (le titre au lieu de l'artiste).",
     "Les extraits viennent de Deezer : il faut Internet, mais aucun compte."
   ], [
     "The host starts the clip: sound plays from their phone, hook it to a speaker if you can.",
     "Multiple choice: 4 answers appear on every phone. Tap the right one fast. First right answer scores 3 points, second 2, the rest 1.",
     "Buzzer: first to buzz answers out loud. The host sees the answer and validates (+2) or not (that player can't buzz again on this song, nor can the host since they saw the answer).",
-    "Themes: current hits, French hits, rap, 80s, 90s-2000s, French classics, dance, rock, Disney, or your own Deezer playlist.",
+    "Themes: current hits, French hits, rap, 80s, 90s-2000s, French classics, dance, rock, Disney (guess the movie), or your own Deezer playlist.",
     "Twists: golden song, 5-second lightning clip, flipped (title instead of artist).",
     "Clips come from Deezer: you need internet, but no account."
   ]),
@@ -155,7 +174,9 @@ SB.register({
       buildPool(ctx.opts.packs, s.rounds + 4).then(pool => ctx.act(c => {
         // Le secret reste petit : seulement les morceaux joués, plus des listes de noms pour les mauvaises réponses.
         const L = (k) => { const seen = new Set(), o = []; pool.forEach(x => { const v = x[k]; if(!seen.has(norm(v)) && o.length < 60){ seen.add(norm(v)); o.push(v); } }); return o; };
-        c.setPriv({ pool: pool.slice(0, c.s.rounds + 2), arts: L("a"), tits: L("t") }); nextSong(c);
+        const sub = f => pool.filter(x => !!x.f === f);
+        const L2 = (arr, k) => { const seen = new Set(), o = []; arr.forEach(x => { const v = x[k]; if(!seen.has(norm(v)) && o.length < 60){ seen.add(norm(v)); o.push(v); } }); return o; };
+        c.setPriv({ pool: pool.slice(0, c.s.rounds + 2), arts: L2(sub(false), "a"), films: L2(sub(true), "a"), tits: L("t") }); nextSong(c);
       }))
         .catch(() => ctx.act(c => c.set({ phase: "err", err: LOAD_ERR })));
       return;
@@ -183,7 +204,7 @@ SB.register({
     const s = ctx.s, me = ctx.me, T = SB.u.byTwist(TW, s.tw || ""), inp = ctx.mine() || {}, live = ctx.ids.filter(id => ctx.here(id));
     const head = CSS + '<span class="eyebrow">' + tr("Chanson ", "Song ") + Math.max(1, s.n) + " / " + s.rounds + " · " + (s.mode === "buzz" ? "Buzzer" : "QCM") + "</span>" + SB.u.twistHTML(T);
     const g2 = s.tw === "inverse" ? (s.guess === "titre" ? "artiste" : "titre") : s.guess;
-    const q = '<p class="howto" style="text-align:center; margin:0">' + (g2 === "titre" ? tr("Quel est le titre ?", "What's the title?") : tr("Qui chante ?", "Who's singing?")) + "</p>";
+    const q = '<p class="howto" style="text-align:center; margin:0">' + (g2 === "titre" ? tr("Quel est le titre ?", "What's the title?") : s.film ? tr("De quel film ?", "Which movie?") : tr("Qui chante ?", "Who's singing?")) + "</p>";
     if(s.phase === "load"){ screen(root, "ld" + s.k, head + disc(true) + '<p class="wait" style="text-align:center">' + tr("Chargement des extraits…", "Loading the clips…") + "</p>"); return; }
     if(s.phase === "err"){
       screen(root, "er" + ctx.isHost, head + '<p class="note-box">' + esc(s.err) + "</p>" + SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : ""), r => {
@@ -294,7 +315,7 @@ SB.register({
         n++; tw = twOn && n > 1 ? SB.u.twist(TW, { last: tw ? tw.id : "", rate: .3 }) : null; found = [];
         tk = pool.length ? pool.pop() : null;
         if(!tk){ end(); return; }
-        screen(root, "rd" + gno + ":" + n, head() + disc(false) + '<p class="howto" style="text-align:center">' + (g2() === "titre" ? tr("Trouvez le titre !", "Find the title!") : tr("Trouvez l'artiste !", "Find the artist!")) + "</p>" +
+        screen(root, "rd" + gno + ":" + n, head() + disc(false) + '<p class="howto" style="text-align:center">' + (g2() === "titre" ? tr("Trouvez le titre !", "Find the title!") : tk.f ? tr("Trouvez le film !", "Find the movie!") : tr("Trouvez l'artiste !", "Find the artist!")) + "</p>" +
           SB.u.dock('<button class="btn acc" type="button" data-play>' + tr("Lancer l'extrait", "Play the clip") + '</button><button class="link" type="button" data-q style="align-self:center">' + tr("Choisir un autre jeu", "Choose another game") + "</button>"), r => {
           r.querySelector("[data-play]").addEventListener("click", () => { buzz(10); play(tk.p, tw && tw.id === "eclair" ? 5000 : 0); playing(); });
           r.querySelector("[data-q]").addEventListener("click", () => { pause(); api.exit(); });
@@ -340,8 +361,8 @@ function nextSong(c){
   const pv = c.priv(), pool = A(pv.pool).slice(), s = c.s;
   if(!pool.length){ c.set({ phase: "end" }); return; }
   const tk = pool.pop(), t = s.n >= 1 && c.opts.twists !== false ? SB.u.twist(TW, { last: s.tw, rate: .3 }) : null, tw = t ? t.id : "";
-  const g = tw === "inverse" ? (s.guess === "titre" ? "artiste" : "titre") : s.guess, C = choicesFor(tk, A(g === "titre" ? pv.tits : pv.arts), g);
-  c.setPriv({ pool, arts: pv.arts, tits: pv.tits, tk, ok: C.ok });
-  c.set({ phase: "ready", n: s.n + 1, tw, ch: s.mode === "qcm" ? C.ch : [], res: null, out: [], who: "", startAt: 0, k: c.rid() });
+  const g = tw === "inverse" ? (s.guess === "titre" ? "artiste" : "titre") : s.guess, C = choicesFor(tk, A(g === "titre" ? pv.tits : tk.f ? pv.films : pv.arts), g);
+  c.setPriv({ pool, arts: pv.arts, films: pv.films, tits: pv.tits, tk, ok: C.ok });
+  c.set({ phase: "ready", n: s.n + 1, tw, film: tk.f ? 1 : 0, ch: s.mode === "qcm" ? C.ch : [], res: null, out: [], who: "", startAt: 0, k: c.rid() });
 }
 })();

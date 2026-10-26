@@ -1,14 +1,14 @@
 {
- "version": "4.28.1",
+ "version": "4.28.2",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Le Karaoké est retiré : seul le Blind test reste dans le filtre « Musique »"
+  "Blind test, thème Disney revu : seulement les vraies chansons des films en français (plus de reprises, de versions karaoké, piano ou berceuse, ni de chansons sans rapport). On devine le film au lieu de l'artiste"
  ],
  "files": {
   "core.js": {
-   "h": "e0a9ff8fa6f618679e4d1b7c47a45cd3a57ca9c84ea38ee3fc750f969436f705",
+   "h": "13eda164706ce389423b3d62794a5ecb4f42a467f0249ce406050af11b022b88",
    "s": 289425
   },
   "firebase-app-compat.js": {
@@ -92,8 +92,8 @@
    "s": 64350
   },
   "games/blindtest.js": {
-   "h": "e56afa365749c5df091a6bbc94eb8ac572deec518e21898c4b09389bbc491c17",
-   "s": 36947
+   "h": "a5b280cb294024c7a64f9bae499b55808937d25e38610dbeefa7940ab9c5e1ab",
+   "s": 39124
   },
   "games/debat.js": {
    "h": "de9ab7e3e4e7bc4f40552efcee34003c9f5558528c97752f47361a204bd635a4",
