@@ -1,15 +1,17 @@
 {
- "version": "4.19.1",
+ "version": "4.20.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Agents secrets : le compteur de l'équipe qui joue ne déborde plus sur le bord de l'écran"
+  "Nouveau jeu : Débats. Pour ou contre ? Deux orateurs, un chrono, le public vote pour le plus convaincant et redonne son avis : on voit qui a changé d'avis",
+  "Catégories Léger, Société, Philo & sciences, Love, Hot (18+) et Enfants ; mode Libre où tout le monde débat",
+  "Coups de théâtre : débat express, avocat du diable, mot interdit, question du public. Aucun gage dans ce jeu"
  ],
  "files": {
   "core.js": {
-   "h": "987140bdb0e2e8c25c2860c400da213d593317d5928177c1acc7d1f1263dbcd7",
-   "s": 276542
+   "h": "3336b8f230466470258d62315599a2d081bb10ef5b41a67433391f03c45a6c1f",
+   "s": 276567
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -90,6 +92,10 @@
   "games/agents.js": {
    "h": "b3a548277fdf2f578da3443f76c040733124b3624e6db0efcea4c4ed612eabc5",
    "s": 64350
+  },
+  "games/debat.js": {
+   "h": "31623a5b0a61919f18cebd2f96609b1935b7474acea0981a3801e3a473e4ea76",
+   "s": 51449
   },
   "games/defis.js": {
    "h": "4d939598885c73acaa9732bcce7ac082ef8f707794ee999a6df5902ecbe06fff",
@@ -192,8 +198,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "4266245db3a982075d676cde8dc0d407188ca9391d22cb435631c2a7a79d2ea9",
-   "s": 51417
+   "h": "ae272bfdc9bf6d6c627f2328e4b4a5981eee53444461da38253c4083ef7c0215",
+   "s": 51456
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
