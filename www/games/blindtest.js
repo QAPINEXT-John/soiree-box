@@ -63,16 +63,7 @@ async function buildPool(themes, need){
     if(t.artists) shuffle(t.artists).slice(0, 12).forEach(a => jobs.push(jsonp(API + "search?q=" + encodeURIComponent('artist:"' + a + '"') + "&limit=8").then(d => A(d && d.data).filter(x => x && x.artist && norm(x.artist.name).indexOf(norm(a)) >= 0).map(trackOf)).catch(() => [])));
     // Disney : on cherche le titre et on ne garde que la version du film (album ou artiste qui citent le film ou Disney),
     // jamais une reprise, une version karaoké ou instrumentale. L'« artiste » affiché devient le nom du film.
-    if(t.songs) shuffle(t.songs).slice(0, 16).forEach(x => jobs.push(jsonp(API + "search?q=" + encodeURIComponent(x[0]) + "&limit=25").then(d => {
-      const film = norm(x[1]).replace(/^(la|le|les)/, ""), want = norm(x[0]).slice(0, 12);
-      const hit = A(d && d.data).find(y => {
-        if(!y || !y.preview || !y.title) return false;
-        const meta = norm((y.album && y.album.title) + " " + (y.artist && y.artist.name)), tt = norm(y.title);
-        if(/karaok|instrumental|cover|piano|lullab|berceuse|remix|acoustic|guitar|reprise/.test(tt + meta)) return false;
-        return tt.indexOf(want) >= 0 && (meta.indexOf(film) >= 0 || meta.indexOf("disney") >= 0);
-      });
-      const tk = trackOf(hit); if(tk){ tk.a = x[1]; tk.f = 1; } return tk ? [tk] : [];
-    }).catch(() => [])));
+    if(t.songs) shuffle(t.songs).slice(0, 16).forEach(x => jobs.push(disneyTrack(x).catch(() => [])));
   });
   const all = [].concat(...(await Promise.all(jobs.map(j => j.catch(() => [])))));
   const seen = new Set(), out = [];
@@ -94,6 +85,21 @@ function play(url, maxMs){
 }
 function pause(){ clearTimeout(stopT); try{ AUD && AUD.pause(); }catch(e){} }
 function resume(){ try{ return AUD ? AUD.play().catch(() => {}) : null; }catch(e){} }
+/* Disney : seulement la chanson chantée du film. On cherche d'abord titre + album du film, puis le titre seul,
+   et on n'accepte un résultat que si l'album ou l'interprète citent le film (« Disney » seul ne suffit pas :
+   il y a des dizaines d'albums « Disney au piano / en berceuse / pour bébé » sans paroles). */
+const DZ_NOVOC = /karaok|instrument|cover|piano|lullab|berceuse|remix|acoust|guitar|reprise|orchestr|symphon|philharm|jazz|harp|harpe|ukulele|relax|sleep|dodo|baby|bebe|musicbox|boiteamusique|violin|violon|cello|strings|quartet|quatuor|ensemble|lounge|chill|bossa|flute|marimba|xylo|8bit|chiptune|epic|ambient|meditat|zen|yoga|study|tribute|hommage|inspired|madefamous|originallyperformed|score|suite|theme|playback|version longue/;
+function disneyTrack(x){
+  const film = norm(x[1]).replace(/^(la|le|les)/, ""), want = norm(x[0]).slice(0, 12);
+  const pick = d => A(d && d.data).find(y => {
+    if(!y || !y.preview || !y.title) return false;
+    const meta = norm((y.album && y.album.title) + " " + (y.artist && y.artist.name)), tt = norm(y.title);
+    if(DZ_NOVOC.test(tt + " " + meta) || DZ_NOVOC.test(String(y.title + " " + (y.album && y.album.title)).toLowerCase())) return false;
+    return tt.indexOf(want) === 0 && meta.indexOf(film) >= 0;
+  });
+  const done = hit => { const tk = trackOf(hit); if(tk){ tk.a = x[1]; tk.f = 1; } return tk ? [tk] : []; };
+  return jsonp(API + "search?q=" + encodeURIComponent('track:"' + x[0] + '" album:"' + x[1] + '"') + "&limit=25").then(d => pick(d) || jsonp(API + "search?q=" + encodeURIComponent(x[0]) + "&limit=50").then(pick)).then(done);
+}
 SB.music = { THEMES, buildPool, play, pause, resume, playlistId, myPlaylist, jsonp, norm, noVoice: x => noVoice(trackOf(x)) };
 SB.music.packs = () => THEMES.filter(t => !t.perso || playlistId(myPlaylist()));
 SB.music.editor = function(){
