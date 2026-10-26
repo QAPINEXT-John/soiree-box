@@ -1,7 +1,9 @@
 {
+  "4.28.1": [
+    "Le Karaoké est retiré : seul le Blind test reste dans le filtre « Musique »"
+  ],
   "4.28.0": [
     "Nouveau jeu : Blind test. Des extraits de 30 secondes de vrais morceaux (Deezer, sans compte). Mode QCM (4 réponses sur chaque téléphone, le plus rapide marque plus) ou buzzer (l'hôte valide). Thèmes : top du moment, tubes français, rap, années 80, 90-2000, variété, dance, rock, Disney, ou ta propre playlist Deezer",
-    "Nouveau jeu : Karaoké. Chacun choisit une chanson parmi 3, la musique part et il chante de mémoire (aucune parole affichée), parfois avec un défi : chuchoter, yaourt, opéra, accent, robot, danse, mime ou duo. Les autres notent sur 10",
     "Nouveau filtre « Musique » sur l'accueil et dans le salon. Le son sort du téléphone de l'hôte : branchez une enceinte !"
   ],
   "4.27.2": [

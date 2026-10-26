@@ -1,7 +1,7 @@
 /* Blind test — des extraits de 30 secondes (API publique de Deezer, sans compte).
    QCM : chacun choisit la bonne réponse sur son téléphone, le plus rapide marque plus.
    Buzzer : le premier qui buzze répond à voix haute, l'hôte valide.
-   Le module SB.music (thèmes, pioche Deezer, lecteur) sert aussi au karaoké. */
+   Le module SB.music (thèmes, pioche Deezer, lecteur) peut servir à d'autres jeux musicaux. */
 (function(){
 "use strict";
 const { esc, A, shuffle, screen, txt, store, persist, pick, tr, buzz, clean } = SB.u;
@@ -71,7 +71,7 @@ SB.music = { THEMES, buildPool, play, pause, resume, playlistId, myPlaylist, jso
 SB.music.packs = () => THEMES.filter(t => !t.perso || playlistId(myPlaylist()));
 SB.music.editor = function(){
   SB.page(tr("Ma playlist Deezer", "My Deezer playlist"), root => {
-    root.innerHTML = '<div class="gs"><p class="howto">' + tr("Dans Deezer, ouvre une playlist publique, touche « Partager » puis « Copier le lien », et colle-le ici. Elle apparaîtra dans les thèmes du blind test et du karaoké.", "In Deezer, open a public playlist, tap “Share” then “Copy link”, and paste it here. It will show up in the blind test and karaoke themes.") + "</p>" +
+    root.innerHTML = '<div class="gs"><p class="howto">' + tr("Dans Deezer, ouvre une playlist publique, touche « Partager » puis « Copier le lien », et colle-le ici. Elle apparaîtra dans les thèmes du blind test.", "In Deezer, open a public playlist, tap “Share” then “Copy link”, and paste it here. It will show up in the blind test themes.") + "</p>" +
       '<input class="txt" id="dz-pl" placeholder="https://www.deezer.com/fr/playlist/…" autocomplete="off"><p class="sm" data-st></p></div>';
     const i = root.querySelector("#dz-pl"), st = root.querySelector("[data-st]");
     i.value = myPlaylist();

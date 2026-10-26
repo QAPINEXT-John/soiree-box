@@ -811,7 +811,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.28.0";
+const VERSION = "4.28.1";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -934,7 +934,7 @@ SB.bug = openBug;
 
 /* Familles de jeux pour les filtres de l'accueil et du salon */
 const CATS = { jamais: "votes", debat: "votes", dixmais: "votes", note10: "votes", photoroulette: "wip", kink: "votes", quiplus: "votes", tupref: "votes", redflag: "votes", purete: "votes", quiadit: "votes", priorites: "votes",
-  undercover: "bluff", killer: "bluff", loupgarou: "bluff", menteurs: "bluff", motsint: "cartes", defis: "cartes", dernierecarte: "cartes", punchline: "votes", actionverite: "cartes", grille: "cartes", agents: "cartes", rougenoir: "cartes", sept: "cartes", pmu: "cartes", blindtest: "musique", karaoke: "musique" };
+  undercover: "bluff", killer: "bluff", loupgarou: "bluff", menteurs: "bluff", motsint: "cartes", defis: "cartes", dernierecarte: "cartes", punchline: "votes", actionverite: "cartes", grille: "cartes", agents: "cartes", rougenoir: "cartes", sept: "cartes", pmu: "cartes", blindtest: "musique" };
 const FILTERS = [["all", tr("Tous", "All")], ["votes", tr("Votes", "Voting")], ["bluff", "Bluff"], ["cartes", tr("Cartes", "Cards")], ["musique", tr("Musique", "Music")], ["hot", "18+"], ["wip", tr("En travaux", "Beta")]];
 // Jeux « en travaux » : jouables pour les tester, mais rangés à part, seulement dans leur filtre.
 const isWip = d => CATS[d.id] === "wip";
@@ -943,7 +943,7 @@ const isWip = d => CATS[d.id] === "wip";
    avatars Hot et gages avec alcool. En salon, c'est le mode de l'hôte qui compte pour les jeux et les gages ;
    pour les avatars, chacun garde le sien. */
 /* Mode Enfant : un Soft verrouillé par un code à 4 chiffres, avec seulement des jeux tout public. */
-const KID_GAMES = ["undercover", "motsint", "loupgarou", "priorites", "dernierecarte", "note10", "grille", "dixmais", "agents", "debat", "jamais", "rougenoir", "sept", "blindtest", "karaoke"];
+const KID_GAMES = ["undercover", "motsint", "loupgarou", "priorites", "dernierecarte", "note10", "grille", "dixmais", "agents", "debat", "jamais", "rougenoir", "sept", "blindtest"];
 const myKid = () => !!(store().kid && store().kid.on);
 const roomKid = () => { const g = N.nr ? G() : null; return g ? g.kid === true : myKid(); };
 const pinHash = p => { let h = 5381; String(p).split("").forEach(c => { h = ((h << 5) + h + c.charCodeAt(0)) | 0; }); return "k" + (h >>> 0).toString(36); };
