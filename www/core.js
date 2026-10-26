@@ -805,7 +805,7 @@ SB.page = function(title, build, onClose){
   $("#pg-title").textContent = title;
   const root = $("#page-root"); root.innerHTML = ""; root.dataset.key = "";
   show("page");
-  SB._pageClose = () => { SB._pageClose = null; show(prev); if(onClose) onClose(); $("#sa-panel").dataset.key = ""; $("#sa-dock").dataset.key = ""; scheduleRender(); };
+  SB._pageClose = () => { SB._pageClose = null; SB._pageBack = null; show(prev); if(onClose) onClose(); $("#sa-panel").dataset.key = ""; $("#sa-dock").dataset.key = ""; scheduleRender(); };
   build(root);
 };
 SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
@@ -814,7 +814,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.30.0";
+const VERSION = "4.30.1";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -2343,6 +2343,7 @@ function gProfilePage(){
     const draw = () => {
       if(view === "alc" && !DRINKS[gProf(store().gp).drink]) view = "main";
       root.innerHTML = view === "avatar" ? avatarHTML() : view === "alc" ? alcHTML() : mainHTML();
+      $("#pg-title").textContent = view === "avatar" ? tr("Avatar", "Avatar") : view === "alc" ? tr("Taux d'alcool", "Blood alcohol") : tr("Mon profil", "My profile");
       const save = p => { const g2 = Object.assign(gProf(store().gp), p); g2.alc = g2.drink !== "sans"; persist({ gp: g2 }); CORE_X._gp = g2; SB.refreshExtras(); draw(); };
       $$("[data-pf-back]", root).forEach(b => b.addEventListener("click", () => go("main")));
       const avb = $("[data-pf-av]", root); if(avb) avb.addEventListener("click", () => go("avatar"));
@@ -2658,7 +2659,8 @@ SB.boot = function(){
     if(dup){ err.textContent = tr("Deux joueurs s'appellent « " + dup + " ». Donne-leur des prénoms différents.", "Two players are called “" + dup + "”. Give them different names."); err.hidden = false; return; }
     err.hidden = true; startLocal(LP.def, names);
   });
-  $("#pg-done").addEventListener("click", () => SB.closePage());
+  // « Terminé » : dans un sous-écran (avatar, taux d'alcool…), on revient d'abord à l'écran principal de la page.
+  $("#pg-done").addEventListener("click", () => { if(SB._pageBack && SB._pageBack()) return; SB.closePage(); });
   $$("#sheet [data-close]").forEach(b => b.addEventListener("click", closeSheet));
   document.addEventListener("keydown", e => { if(e.key === "Escape" && sheetOpen) closeSheet(); });
   // Retour système de l'appli web installée (l'APK passe par SB.back directement)

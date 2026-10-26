@@ -1,16 +1,15 @@
 {
- "version": "4.30.0",
+ "version": "4.30.1",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Profil redessiné, plus court et plus clair : avatar et prénom en haut, mode de jeu en un sélecteur Hard / Soft / Enfant, « Ce soir je bois » en boutons, limite, compteur et taux d'alcool regroupés dans un seul bloc, puis les réglages (gages, langue)",
-  "Le choix de l'avatar et le taux d'alcool ont maintenant chacun leur écran (on y va en touchant l'avatar ou « Taux d'alcool estimé », et on revient avec « Profil » ou le bouton retour)"
+  "Profil : « Terminé » sur l'écran Avatar ou Taux d'alcool ramène au profil (avant, il fermait tout et renvoyait à l'accueil). La barre du haut affiche le nom de l'écran"
  ],
  "files": {
   "core.js": {
-   "h": "4bab28a676f07b06e2c330625ca3a19704e6e0c3479754fcae9d27071f238d43",
-   "s": 293446
+   "h": "7ba4c54c7bdd3d79169aed550989d49b92f1049737739d28ad584ca47d049126",
+   "s": 293806
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
