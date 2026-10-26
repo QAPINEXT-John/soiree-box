@@ -1,4 +1,7 @@
 {
+  "4.29.3": [
+    "Blind test : la musique s'arrête quand on quitte la partie (avant, l'extrait continuait en fond)"
+  ],
   "4.29.2": [
     "Blind test : correction du chargement des extraits (« Impossible de charger les extraits Deezer »). Deezer limite le nombre de demandes par seconde : l'appli les étale maintenant, et garde les réponses 20 minutes pour les parties suivantes"
   ],

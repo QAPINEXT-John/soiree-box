@@ -157,7 +157,7 @@ function artistTop(name){
     return jsonp(API + "artist/" + ar.id + "/top?limit=12").then(t => A(t && t.data).filter(x => x && x.artist && x.artist.id === ar.id).map(trackOf));
   });
 }
-SB.music = { THEMES, buildPool, play, pause, resume, playlistId, myPlaylist, jsonp, norm, noVoice: x => noVoice(trackOf(x)) };
+SB.music = { THEMES, buildPool, play, pause, resume, audio: AUD, playlistId, myPlaylist, jsonp, norm, noVoice: x => noVoice(trackOf(x)) };
 SB.music.packs = () => THEMES.filter(t => !t.perso || playlistId(myPlaylist()));
 SB.music.editor = function(){
   SB.page(tr("Ma playlist Deezer", "My Deezer playlist"), root => {

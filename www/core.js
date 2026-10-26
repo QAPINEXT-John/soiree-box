@@ -752,10 +752,12 @@ async function roomJoin(code){
 /* =================== Navigation =================== */
 const SCREENS = ["home", "salon", "game", "spect", "lost", "llist", "lplayers", "local", "page"];
 let current = "home";
+// Coupe la musique des jeux (blind test…) quand on quitte une partie ou qu'une autre commence.
+function stopSounds(){ try{ if(SB.music && SB.music.pause) SB.music.pause(); }catch(e){} }
 function show(name){
   if(current === name) return;
   closeSheet();
-  if(name !== "game" && name !== "local"){ closeRulesOv(); closeQuitOv(); }
+  if(name !== "game" && name !== "local"){ closeRulesOv(); closeQuitOv(); stopSounds(); }
   SCREENS.forEach(s => { $("#s-" + s).hidden = s !== name; });
   const el = $("#s-" + name); if(el){ el.scrollTop = 0; enter(el); }
   current = name; trail("Écran " + name);
@@ -811,7 +813,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.29.2";
+const VERSION = "4.29.3";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -1494,7 +1496,7 @@ function render(){
     if(!ctx.playing){ $("#sp-game").textContent = def.name; show("spect"); return; }
     show("game");
     const root = $("#game-root");
-    if(root.dataset.gid !== g.gid){ root.dataset.gid = g.gid; root.dataset.key = ""; root.innerHTML = ""; buzz([30, 50, 30]); }
+    if(root.dataset.gid !== g.gid){ stopSounds(); root.dataset.gid = g.gid; root.dataset.key = ""; root.innerHTML = ""; buzz([30, 50, 30]); }
     $("#gm-title").textContent = def.name; $("#gm-gl").textContent = def.glyph || "";
     const ex = $("#gm-exit");
     const exKey = g.gid + (N.host ? "h" : "p");
@@ -1811,6 +1813,7 @@ function startLocal(def, names){
       const w = A(list); if(def.gagesEnd !== false) gLocalApply(def.id, names, w.map(n => ({ id: n, ev: "_win" })).concat(names.filter(n => w.indexOf(n) < 0).map(n => ({ id: n, ev: "_lose" }))), "end" + rid()); },
     // Gages d'une manche : [{ id: prénom, ev }], clé unique par manche.
     gage(list, key){ gLocalApply(def.id, names, list, key); } };
+  stopSounds();
   try{ def.local.start(root, api); }catch(e){ console.error(e); }
 }
 
