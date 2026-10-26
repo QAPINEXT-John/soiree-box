@@ -1,14 +1,15 @@
 {
- "version": "4.28.4",
+ "version": "4.29.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Blind test, thème Disney : plus de versions sans paroles (piano, orchestre, berceuse, guitare, jazz, « pour bébé »…). On ne garde que la chanson chantée de l'album du film"
+  "Blind test : nouveau thème Manga & anime, avec les génériques d'anime (Naruto, One Piece, L'Attaque des Titans, Demon Slayer, Death Note…) et ceux du Club Dorothée (Dragon Ball Z, Les Chevaliers du Zodiaque, Nicky Larson, Goldorak…). On devine l'anime. Seulement les versions originales chantées, jamais de reprises",
+  "Blind test : nouveau thème Metal (Metallica, Iron Maiden, Rammstein, Slipknot, System of a Down, Gojira, Mass Hysteria…)"
  ],
  "files": {
   "core.js": {
-   "h": "a2f9ca6d0208f12d5e18b285242e863e7c89e92144714c6b4b3e402b04a08468",
+   "h": "94ac5eeccc1e27f39e64c836a50a66d956a99c5d1db5311ed57958075e0b09fe",
    "s": 289425
   },
   "firebase-app-compat.js": {
@@ -92,8 +93,8 @@
    "s": 64350
   },
   "games/blindtest.js": {
-   "h": "64262bb35455e87f1fab050922a44077dcc3f4ab373aa4ba27ac0f9980d894ff",
-   "s": 41321
+   "h": "396b71e03553d0a409ad1fab8639b53162c1c3df6e072de457e3c1d685be0913",
+   "s": 45488
   },
   "games/debat.js": {
    "h": "de9ab7e3e4e7bc4f40552efcee34003c9f5558528c97752f47361a204bd635a4",
