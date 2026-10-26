@@ -1,15 +1,15 @@
 {
- "version": "4.29.4",
+ "version": "4.29.5",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Dans les menus, « robots » devient « bots » (jouer seul contre des bots)"
+  "Accueil : le message « Tu es invité dans le salon… » est retiré (le code du salon reste pré-rempli)"
  ],
  "files": {
   "core.js": {
-   "h": "8a29870cfa19c4b0d9830e97ea6cd14cfbbd06b0b97333d0e1bce89ae64a1e0e",
-   "s": 289652
+   "h": "a9e2e23cf4c75703cc5abf5e665b7b78f6aebb35fd2c96ba0429bb7649576544",
+   "s": 289406
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",

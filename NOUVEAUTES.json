@@ -1,4 +1,7 @@
 {
+  "4.29.5": [
+    "Accueil : le message « Tu es invité dans le salon… » est retiré (le code du salon reste pré-rempli)"
+  ],
   "4.29.4": [
     "Dans les menus, « robots » devient « bots » (jouer seul contre des bots)"
   ],
