@@ -1,4 +1,7 @@
 {
+  "4.27.0": [
+    "Pendant une partie, un bouton « ? » en haut de l'écran ouvre les règles du jeu. « Terminé » ramène pile où on en était, dans tous les jeux, en ligne et sur un seul téléphone"
+  ],
   "4.26.0": [
     "Nouveau jeu : Le PMU, la course des as. Chacun parie sur un cheval et sa mise, les cartes font avancer les as, les cartes pièges les font reculer",
     "Course animée identique sur tous les téléphones, avec commentaires ; les gagnants distribuent leur mise × 2, les perdants prennent leur mise",

@@ -61,7 +61,7 @@ const EN_HTML = {
   "Ton prénom": "Your name", "Léa": "Alex", "Créer un salon": "Create a room", "Code du salon": "Room code", "Rejoindre": "Join",
   "Jouer sur un seul téléphone": "Play on one phone", "On se le passe, ou on joue contre des robots": "Pass it around, or play against bots",
   "Les jeux": "Games", "Un bug, un souci ?": "Bug or problem?", "Signale-le": "Report it",
-  "Salon": "Room", "Hors ligne…": "Offline…", "Signaler un bug": "Report a bug", "Quitter": "Leave",
+  "Salon": "Room", "Hors ligne…": "Offline…", "Signaler un bug": "Report a bug", "Règles du jeu": "Game rules", "Quitter": "Leave",
   "Code à partager": "Code to share", "Partager l'invitation": "Share the invite", "QR code du salon": "Room QR code", "Mon profil": "My profile", "Invitation": "Invite", "Choisis un jeu": "Pick a game",
   "Partie en cours": "Game in progress",
   "Tu es arrivé en cours de partie. Tu pourras jouer à la prochaine, quand l'hôte la lancera depuis le salon.": "You joined mid-game. You can play the next one when the host starts it from the room.",
@@ -808,7 +808,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.26.0";
+const VERSION = "4.27.0";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -994,13 +994,13 @@ function rulesHTML(def){
   const r = A(def.rules);
   return r.length ? '<details><summary>' + tr("Règles", "Rules") + '</summary><ol>' + r.map(x => "<li>" + esc(x) + "</li>").join("") + '</ol></details>' : "";
 }
-function openRules(def){
+function openRules(def, inGame){
   SB.page(def.name, root => {
     accent(def.id);
     root.innerHTML = '<div class="card acc"><span class="gl hand huge">' + esc(def.glyph || "") + '</span><p class="lead">' + esc(def.tag || "") + '</p><span class="sm">' +
       esc(rangeLong(def)) + (def.local ? tr(" · aussi sur un seul téléphone", " · also on a single phone") : "") + '</span></div>' +
       '<ol class="howto" style="margin:0; padding-left:30px; display:flex; flex-direction:column; gap:6px">' + A(def.rules).map(x => "<li>" + esc(x) + "</li>").join("") + "</ol>";
-  }, () => accent(""));
+  }, () => accent(inGame ? def.id : ""));
 }
 
 /* =================== Accueil =================== */
@@ -2561,6 +2561,11 @@ SB.boot = function(){
     shareText(tr("Rejoins mon salon Soirée Box ! Code : " + N.code, "Join my Soirée Box room! Code: " + N.code), url, $("#sa-link"), msg => toast(msg === "Copié" ? tr("Invitation copiée", "Invite copied") : tr("Invitation partagée", "Invite shared")));
   });
   $("#ll-back").addEventListener("click", goHome);
+  // Rappel des règles pendant une partie (en réseau ou sur un seul téléphone).
+  $$("[data-grules]").forEach(b => b.addEventListener("click", () => {
+    const g = N.nr ? G() : null, def = current === "local" ? L.def : g && g.game ? SB.byId[g.game] : null;
+    if(def){ buzz(6); openRules(def, true); }
+  }));
   $$("[data-bug]").forEach(b => {
     if(b.classList.contains("bugbtn")) b.innerHTML = BUGICON; else { const i = b.querySelector(".bi"); if(i) i.innerHTML = BUGICON; }
     b.addEventListener("click", () => { buzz(8); openBug(); });

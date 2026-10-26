@@ -348,7 +348,7 @@ button,.tile,.opt,.pack,.seg button,.ab button,.pad button{touch-action:manipula
 .ver button{background:none; border:0; color:var(--muted); font:inherit; font-weight:700; text-decoration:underline; text-underline-offset:3px; padding:8px 4px; min-height:40px}
 /* Signaler un bug */
 .top .tr{display:flex; align-items:center; gap:6px}
-.bugbtn{flex:none; width:36px; height:36px; display:grid; place-items:center; border:0; border-radius:12px; background:var(--soft); color:var(--muted)}
+.rulesbtn{font-family:var(--f-disp); font-weight:800; font-size:19px; color:var(--ink)}.bugbtn{flex:none; width:36px; height:36px; display:grid; place-items:center; border:0; border-radius:12px; background:var(--soft); color:var(--muted)}
 .bugbtn:active{transform:scale(.94)}
 .footlink{display:flex; align-items:center; justify-content:center; gap:8px; margin:6px auto 0; min-height:44px; padding:0 12px; border:0; background:none; color:var(--muted); font-weight:600; font-size:14px}
 .footlink u{color:var(--ink); text-underline-offset:3px}
@@ -435,7 +435,7 @@ button,.tile,.opt,.pack,.seg button,.ab button,.pad button{touch-action:manipula
 
   <!-- PARTIE EN RÉSEAU -->
   <section class="screen" id="s-game" hidden>
-    <div class="top"><span class="gsq" id="gm-gl" aria-hidden="true"></span><span class="ttl" id="gm-title"></span><span class="offline" data-offline hidden>Hors ligne…</span><button class="bugbtn" data-bug type="button" aria-label="Signaler un bug"></button><span id="gm-exit"></span></div>
+    <div class="top"><span class="gsq" id="gm-gl" aria-hidden="true"></span><span class="ttl" id="gm-title"></span><span class="offline" data-offline hidden>Hors ligne…</span><button class="bugbtn rulesbtn" data-grules type="button" aria-label="Règles du jeu">?</button><button class="bugbtn" data-bug type="button" aria-label="Signaler un bug"></button><span id="gm-exit"></span></div>
     <div class="root" id="game-root"></div>
   </section>
 
@@ -478,7 +478,7 @@ button,.tile,.opt,.pack,.seg button,.ab button,.pad button{touch-action:manipula
   </section>
 
   <section class="screen" id="s-local" hidden>
-    <div class="top"><span class="gsq" id="lc-gl" aria-hidden="true"></span><span class="ttl" id="lc-title"></span><button class="bugbtn" data-bug type="button" aria-label="Signaler un bug"></button><span id="lc-exit"></span></div>
+    <div class="top"><span class="gsq" id="lc-gl" aria-hidden="true"></span><span class="ttl" id="lc-title"></span><button class="bugbtn rulesbtn" data-grules type="button" aria-label="Règles du jeu">?</button><button class="bugbtn" data-bug type="button" aria-label="Signaler un bug"></button><span id="lc-exit"></span></div>
     <div class="root" id="local-root"></div>
   </section>
 

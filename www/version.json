@@ -1,17 +1,15 @@
 {
- "version": "4.26.0",
+ "version": "4.27.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Nouveau jeu : Le PMU, la course des as. Chacun parie sur un cheval et sa mise, les cartes font avancer les as, les cartes pièges les font reculer",
-  "Course animée identique sur tous les téléphones, avec commentaires ; les gagnants distribuent leur mise × 2, les perdants prennent leur mise",
-  "Options : longueur de la piste, nombre de courses, vitesse. Coups de théâtre : cheval dopé, chute générale, cote de l'outsider"
+  "Pendant une partie, un bouton « ? » en haut de l'écran ouvre les règles du jeu. « Terminé » ramène pile où on en était, dans tous les jeux, en ligne et sur un seul téléphone"
  ],
  "files": {
   "core.js": {
-   "h": "0630a12293a5d83bd17bc32575a0a8232f53f3fe1544e02d5bed729272fa67f4",
-   "s": 285608
+   "h": "147c625d8005576b0d0bae580d1aa78f2f3a4daa797769791a3af4e1296b3529",
+   "s": 285981
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -214,8 +212,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "ca3beae60c8420ec5721b01b6c2130cf091d1baf6150b63ae90f0a4c5896c563",
-   "s": 53333
+   "h": "52562cb74d5f2554482a68368ea0fae74a99a2be14cef449d9eb2c036f5330a9",
+   "s": 53612
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
