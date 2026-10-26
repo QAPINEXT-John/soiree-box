@@ -207,13 +207,20 @@ SB.register({
     start(root, api){
       const names = api.names, st = store();
       let sel = A(st.jmPacks).length ? A(st.jmPacks).slice() : ["cl", "soir", "love"], lives = [3, 5, 10].indexOf(st.jmLives) >= 0 ? st.jmLives : 5, twOn = st.jmTw !== false;
+      let mode = st.jmMode === "score" ? "score" : "doigts", rounds = [10, 15, 20].indexOf(st.jmRounds) >= 0 ? st.jmRounds : 15;
       let deck = [], q = "", round = 0, tw = null, au = "", fing = {}, picked = [], gno = 0, tok = Math.random().toString(36).slice(2, 7), tot = {};
       function setup(){
-        screen(root, "su" + Math.random(), CSS + '<p class="howto">' + tr("Tout le monde lève ses doigts. À chaque phrase, touchez les prénoms de ceux qui l'ont déjà fait : ils baissent un doigt. Le dernier avec des doigts levés gagne.", "Everyone holds up their fingers. For each line, tap the names of those who've done it: they put a finger down. Last one with fingers up wins.") + "</p>" +
-          '<div class="field"><span class="eyebrow">' + tr("Doigts au départ", "Starting fingers") + '</span><div class="seg">' + [3, 5, 10].map(n => '<button type="button" data-l="' + n + '" aria-pressed="' + (lives === n) + '">' + n + "</button>").join("") + "</div></div>" +
+        const sc = mode === "score";
+        screen(root, "su" + Math.random(), CSS +
+          '<div class="field"><span class="eyebrow">' + tr("Mode", "Mode") + '</span><div class="seg">' + [["doigts", tr("Avec des vies (doigts)", "With lives (fingers)")], ["score", tr("Aux points", "With points")]].map(x => '<button type="button" data-m="' + x[0] + '" aria-pressed="' + (mode === x[0]) + '">' + x[1] + "</button>").join("") + "</div>" +
+          '<p class="sm" style="margin:0">' + (sc ? tr("Pas d'élimination : chaque « déjà fait » rapporte 1 point. Après la dernière phrase, le plus de points gagne : le plus expérimenté du groupe !", "No elimination: each “done it” scores 1 point. After the last line, the most points wins: the group's most experienced!") : tr("Tout le monde lève ses doigts. À chaque phrase, ceux qui l'ont déjà fait baissent un doigt. Le dernier avec des doigts levés gagne.", "Everyone holds up their fingers. For each line, those who've done it put a finger down. Last one with fingers up wins.")) + "</p></div>" +
+          (sc ? '<div class="field"><span class="eyebrow">' + tr("Phrases", "Lines") + '</span><div class="seg">' + [10, 15, 20].map(n => '<button type="button" data-rd="' + n + '" aria-pressed="' + (rounds === n) + '">' + n + "</button>").join("") + "</div></div>"
+            : '<div class="field"><span class="eyebrow">' + tr("Doigts au départ", "Starting fingers") + '</span><div class="seg">' + [3, 5, 10].map(n => '<button type="button" data-l="' + n + '" aria-pressed="' + (lives === n) + '">' + n + "</button>").join("") + "</div></div>") +
           '<div class="field"><span class="eyebrow">' + tr("Paquets", "Packs") + '</span><div class="packs">' + PACKS.filter(SB.packOk).map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-p="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + "</span></span></button>").join("") + "</div></div>" +
           '<div class="field"><div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + twOn + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Plot twists") + '</span><span class="ds">' + tr("De temps en temps, une règle change", "Now and then, a rule changes") + "</span></span></button></div></div>" +
-          SB.u.dock('<button class="btn acc" type="button" data-go>' + tr("Lever les doigts", "Fingers up") + "</button>"), r => {
+          SB.u.dock('<button class="btn acc" type="button" data-go>' + (sc ? tr("Commencer", "Start") : tr("Lever les doigts", "Fingers up")) + "</button>"), r => {
+          r.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => { mode = b.dataset.m; persist({ jmMode: mode }); setup(); }));
+          r.querySelectorAll("[data-rd]").forEach(b => b.addEventListener("click", () => { rounds = +b.dataset.rd; persist({ jmRounds: rounds }); setup(); }));
           r.querySelectorAll("[data-l]").forEach(b => b.addEventListener("click", () => { lives = +b.dataset.l; persist({ jmLives: lives }); setup(); }));
           r.querySelectorAll("[data-p]").forEach(b => b.addEventListener("click", () => { const i = sel.indexOf(b.dataset.p); if(i >= 0) sel.splice(i, 1); else sel.push(b.dataset.p); persist({ jmPacks: sel }); setup(); }));
           r.querySelector("[data-tw]").addEventListener("click", () => { twOn = !twOn; persist({ jmTw: twOn }); setup(); });
@@ -223,9 +230,10 @@ SB.register({
           });
         });
       }
-      const alive = () => names.filter(n => fing[n] > 0);
-      const fingers = n => { let h = ""; for(let i = 0; i < lives; i++) h += i < fing[n] ? "●" : "<s>●</s>"; return h; };
-      const lab = () => CSS + '<span class="eyebrow">' + tr("Phrase ", "Line ") + round + "</span>" + SB.u.twistHTML(tw);
+      const SC = () => mode === "score";
+      const alive = () => (SC() ? names.slice() : names.filter(n => fing[n] > 0));
+      const fingers = n => { if(SC()) return '<span style="letter-spacing:0">' + tr((tot[n] || 0) + " pt" + ((tot[n] || 0) > 1 ? "s" : ""), (tot[n] || 0) + ((tot[n] || 0) === 1 ? " pt" : " pts")) + "</span>"; let h = ""; for(let i = 0; i < lives; i++) h += i < fing[n] ? "●" : "<s>●</s>"; return h; };
+      const lab = () => CSS + '<span class="eyebrow">' + tr("Phrase ", "Line ") + round + (SC() ? " / " + rounds : "") + "</span>" + SB.u.twistHTML(tw);
       function next(){
         round++; picked = [];
         tw = twOn && round > 1 ? SB.u.twist(TWL, { last: tw ? tw.id : "", n: alive().length, rate: .3 }) : null;
@@ -236,8 +244,8 @@ SB.register({
       function draw(){
         const top = au ? '<div class="pass"><span class="eyebrow">' + tr("La plume", "The pen") + '</span><div class="who">' + esc(au) + '</div><p class="howto">' + tr("invente une phrase à voix haute : « Je n'ai jamais… »", "makes up a line out loud: “Never have I ever…”") + "</p></div>" : qCard(q, SB.lang(), "");
         screen(root, "d" + gno + ":" + round + ":" + picked.join(","), lab() + top + '<p class="howto" style="text-align:center; margin:0">' + tr("Touchez ceux qui l'ont déjà fait.", "Tap everyone who's done it.") + '</p><div class="jm-list">' +
-          names.map(n => '<button type="button" class="jm-p" data-n="' + esc(n) + '" aria-pressed="' + (picked.indexOf(n) >= 0) + '"' + (fing[n] > 0 ? "" : " disabled") + "><span>" + esc(n) + '</span><span class="f">' + fingers(n) + "</span></button>").join("") + "</div>" +
-          SB.u.dock('<button class="btn acc" type="button" data-ok>' + (picked.length ? tr("Baisser un doigt (" + picked.length + ")", "Put a finger down (" + picked.length + ")") : tr("Personne ne l'a fait", "Nobody has done it")) + '</button><button class="link" type="button" data-q style="align-self:center">' + tr("Choisir un autre jeu", "Choose another game") + "</button>"), r => {
+          names.map(n => '<button type="button" class="jm-p" data-n="' + esc(n) + '" aria-pressed="' + (picked.indexOf(n) >= 0) + '"' + (SC() || fing[n] > 0 ? "" : " disabled") + "><span>" + esc(n) + '</span><span class="f">' + fingers(n) + "</span></button>").join("") + "</div>" +
+          SB.u.dock('<button class="btn acc" type="button" data-ok>' + (picked.length ? (SC() ? tr("Valider (" + picked.length + ")", "Confirm (" + picked.length + ")") : tr("Baisser un doigt (" + picked.length + ")", "Put a finger down (" + picked.length + ")")) : tr("Personne ne l'a fait", "Nobody has done it")) + '</button><button class="link" type="button" data-q style="align-self:center">' + tr("Choisir un autre jeu", "Choose another game") + "</button>"), r => {
           r.querySelectorAll("[data-n]").forEach(b => b.addEventListener("click", () => { const n = b.dataset.n, i = picked.indexOf(n); if(i >= 0) picked.splice(i, 1); else picked.push(n); buzz(6); draw(); }));
           r.querySelector("[data-ok]").addEventListener("click", resolve);
           r.querySelector("[data-q]").addEventListener("click", api.exit);
@@ -245,26 +253,32 @@ SB.register({
       }
       function resolve(){
         const down = tw && tw.id === "or" ? 2 : 1, before = alive();
-        picked.forEach(n => { fing[n] = Math.max(0, fing[n] - down); tot[n] = (tot[n] || 0) + 1; });
+        picked.forEach(n => { if(!SC()) fing[n] = Math.max(0, fing[n] - down); tot[n] = (tot[n] || 0) + (SC() ? down : 1); });
         buzz(picked.length ? [20, 30, 20] : 10);
         if(api.gage && picked.length){ const x = down; api.gage(picked.length === 1 ? [{ id: picked[0], ev: "seul", x }] : picked.map(id => ({ id, ev: "deja", x })), "jm" + tok + "-" + gno + ":" + round); }
         const out = before.filter(n => fing[n] <= 0), left = alive(), story = tw && tw.id === "raconte" && picked.length ? pick(picked) : "";
-        const over = left.length <= 1;
-        const win = over ? (left.length ? left : out) : [];
+        const mx = Math.max(0, ...names.map(n => tot[n] || 0));
+        const over = SC() ? round >= rounds : left.length <= 1;
+        const win = !over ? [] : SC() ? (mx ? names.filter(n => (tot[n] || 0) === mx) : []) : (left.length ? left : out);
         screen(root, "r" + gno + ":" + round, lab() + (au ? "" : qCard(q, SB.lang(), "")) +
-          (picked.length ? '<p class="note-box">' + tr(esc(picked.join(", ")) + (picked.length > 1 ? " baissent " : " baisse ") + (down > 1 ? "deux doigts" : "un doigt") + ".", esc(picked.join(", ")) + " put down " + (down > 1 ? "two fingers" : "a finger") + ".") + "</p>" : '<p class="note-box">' + tr("Personne ne l'a fait !", "Nobody has done it!") + "</p>") +
+          (picked.length ? '<p class="note-box">' + tr(esc(picked.join(", ")) + (SC() ? " : +" + down + (down > 1 ? " points." : " point.") : (picked.length > 1 ? " baissent " : " baisse ") + (down > 1 ? "deux doigts" : "un doigt") + "."), esc(picked.join(", ")) + (SC() ? ": +" + down + (down > 1 ? " points." : " point.") : " put down " + (down > 1 ? "two fingers" : "a finger") + ".")) + "</p>" : '<p class="note-box">' + tr("Personne ne l'a fait !", "Nobody has done it!") + "</p>") +
           (story ? '<p class="note-box">' + tr("Raconte ! " + esc(story) + ", on veut l'histoire.", "Spill it! " + esc(story) + ", we want the story.") + "</p>" : "") +
           (out.length ? '<p class="sm" style="text-align:center">' + tr("Plus de doigts : " + esc(out.join(", ")), "Out of fingers: " + esc(out.join(", "))) + "</p>" : "") +
-          '<div class="jm-list">' + names.map(n => '<div class="jm-p"' + (fing[n] > 0 ? "" : ' style="opacity:.4"') + "><span>" + esc(n) + '</span><span class="f">' + fingers(n) + "</span></div>").join("") + "</div>" +
-          SB.u.dock('<button class="btn acc" type="button" data-n>' + (over ? tr("Voir le gagnant", "See the winner") : tr("Phrase suivante", "Next line")) + "</button>"), r => {
+          '<div class="jm-list">' + (SC() ? names.slice().sort((a, b) => (tot[b] || 0) - (tot[a] || 0)) : names).map(n => '<div class="jm-p"' + (SC() || fing[n] > 0 ? "" : ' style="opacity:.4"') + "><span>" + esc(n) + '</span><span class="f">' + fingers(n) + "</span></div>").join("") + "</div>" +
+          SB.u.dock('<button class="btn acc" type="button" data-n>' + (over ? (SC() ? tr("Voir le classement", "See the standings") : tr("Voir le gagnant", "See the winner")) : tr("Phrase suivante", "Next line")) + "</button>"), r => {
           r.querySelector("[data-n]").addEventListener("click", () => { if(over) end(win); else next(); });
         });
       }
       function end(win){
         if(api.win){ let tries = 0; const go = () => { if(document.getElementById("gage-sheet") && tries++ < 1200) setTimeout(go, 500); else api.win(win); }; go(); }
         const order = names.slice().sort((a, b) => (tot[b] || 0) - (tot[a] || 0));
-        screen(root, "end" + gno, CSS + '<span class="eyebrow">' + (win.length > 1 ? tr("Égalité", "It's a tie") : tr("Le plus sage", "The most innocent")) + '</span><div class="who">' + esc(win.join(" & ")) + "</div>" +
-          '<p class="sm" style="text-align:center">' + tr("Le plus de « déjà fait » : " + esc(order[0]) + " (" + (tot[order[0]] || 0) + ")", "Most “done it”: " + esc(order[0]) + " (" + (tot[order[0]] || 0) + ")") + "</p>" +
+        const low = order[order.length - 1];
+        screen(root, "end" + gno, CSS + (SC()
+          ? '<span class="eyebrow">' + (win.length > 1 ? tr("Égalité : les plus expérimentés", "Tie: the most experienced") : tr("Le plus expérimenté", "The most experienced")) + '</span><div class="who">' + esc(win.join(" & ") || "—") + "</div>" +
+            '<div class="jm-list">' + order.map((n, i) => '<div class="jm-p"><span>' + (i + 1) + ". " + esc(n) + '</span><span class="f">' + fingers(n) + "</span></div>").join("") + "</div>" +
+            (names.length > 2 ? '<p class="sm" style="text-align:center">' + tr("L'ange du groupe : " + esc(low) + " (" + (tot[low] || 0) + ")", "The group's angel: " + esc(low) + " (" + (tot[low] || 0) + ")") + "</p>" : "")
+          : '<span class="eyebrow">' + (win.length > 1 ? tr("Égalité", "It's a tie") : tr("Le plus sage", "The most innocent")) + '</span><div class="who">' + esc(win.join(" & ")) + "</div>" +
+            '<p class="sm" style="text-align:center">' + tr("Le plus de « déjà fait » : " + esc(order[0]) + " (" + (tot[order[0]] || 0) + ")", "Most “done it”: " + esc(order[0]) + " (" + (tot[order[0]] || 0) + ")") + "</p>") +
           SB.u.dock('<button class="btn acc" type="button" data-a>' + tr("Rejouer", "Play again") + '</button><button class="btn ghost" type="button" data-q>' + tr("Choisir un autre jeu", "Pick another game") + "</button>"), r => {
           r.querySelector("[data-a]").addEventListener("click", api.again);
           r.querySelector("[data-q]").addEventListener("click", api.exit);
