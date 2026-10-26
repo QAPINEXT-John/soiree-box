@@ -1,17 +1,14 @@
 {
- "version": "4.19.0",
+ "version": "4.19.1",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Nouveau jeu : Agents secrets. Deux équipes, 25 mots, un espion par équipe qui donne un indice (un mot, un nombre). Les agents votent sur leur téléphone",
-  "Mode Duo à 2 en coopération : chacun voit sa carte, 15 agents à trouver en 9 tours",
-  "Paquets Classique, Copains, Pop culture, Soirée, Hot et Trash ; mots perso et prénoms dans la grille ; assassins, mot piégé, coups de théâtre et gages",
-  "Sur un seul téléphone : l'espion regarde la carte en cachette, puis l'équipe retourne les mots"
+  "Agents secrets : le compteur de l'équipe qui joue ne déborde plus sur le bord de l'écran"
  ],
  "files": {
   "core.js": {
-   "h": "1200316cdca5c5a5ade71ea683cc954ec122b8f0b45b9f742f4af8656e383ff2",
+   "h": "987140bdb0e2e8c25c2860c400da213d593317d5928177c1acc7d1f1263dbcd7",
    "s": 276542
   },
   "firebase-app-compat.js": {
@@ -91,8 +88,8 @@
    "s": 106670
   },
   "games/agents.js": {
-   "h": "f469f14a747ca6cec1a2af9445639183e280a07773d4b0c576015e0591f94e4b",
-   "s": 64328
+   "h": "b3a548277fdf2f578da3443f76c040733124b3624e6db0efcea4c4ed612eabc5",
+   "s": 64350
   },
   "games/defis.js": {
    "h": "4d939598885c73acaa9732bcce7ac082ef8f707794ee999a6df5902ecbe06fff",

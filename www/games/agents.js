@@ -143,8 +143,8 @@ const CSS = '<style data-ag>' +
   '.ag-c.dim{opacity:.45}.ag-c.sel{outline:3px solid var(--acc); outline-offset:1px}.ag-c:disabled{cursor:default}' +
   '.ag-c .v{position:absolute; top:-6px; right:-4px; min-width:20px; height:20px; border-radius:99px; background:var(--acc); color:var(--dark,#14101a); font-size:11px; display:grid; place-items:center; padding:0 4px}' +
   '.ag-c .nb{position:absolute; top:2px; left:4px; font-size:9px; opacity:.8}' +
-  '.ag-score{display:flex; justify-content:space-between; align-items:center; gap:8px}.ag-score b{font-family:var(--f-disp); font-size:22px; padding:2px 12px; border-radius:12px}' +
-  '.ag-score .r{background:#e8414e; color:#fff}.ag-score .b{background:#3a7bff; color:#fff}.ag-score .on{box-shadow:0 0 0 3px var(--ink)}' +
+  '.ag-score{display:flex; justify-content:space-between; align-items:center; gap:8px}.ag-score b{font-family:var(--f-disp); font-size:22px; padding:1px 11px; border-radius:12px; border:3px solid transparent}' +
+  '.ag-score .r{background:#e8414e; color:#fff}.ag-score .b{background:#3a7bff; color:#fff}.ag-score .on{border-color:var(--ink)}' +
   '.ag-clue{text-align:center; font-family:var(--f-disp); font-weight:800; font-size:30px; line-height:1.1}.ag-clue small{display:block; font-size:13px; color:var(--muted); font-family:var(--f-body,inherit)}' +
   '.ag-log{text-align:center; font-weight:700; font-size:14px; margin:0; color:var(--muted); min-height:1.2em}' +
   '.ag-teams{display:grid; grid-template-columns:1fr 1fr; gap:8px}.ag-team{border-radius:16px; padding:10px; display:flex; flex-direction:column; gap:6px}.ag-team.r{background:rgba(232,65,78,.16); border:2px solid #e8414e}.ag-team.b{background:rgba(58,123,255,.16); border:2px solid #3a7bff}' +

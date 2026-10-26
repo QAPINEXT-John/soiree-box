@@ -1,4 +1,7 @@
 {
+  "4.19.1": [
+    "Agents secrets : le compteur de l'équipe qui joue ne déborde plus sur le bord de l'écran"
+  ],
   "4.19.0": [
     "Nouveau jeu : Agents secrets. Deux équipes, 25 mots, un espion par équipe qui donne un indice (un mot, un nombre). Les agents votent sur leur téléphone",
     "Mode Duo à 2 en coopération : chacun voit sa carte, 15 agents à trouver en 9 tours",
