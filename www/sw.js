@@ -1,6 +1,6 @@
 // Service worker de Soirée Box : met l'appli en cache pour qu'elle s'ouvre même sans réseau.
 // Change CACHE à chaque mise à jour, et ajoute ici le fichier de chaque nouveau jeu.
-const CACHE = "soireebox-4.34.0";
+const CACHE = "soireebox-4.35.0";
 const FILES = [
   "./",
   "core.js",
@@ -23,6 +23,7 @@ const FILES = [
   "games/actionverite.js",
   "games/agents.js",
   "games/blindtest.js",
+  "games/course.js",
   "games/debat.js",
   "games/defis.js",
   "games/dernierecarte.js",

@@ -815,7 +815,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.34.0";
+const VERSION = "4.35.0";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -938,8 +938,8 @@ SB.bug = openBug;
 
 /* Familles de jeux pour les filtres de l'accueil et du salon */
 const CATS = { jamais: "votes", debat: "votes", dixmais: "votes", note10: "votes", photoroulette: "wip", kink: "votes", quiplus: "votes", tupref: "votes", redflag: "votes", purete: "votes", quiadit: "votes", priorites: "votes",
-  undercover: "bluff", killer: "bluff", loupgarou: "bluff", menteurs: "bluff", motsint: "cartes", defis: "cartes", dernierecarte: "cartes", punchline: "votes", actionverite: "cartes", grille: "cartes", agents: "cartes", rougenoir: "cartes", sept: "cartes", pmu: "cartes", blindtest: "quiz", quiz: "quiz" };
-const FILTERS = [["all", tr("Tous", "All")], ["votes", tr("Votes", "Voting")], ["bluff", "Bluff"], ["cartes", tr("Cartes", "Cards")], ["quiz", "Quiz"], ["hot", "18+"], ["wip", tr("En travaux", "Beta")]];
+  undercover: "bluff", killer: "bluff", loupgarou: "bluff", menteurs: "bluff", motsint: "cartes", defis: "action", dernierecarte: "cartes", punchline: "votes", actionverite: "action", grille: "cartes", agents: "cartes", rougenoir: "cartes", sept: "cartes", pmu: "cartes", blindtest: "quiz", quiz: "quiz", course: "action" };
+const FILTERS = [["all", tr("Tous", "All")], ["votes", tr("Votes", "Voting")], ["bluff", "Bluff"], ["cartes", tr("Cartes", "Cards")], ["quiz", "Quiz"], ["action", "Action"], ["hot", "18+"], ["wip", tr("En travaux", "Beta")]];
 // Jeux « en travaux » : jouables pour les tester, mais rangés à part, seulement dans leur filtre.
 const isWip = d => CATS[d.id] === "wip";
 /* ---------- Mode Hard / Soft ----------
@@ -947,7 +947,7 @@ const isWip = d => CATS[d.id] === "wip";
    avatars Hot et gages avec alcool. En salon, c'est le mode de l'hôte qui compte pour les jeux et les gages ;
    pour les avatars, chacun garde le sien. */
 /* Mode Enfant : un Soft verrouillé par un code à 4 chiffres, avec seulement des jeux tout public. */
-const KID_GAMES = ["undercover", "motsint", "loupgarou", "priorites", "dernierecarte", "note10", "grille", "dixmais", "agents", "debat", "jamais", "rougenoir", "sept", "blindtest", "quiz"];
+const KID_GAMES = ["undercover", "motsint", "loupgarou", "priorites", "dernierecarte", "note10", "grille", "dixmais", "agents", "debat", "jamais", "rougenoir", "sept", "blindtest", "quiz", "course"];
 const myKid = () => !!(store().kid && store().kid.on);
 const roomKid = () => { const g = N.nr ? G() : null; return g ? g.kid === true : myKid(); };
 const pinHash = p => { let h = 5381; String(p).split("").forEach(c => { h = ((h << 5) + h + c.charCodeAt(0)) | 0; }); return "k" + (h >>> 0).toString(36); };
@@ -2108,8 +2108,8 @@ function gSettingsPage(get, set, editable, tally, onReset){
       } else if(view === "jeux"){
         h += backRow() + '<p class="sm pf-desc">' + tr("Par défaut, chaque jeu suit le niveau choisi pour tous (" + GN[lv] + "). Touche un jeu seulement si tu veux qu'il soit différent.", "By default, every game follows the level chosen for all (" + GN[lv] + "). Only open a game if you want it to be different.") + "</p>" +
           (hard ? '<div class="gd-legend"><span><i class="gk-boit"></i>' + tr("boit", "drinks") + '</span><span><i class="gk-distribue"></i>' + tr("distribue (il choisit qui boit)", "hands out (picks who drinks)") + '</span><span><i class="gk-tous"></i>' + tr("tout le monde", "everyone") + "</span></div>" : "");
-        const fams = FILTERS.filter(f => ["votes", "bluff", "cartes", "quiz"].indexOf(f[0]) >= 0).map(f => [f[1], gGames().filter(d => CATS[d.id] === f[0])]);
-        const rest = gGames().filter(d => ["votes", "bluff", "cartes", "quiz"].indexOf(CATS[d.id]) < 0);
+        const fams = FILTERS.filter(f => ["votes", "bluff", "cartes", "quiz", "action"].indexOf(f[0]) >= 0).map(f => [f[1], gGames().filter(d => CATS[d.id] === f[0])]);
+        const rest = gGames().filter(d => ["votes", "bluff", "cartes", "quiz", "action"].indexOf(CATS[d.id]) < 0);
         if(rest.length) fams.push([tr("Autres", "Others"), rest]);
         fams.filter(f => f[1].length).forEach(f => {
           h += '<div class="field"><span class="eyebrow">' + esc(f[0]) + '</span><div class="gs-box gd-list">';

@@ -1,18 +1,18 @@
 {
- "version": "4.34.0",
+ "version": "4.35.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Quiz et Blind test : nouveau mode équipes (2 à 4 équipes de couleur). L'hôte forme les équipes au début (au hasard, puis on peut changer chacun d'équipe), et chaque équipe additionne ses points",
-  "Quiz en équipes : à chaque question, un capitaine différent mise et répond pour son équipe, ses coéquipiers voient son choix en direct. Une mauvaise réponse donne un gage à toute l'équipe",
-  "Blind test en équipes : en QCM, un capitaine répond pour l'équipe ; au buzzer, c'est une équipe contre l'autre, et un mauvais buzz bloque toute l'équipe sur la chanson",
-  "Ça marche aussi sur un seul téléphone : on touche l'équipe qui a trouvé"
+  "Nouveau jeu : Course de défis. Un défi tombe sur tous les téléphones après un compte à rebours, la première équipe qui réussit touche « On l'a ! » et l'hôte valide. En équipes (2 à 4) ou chacun pour soi",
+  "7 paquets de défis comme dans les autres jeux : chasse aux objets, défis physiques, créatif et malin, toute l'équipe, soirée, pimenté (18+) et enfants, plus vos propres défis",
+  "Coups de théâtre : défi en or, en silence, une seule main, express. Marche aussi sur un seul téléphone",
+  "Nouveau filtre « Action » : Course de défis, Action ou vérité et Défis en chaîne"
  ],
  "files": {
   "core.js": {
-   "h": "da68597adf133ce616d98976bf4792ef783809f1ff43916442d33b128d66dc39",
-   "s": 308343
+   "h": "50b86ad051ace59733b9f4219ead97de3e3987802b11995bf934336eefe311dc",
+   "s": 308413
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -97,6 +97,10 @@
   "games/blindtest.js": {
    "h": "d6d7b223df3d711faff718eec367e37213d9b506e27f80df9e2886c23a37ef4a",
    "s": 54923
+  },
+  "games/course.js": {
+   "h": "b54664c2862a235f46b0847c5a2ddc74fe8de428f556f85b358f5f1213961c66",
+   "s": 50089
   },
   "games/debat.js": {
    "h": "de9ab7e3e4e7bc4f40552efcee34003c9f5558528c97752f47361a204bd635a4",
@@ -227,8 +231,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "dd6d4ef5629114b7458a05b00938abea81878d23d550f3a2a10a9909bcccf8fa",
-   "s": 61567
+   "h": "9bd4e0541cfa30fb08daef8a6419f1881714e6a3dd2e4c38b7624503e3fd58fb",
+   "s": 61607
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
