@@ -32,16 +32,14 @@ const EN = {
 };
 const LISTS = { fr: FR, en: EN };
 const LL = lg => LISTS[lg === "en" ? "en" : "fr"];
+// 4 paquets : chacun regroupe plusieurs listes de thèmes (« soir » ajoute les thèmes d'alcool seulement en Hard).
+const GROUPS = { cl: ["cl", "bouffe", "sport", "galere"], pop: ["pop", "soir"], x18: ["hot", "trash"], kid: ["kid"] };
+const gl = (v, lg) => [].concat(...GROUPS[v].map(k => LL(lg)[k]));
 const PACKS = [
-  { v: "cl", label: tr("Classique", "Classic"), desc: tr("Marques, pays, animaux, objets…", "Brands, countries, animals, objects…"), list: LL(SB.lang()).cl },
-  { v: "bouffe", label: tr("Bouffe", "Food"), desc: tr("Fromages, sauces, desserts…", "Cheeses, sauces, desserts…"), list: LL(SB.lang()).bouffe },
-  { v: "pop", label: tr("Pop culture", "Pop culture"), desc: tr("Séries, films, jeux vidéo, musique", "Shows, movies, video games, music"), list: LL(SB.lang()).pop },
-  { v: "sport", label: tr("Sport", "Sports"), desc: tr("Clubs, joueurs, disciplines", "Clubs, players, disciplines"), list: LL(SB.lang()).sport },
-  { v: "soir", label: tr("Soirée", "Party"), desc: tr("Boîtes, afters, lendemains", "Clubs, afterparties, mornings after"), list: LL(SB.lang()).soir },
-  { v: "galere", label: tr("Galères", "Daily hassles"), desc: tr("Retards, excuses, phrases de parents…", "Being late, excuses, things parents say…"), list: LL(SB.lang()).galere },
-  { v: "hot", label: "Hot", desc: tr("Positions, fantasmes, sex toys…", "Positions, fantasies, sex toys…"), list: LL(SB.lang()).hot, hot: true },
-  { v: "trash", label: "Trash", desc: tr("Cru et sans filtre", "Raw and unfiltered"), list: LL(SB.lang()).trash, hot: true },
-  { v: "kid", label: tr("Enfants", "Kids"), desc: tr("Thèmes faciles, 10 secondes au lieu de 7", "Easy themes, 10 seconds instead of 7"), list: LL(SB.lang()).kid, kid: true }
+  { v: "cl", label: tr("Classique", "Classic"), desc: tr("Culture G, bouffe, sport, galères du quotidien", "General knowledge, food, sports, daily hassles"), list: gl("cl", SB.lang()) },
+  { v: "pop", label: tr("Pop & soirée", "Pop & party"), desc: tr("Séries, films, jeux vidéo, musique, soirées", "Shows, movies, video games, music, parties"), list: gl("pop", SB.lang()) },
+  { v: "x18", label: "Hot & trash", desc: tr("Sexe, du coquin au très cru", "Sex, from naughty to very raw"), list: gl("x18", SB.lang()), hot: true },
+  { v: "kid", label: tr("Enfants", "Kids"), desc: tr("Thèmes faciles, 10 secondes au lieu de 7", "Easy themes, 10 seconds instead of 7"), list: gl("kid", SB.lang()), kid: true }
 ];
 const SEEN = "sept:t";
 const kidF = l => { if(!(SB.kid && SB.kid())) return l; const k = l.filter(x => SB.kidOk(x)); return k.length ? k : l; };
@@ -49,7 +47,7 @@ const myThemes = () => A(store().septCustom).map(x => clean(x, 80)).filter(Boole
 // Pioche : chaque thème garde son paquet (pour les 10 secondes des enfants).
 function deckFor(packs, lg, custom){
   const sel = A(packs), L = LL(lg), out = [];
-  PACKS.filter(p => sel.indexOf(p.v) >= 0).forEach(p => { L[p.v].concat(p.v === "soir" && SB.hard() ? L.alc : []).forEach(t => out.push(p.v + "|" + t)); });
+  PACKS.filter(p => sel.indexOf(p.v) >= 0).forEach(p => GROUPS[p.v].forEach(k => { L[k].concat(k === "soir" && SB.hard() ? L.alc : []).forEach(t => out.push(k + "|" + t)); }));
   A(custom).forEach(t => out.push("perso|" + t));
   let pool = out.length ? out : L.cl.map(t => "cl|" + t);
   if(SB.kid && SB.kid()){ const k = pool.filter(x => x.indexOf("kid|") === 0 || SB.kidOk(x)); if(k.length) pool = k; }
@@ -127,7 +125,7 @@ SB.register({
   ]),
   options: [
     { id: "turns", label: tr("Tours par joueur", "Turns per player"), type: "seg", def: 3, values: [{ v: 2, label: "2" }, { v: 3, label: "3" }, { v: 5, label: "5" }] },
-    { id: "packs", label: tr("Paquets", "Packs"), type: "multi", def: ["cl", "bouffe", "pop"], values: PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, kid: p.kid, count: p.list.length })) },
+    { id: "packs", label: tr("Paquets", "Packs"), type: "multi", def: ["cl", "pop"], values: PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, kid: p.kid, count: p.list.length })) },
     { id: "perso", label: tr("Nos thèmes perso", "Our own themes"), type: "toggle", text: tr("Nos thèmes perso", "Our own themes"), desc: tr("Mélanger vos thèmes aux paquets", "Mix your themes with the packs"), def: true },
     { id: "edit", type: "button", label: tr("Modifier nos thèmes perso", "Edit our own themes"), onClick: () => editor() },
     { id: "twists", label: tr("Coups de théâtre", "Plot twists"), type: "toggle", text: tr("Coups de théâtre", "Plot twists"), desc: tr("De temps en temps, une règle change pour un tour", "Now and then, a rule changes for one turn"), def: true }
@@ -257,7 +255,7 @@ SB.register({
     players: { min: 2, max: 20 },
     start(root, api){
       const names = api.names, st = store();
-      let sel = A(st.spPacks).length ? A(st.spPacks).slice() : ["cl", "bouffe", "pop"], turns = [2, 3, 5].indexOf(st.spTurns) >= 0 ? st.spTurns : 3, twOn = st.spTw !== false, perso = st.spPerso !== false;
+      let sel = A(st.spPacks).filter(v => GROUPS[v]).length ? A(st.spPacks).filter(v => GROUPS[v]) : ["cl", "pop"], turns = [2, 3, 5].indexOf(st.spTurns) >= 0 ? st.spTurns : 3, twOn = st.spTw !== false, perso = st.spPerso !== false;
       let E = null, deck = [], gno = 0, tok = Math.random().toString(36).slice(2, 7), timer = null;
       const stop = () => { clearInterval(timer); timer = null; };
       function setup(){
