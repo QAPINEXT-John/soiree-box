@@ -216,17 +216,20 @@ SB.register({
     "Mode buzzer : le premier qui buzze répond à voix haute. L'hôte voit la réponse et valide (+2) ou non (le joueur ne peut plus buzzer sur cette chanson, l'hôte non plus puisqu'il a vu la réponse).",
     "Thèmes : top du moment, tubes français, rap, années 80, 90-2000, variété, dance, rock, metal, Disney (là, on devine le film), manga & anime (on devine l'anime), ou ta propre playlist Deezer.",
     "Coups de théâtre : chanson en or, extrait éclair de 5 secondes, à l'envers (le titre au lieu de l'artiste).",
-    "Les extraits viennent de Deezer : il faut Internet, mais aucun compte."
+    "Les extraits viennent de Deezer : il faut Internet, mais aucun compte.",
+    "En équipes (2 à 4) : en QCM, un capitaine différent répond pour son équipe à chaque chanson ; au buzzer, le premier qui buzze répond pour son équipe, et si c'est faux toute l'équipe est bloquée sur cette chanson."
   ], [
     "The host starts the clip: sound plays from their phone, hook it to a speaker if you can.",
     "Multiple choice: 4 answers appear on every phone. Tap the right one fast. First right answer scores 3 points, second 2, the rest 1.",
     "Buzzer: first to buzz answers out loud. The host sees the answer and validates (+2) or not (that player can't buzz again on this song, nor can the host since they saw the answer).",
     "Themes: current hits, French hits, rap, 80s, 90s-2000s, French classics, dance, rock, metal, Disney (guess the movie), manga & anime (guess the anime), or your own Deezer playlist.",
     "Twists: golden song, 5-second lightning clip, flipped (title instead of artist).",
-    "Clips come from Deezer: you need internet, but no account."
+    "Clips come from Deezer: you need internet, but no account.",
+    "In teams (2 to 4): in multiple choice, a different captain answers for the team each song; on the buzzer, whoever buzzes first answers for their team, and if wrong the whole team is out for that song."
   ]),
   options: [
     { id: "mode", label: tr("Mode", "Mode"), type: "seg", def: "qcm", values: [{ v: "qcm", label: "QCM" }, { v: "buzz", label: "Buzzer" }] },
+    { id: "teams", label: tr("Équipes", "Teams"), type: "seg", def: 0, values: [{ v: 0, label: tr("Non", "No") }, { v: 2, label: "2" }, { v: 3, label: "3" }, { v: 4, label: "4" }] },
     { id: "guess", label: tr("On devine", "Guess the"), type: "seg", def: "artiste", values: [{ v: "artiste", label: tr("L'artiste", "Artist") }, { v: "titre", label: tr("Le titre", "Title") }] },
     { id: "rounds", label: tr("Chansons", "Songs"), type: "seg", def: 10, values: [{ v: 10, label: "10" }, { v: 15, label: "15" }, { v: 20, label: "20" }] },
     { id: "packs", label: tr("Thèmes", "Themes"), type: "multi", def: ["top", "fr"], values: () => SB.music.packs().map(t => ({ v: t.v, label: t.label, desc: t.desc, kid: t.kid })) },
@@ -236,7 +239,9 @@ SB.register({
   start(ctx, o){
     if(!A(o.packs).length) throw new Error(tr("Choisis au moins un thème.", "Pick at least one theme."));
     LOADING = "";
-    return { phase: "load", mode: o.mode === "buzz" ? "buzz" : "qcm", guess: o.guess === "titre" ? "titre" : "artiste", rounds: o.rounds || 10, n: 0, tw: "", tk: null, ch: [], startAt: 0, pts: {}, res: null, bz: [], out: [], err: "" };
+    const tmn = +o.teams >= 2 ? Math.min(4, +o.teams) : 0;
+    if(tmn && ctx.ids.length < tmn) throw new Error(tr("Il faut au moins " + tmn + " joueurs pour " + tmn + " équipes.", "You need at least " + tmn + " players for " + tmn + " teams."));
+    return { tmn, tm: tmn ? SB.teams.split(ctx.ids, tmn) : null, tp: {}, caps: {}, phase: tmn ? "teams" : "load", mode: o.mode === "buzz" ? "buzz" : "qcm", guess: o.guess === "titre" ? "titre" : "artiste", rounds: o.rounds || 10, n: 0, tw: "", tk: null, ch: [], startAt: 0, pts: {}, res: null, bz: [], out: [], err: "" };
   },
   host(ctx){
     const s = ctx.s, live = ctx.ids.filter(id => ctx.here(id));
@@ -253,16 +258,17 @@ SB.register({
       return;
     }
     if(s.phase === "play" && s.mode === "qcm"){
-      const now = ctx.now(), ans = {};
-      live.forEach(id => { const i = ctx.input(id); if(i && i.a != null) ans[id] = { a: +i.a, t: Math.max(0, +i.t || 0) }; });
-      if(Object.keys(ans).length < live.length && now < s.startAt + ROUND_MS) return;
+      const now = ctx.now(), ans = {}, act = btActors(s, live);
+      act.forEach(id => { const i = ctx.input(id); if(i && i.a != null) ans[id] = { a: +i.a, t: Math.max(0, +i.t || 0) }; });
+      if(Object.keys(ans).length < act.length && now < s.startAt + ROUND_MS) return;
       const ok = ctx.priv().ok, x = s.tw === "x2" ? 2 : 1, good = Object.keys(ans).filter(id => ans[id].a === ok).sort((a, b) => ans[a].t - ans[b].t);
-      const pts = Object.assign({}, s.pts), got = {}, gl = [];
-      good.forEach((id, i) => { got[id] = (i === 0 ? 3 : i === 1 ? 2 : 1) * x; pts[id] = (pts[id] || 0) + got[id]; });
-      live.filter(id => good.indexOf(id) < 0).forEach(id => gl.push({ id, ev: "rate" }));
+      const pts = Object.assign({}, s.pts), tp = Object.assign({}, s.tp), got = {}, tg = {}, gl = [];
+      const team = id => (s.tmn ? SB.teams.members(s.tm, s.tm[id], ctx.ids) : [id]);
+      good.forEach((id, i) => { got[id] = (i === 0 ? 3 : i === 1 ? 2 : 1) * x; pts[id] = (pts[id] || 0) + got[id]; if(s.tmn){ const t = s.tm[id]; tg[t] = got[id]; tp[t] = (tp[t] || 0) + got[id]; } });
+      act.filter(id => good.indexOf(id) < 0).forEach(id => team(id).forEach(m => gl.push({ id: m, ev: "rate" })));
       if(good.length) gl.push({ id: good[0], ev: "rapide" });
       ctx.gage(gl, s.k);
-      ctx.set({ phase: "res", pts, res: { ok, got, ans, tk: ctx.priv().tk } });
+      ctx.set({ phase: "res", pts, tp, res: { ok, got, tg, ans, tk: ctx.priv().tk } });
       return;
     }
     if(s.phase === "play" && s.mode === "buzz"){
@@ -273,7 +279,22 @@ SB.register({
   },
   render(ctx, root){
     const s = ctx.s, me = ctx.me, T = SB.u.byTwist(TW, s.tw || ""), inp = ctx.mine() || {}, live = ctx.ids.filter(id => ctx.here(id));
-    const head = CSS + '<span class="eyebrow">' + tr("Chanson ", "Song ") + Math.max(1, s.n) + " / " + s.rounds + " · " + (s.mode === "buzz" ? "Buzzer" : "QCM") + "</span>" + SB.u.twistHTML(T);
+    const myT = s.tmn ? (s.tm || {})[me] : "", cap = myT ? (s.caps || {})[myT] : me, isCap = !s.tmn || cap === me, capIn = (s.tmn && cap && ctx.input(cap)) || inp;
+    const head = CSS + '<span class="eyebrow">' + tr("Chanson ", "Song ") + Math.max(1, s.n) + " / " + s.rounds + " · " + (s.mode === "buzz" ? "Buzzer" : "QCM") + "</span>" + SB.u.twistHTML(T) +
+      (myT && s.phase !== "teams" ? '<p class="sm" style="text-align:center; margin:0">' + SB.teams.pill(myT) + " " + esc(s.mode === "buzz" ? tr("Le premier qui buzze répond pour l'équipe.", "Whoever buzzes first answers for the team.") : isCap ? tr("Tu es capitaine : tu réponds pour l'équipe.", "You're captain: you answer for the team.") : tr("Capitaine : " + ctx.name(cap) + ". Dites-lui la réponse !", "Captain: " + ctx.name(cap) + ". Tell them the answer!")) + "</p>" : "");
+    if(s.phase === "teams"){
+      const ok = SB.teams.ok(s.tm, s.tmn, ctx.ids);
+      screen(root, "tm" + JSON.stringify(s.tm) + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Les équipes", "The teams") + "</span>" + SB.teams.grid(s.tm, s.tmn, ctx.ids, ctx.name, ctx.isHost) +
+        '<p class="sm" style="margin:0">' + (s.mode === "buzz" ? tr("Buzzer : le premier qui buzze répond pour son équipe. Raté, toute l'équipe est bloquée sur cette chanson.", "Buzzer: whoever buzzes first answers for their team. Wrong, and the whole team is out for that song.") : tr("QCM : à chaque chanson, un capitaine différent répond pour son équipe.", "Multiple choice: each song, a different captain answers for the team.")) + (ctx.isHost ? tr(" Touche un joueur pour le changer d'équipe.", " Tap a player to switch their team.") : "") + "</p>" +
+        (ctx.isHost ? '<button class="link" type="button" data-mix style="align-self:flex-start">' + tr("Mélanger les équipes", "Shuffle the teams") + "</button>" : "") +
+        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-go' + (ok ? "" : " disabled") + ">" + tr("C'est parti", "Let's go") + "</button>" : '<p class="wait">' + tr("En attente de l'hôte…", "Waiting for the host…") + "</p>"), r => {
+        if(!ctx.isHost) return;
+        r.querySelectorAll("[data-tmv]").forEach(b => b.addEventListener("click", () => { buzz(6); ctx.act(c => { if(c.s.phase === "teams") c.set({ tm: SB.teams.cycle(c.s.tm, b.dataset.tmv, c.s.tmn) }); }); }));
+        r.querySelector("[data-mix]").addEventListener("click", () => ctx.act(c => { if(c.s.phase === "teams") c.set({ tm: SB.teams.split(c.ids, c.s.tmn) }); }));
+        r.querySelector("[data-go]").addEventListener("click", () => ctx.act(c => { if(c.s.phase === "teams" && SB.teams.ok(c.s.tm, c.s.tmn, c.ids)) c.set({ phase: "load" }); }));
+      });
+      return;
+    }
     const g2 = s.tw === "inverse" ? (s.guess === "titre" ? "artiste" : "titre") : s.guess;
     const q = '<p class="howto" style="text-align:center; margin:0">' + (g2 === "titre" ? tr("Quel est le titre ?", "What's the title?") : s.film === "anime" ? tr("De quel anime ?", "Which anime?") : s.film ? tr("De quel film ?", "Which movie?") : tr("Qui chante ?", "Who's singing?")) + "</p>";
     if(s.phase === "load"){ screen(root, "ld" + s.k, head + disc(true) + '<p class="wait" style="text-align:center">' + tr("Chargement des extraits…", "Loading the clips…") + "</p>"); return; }
@@ -297,29 +318,31 @@ SB.register({
     }
     if(s.phase === "play" && s.mode === "qcm"){
       const sec = Math.max(0, Math.ceil((s.startAt + ROUND_MS - ctx.now()) / 1000));
-      screen(root, "pq" + s.k + (inp.a != null ? inp.a : ""), head + disc(true) + q + '<div class="bt-ch">' + A(s.ch).map((c, i) => '<button type="button" data-a="' + i + '" aria-pressed="' + (+inp.a === i && inp.a != null) + '"' + (inp.a != null || !ctx.playing ? " disabled" : "") + ">" + esc(c) + "</button>").join("") + "</div>" +
+      screen(root, "pq" + s.k + (capIn.a != null ? capIn.a : "") + isCap, head + disc(true) + q + '<div class="bt-ch">' + A(s.ch).map((c, i) => '<button type="button" data-a="' + i + '" aria-pressed="' + (+capIn.a === i && capIn.a != null) + '"' + (capIn.a != null || !ctx.playing || !isCap ? " disabled" : "") + ">" + esc(c) + "</button>").join("") + "</div>" +
         '<div class="bt-t" data-t>' + sec + "</div>" + SB.u.dock('<p class="wait" data-wait></p>'), r => {
         r.querySelectorAll("[data-a]").forEach(b => b.addEventListener("click", () => { buzz(10); ctx.send({ a: +b.dataset.a, t: ctx.now() - s.startAt }); }));
       });
       txt(root, "[data-t]", String(sec));
-      txt(root, "[data-wait]", live.filter(id => { const i = ctx.input(id); return i && i.a != null; }).length + " / " + live.length + tr(" réponses", " answers"));
+      const act = btActors(s, live);
+      txt(root, "[data-wait]", act.filter(id => { const i = ctx.input(id); return i && i.a != null; }).length + " / " + act.length + tr(" réponses", " answers"));
       return;
     }
     if((s.phase === "play" || s.phase === "buzzed") && s.mode === "buzz"){
       const out = A(s.out), canBuzz = s.phase === "play" && ctx.playing && out.indexOf(me) < 0 && !inp.bz;
       if(s.phase === "buzzed" && ctx.isHost && root.dataset.bzp !== s.k + s.who){ root.dataset.bzp = s.k + s.who; pause(); }
       screen(root, "bz" + s.k + s.phase + (s.who || "") + (inp.bz ? 1 : 0) + ctx.isHost + out.join(), head + disc(s.phase === "play") + q +
-        (s.phase === "buzzed" ? '<div class="who" style="text-align:center">' + esc(ctx.name(s.who)) + '</div><p class="howto" style="text-align:center">' + (s.who === me ? tr("Réponds à voix haute !", "Answer out loud!") : tr("a buzzé ! On écoute sa réponse…", "buzzed! Listen to the answer…")) + "</p>" +
+        (s.phase === "buzzed" ? '<div class="who" style="text-align:center' + (s.tmn ? "; color:" + SB.teams.color(s.tm[s.who]) : "") + '">' + esc(ctx.name(s.who)) + "</div>" + (s.tmn ? '<p class="sm" style="text-align:center; margin:0">' + SB.teams.pill(s.tm[s.who]) + "</p>" : "") + '<p class="howto" style="text-align:center">' + (s.who === me ? tr("Réponds à voix haute !", "Answer out loud!") : tr("a buzzé ! On écoute sa réponse…", "buzzed! Listen to the answer…")) + "</p>" +
           (ctx.isHost && s.who !== me && ctx.priv().tk ? '<p class="note-box" style="text-align:center">' + tr("Réponse (toi seul la vois) : ", "Answer (only you see it): ") + "<b>" + esc(label(ctx.priv().tk, g2)) + "</b></p>" : "")
-          : '<button type="button" class="bt-buzz" data-bz' + (canBuzz ? "" : " disabled") + ">BUZZ</button>" + (out.indexOf(me) >= 0 ? '<p class="sm" style="text-align:center">' + (ctx.isHost ? tr("Tu as vu la réponse : plus de buzz pour toi sur cette chanson.", "You saw the answer: no more buzzing for you on this song.") : tr("Raté : tu ne peux plus buzzer sur cette chanson.", "Wrong: you can't buzz again on this song.")) + "</p>" : "")) +
+          : '<button type="button" class="bt-buzz" data-bz' + (canBuzz ? "" : " disabled") + ">BUZZ</button>" + (out.indexOf(me) >= 0 ? '<p class="sm" style="text-align:center">' + (ctx.isHost && !(s.tmn && SB.teams.members(s.tm, myT, ctx.ids).some(id => id !== me && out.indexOf(id) >= 0)) ? tr("Tu as vu la réponse : plus de buzz pour toi sur cette chanson.", "You saw the answer: no more buzzing for you on this song.") : s.tmn ? tr("Raté : ton équipe ne peut plus buzzer sur cette chanson.", "Wrong: your team can't buzz again on this song.") : tr("Raté : tu ne peux plus buzzer sur cette chanson.", "Wrong: you can't buzz again on this song.")) + "</p>" : "")) +
         SB.u.dock(ctx.isHost ? (s.phase === "buzzed" ? '<div class="row"><button class="btn ghost" type="button" data-no>' + tr("Faux", "Wrong") + '</button><button class="btn acc" type="button" data-yes>' + tr("Juste !", "Right!") + "</button></div>" : '<button class="btn ghost" type="button" data-reveal>' + tr("Personne ne trouve : réponse", "Nobody gets it: reveal") + "</button>") : '<p class="wait"></p>'), r => {
         const b = r.querySelector("[data-bz]"); if(b) b.addEventListener("click", () => { buzz([30, 20, 30]); ctx.send({ bz: ctx.now() }); b.disabled = true; });
         const y = r.querySelector("[data-yes]"); if(y) y.addEventListener("click", () => ctx.act(c => {
-          if(c.s.phase !== "buzzed") return; const x = c.s.tw === "x2" ? 2 : 1, pts = Object.assign({}, c.s.pts), got = { [c.s.who]: 2 * x }; pts[c.s.who] = (pts[c.s.who] || 0) + 2 * x;
-          c.gage([{ id: c.s.who, ev: "rapide" }], c.s.k + ":ok"); c.set({ phase: "res", pts, res: { tk: c.priv().tk, got } });
+          if(c.s.phase !== "buzzed") return; const x = c.s.tw === "x2" ? 2 : 1, pts = Object.assign({}, c.s.pts), tp = Object.assign({}, c.s.tp), got = { [c.s.who]: 2 * x }, tg = {}; pts[c.s.who] = (pts[c.s.who] || 0) + 2 * x;
+          if(c.s.tmn){ const t = c.s.tm[c.s.who]; tg[t] = 2 * x; tp[t] = (tp[t] || 0) + 2 * x; }
+          c.gage([{ id: c.s.who, ev: "rapide" }], c.s.k + ":ok"); c.set({ phase: "res", pts, tp, res: { tk: c.priv().tk, got, tg } });
         }));
         const nb = r.querySelector("[data-no]"); if(nb) nb.addEventListener("click", () => { resume(); ctx.act(c => {
-          if(c.s.phase !== "buzzed") return; c.gage([{ id: c.s.who, ev: "rate" }], c.s.k + ":ko:" + c.s.who); c.set({ phase: "play", out: A(c.s.out).concat([c.s.who], c.me !== c.s.who ? [c.me] : []), who: "", startAt: Math.max(c.s.startAt, c.now() - 20000) });
+          if(c.s.phase !== "buzzed") return; c.gage([{ id: c.s.who, ev: "rate" }], c.s.k + ":ko:" + c.s.who); c.set({ phase: "play", out: A(c.s.out).concat(c.s.tmn ? SB.teams.members(c.s.tm, c.s.tm[c.s.who], c.ids) : [c.s.who], c.me !== c.s.who ? [c.me] : []), who: "", startAt: Math.max(c.s.startAt, c.now() - 20000) });
         }); });
         const rv = r.querySelector("[data-reveal]"); if(rv) rv.addEventListener("click", () => ctx.act(c => { if(c.s.phase === "play") c.set({ phase: "res", res: { tk: c.priv().tk, got: {}, none: 1 } }); }));
       });
@@ -327,9 +350,9 @@ SB.register({
     }
     if(s.phase === "res"){
       const R = s.res || {}, tk = R.tk || {}, last = s.n >= s.rounds;
-      const ch = s.mode === "qcm" ? '<div class="bt-ch">' + A(s.ch).map((c, i) => '<button type="button" disabled class="' + (i === R.ok ? "ok" : inp.a != null && +inp.a === i ? "ko" : "") + '">' + esc(c) + "</button>").join("") + "</div>" : "";
-      const got = R.got || {}, gk = Object.keys(got).sort((a, b) => got[b] - got[a]);
-      screen(root, "rs" + s.k + ctx.isHost, head + ansHTML(tk, g2) + ch + (gk.length ? '<p class="sm" style="text-align:center">' + esc(gk.map(id => ctx.name(id) + " +" + got[id]).join(" · ")) + "</p>" : '<p class="sm" style="text-align:center">' + tr("Personne n'a trouvé !", "Nobody got it!") + "</p>") + standings(ctx.ids, s.pts, ctx.name) +
+      const ch = s.mode === "qcm" ? '<div class="bt-ch">' + A(s.ch).map((c, i) => '<button type="button" disabled class="' + (i === R.ok ? "ok" : capIn.a != null && +capIn.a === i ? "ko" : "") + '">' + esc(c) + "</button>").join("") + "</div>" : "";
+      const got = R.got || {}, gk = Object.keys(got).sort((a, b) => got[b] - got[a]), nm = id => (s.tmn ? ctx.name(id) + " (" + SB.teams.name(s.tm[id]) + ")" : ctx.name(id));
+      screen(root, "rs" + s.k + ctx.isHost, head + ansHTML(tk, g2) + ch + (gk.length ? '<p class="sm" style="text-align:center">' + esc(gk.map(id => nm(id) + " +" + got[id]).join(" · ")) + "</p>" : '<p class="sm" style="text-align:center">' + tr("Personne n'a trouvé !", "Nobody got it!") + "</p>") + (s.tmn ? SB.teams.board(s.tm, s.tmn, s.tp || {}, ctx.ids, ctx.name, R.tg) : standings(ctx.ids, s.pts, ctx.name)) +
         SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>' + (last ? tr("Voir le classement", "See the standings") : tr("Chanson suivante", "Next song")) + "</button>" : '<p class="wait">' + tr("L'hôte passe à la suite…", "Waiting for the host…") + "</p>"), r => {
         const b = r.querySelector("[data-next]"); if(b) b.addEventListener("click", () => { pause(); ctx.act(c => { if(c.s.phase !== "res") return; if(c.s.n >= c.s.rounds) c.set({ phase: "end" }); else nextSong(c); }); });
       });
@@ -337,11 +360,17 @@ SB.register({
     }
     if(s.phase === "end"){
       if(ctx.isHost) pause();
-      const p = s.pts || {}, order = ctx.ids.slice().sort((a, b) => (p[b] || 0) - (p[a] || 0));
-      screen(root, "end" + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Meilleure oreille", "Best ear") + '</span><div class="who">' + esc(ctx.name(order[0])) + "</div>" + standings(ctx.ids, p, ctx.name) +
+      const p = s.pts || {}, order = ctx.ids.slice().sort((a, b) => (p[b] || 0) - (p[a] || 0)), TB = s.tmn ? SB.teams.best(s.tp || {}, s.tmn) : null;
+      screen(root, "end" + ctx.isHost, CSS + (TB ? '<span class="eyebrow">' + tr("Les meilleures oreilles", "The best ears") + '</span><div class="who" style="color:' + SB.teams.color(TB.win[0]) + '">' + esc(TB.win.map(SB.teams.name).join(" & ")) + "</div>" + SB.teams.board(s.tm, s.tmn, s.tp || {}, ctx.ids, ctx.name)
+        : '<span class="eyebrow">' + tr("Meilleure oreille", "Best ear") + '</span><div class="who">' + esc(ctx.name(order[0])) + "</div>" + standings(ctx.ids, p, ctx.name)) +
         SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
+          if(c.s.tmn){
+            const B = SB.teams.best(c.s.tp || {}, c.s.tmn);
+            c.end({ title: tr("Blind test : les ", "Blind Test: ") + B.win.map(SB.teams.name).join(" & "), lines: SB.teams.ids(c.s.tmn).sort((x, y) => ((c.s.tp || {})[y] || 0) - ((c.s.tp || {})[x] || 0)).map((t, i) => (i + 1) + ". " + SB.teams.name(t) + " · " + ((c.s.tp || {})[t] || 0) + " pts"), win: B.mx > 0 ? c.ids.filter(id => B.win.indexOf(c.s.tm[id]) >= 0) : [] });
+            return;
+          }
           const pp = c.s.pts || {}, o2 = c.ids.slice().sort((a, b2) => (pp[b2] || 0) - (pp[a] || 0)), mx = pp[o2[0]] || 0;
           c.end({ title: tr("Blind test : ", "Blind Test: ") + c.name(o2[0]), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (pp[id] || 0) + " pts"), win: mx ? o2.filter(id => (pp[id] || 0) === mx) : [] });
         }));
@@ -356,11 +385,16 @@ SB.register({
       const names = api.names, st = store();
       let sel = A(st.btPacks).length ? A(st.btPacks).slice() : ["top", "fr"], guess = st.btGuess === "titre" ? "titre" : "artiste", rounds = [10, 15, 20].indexOf(st.btRounds) >= 0 ? st.btRounds : 10, twOn = st.btTw !== false;
       let pool = [], n = 0, tw = null, tk = null, pts = {}, gno = 0, tok = Math.random().toString(36).slice(2, 7), found = [];
+      let tmn = [2, 3, 4].indexOf(st.btTeams) >= 0 && names.length >= st.btTeams ? st.btTeams : 0, tm = tmn ? SB.teams.split(names, tmn) : {};
+      const units = () => (tmn ? SB.teams.ids(tmn) : names), uname = u => (tmn ? SB.teams.name(u) : u), memb = u => (tmn ? SB.teams.members(tm, u, names) : [u]);
+      const brd = () => (tmn ? SB.teams.board(tm, tmn, pts, names, z => z) : standings(names, pts, z => z));
       function setup(){
         pause();
         const packs = SB.music.packs().filter(SB.packOk);
         screen(root, "su" + Math.random(), CSS + '<p class="howto">' + tr("Le téléphone joue l'extrait : criez la réponse ! Ensuite, touchez le prénom de celui qui a trouvé en premier.", "The phone plays the clip: shout the answer! Then tap the name of whoever got it first.") + "</p>" +
           '<div class="field"><span class="eyebrow">' + tr("On devine", "Guess the") + '</span><div class="seg">' + [["artiste", tr("L'artiste", "Artist")], ["titre", tr("Le titre", "Title")]].map(x => '<button type="button" data-g="' + x[0] + '" aria-pressed="' + (guess === x[0]) + '">' + x[1] + "</button>").join("") + "</div></div>" +
+          (names.length >= 2 ? '<div class="field"><span class="eyebrow">' + tr("Équipes", "Teams") + '</span><div class="seg">' + [[0, tr("Non", "No")], [2, "2"], [3, "3"], [4, "4"]].map(v => '<button type="button" data-tmn="' + v[0] + '" aria-pressed="' + (tmn === v[0]) + '"' + (v[0] && names.length < v[0] ? " disabled" : "") + ">" + v[1] + "</button>").join("") + "</div>" +
+            (tmn ? SB.teams.grid(tm, tmn, names, z => z, true) + '<button class="link" type="button" data-mix style="align-self:flex-start">' + tr("Mélanger les équipes", "Shuffle the teams") + "</button>" : "") + "</div>" : "") +
           '<div class="field"><span class="eyebrow">' + tr("Chansons", "Songs") + '</span><div class="seg">' + [10, 15, 20].map(v => '<button type="button" data-r="' + v + '" aria-pressed="' + (rounds === v) + '">' + v + "</button>").join("") + "</div></div>" +
           '<div class="field"><span class="eyebrow">' + tr("Thèmes", "Themes") + '</span><div class="packs">' + packs.map(p => '<button type="button" class="pack" data-p="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + '</span><span class="ds">' + esc(p.desc) + "</span></span></button>").join("") + "</div>" +
           '<button class="link" type="button" data-ed style="align-self:flex-start">' + tr("Ajouter ma playlist Deezer", "Add my Deezer playlist") + "</button></div>" +
@@ -368,11 +402,15 @@ SB.register({
           SB.u.dock('<button class="btn acc" type="button" data-go>' + tr("Charger les extraits", "Load the clips") + "</button>"), r => {
           r.querySelectorAll("[data-g]").forEach(b => b.addEventListener("click", () => { guess = b.dataset.g; persist({ btGuess: guess }); setup(); }));
           r.querySelectorAll("[data-r]").forEach(b => b.addEventListener("click", () => { rounds = +b.dataset.r; persist({ btRounds: rounds }); setup(); }));
+          r.querySelectorAll("[data-tmn]").forEach(b => b.addEventListener("click", () => { tmn = +b.dataset.tmn; tm = tmn ? SB.teams.split(names, tmn) : {}; persist({ btTeams: tmn }); setup(); }));
+          r.querySelectorAll("[data-tmv]").forEach(b => b.addEventListener("click", () => { tm = SB.teams.cycle(tm, b.dataset.tmv, tmn); buzz(6); setup(); }));
+          const mx = r.querySelector("[data-mix]"); if(mx) mx.addEventListener("click", () => { tm = SB.teams.split(names, tmn); setup(); });
           r.querySelectorAll("[data-p]").forEach(b => b.addEventListener("click", () => { const i = sel.indexOf(b.dataset.p); if(i >= 0) sel.splice(i, 1); else sel.push(b.dataset.p); persist({ btPacks: sel }); setup(); }));
           r.querySelector("[data-tw]").addEventListener("click", () => { twOn = !twOn; persist({ btTw: twOn }); setup(); });
           r.querySelector("[data-ed]").addEventListener("click", () => SB.music.editor());
           r.querySelector("[data-go]").addEventListener("click", () => {
             if(!sel.length){ SB.u.toast(tr("Choisis au moins un thème", "Pick at least one theme")); return; }
+            if(tmn && !SB.teams.ok(tm, tmn, names)){ SB.u.toast(tr("Chaque équipe doit avoir au moins un joueur", "Every team needs at least one player")); return; }
             screen(root, "ld" + Math.random(), CSS + disc(true) + '<p class="wait" style="text-align:center">' + tr("Chargement des extraits…", "Loading the clips…") + "</p>");
             buildPool(SB.okPacks(sel, SB.music.packs()), rounds).then(p => { pool = p; n = 0; pts = {}; tw = null; gno++; next(); }).catch(() => {
               screen(root, "le" + Math.random(), CSS + '<p class="note-box">' + esc(LOAD_ERR) + "</p>" + SB.u.dock('<button class="btn acc" type="button" data-b>' + tr("Retour", "Back") + "</button>"), r2 => r2.querySelector("[data-b]").addEventListener("click", setup));
@@ -400,14 +438,14 @@ SB.register({
         });
       }
       function reveal(){
-        screen(root, "rv" + gno + ":" + n + found.join(","), head() + ansHTML(tk, g2()) + (names.length ? '<p class="howto" style="text-align:center; margin:0">' + tr("Qui a trouvé en premier ?", "Who got it first?") + '</p><div class="bt-ch">' + names.map(x => '<button type="button" data-who="' + esc(x) + '" aria-pressed="' + (found.indexOf(x) >= 0) + '">' + esc(x) + "</button>").join("") + "</div>" : "") +
+        screen(root, "rv" + gno + ":" + n + found.join(","), head() + ansHTML(tk, g2()) + (names.length ? '<p class="howto" style="text-align:center; margin:0">' + (tmn ? tr("Quelle équipe a trouvé en premier ?", "Which team got it first?") : tr("Qui a trouvé en premier ?", "Who got it first?")) + '</p><div class="bt-ch">' + units().map(x => '<button type="button" data-who="' + esc(x) + '" aria-pressed="' + (found.indexOf(x) >= 0) + '"' + (tmn ? ' style="border-color:' + SB.teams.color(x) + '"' : "") + ">" + esc(uname(x)) + "</button>").join("") + "</div>" : "") +
           SB.u.dock('<button class="btn acc" type="button" data-n>' + (found.length ? tr("Valider", "Confirm") : tr("Personne", "Nobody")) + "</button>"), r => {
           r.querySelectorAll("[data-who]").forEach(b => b.addEventListener("click", () => { found = found[0] === b.dataset.who ? [] : [b.dataset.who]; buzz(6); reveal(); }));
           r.querySelector("[data-n]").addEventListener("click", () => {
             pause();
             const x = tw && tw.id === "x2" ? 2 : 1;
-            if(found.length){ pts[found[0]] = (pts[found[0]] || 0) + 2 * x; if(api.gage) api.gage([{ id: found[0], ev: "rapide" }], "bt" + tok + "-" + gno + ":" + n); }
-            screen(root, "sc" + gno + ":" + n, head() + standings(names, pts, z => z) + SB.u.dock('<button class="btn acc" type="button" data-n>' + (n >= rounds ? tr("Voir le classement", "See the standings") : tr("Chanson suivante", "Next song")) + "</button>"), r2 => {
+            if(found.length){ pts[found[0]] = (pts[found[0]] || 0) + 2 * x; if(api.gage) api.gage([{ id: memb(found[0])[0], ev: "rapide" }], "bt" + tok + "-" + gno + ":" + n); }
+            screen(root, "sc" + gno + ":" + n, head() + brd() + SB.u.dock('<button class="btn acc" type="button" data-n>' + (n >= rounds ? tr("Voir le classement", "See the standings") : tr("Chanson suivante", "Next song")) + "</button>"), r2 => {
               r2.querySelector("[data-n]").addEventListener("click", () => { if(n >= rounds) end(); else next(); });
             });
           });
@@ -415,9 +453,9 @@ SB.register({
       }
       function end(){
         pause();
-        const order = names.slice().sort((a, b) => (pts[b] || 0) - (pts[a] || 0)), mx = pts[order[0]] || 0;
-        if(api.win) api.win(mx ? order.filter(x => (pts[x] || 0) === mx) : []);
-        screen(root, "end" + gno, CSS + '<span class="eyebrow">' + tr("Meilleure oreille", "Best ear") + '</span><div class="who">' + esc(order[0] || "") + "</div>" + standings(names, pts, z => z) +
+        const order = units().slice().sort((a, b) => (pts[b] || 0) - (pts[a] || 0)), mx = pts[order[0]] || 0, best = order.filter(x => (pts[x] || 0) === mx);
+        if(api.win) api.win(mx ? [].concat(...best.map(memb)) : []);
+        screen(root, "end" + gno, CSS + '<span class="eyebrow">' + (tmn ? tr("Les meilleures oreilles", "The best ears") : tr("Meilleure oreille", "Best ear")) + '</span><div class="who"' + (tmn ? ' style="color:' + SB.teams.color(best[0]) + '"' : "") + ">" + esc(best.map(uname).join(" & ")) + "</div>" + brd() +
           SB.u.dock('<button class="btn acc" type="button" data-a>' + tr("Rejouer", "Play again") + '</button><button class="btn ghost" type="button" data-q>' + tr("Choisir un autre jeu", "Pick another game") + "</button>"), r => {
           r.querySelector("[data-a]").addEventListener("click", api.again);
           r.querySelector("[data-q]").addEventListener("click", api.exit);
@@ -427,6 +465,8 @@ SB.register({
     }
   }
 });
+// En équipes (QCM), seuls les capitaines répondent.
+function btActors(s, live){ return s.tmn && s.mode === "qcm" ? Object.keys(s.caps || {}).map(t => s.caps[t]).filter(id => id && live.indexOf(id) >= 0) : live; }
 // Prépare la chanson suivante (chez l'hôte) : morceau secret dans priv, choix publics.
 function nextSong(c){
   const pv = c.priv(), pool = A(pv.pool).slice(), s = c.s;
@@ -434,6 +474,7 @@ function nextSong(c){
   const tk = pool.pop(), t = s.n >= 1 && c.opts.twists !== false ? SB.u.twist(TW, { last: s.tw, rate: .3 }) : null, tw = t ? t.id : "";
   const g = tw === "inverse" ? (s.guess === "titre" ? "artiste" : "titre") : s.guess, C = choicesFor(tk, A(g === "titre" ? pv.tits : tk.f === "film" ? pv.films : tk.f === "anime" ? pv.animes : pv.arts), g);
   c.setPriv({ pool, arts: pv.arts, films: pv.films, animes: pv.animes, tits: pv.tits, tk, ok: C.ok });
-  c.set({ phase: "ready", n: s.n + 1, tw, film: tk.f || "", ch: s.mode === "qcm" ? C.ch : [], res: null, out: [], who: "", startAt: 0, k: c.rid() });
+  const caps = {}; if(s.tmn) SB.teams.ids(s.tmn).forEach(tt => { caps[tt] = SB.teams.captain(s.tm, tt, c.ids, s.n + 1, c.here); });
+  c.set({ caps, phase: "ready", n: s.n + 1, tw, film: tk.f || "", ch: s.mode === "qcm" ? C.ch : [], res: null, out: [], who: "", startAt: 0, k: c.rid() });
 }
 })();

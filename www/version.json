@@ -1,18 +1,18 @@
 {
- "version": "4.33.0",
+ "version": "4.34.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Nouveau jeu : Quiz. QCM, estimations (le plus proche gagne) et vrai ou faux. Avant chaque question, chacun mise 1, 2 ou 3 points sur sa confiance : gagné, il les prend, raté, il les perd",
-  "Plus de 450 questions en 10 thèmes : culture G, pop culture, histoire, géo, sport, bouffe, insolite, soirée, culture coquine (18+) et enfants. On peut aussi écrire ses propres questions",
-  "Coups de théâtre : question en or, chrono éclair, tapis. Marche en salon et sur un seul téléphone",
-  "Le filtre « Musique » devient « Quiz » : on y trouve le Quiz et le Blind test"
+  "Quiz et Blind test : nouveau mode équipes (2 à 4 équipes de couleur). L'hôte forme les équipes au début (au hasard, puis on peut changer chacun d'équipe), et chaque équipe additionne ses points",
+  "Quiz en équipes : à chaque question, un capitaine différent mise et répond pour son équipe, ses coéquipiers voient son choix en direct. Une mauvaise réponse donne un gage à toute l'équipe",
+  "Blind test en équipes : en QCM, un capitaine répond pour l'équipe ; au buzzer, c'est une équipe contre l'autre, et un mauvais buzz bloque toute l'équipe sur la chanson",
+  "Ça marche aussi sur un seul téléphone : on touche l'équipe qui a trouvé"
  ],
  "files": {
   "core.js": {
-   "h": "e86f08de6cbb600ab603067bec6415de5fbaf7be1254f822224b5dcbcbc151c4",
-   "s": 305574
+   "h": "da68597adf133ce616d98976bf4792ef783809f1ff43916442d33b128d66dc39",
+   "s": 308343
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -95,8 +95,8 @@
    "s": 64350
   },
   "games/blindtest.js": {
-   "h": "1c3ed6ac059639a64970a382d71b9f13373b132dac0a620a0a85f5967bd77081",
-   "s": 47149
+   "h": "d6d7b223df3d711faff718eec367e37213d9b506e27f80df9e2886c23a37ef4a",
+   "s": 54923
   },
   "games/debat.js": {
    "h": "de9ab7e3e4e7bc4f40552efcee34003c9f5558528c97752f47361a204bd635a4",
@@ -179,8 +179,8 @@
    "s": 122839
   },
   "games/quiz.js": {
-   "h": "6591874cfec7fed4e34ba541bd8f9d6bc0af80e911b5e8b6d32f578da340420f",
-   "s": 33635
+   "h": "803c8be3c2ff7293174d63665d488e83e2c093cbd2a46932d4be32fa82a33f7a",
+   "s": 41323
   },
   "games/redflag.js": {
    "h": "daf2f97fb5197a93642eb15eb388a314975952d44c5d40868eb5dd20050898c1",
@@ -227,8 +227,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "8fa0f66ea66decba8f47a796fbf0b149e6ab314da607a14aed1ed6e38aebbb1e",
-   "s": 60415
+   "h": "dd6d4ef5629114b7458a05b00938abea81878d23d550f3a2a10a9909bcccf8fa",
+   "s": 61567
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",

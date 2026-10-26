@@ -815,7 +815,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.33.0";
+const VERSION = "4.34.0";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -962,6 +962,34 @@ const HD_OK = {};
 let HOME_REDRAW = null;
 SB.hard = () => roomHard();
 // Pour les jeux : un paquet est-il permis dans le mode actuel ?
+/* Équipes pour les jeux qui le proposent (Quiz, Blind test) : 2 à 4 équipes de couleur.
+   m = { joueur: "a" | "b" | "c" | "d" }. Le capitaine tourne à chaque manche. */
+const TEAMS = [["a", tr("Rouges", "Red"), "#e8414e"], ["b", tr("Bleus", "Blue"), "#3a7bff"], ["c", tr("Verts", "Green"), "#2fa860"], ["d", tr("Jaunes", "Yellow"), "#d99a00"]];
+SB.teams = {
+  ids: n => TEAMS.slice(0, Math.max(2, Math.min(4, n || 2))).map(t => t[0]),
+  name: t => (TEAMS.find(x => x[0] === t) || [0, ""])[1],
+  color: t => (TEAMS.find(x => x[0] === t) || [0, 0, "#888"])[2],
+  split(ids, n){ const m = {}, T = SB.teams.ids(n); shuffle(A(ids)).forEach((id, i) => { m[id] = T[i % T.length]; }); return m; },
+  members: (m, t, ids) => A(ids).filter(id => (m || {})[id] === t),
+  cycle(m, id, n){ const T = SB.teams.ids(n), i = T.indexOf((m || {})[id]); return Object.assign({}, m, { [id]: T[(i + 1) % T.length] }); },
+  ok: (m, n, ids) => SB.teams.ids(n).every(t => SB.teams.members(m, t, ids).length > 0),
+  captain(m, t, ids, round, here){ const L = SB.teams.members(m, t, ids).filter(id => !here || here(id)); return L.length ? L[Math.max(0, (round || 1) - 1) % L.length] : ""; },
+  pill: t => '<span class="tm-pill" style="background:' + SB.teams.color(t) + '">' + esc(SB.teams.name(t)) + "</span>",
+  // Les colonnes d'équipes ; avec editable, chaque prénom est un bouton (data-tmv) qui le fait passer à l'équipe suivante.
+  grid(m, n, ids, nameOf, editable){
+    return '<div class="tm-grid">' + SB.teams.ids(n).map(t => '<div class="tm-col" style="border-color:' + SB.teams.color(t) + '"><b style="color:' + SB.teams.color(t) + '">' + esc(SB.teams.name(t)) + "</b>" +
+      SB.teams.members(m, t, ids).map(id => '<button type="button" data-tmv="' + esc(id) + '"' + (editable ? "" : " disabled") + ">" + esc(nameOf(id)) + "</button>").join("") + "</div>").join("") + "</div>";
+  },
+  // Classement par équipe : tp = { a: points }, got = { a: points de la manche }.
+  board(m, n, tp, ids, nameOf, got){
+    return '<div class="tm-board">' + SB.teams.ids(n).slice().sort((x, y) => (tp[y] || 0) - (tp[x] || 0)).map((t, i) => {
+      const d = got && got[t];
+      return '<div class="tm-row" style="border-color:' + SB.teams.color(t) + '"><span class="tx"><b style="color:' + SB.teams.color(t) + '">' + (i + 1) + ". " + esc(SB.teams.name(t)) + "</b><small>" + esc(SB.teams.members(m, t, ids).map(nameOf).join(", ")) + "</small></span>" +
+        (d ? '<span class="d ' + (d > 0 ? "p" : "m") + '">' + (d > 0 ? "+" : "") + d + "</span>" : "") + '<span class="n">' + (tp[t] || 0) + "</span></div>";
+    }).join("") + "</div>";
+  },
+  best(tp, n){ const T = SB.teams.ids(n), mx = Math.max(...T.map(t => tp[t] || 0)); return { mx, win: T.filter(t => (tp[t] || 0) === mx) }; }
+};
 SB.packOk = p => !p || (roomKid() ? !!p.kid : !p.hot || roomHard());
 // Pour les jeux : garde de la sélection sel les paquets permis (packs = liste { v, hot }). Jamais vide si un paquet soft existe.
 SB.okPacks = (sel, packs) => {

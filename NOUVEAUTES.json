@@ -1,4 +1,10 @@
 {
+  "4.34.0": [
+    "Quiz et Blind test : nouveau mode équipes (2 à 4 équipes de couleur). L'hôte forme les équipes au début (au hasard, puis on peut changer chacun d'équipe), et chaque équipe additionne ses points",
+    "Quiz en équipes : à chaque question, un capitaine différent mise et répond pour son équipe, ses coéquipiers voient son choix en direct. Une mauvaise réponse donne un gage à toute l'équipe",
+    "Blind test en équipes : en QCM, un capitaine répond pour l'équipe ; au buzzer, c'est une équipe contre l'autre, et un mauvais buzz bloque toute l'équipe sur la chanson",
+    "Ça marche aussi sur un seul téléphone : on touche l'équipe qui a trouvé"
+  ],
   "4.33.0": [
     "Nouveau jeu : Quiz. QCM, estimations (le plus proche gagne) et vrai ou faux. Avant chaque question, chacun mise 1, 2 ou 3 points sur sa confiance : gagné, il les prend, raté, il les perd",
     "Plus de 450 questions en 10 thèmes : culture G, pop culture, histoire, géo, sport, bouffe, insolite, soirée, culture coquine (18+) et enfants. On peut aussi écrire ses propres questions",
