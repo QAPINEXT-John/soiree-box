@@ -19,7 +19,15 @@ function jsonp(url, ms){
   });
 }
 const API = "https://api.deezer.com/";
-const trackOf = x => (x && x.preview && x.title && x.artist ? { id: x.id, t: clean(String(x.title_short || x.title).replace(/\s*[(\[](de|du film|from|tir[ée]e? d)[^)\]]*[)\]]\s*$/i, ""), 80), a: clean(x.artist.name, 60), p: x.preview, c: (x.album && (x.album.cover_medium || x.album.cover)) || "", e: x.explicit_lyrics ? 1 : 0 } : null);
+const trackOf = x => (x && x.preview && x.title && x.artist ? { id: x.id, t: clean(String(x.title_short || x.title).replace(/\s*[(\[](de|du film|from|tir[ée]e? d)[^)\]]*[)\]]\s*$/i, ""), 80), a: clean(x.artist.name, 60), p: x.preview, c: (x.album && (x.album.cover_medium || x.album.cover)) || "", e: x.explicit_lyrics ? 1 : 0, al: clean((x.album && x.album.title) || "", 80), raw: clean(x.title, 120) } : null);
+/* Morceaux sans paroles : on les écarte (un blind test se joue sur des chansons).
+   L'API ne dit pas si un titre est chanté : on filtre les versions instrumentales par leur nom,
+   plus une liste de tubes connus pour être instrumentaux. */
+const NOVOC_RX = /\b(instrumental(e|es)?|instru|karaok[eé]|interlude|intro|outro|skit|piano version|version piano|orchestral|lullab\w*|berceuse|bgm|8-bit|music box|backing track|playback)\b/i;
+// Tubes instrumentaux connus : [artiste, titre] (artiste vide = quel que soit l'interprète).
+const NOVOC = [["daftpunk", "dafunk"], ["daftpunk", "aerodynamic"], ["daftpunk", "derezzed"], ["daftpunk", "veridisquo"], ["daftpunk", "rollinscratchin"], ["daftpunk", "endofline"], ["daftpunk", "thegrid"], ["daftpunk", "contact"],
+  ["avicii", "levels"], ["martingarrix", "animals"], ["metallica", "orion"], ["metallica", "thecallofktulu"], ["", "sandstorm"], ["", "children"], ["", "axelf"], ["", "popcorn"], ["", "oxygene"], ["", "tubularbells"], ["", "flightofthebumblebee"]];
+const noVoice = x => NOVOC_RX.test(x.raw + " " + x.al) || NOVOC.some(n => norm(x.t) === n[1] && (!n[0] || norm(x.a) === n[0]));
 const norm = s => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]/g, "");
 
 /* ---------- Les thèmes ---------- */
@@ -28,9 +36,9 @@ const THEMES = [
   { v: "fr", label: tr("Tubes français", "French hits"), desc: "Stromae, Angèle, Indila, Vianney…", artists: ["Stromae", "Angèle", "Indila", "Zaz", "Vianney", "Kendji Girac", "Louane", "Christophe Maé", "Soprano", "Aya Nakamura", "Gims", "Julien Doré", "Clara Luciani", "Amir", "Slimane", "Calogero"] },
   { v: "rapfr", label: tr("Rap français", "French rap"), desc: "PNL, Jul, Ninho, Nekfeu, Orelsan…", artists: ["PNL", "Jul", "Ninho", "Booba", "Nekfeu", "Orelsan", "SCH", "Damso", "Niska", "Gazo", "Tiakola", "Lomepal", "Bigflo & Oli", "IAM", "Diam's", "Sexion d'Assaut"] },
   { v: "80s", label: tr("Années 80", "The 80s"), desc: "Michael Jackson, Madonna, Goldman…", artists: ["Michael Jackson", "Madonna", "Queen", "a-ha", "Cyndi Lauper", "Daniel Balavoine", "Jean-Jacques Goldman", "Indochine", "Téléphone", "Wham!", "Dire Straits", "Eurythmics", "Whitney Houston", "Bon Jovi", "Desireless", "Images"] },
-  { v: "90s", label: tr("Années 90-2000", "90s & 2000s"), desc: "Spice Girls, Britney, Eminem, Alizée…", artists: ["Spice Girls", "Britney Spears", "Backstreet Boys", "Eminem", "Nirvana", "Oasis", "Destiny's Child", "Shakira", "Moby", "Eiffel 65", "Alizée", "Lorie", "Las Ketchup", "Lou Bega", "Ricky Martin", "Linkin Park"] },
+  { v: "90s", label: tr("Années 90-2000", "90s & 2000s"), desc: "Spice Girls, Britney, Eminem, Alizée…", artists: ["Spice Girls", "Britney Spears", "Backstreet Boys", "Eminem", "Nirvana", "Oasis", "Destiny's Child", "Shakira", "Haddaway", "Eiffel 65", "Alizée", "Lorie", "Las Ketchup", "Lou Bega", "Ricky Martin", "Linkin Park"] },
   { v: "variete", label: tr("Variété française", "French classics"), desc: "Johnny, Piaf, Goldman, Céline Dion…", artists: ["Johnny Hallyday", "Edith Piaf", "Charles Aznavour", "Joe Dassin", "Claude François", "Michel Sardou", "France Gall", "Céline Dion", "Francis Cabrel", "Renaud", "Michel Berger", "Dalida", "Serge Gainsbourg", "Mylène Farmer", "Patrick Bruel"] },
-  { v: "dance", label: tr("Soirée dance", "Dance party"), desc: "Guetta, Avicii, Daft Punk, Dua Lipa…", artists: ["David Guetta", "Calvin Harris", "Avicii", "Bob Sinclar", "Daft Punk", "Martin Garrix", "Dua Lipa", "The Black Eyed Peas", "Pitbull", "LMFAO", "Major Lazer", "Kygo", "Lady Gaga", "Rihanna"] },
+  { v: "dance", label: tr("Soirée dance", "Dance party"), desc: "Guetta, Avicii, Daft Punk, Dua Lipa…", artists: ["David Guetta", "Calvin Harris", "Avicii", "Bob Sinclar", "Daft Punk", "Clean Bandit", "Dua Lipa", "The Black Eyed Peas", "Pitbull", "LMFAO", "Major Lazer", "Kygo", "Lady Gaga", "Rihanna"] },
   { v: "rock", label: "Rock", desc: "Queen, AC/DC, Nirvana, Muse…", artists: ["Queen", "AC/DC", "Nirvana", "Red Hot Chili Peppers", "Muse", "Arctic Monkeys", "Linkin Park", "The Rolling Stones", "U2", "Green Day", "The Beatles", "Guns N' Roses", "Metallica", "Coldplay"] },
   { v: "disney", label: tr("Disney & dessins animés", "Disney & cartoons"), desc: tr("Les chansons des films, en français. On devine le film (ou le titre).", "Songs from the movies, in French. Guess the movie (or the title)."), kid: true, songs: [
     ["Libérée, délivrée", "La Reine des neiges"], ["Je voudrais un bonhomme de neige", "La Reine des neiges"], ["L'histoire de la vie", "Le Roi lion"], ["Hakuna Matata", "Le Roi lion"],
@@ -69,7 +77,7 @@ async function buildPool(themes, need){
   const all = [].concat(...(await Promise.all(jobs.map(j => j.catch(() => [])))));
   const seen = new Set(), out = [];
   const kid = SB.kid();
-  shuffle(all).forEach(x => { if(!x || (kid && (x.e || !SB.kidOk(x.t + " " + x.a)))) return; const k = norm(x.a) + "|" + norm(x.t); if(seen.has(k)) return; seen.add(k); out.push(x); });
+  shuffle(all).forEach(x => { if(!x || noVoice(x) || (kid && (x.e || !SB.kidOk(x.t + " " + x.a)))) return; const k = norm(x.a) + "|" + norm(x.t); if(seen.has(k)) return; seen.add(k); out.push(x); });
   if(out.length < Math.min(need || 6, 6)) throw new Error("pool");
   return out;
 }
@@ -86,7 +94,7 @@ function play(url, maxMs){
 }
 function pause(){ clearTimeout(stopT); try{ AUD && AUD.pause(); }catch(e){} }
 function resume(){ try{ return AUD ? AUD.play().catch(() => {}) : null; }catch(e){} }
-SB.music = { THEMES, buildPool, play, pause, resume, playlistId, myPlaylist, jsonp, norm };
+SB.music = { THEMES, buildPool, play, pause, resume, playlistId, myPlaylist, jsonp, norm, noVoice: x => noVoice(trackOf(x)) };
 SB.music.packs = () => THEMES.filter(t => !t.perso || playlistId(myPlaylist()));
 SB.music.editor = function(){
   SB.page(tr("Ma playlist Deezer", "My Deezer playlist"), root => {

@@ -1,14 +1,14 @@
 {
- "version": "4.28.2",
+ "version": "4.28.3",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Blind test, thème Disney revu : seulement les vraies chansons des films en français (plus de reprises, de versions karaoké, piano ou berceuse, ni de chansons sans rapport). On devine le film au lieu de l'artiste"
+  "Blind test : plus de morceaux sans paroles. Les versions instrumentales, karaoké, piano, intro ou interlude sont écartées, ainsi que les tubes instrumentaux connus (Da Funk, Levels, Animals, Sandstorm…). Daft Punk reste mais seulement ses titres chantés"
  ],
  "files": {
   "core.js": {
-   "h": "13eda164706ce389423b3d62794a5ecb4f42a467f0249ce406050af11b022b88",
+   "h": "80f54bf1a5b7f2d1ebb425e2650a92545f3327196e010066007ce458c3e80db6",
    "s": 289425
   },
   "firebase-app-compat.js": {
@@ -92,8 +92,8 @@
    "s": 64350
   },
   "games/blindtest.js": {
-   "h": "a5b280cb294024c7a64f9bae499b55808937d25e38610dbeefa7940ab9c5e1ab",
-   "s": 39124
+   "h": "2f8174835afaf19a53672acc30f29c08a4573d915d4f35431fd6ebea7aa7c80b",
+   "s": 40394
   },
   "games/debat.js": {
    "h": "de9ab7e3e4e7bc4f40552efcee34003c9f5558528c97752f47361a204bd635a4",
