@@ -786,7 +786,7 @@ SB.back = function(){
   if(closeQuitOv()) return true;
   if(closeRulesOv()) return true;
   if(sheetOpen){ closeSheet(); return true; }
-  if(current === "page"){ SB.closePage(); return true; }
+  if(current === "page"){ if(SB._pageBack && SB._pageBack()) return true; SB.closePage(); return true; }
   if(current === "lplayers"){ openLocalList(); return true; }
   if(current === "llist"){ goHome(); return true; }
   if(current === "local") return armedBack(tr("Appuie encore sur retour pour quitter la partie", "Press back again to quit the game"), openLocalList);
@@ -799,7 +799,8 @@ function accent(id){
   app.className = id ? "acc-" + id : "";
 }
 SB.page = function(title, build, onClose){
-  const prev = current;
+  const prev = current === "page" ? (SB._pagePrev || "home") : current;
+  SB._pagePrev = prev; SB._pageBack = null;
   closeSheet();
   $("#pg-title").textContent = title;
   const root = $("#page-root"); root.innerHTML = ""; root.dataset.key = "";
@@ -813,7 +814,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.29.5";
+const VERSION = "4.30.0";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -2267,47 +2268,85 @@ function gProfilePage(){
         (k === "unlock" ? '<button class="link" type="button" data-pforgot style="align-self:flex-start">' + tr("Code oublié ?", "Forgot the code?") + "</button>" : "") + "</div>";
     };
     const cur = avNum(store().photo); let avTab = (AV_CATS.find(c => c[2].includes(cur)) || AV_CATS[0])[0];
-    const draw = () => {
+    // Trois vues dans la même page : le profil, le choix de l'avatar, le taux d'alcool.
+    let view = "main";
+    const go = v => { view = v; buzz(6); draw(); root.scrollTop = 0; try{ $("#page-root").scrollTop = 0; window.scrollTo(0, 0); }catch(e){} };
+    SB._pageBack = () => { if(view === "main") return false; go("main"); return true; };
+    const CHEV = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+    const LOCK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+    const backRow = t => '<button type="button" class="pf-back" data-pf-back>' + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>' + esc(t) + "</button>";
+    const SHORT = { sans: tr("Pas d'alcool", "No alcohol"), biere: tr("Bière", "Beer"), vin: tr("Vin", "Wine"), cocktail: "Cocktail", fort: "Shots" };
+    const MODES = [["hard", "Hard", tr("Tout le contenu : jeux et paquets 18+, avatars Hot, gages avec alcool.", "Everything: 18+ games and packs, Hot avatars, drinking forfeits.")],
+      ["soft", "Soft", tr("Rien de 18+ et des gages sans alcool. Pratique en famille ou avec des gens que tu connais peu.", "Nothing 18+ and alcohol-free forfeits. Handy with family or people you barely know.")],
+      ["kid", tr("Enfant", "Kids"), tr("Jeux tout public seulement, verrouillé par un code à 4 chiffres.", "Family-friendly games only, locked with a 4-digit code.")]];
+    const mainHTML = () => {
+      const gp = gProf(store().gp), lim = gLim(gp), d = DRINKS[gp.drink], ph = myPhoto(), nm = clean(store().name, 16), t = alcTotals(), bac = alcBac(), S = gLocalSettings();
+      const mode = curMode(), md = MODES.find(m => m[0] === mode) || MODES[0];
+      return '<div class="gs pf2">' +
+        '<div class="pf-id"><button type="button" class="pf-avb" data-pf-av aria-label="' + tr("Changer d'avatar ou de photo", "Change avatar or photo") + '"><span class="face">' + (ph ? phHTML(ph) : nm ? esc(nm.slice(0, 1).toUpperCase()) : "?") + '</span><span class="pen"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></span></button>' +
+          '<label class="lbl pf-nm" for="pf-name">' + tr("Ton prénom", "Your name") + '<input class="txt" id="pf-name" maxlength="16" autocomplete="given-name" value="' + esc(nm) + '" placeholder="' + tr("Léa", "Alex") + '"></label></div>' +
+        '<div class="field"><span class="eyebrow">' + tr("Mode de jeu", "Game mode") + '</span><div class="seg pf-modes">' +
+          MODES.map(m => '<button type="button" data-md="' + m[0] + '" aria-pressed="' + (mode === m[0]) + '">' + (myKid() && m[0] !== "kid" ? LOCK + " " : "") + esc(m[1]) + "</button>").join("") + "</div>" +
+          '<p class="sm pf-desc">' + esc(md[2]) + (N.nr ? tr(" Dans un salon, c'est le mode de l'hôte qui compte.", " In a room, the host's mode applies.") : "") + "</p>" + pinBox() +
+          (myKid() && !pinUI ? '<div class="row" style="gap:14px"><button class="link" type="button" data-pexit>' + tr("Quitter le mode Enfant", "Leave Kids mode") + '</button><button class="link" type="button" data-pchg>' + tr("Changer le code", "Change the code") + "</button></div>" : "") + "</div>" +
+        (roomHard() ? '<div class="field"><span class="eyebrow">' + tr("Ce soir, je bois", "Tonight I'm drinking") + '</span><div class="pf-chips">' +
+          ["sans"].concat(Object.keys(DRINKS)).map(k => '<button type="button" class="pf-chip" data-gd="' + k + '" aria-pressed="' + (gp.drink === k) + '">' + esc(SHORT[k]) + "</button>").join("") + "</div>" +
+          (d ? '<div class="gs-box">' +
+            '<div class="gs-row"><span class="tx"><b>' + tr("Ma limite", "My limit") + '</b><span class="sm">' + (gp.nolim ? tr("Pas de limite ce soir", "No limit tonight") : esc(gVerres(lim, gp.drink)) + tr(" · au-delà, gages sans alcool", " · then no-alcohol forfeits")) + "</span></span>" +
+              (gp.nolim ? "" : '<button type="button" class="gs-b" data-gl="-1" aria-label="' + tr("Moins", "Less") + '">−</button><b class="gs-n">' + lim + '</b><button type="button" class="gs-b" data-gl="1" aria-label="' + tr("Plus", "More") + '">+</button>') + "</div>" +
+            '<div class="gs-row"><span class="tx"><b>' + tr("Sans limite", "No limit") + '</b></span><button type="button" class="gs-sw" data-gnolim aria-pressed="' + !!gp.nolim + '" aria-label="' + tr("Sans limite", "No limit") + '"><i></i></button></div>' +
+            '<div class="gs-row"><span class="tx"><b>' + tr("Mon compteur", "My counter") + '</b><span class="sm">' + esc(tr(t.n + (t.n > 1 ? " verres notés" : " verre noté"), t.n + (t.n === 1 ? " drink logged" : " drinks logged")) + " · " + alcStd(t.tot)) + "</span></span>" +
+              '<button type="button" class="gs-b" data-alc="-1" aria-label="' + tr("Retirer le dernier verre", "Remove the last drink") + '"' + (t.n ? "" : " disabled") + '>−</button><button type="button" class="gs-b pf-plus" data-alc="1" aria-label="' + tr("Ajouter un verre", "Add a drink") + '">+</button></div>' +
+            '<div class="gs-row"><button type="button" class="pf-go" data-pf-alc><span class="t">' + tr("Taux d'alcool estimé", "Blood alcohol estimate") + '</span><span class="v">' + (bac == null ? tr("À régler", "Set up") : "≈ " + alcNum(bac, 2) + " g/L") + "</span>" + CHEV + "</button></div>" +
+          "</div>" : "") + "</div>"
+          : "") +
+        '<div class="field"><span class="eyebrow">' + tr("Réglages", "Settings") + '</span><div class="gs-box">' +
+          '<div class="gs-row"><button type="button" class="pf-go" data-pf-gages><span class="t">' + tr("Gages", "Forfeits") + '</span><span class="v">' + (S.on ? tr("Activés", "On") : tr("Désactivés", "Off")) + "</span>" + CHEV + "</button></div>" +
+          '<div class="gs-row"><span class="tx"><b>' + tr("Langue", "Language") + '</b></span><div class="seg pf-lang">' + [["fr", "FR"], ["en", "EN"]].map(l => '<button type="button" data-pf-lang="' + l[0] + '" aria-pressed="' + (LANG === l[0]) + '">' + l[1] + "</button>").join("") + "</div></div>" +
+        "</div></div>" +
+        '<p class="sm pf-priv">' + LOCK + tr(" Tout reste sur ton téléphone. Les autres ne voient que ta photo et ton prénom.", " Everything stays on your phone. Others only see your photo and name.") + "</p>" +
+        '<p class="sm" style="margin:0; text-align:center">Soirée Box ' + VERSION + (IS_BETA ? " · beta" : "") + "</p></div>";
+    };
+    const avatarHTML = () => {
       if(avTab === "hot" && !myHard()) avTab = AV_CATS[0][0];
-      const gp = gProf(store().gp), lim = gLim(gp), d = DRINKS[gp.drink];
-      const opts = [["sans", tr("Je ne bois pas d'alcool", "I'm not drinking alcohol"), tr("Tu reçois des gages sans alcool à la place : défis, chansons, pompes…", "You get no-alcohol forfeits instead: dares, songs, push-ups…")]]
-        .concat(Object.keys(DRINKS).map(k => [k, DRINKS[k].name, tr("1 verre = ", "1 drink = ") + DRINKS[k].glass + (DRINKS[k].sips > 1 ? tr(" ≈ " + DRINKS[k].sips + " gorgées", " ≈ " + DRINKS[k].sips + " sips") : "")]));
       const ph = myPhoto(), nm = clean(store().name, 16);
-      root.innerHTML = '<div class="gs"><div class="pf-top"><button type="button" class="pf-av" data-pf-rand aria-label="' + tr("Avatar au hasard", "Random avatar") + '" style="position:relative; overflow:visible; padding:0; color:var(--ink); cursor:pointer">' +
-          '<span class="pf-face" style="position:absolute; inset:0; border-radius:50%; overflow:hidden; display:grid; place-items:center">' + (ph ? phHTML(ph) : "?") + "</span>" +
-          '</button><div class="pf-act">' +
-        '<input class="pr-file" type="file" accept="image/*" data-pf-file aria-label="' + tr("Choisir une photo", "Choose a photo") + '">' +
-        '<button class="btn ghost" type="button" data-pf-pick>' + tr("Choisir une photo", "Choose a photo") + "</button>" +
-        (ph ? '<button class="link" type="button" data-pf-del>' + (avNum(ph) >= 0 ? tr("Retirer l'avatar", "Remove avatar") : tr("Retirer la photo", "Remove photo")) + "</button>" : "") + "</div></div>" +
-        '<div class="field"><span class="eyebrow">' + tr("Ou choisis un avatar", "Or pick an avatar") + '</span><div class="avtabs">' + AV_CATS.filter(c => c[0] !== "hot" || myHard()).map(c => '<button type="button" class="avtab' + (c[0] === "hot" ? " hot" : "") + '" data-avc="' + c[0] + '" aria-pressed="' + (c[0] === avTab) + '"><span class="avtab-i">' + avSvg(c[2][AV_TABICON[c[0]] || 0]) + '</span><span class="avtab-t">' + esc(c[1].replace(" 🔥", "")) + '</span><span class="avtab-n">' + c[2].length + "</span></button>").join("") + "</div>" +
-        '<div class="avgrid">' + (AV_CATS.find(c => c[0] === avTab) || AV_CATS[0])[2].map(i => '<button type="button" class="avpick" data-av="' + i + '" aria-pressed="' + (ph === "av:" + i) + '" aria-label="Avatar ' + (i + 1) + '">' + avSvg(i) + "</button>").join("") + "</div>" + "</div>" +
-        '<label class="lbl" for="pf-name">' + tr("Ton prénom", "Your name") + '<input class="txt" id="pf-name" maxlength="16" autocomplete="given-name" value="' + esc(nm) + '" placeholder="' + tr("Léa", "Alex") + '"></label>' +
-        '<p class="sm" style="margin:0">' + tr("Ta photo et ton prénom s'affichent dans les salons que tu rejoins.", "Your photo and name show in the rooms you join.") + "</p>" +
-        '<button type="button" class="gbtn" data-pf-gages><b>' + tr("Mes gages", "My forfeits") + '</b><span class="sm">' + (gLocalSettings().on ? tr("Activés · ", "On · ") + esc({ chill: "Chill", classique: tr("Classique", "Classic"), chaud: tr("Apéro chaud", "Wild night"), perso: "Perso" }[gLocalSettings().level]) : tr("Désactivés", "Off")) + tr(" · réglages utilisés dans tes salons", " · settings used in your rooms") + "</span></button>" +
-        '<div class="field"><span class="eyebrow">' + tr("Mode de jeu", "Game mode") + '</span><div class="packs">' +
-          [["hard", "Hard 🔥", tr("Tout le contenu : jeux et paquets 18+, avatars Hot, gages avec alcool. C'est le mode par défaut.", "Everything: 18+ games and packs, Hot avatars, drinking forfeits. This is the default.")],
-           ["soft", "Soft", tr("Rien de 18+ : pas de jeux ni de paquets adultes, avatars Hot masqués, gages sans alcool. Pratique en famille ou avec des gens que tu connais peu.", "Nothing 18+: no adult games or packs, Hot avatars hidden, alcohol-free forfeits. Handy with family or people you barely know.")],
-           ["kid", tr("Enfant 🔒", "Kids 🔒"), tr("Seulement des jeux tout public, rien sur l'alcool ni le sexe. Verrouillé par un code à 4 chiffres : il faut le code pour en sortir.", "Family-friendly games only, nothing about alcohol or sex. Locked with a 4-digit code: you need it to leave.")]]
-          .filter(m => !myKid() || m[0] === "kid")
-          .map(m => '<button type="button" class="pack" data-md="' + m[0] + '" aria-pressed="' + (curMode() === m[0]) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + m[1] + (myKid() && m[0] !== "kid" ? " 🔒" : "") + '</span><span class="ds">' + esc(m[2]) + "</span></span></button>").join("") + "</div>" +
-          pinBox() +
-          (myKid() && !pinUI ? '<button class="btn ghost" type="button" data-pexit>' + tr("Quitter le mode Enfant", "Leave Kids mode") + '</button><button class="link" type="button" data-pchg style="align-self:flex-start">' + tr("Changer le code", "Change the code") + "</button>" : "") +
-          '<p class="sm" style="margin:0">' + tr("Dans un salon, c'est le mode de l'hôte qui compte. Un téléphone en mode Enfant ne peut entrer que dans un salon en mode Enfant.", "In a room, the host's mode applies. A phone in Kids mode can only join a room in Kids mode.") + "</p></div>" +
-        (roomHard() ? '<p class="howto">' + tr("Ton profil reste sur ton téléphone et te suit dans chaque salon. Il sert à une chose : que les gages des jeux respectent ce que tu bois et ta limite. Une fois ta limite atteinte, tes gages passent automatiquement en sans alcool, sans que les autres sachent pourquoi.", "Your profile stays on your phone and follows you into every room. It does one thing: makes game forfeits respect what you drink and your limit. Once you hit your limit, your forfeits switch to no-alcohol automatically, without the others knowing why.") + "</p>" +
-        '<div class="field"><span class="eyebrow">' + tr("Ce soir, je bois…", "Tonight I'm drinking…") + '</span><div class="packs">' +
-        opts.map(o => '<button type="button" class="pack" data-gd="' + o[0] + '" aria-pressed="' + (gp.drink === o[0]) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(o[1]) + '</span><span class="ds">' + esc(o[2]) + "</span></span></button>").join("") + "</div></div>" +
-        (d ? '<div class="field"><span class="eyebrow">' + tr("Ma limite pour la soirée", "My limit for the night") + '</span><div class="gs-box">' + (gp.nolim ? "" : '<div class="gs-row"><span class="tx"><b>' + esc(gVerres(lim, gp.drink)) + '</b><span class="sm">' + esc(gLimText(gp.drink, lim)) + '</span></span><button type="button" class="gs-b" data-gl="-1" aria-label="' + tr("Moins", "Less") + '">−</button><b class="gs-n">' + lim + '</b><button type="button" class="gs-b" data-gl="1" aria-label="' + tr("Plus", "More") + '">+</button></div>') +
-          '<div class="gs-row"><span class="tx"><b>' + tr("Sans limite", "No limit") + '</b><span class="sm">' + (gp.nolim ? tr("Pas de limite perso. Le plafond de l'hôte compte quand même s'il en a mis un.", "No personal limit. The host's cap still applies if they set one.") : tr("Pas de limite perso pour la soirée", "No personal limit for the night")) + '</span></span><button type="button" class="gs-sw" data-gnolim aria-pressed="' + !!gp.nolim + '" aria-label="' + tr("Sans limite", "No limit") + '"><i></i></button></div></div>' +
-          '<p class="sm" style="margin:0">' + tr("Une limite est gardée pour chaque boisson : si tu passes de la bière au vin, ta limite « vin » reprend.", "A limit is kept for each drink: switch from beer to wine and your “wine” limit comes back.") + "</p></div>" +
-          '<div class="field"><span class="eyebrow">' + tr("Mon compteur d'alcool", "My drink counter") + "</span>" + alcMineHTML() + "</div>" +
-          '<div class="field"><span class="eyebrow">' + tr("Comment on compte", "How it's counted") + '</span><ul class="gs-how">' +
+      return '<div class="gs pf2">' + backRow(tr("Profil", "Profile")) +
+        '<div class="pf-avtop"><span class="pf-avbig">' + (ph ? phHTML(ph) : nm ? esc(nm.slice(0, 1).toUpperCase()) : "?") + '</span><div class="pf-act">' +
+          '<input class="pr-file" type="file" accept="image/*" data-pf-file aria-label="' + tr("Choisir une photo", "Choose a photo") + '">' +
+          '<button class="btn ghost" type="button" data-pf-pick>' + tr("Choisir une photo", "Choose a photo") + '</button><div class="row" style="gap:14px"><button class="link" type="button" data-pf-rand>' + tr("Au hasard", "Random") + "</button>" +
+          (ph ? '<button class="link" type="button" data-pf-del>' + (avNum(ph) >= 0 ? tr("Retirer l'avatar", "Remove avatar") : tr("Retirer la photo", "Remove photo")) + "</button>" : "") + "</div></div></div>" +
+        '<div class="avtabs">' + AV_CATS.filter(c => c[0] !== "hot" || myHard()).map(c => '<button type="button" class="avtab' + (c[0] === "hot" ? " hot" : "") + '" data-avc="' + c[0] + '" aria-pressed="' + (c[0] === avTab) + '"><span class="avtab-i">' + avSvg(c[2][AV_TABICON[c[0]] || 0]) + '</span><span class="avtab-t">' + esc(c[1].replace(" 🔥", "")) + '</span><span class="avtab-n">' + c[2].length + "</span></button>").join("") + "</div>" +
+        '<div class="avgrid">' + (AV_CATS.find(c => c[0] === avTab) || AV_CATS[0])[2].map(i => '<button type="button" class="avpick" data-av="' + i + '" aria-pressed="' + (ph === "av:" + i) + '" aria-label="Avatar ' + (i + 1) + '">' + avSvg(i) + "</button>").join("") + "</div>" +
+        '<button class="btn acc" type="button" data-pf-back>' + tr("Valider", "Done") + "</button></div>";
+    };
+    const alcHTML = () => {
+      const gp = gProf(store().gp), d = DRINKS[gp.drink], a = alcStore(), t = alcTotals(), bac = alcBac();
+      const pct = bac == null ? 0 : Math.min(100, bac / 1.5 * 100);
+      return '<div class="gs pf2">' + backRow(tr("Profil", "Profile")) +
+        '<div class="pf-bac"><span class="sm">' + esc(tr("Estimation ce soir · ", "Tonight's estimate · ") + alcStd(t.tot)) + "</span>" +
+          (bac == null ? '<p class="pf-bac-n" style="font-size:22px">' + tr("Indique ton poids et la base de calcul", "Enter your weight and calculation basis") + "</p>"
+            : '<p class="pf-bac-n">' + alcNum(bac, 2) + " <small>g/L</small></p>") +
+          '<div class="pf-gauge"><i style="width:' + pct + '%"></i><span class="mk"></span></div><div class="pf-gl"><span>0</span><span>' + tr("0,5 · limite au volant", "0.5 · French driving limit") + "</span><span>1,5</span></div></div>" +
+        '<div class="gs-box">' +
+          '<div class="gs-row"><span class="tx"><b>' + tr("Poids", "Weight") + '</b></span><button type="button" class="gs-b" data-kg="-1" aria-label="' + tr("Moins", "Less") + '">−</button><b class="gs-n" style="min-width:64px">' + (a.kg ? a.kg + " kg" : "—") + '</b><button type="button" class="gs-b" data-kg="1" aria-label="' + tr("Plus", "More") + '">+</button></div>' +
+          '<div class="gs-row"><span class="tx"><b>' + tr("Base de calcul", "Basis") + '</b></span><div class="seg pf-lang">' + [[0.7, tr("Homme", "Male")], [0.6, tr("Femme", "Female")]].map(o => '<button type="button" data-alcr="' + o[0] + '" aria-pressed="' + (a.r === o[0]) + '">' + o[1] + "</button>").join("") + "</div></div>" +
+        "</div>" +
+        '<p class="sm" style="margin:0">' + tr("Calcul très approximatif (formule de Widmark) : il ne tient compte ni du repas, ni de ta santé, ni de tes médicaments. Ton poids reste sur ce téléphone.", "A very rough estimate (Widmark formula): it ignores food, health and medication. Your weight stays on this phone.") + "</p>" +
+        '<div class="pf-warn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M5 17H3v-5l2-5h11l3 5h2v5h-2M9 17h6M3 12h18"/></svg>' + tr("Si tu as bu, tu ne prends pas le volant.", "If you've been drinking, don't drive.") + "</div>" +
+        (d ? '<div class="field"><span class="eyebrow">' + tr("Comment on compte", "How it's counted") + '</span><ul class="gs-how">' +
           "<li><b>" + tr("1 gorgée", "1 sip") + "</b> " + tr("= une gorgée normale de ta boisson (" + d.sips + " par verre).", "= a normal sip of your drink (" + d.sips + " per drink).") + "</li>" +
           "<li><b>1 shot</b> " + (gp.drink === "fort" ? tr("= un shot (3 cl).", "= one shot (3 cl).") : tr("= 3 gorgées de ta boisson.", "= 3 sips of your drink.")) + "</li>" +
           "<li><b>" + tr("1 cul-sec", "1 chug") + "</b> " + tr("= finir ton verre (" + d.glass + ").", "= finish your drink (" + d.glass + ").") + "</li>" +
-          "<li>" + tr("1 verre standard = 10 g d'alcool pur. Les repères santé conseillent pas plus de 10 par semaine et pas plus de 2 par jour.", "1 standard drink = 10 g of pure alcohol. Health guidelines suggest no more than 10 a week and no more than 2 a day.") + "</li></ul></div>" : "") : '<p class="howto">' + (myKid() ? tr("Mode Enfant : les gages des jeux sont des défis, des chansons, des pompes…", "Kids mode: game forfeits are dares, songs, push-ups…") : tr("Mode Soft : pas d'alcool. Les gages des jeux sont des défis, des chansons, des pompes…", "Soft mode: no alcohol. Game forfeits are dares, songs, push-ups…")) + "</p>") +
-        '<p class="sm" style="margin:8px 0 0; text-align:center">Soirée Box ' + VERSION + (IS_BETA ? " · beta" : "") + "</p>" +
-        "</div>";
+          "<li>" + tr("1 verre standard = 10 g d'alcool pur. Les repères santé conseillent pas plus de 10 par semaine et pas plus de 2 par jour.", "1 standard drink = 10 g of pure alcohol. Health guidelines suggest no more than 10 a week and no more than 2 a day.") + "</li></ul></div>" : "") +
+        (t.n || t.j ? '<button class="link" type="button" data-alc0 style="align-self:flex-start">' + tr("Remettre mon compteur à zéro", "Reset my counter") + "</button>" : "") + "</div>";
+    };
+    const draw = () => {
+      if(view === "alc" && !DRINKS[gProf(store().gp).drink]) view = "main";
+      root.innerHTML = view === "avatar" ? avatarHTML() : view === "alc" ? alcHTML() : mainHTML();
       const save = p => { const g2 = Object.assign(gProf(store().gp), p); g2.alc = g2.drink !== "sans"; persist({ gp: g2 }); CORE_X._gp = g2; SB.refreshExtras(); draw(); };
+      $$("[data-pf-back]", root).forEach(b => b.addEventListener("click", () => go("main")));
+      const avb = $("[data-pf-av]", root); if(avb) avb.addEventListener("click", () => go("avatar"));
+      const alb = $("[data-pf-alc]", root); if(alb) alb.addEventListener("click", () => go("alc"));
       $$("[data-gd]", root).forEach(b => b.addEventListener("click", () => { buzz(8); save({ drink: b.dataset.gd }); }));
       $$("[data-md]", root).forEach(b => b.addEventListener("click", () => {
         const m = b.dataset.md; if(m === curMode()){ pinUI = null; draw(); return; } buzz(8);
@@ -2339,26 +2378,30 @@ function gProfilePage(){
         pinUI = null; draw();
       });
       const setPh = v => { persist({ photo: v }); CORE_X._ph = v; SB.refreshExtras(); renderMe(); draw(); };
-      [["[data-pf-pick]", "[data-pf-file]"]].forEach(x => {
-        const fi = $(x[1], root);
-        $(x[0], root).addEventListener("click", () => fi.click());
+      const fi = $("[data-pf-file]", root), pk = $("[data-pf-pick]", root);
+      if(fi && pk){
+        pk.addEventListener("click", () => fi.click());
         fi.addEventListener("change", async () => { const d = await shrinkPhoto(fi.files && fi.files[0]); fi.value = ""; if(!d){ toast(tr("Cette photo n'a pas pu être lue", "Couldn't read that photo")); return; } setPh(d); });
-      });
-      // Le rond de la photo : un avatar au hasard à chaque appui (jamais deux fois le même d'affilée).
-      $("[data-pf-rand]", root).addEventListener("click", () => {
+      }
+      const rnd = $("[data-pf-rand]", root); if(rnd) rnd.addEventListener("click", () => {
         const all = [].concat.apply([], AV_CATS.filter(c => c[0] !== "hot" || myHard()).map(c => c[2])).filter(i => AVATARS[i] && "av:" + i !== myPhoto());
         if(!all.length) return;
         buzz(10); const i = all[Math.floor(Math.random() * all.length)];
         const c = AV_CATS.find(c => c[2].indexOf(i) >= 0); if(c) avTab = c[0];
         setPh("av:" + i);
       });
-            $$("[data-avc]", root).forEach(b => b.addEventListener("click", () => { avTab = b.dataset.avc; buzz(6); draw(); }));
-      $$("[data-av]", root).forEach(b => b.addEventListener("click", () => { buzz(8); const v = "av:" + b.dataset.av; persist({ photo: v }); CORE_X._ph = v; SB.refreshExtras(); renderMe(); draw(); }));
+      $$("[data-avc]", root).forEach(b => b.addEventListener("click", () => { avTab = b.dataset.avc; buzz(6); draw(); }));
+      $$("[data-av]", root).forEach(b => b.addEventListener("click", () => { buzz(8); setPh("av:" + b.dataset.av); }));
       const del = $("[data-pf-del]", root); if(del) del.addEventListener("click", () => { persist({ photo: "" }); delete CORE_X._ph; SB.refreshExtras(); renderMe(); draw(); });
-      const ni = $("#pf-name", root); ni.addEventListener("input", () => { const v = clean(ni.value, 16); persist({ name: v }); const hn = $("#h-name"); if(hn) hn.value = v; renderMe(); });
-      $("[data-pf-gages]", root).addEventListener("click", () => gSettingsPage(gLocalSettings, gSaveSettings, true, () => ({}), null));
+      const ni = $("#pf-name", root); if(ni) ni.addEventListener("input", () => { const v = clean(ni.value, 16); persist({ name: v }); const hn = $("#h-name"); if(hn) hn.value = v; renderMe(); });
+      const gg = $("[data-pf-gages]", root); if(gg) gg.addEventListener("click", () => {
+        gSettingsPage(gLocalSettings, gSaveSettings, true, () => ({}), null);
+        SB._pageClose = () => { SB._pageClose = null; gProfilePage(); };
+      });
+      $$("[data-pf-lang]", root).forEach(b => b.addEventListener("click", () => { if(b.dataset.pfLang !== LANG){ buzz(8); SB.setLang(b.dataset.pfLang); } }));
       const nl = $("[data-gnolim]", root); if(nl) nl.addEventListener("click", () => { buzz(8); save({ nolim: !gProf(store().gp).nolim }); });
       alcMineBind(root, draw);
+      $$("[data-kg]", root).forEach(b => b.addEventListener("click", () => { const a = alcStore(); buzz(6); alcSave({ kg: a.kg ? Math.max(35, Math.min(250, a.kg + +b.dataset.kg)) : 70 }); draw(); }));
       $$("[data-gl]", root).forEach(b => b.addEventListener("click", () => { const g2 = gProf(store().gp), l = Object.assign({}, g2.lim); l[g2.drink] = Math.max(1, Math.min(20, gLim(g2) + +b.dataset.gl)); save({ lim: l }); }));
     };
     draw();

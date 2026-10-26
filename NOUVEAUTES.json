@@ -1,4 +1,8 @@
 {
+  "4.30.0": [
+    "Profil redessiné, plus court et plus clair : avatar et prénom en haut, mode de jeu en un sélecteur Hard / Soft / Enfant, « Ce soir je bois » en boutons, limite, compteur et taux d'alcool regroupés dans un seul bloc, puis les réglages (gages, langue)",
+    "Le choix de l'avatar et le taux d'alcool ont maintenant chacun leur écran (on y va en touchant l'avatar ou « Taux d'alcool estimé », et on revient avec « Profil » ou le bouton retour)"
+  ],
   "4.29.5": [
     "Accueil : le message « Tu es invité dans le salon… » est retiré (le code du salon reste pré-rempli)"
   ],

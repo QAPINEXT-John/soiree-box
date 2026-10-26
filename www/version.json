@@ -1,15 +1,16 @@
 {
- "version": "4.29.5",
+ "version": "4.30.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Accueil : le message « Tu es invité dans le salon… » est retiré (le code du salon reste pré-rempli)"
+  "Profil redessiné, plus court et plus clair : avatar et prénom en haut, mode de jeu en un sélecteur Hard / Soft / Enfant, « Ce soir je bois » en boutons, limite, compteur et taux d'alcool regroupés dans un seul bloc, puis les réglages (gages, langue)",
+  "Le choix de l'avatar et le taux d'alcool ont maintenant chacun leur écran (on y va en touchant l'avatar ou « Taux d'alcool estimé », et on revient avec « Profil » ou le bouton retour)"
  ],
  "files": {
   "core.js": {
-   "h": "a9e2e23cf4c75703cc5abf5e665b7b78f6aebb35fd2c96ba0429bb7649576544",
-   "s": 289406
+   "h": "4bab28a676f07b06e2c330625ca3a19704e6e0c3479754fcae9d27071f238d43",
+   "s": 293446
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -216,8 +217,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "707ed41f16ad447c676b7a2dadf21a72f95a9ef356437387388fad3fe9b8de88",
-   "s": 54932
+   "h": "fca249c124ef95cb8eb39707a0f0b2724e6672a44a34c3d243afea137c11eb24",
+   "s": 58157
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
