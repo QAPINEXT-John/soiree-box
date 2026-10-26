@@ -1,15 +1,18 @@
 {
- "version": "4.36.1",
+ "version": "4.37.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Puissance 4 : plus de tremblement quand on pose un pion (la grille reste en place au lieu d'être redessinée), et le pion tombe maintenant du haut de la grille jusqu'à sa case avec un petit rebond"
+  "Nouveau jeu : La Bombe. Une syllabe ou une catégorie tombe, la mèche est allumée : dis un mot qui va et passe la bombe au suivant. Personne ne sait quand elle explose ! Tic-tac qui accélère, explosion, vibration",
+  "En salon, la bombe saute de téléphone en téléphone. Sur un seul téléphone, c'est lui la bombe : on se le passe",
+  "Cartes : syllabe dans le mot, ça commence par, ça finit par, catégories, catégories 18+, enfants, et vos propres cartes. Mèche courte, normale ou longue",
+  "Coups de théâtre : sens inverse, mèche courte, éclaboussures (les voisins prennent aussi), mots de 6 lettres minimum"
  ],
  "files": {
   "core.js": {
-   "h": "c99a65313fc40ce4c02067eb74f900b244f9fc10bf98b6063d9e97f0c1f8421b",
-   "s": 308449
+   "h": "8feea49064a6c7a5d3328946a58d7c80fb1dfbd0a297821224e2142880b387ca",
+   "s": 308694
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -94,6 +97,10 @@
   "games/blindtest.js": {
    "h": "d6d7b223df3d711faff718eec367e37213d9b506e27f80df9e2886c23a37ef4a",
    "s": 54923
+  },
+  "games/bombe.js": {
+   "h": "b7428de2e4f7d1e2aeca8cd99d6851ecba9e97f0e1f4a137c9669f910565fe18",
+   "s": 34479
   },
   "games/course.js": {
    "h": "b54664c2862a235f46b0847c5a2ddc74fe8de428f556f85b358f5f1213961c66",
@@ -232,8 +239,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "fcae8d77587be48c0bf81e84aeb36b0c03f53aa2711d3e305442f51eb0b4e987",
-   "s": 61651
+   "h": "6f2df240ca3b32ee462f5a2c34b974dcf4905bfe6897896c0a3a7f7cb30d3a43",
+   "s": 61690
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",

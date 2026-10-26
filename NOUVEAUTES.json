@@ -1,4 +1,10 @@
 {
+  "4.37.0": [
+    "Nouveau jeu : La Bombe. Une syllabe ou une catégorie tombe, la mèche est allumée : dis un mot qui va et passe la bombe au suivant. Personne ne sait quand elle explose ! Tic-tac qui accélère, explosion, vibration",
+    "En salon, la bombe saute de téléphone en téléphone. Sur un seul téléphone, c'est lui la bombe : on se le passe",
+    "Cartes : syllabe dans le mot, ça commence par, ça finit par, catégories, catégories 18+, enfants, et vos propres cartes. Mèche courte, normale ou longue",
+    "Coups de théâtre : sens inverse, mèche courte, éclaboussures (les voisins prennent aussi), mots de 6 lettres minimum"
+  ],
   "4.36.1": [
     "Puissance 4 : plus de tremblement quand on pose un pion (la grille reste en place au lieu d'être redessinée), et le pion tombe maintenant du haut de la grille jusqu'à sa case avec un petit rebond"
   ],

@@ -753,7 +753,9 @@ async function roomJoin(code){
 const SCREENS = ["home", "salon", "game", "spect", "lost", "llist", "lplayers", "local", "page"];
 let current = "home";
 // Coupe la musique des jeux (blind test…) quand on quitte une partie ou qu'une autre commence.
-function stopSounds(){ try{ if(SB.music && SB.music.pause) SB.music.pause(); }catch(e){} }
+function stopSounds(){ try{ if(SB.music && SB.music.pause) SB.music.pause(); }catch(e){} A(SB._stops).forEach(f => { try{ f(); }catch(e){} }); }
+// Les jeux qui font du son (tic-tac…) s'inscrivent ici pour être coupés quand on quitte la partie.
+SB.onStop = f => { (SB._stops = SB._stops || []).push(f); };
 function show(name){
   if(current === name) return;
   closeSheet();
@@ -815,7 +817,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.36.1";
+const VERSION = "4.37.0";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -938,7 +940,7 @@ SB.bug = openBug;
 
 /* Familles de jeux pour les filtres de l'accueil et du salon */
 const CATS = { jamais: "votes", debat: "votes", dixmais: "votes", note10: "votes", photoroulette: "wip", kink: "votes", quiplus: "votes", tupref: "votes", redflag: "votes", purete: "votes", quiadit: "votes", priorites: "votes",
-  undercover: "bluff", killer: "bluff", loupgarou: "bluff", menteurs: "bluff", motsint: "cartes", defis: "action", dernierecarte: "cartes", punchline: "votes", actionverite: "action", grille: "cartes", agents: "cartes", rougenoir: "cartes", sept: "cartes", pmu: "cartes", blindtest: "quiz", quiz: "quiz", course: "action", puissance4: "cartes" };
+  undercover: "bluff", killer: "bluff", loupgarou: "bluff", menteurs: "bluff", motsint: "cartes", defis: "action", dernierecarte: "cartes", punchline: "votes", actionverite: "action", grille: "cartes", agents: "cartes", rougenoir: "cartes", sept: "cartes", pmu: "cartes", blindtest: "quiz", quiz: "quiz", course: "action", puissance4: "cartes", bombe: "action" };
 const FILTERS = [["all", tr("Tous", "All")], ["votes", tr("Votes", "Voting")], ["bluff", "Bluff"], ["cartes", tr("Cartes", "Cards")], ["quiz", "Quiz"], ["action", "Action"], ["hot", "18+"], ["wip", tr("En travaux", "Beta")]];
 // Jeux « en travaux » : jouables pour les tester, mais rangés à part, seulement dans leur filtre.
 const isWip = d => CATS[d.id] === "wip";
@@ -947,7 +949,7 @@ const isWip = d => CATS[d.id] === "wip";
    avatars Hot et gages avec alcool. En salon, c'est le mode de l'hôte qui compte pour les jeux et les gages ;
    pour les avatars, chacun garde le sien. */
 /* Mode Enfant : un Soft verrouillé par un code à 4 chiffres, avec seulement des jeux tout public. */
-const KID_GAMES = ["undercover", "motsint", "loupgarou", "priorites", "dernierecarte", "note10", "grille", "dixmais", "agents", "debat", "jamais", "rougenoir", "sept", "blindtest", "quiz", "course", "puissance4"];
+const KID_GAMES = ["undercover", "motsint", "loupgarou", "priorites", "dernierecarte", "note10", "grille", "dixmais", "agents", "debat", "jamais", "rougenoir", "sept", "blindtest", "quiz", "course", "puissance4", "bombe"];
 const myKid = () => !!(store().kid && store().kid.on);
 const roomKid = () => { const g = N.nr ? G() : null; return g ? g.kid === true : myKid(); };
 const pinHash = p => { let h = 5381; String(p).split("").forEach(c => { h = ((h << 5) + h + c.charCodeAt(0)) | 0; }); return "k" + (h >>> 0).toString(36); };
