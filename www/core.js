@@ -815,7 +815,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.31.0";
+const VERSION = "4.32.0";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -1825,7 +1825,9 @@ function startLocal(def, names){
      ctx.gage([{ id, ev }], clé) en réseau (chez l'hôte) ou api.gage([{ id: nom, ev }], clé) sur un seul téléphone.
    - Fin de partie : tous les jeux, le gagnant distribue et les autres boivent (réglable).
    - Un panneau « Gages de la manche » s'affiche alors sur chaque téléphone. */
-const GDEF = { on: false, unit: "gorgee", level: "classique", cap: 15, capOff: false, water: 8, joker: true, trig: {}, custom: [] };
+const GDEF = { on: false, unit: "gorgee", level: "classique", cap: 15, capOff: false, water: 8, joker: true, trig: {}, glv: {}, custom: [] };
+// Noms des niveaux de gages (« perso » : ancien réglage, traité comme Moyen).
+const GLV_NAME = () => ({ off: tr("Aucun gage", "No forfeits"), chill: tr("Basique", "Basic"), classique: tr("Moyen", "Medium"), chaud: "Hard", perso: tr("Moyen", "Medium") });
 const GMULT = { chill: .5, classique: 1, chaud: 2, perso: 1 };
 const GEND = [
   { ev: "_win", label: tr("Gagnant de la partie", "Game winner"), kind: "distribue", n: 3 },
@@ -1851,11 +1853,13 @@ function gGlass(S, drink){
   return 1 / d.sips;
 }
 const gVerres = (n, drink) => { const d = DRINKS[drink] || DRINKS.biere, v = Math.round(n * 10) / 10; return String(v).replace(".", tr(",", ".")) + " " + (v > 1 ? d.glasses[1] : d.glasses[0]); };
-const gSettings = s => Object.assign({}, GDEF, s && typeof s === "object" ? s : {}, { trig: Object.assign({}, (s && s.trig) || {}), custom: A(s && s.custom).map(x => clean(x, 120)).filter(Boolean).slice(0, 40) });
+const gSettings = s => Object.assign({}, GDEF, s && typeof s === "object" ? s : {}, { trig: Object.assign({}, (s && s.trig) || {}), glv: Object.assign({}, (s && s.glv) || {}), custom: A(s && s.custom).map(x => clean(x, 120)).filter(Boolean).slice(0, 40) });
 const gUnit = (S, n) => { const u = { gorgee: [tr("gorgée", "sip"), tr("gorgées", "sips")], shot: ["shot", "shots"], culsec: [tr("cul-sec", "chug"), tr("culs-secs", "chugs")] }[S.unit] || ["", ""]; return n + " " + (n === 1 ? u[0] : u[1]); };
 function gEvents(gameId){ const d = SB.byId[gameId]; return A(d && d.gages).concat(GEND); }
 function gBase(S, gameId, ev){ const k = gameId + ":" + ev; if(S.trig[k] != null) return Math.max(0, Math.min(10, +S.trig[k] || 0)); const e = gEvents(gameId).find(x => x.ev === ev); return e ? e.n : 0; }
-function gAmount(S, gameId, ev){ const b = gBase(S, gameId, ev); return b > 0 ? Math.max(1, Math.round(b * (GMULT[S.level] || 1))) : 0; }
+// Niveau d'un jeu : le sien s'il en a un (« off » = aucun gage), sinon le niveau choisi pour tous les jeux.
+const gLevel = (S, gameId) => ((S.glv || {})[gameId] || S.level || "classique");
+function gAmount(S, gameId, ev){ const lv = gLevel(S, gameId); if(lv === "off") return 0; const b = gBase(S, gameId, ev); return b > 0 ? Math.max(1, Math.round(b * (GMULT[lv] || 1))) : 0; }
 function gTask(S){
   const base = A(S.custom).length ? A(S.custom) : GTASKS[LANG === "en" ? "en" : "fr"];
   // Mode Enfant : pas de gages autour du téléphone, des contacts ou de la honte.
@@ -1880,7 +1884,8 @@ function gCompute(S, gameId, list, players, tally){
   A(list).forEach(e => {
     const ed = gEvents(gameId).find(x => x.ev === e.ev); if(!ed) return;
     const times = e.x != null ? Math.max(0, Math.floor(+e.x || 0)) : 1;
-    const n = (e.n != null ? Math.max(0, Math.round(+e.n * (GMULT[S.level] || 1))) : gAmount(S, gameId, e.ev)) * times; if(!n) return;
+    const lv = gLevel(S, gameId);
+    const n = (e.n != null ? (lv === "off" ? 0 : Math.max(0, Math.round(+e.n * (GMULT[lv] || 1)))) : gAmount(S, gameId, e.ev)) * times; if(!n) return;
     const why = e.why || ed.label;
     if(ed.kind === "tous") players.forEach(p => drink(p, n, why));
     else if(ed.kind === "distribue"){ const p = P(e.id); if(p && players.length > 1 && players.some(x => x.alc && x.id !== p.id)) items.push({ t: "give", who: p.id, name: p.name, n, why, done: 0 }); }
@@ -1894,9 +1899,9 @@ function gGive(S, gameId, q, giverId, to, players, tally){
   let sum = 0; const list = [];
   Object.keys(to || {}).forEach(id => { const k = Math.max(0, Math.floor(+to[id] || 0)); if(k && id !== giverId && players.some(p => p.id === id)){ sum += k; list.push([id, k]); } });
   if(sum !== it.n) return null;
-  const r = gCompute(Object.assign({}, S, { level: "perso" }), gameId, [], players, tally); let T = r.tally;
+  const r = gCompute(Object.assign({}, S, { level: "perso", glv: {} }), gameId, [], players, tally); let T = r.tally;
   const items = A(q.items).map(x => (x === it ? Object.assign({}, x, { done: 1 }) : x));
-  list.forEach(([id, k]) => { const c = gCompute(Object.assign({}, S, { level: "perso", trig: Object.assign({}, S.trig, { [gameId + ":_give"]: k }) }), gameId, [{ id, ev: "_give", n: k, why: tr("de la part de ", "from ") + it.name }], players, T); T = c.tally; c.items.forEach(x => items.push(x)); });
+  list.forEach(([id, k]) => { const c = gCompute(Object.assign({}, S, { level: "perso", glv: {}, trig: Object.assign({}, S.trig, { [gameId + ":_give"]: k }) }), gameId, [{ id, ev: "_give", n: k, why: tr("de la part de ", "from ") + it.name }], players, T); T = c.tally; c.items.forEach(x => items.push(x)); });
   T = gT(T, it.name); T[it.name].g += it.n;
   return { items, tally: T };
 }
@@ -2018,50 +2023,117 @@ function gLocalApply(gameId, names, list, key, rerender){
 const gRefresh = () => { try{ renderMe(); if(!$("#s-llist").hidden) gLocalBar(); }catch(e){} };
 function gSettingsPage(get, set, editable, tally, onReset){
   SB.page(tr("Gages", "Forfeits"), root => {
-    let game = (SB.games.find(d => A(d.gages).length) || {}).id || "_fin";
+    // Vues : « main » (réglages), « jeux » (déclencheurs par jeu), « fin » (fin de partie), « sans » (gages sans alcool).
+    let view = "main", openG = "";
+    const TITLES = () => ({ main: tr("Gages", "Forfeits"), jeux: tr("Déclencheurs", "Triggers"), fin: tr("Fin de partie", "End of game"), sans: tr("Gages sans alcool", "No-alcohol forfeits") });
+    const go = v => { view = v; buzz(6); draw(); try{ window.scrollTo(0, 0); }catch(e){} };
+    SB._pageBack = () => { if(view === "main") return false; go("main"); return true; };
+    const CHEV = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+    const backRow = () => '<button type="button" class="pf-back" data-gback><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>' + tr("Gages", "Forfeits") + "</button>";
+    const LV = ["chill", "classique", "chaud"], lvOf = S => (LV.indexOf(S.level) >= 0 ? S.level : "classique");
+    const gGames = () => SB.games.filter(d => A(d.gages).some(e => !e.hidden));
+    const gameKeys = (S, gid) => Object.keys(S.trig).filter(k => k.indexOf(gid + ":") === 0 && k.slice(gid.length + 1).charAt(0) !== "_");
+    const apart = (S, gid) => !!(S.glv || {})[gid] || gameKeys(S, gid).length > 0;
     const draw = () => {
-      const S = get(), mult = GMULT[S.level] || 1, dis = editable ? "" : " disabled", hard = roomHard();
-      const seg = (k, opts) => '<div class="seg">' + opts.map(o => '<button type="button" data-gs="' + k + '" data-v="' + o[0] + '" aria-pressed="' + (S[k] === o[0]) + '"' + dis + ">" + o[1] + "</button>").join("") + "</div>";
-      const step = (k, label, sub, min, max) => '<div class="gs-row"><span class="tx"><b>' + label + '</b><span class="sm">' + sub + '</span></span><button type="button" class="gs-b" data-gst="' + k + '" data-d="-1" aria-label="' + tr("Moins", "Less") + '"' + dis + '>−</button><b class="gs-n">' + S[k] + '</b><button type="button" class="gs-b" data-gst="' + k + '" data-d="1" aria-label="' + tr("Plus", "More") + '"' + dis + ">+</button></div>";
-      const games = SB.games.filter(d => A(d.gages).length).map(d => [d.id, d.name]).concat([["_fin", tr("Fin de partie (tous les jeux)", "End of game (all games)")]]);
-      const evs = (game === "_fin" ? GEND : A((SB.byId[game] || {}).gages)).filter(e => !e.hidden && (hard || e.kind !== "distribue"));
+      const S = get(), dis = editable ? "" : " disabled", hard = roomHard(), GN = GLV_NAME(), lv = lvOf(S);
+      const evsOf = gid => A((SB.byId[gid] || {}).gages).filter(e => !e.hidden && (hard || e.kind !== "distribue"));
       const kindTxt = k => (!hard ? (k === "tous" ? tr("tout le monde a un gage", "everyone gets a forfeit") : tr("a un gage", "gets a forfeit")) : k === "distribue" ? tr("distribue", "hands out") : k === "tous" ? tr("tout le monde boit", "everyone drinks") : tr("boit", "drinks"));
-      const gid = game === "_fin" ? (SB.games[0] || {}).id : game;
-      let h = '<div class="gs">' +
-        '<button type="button" class="pack" data-gon aria-pressed="' + S.on + '"' + dis + '><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Gages activés", "Forfeits on") + '</span><span class="ds">' + (hard ? tr("Les jeux affichent les gages à la fin des manches. Chacun peut jouer sans alcool.", "Games show forfeits at the end of rounds. Anyone can play without alcohol.") : tr("Les jeux donnent des gages à la fin des manches : défis, chansons, pompes…", "Games give forfeits at the end of rounds: dares, songs, push-ups…")) + "</span></span></button>" +
-        (editable ? '<p class="sm" style="margin:0">' + tr("Gardés sur ce téléphone : ils servent automatiquement à chaque salon que tu crées et sur un seul téléphone.", "Saved on this phone: used automatically for every room you create and on one phone.") + "</p>" : '<p class="note-box">' + tr("Seul l'hôte modifie ces réglages.", "Only the host can change these settings.") + "</p>") +
-        (hard ? '<div class="field"><span class="eyebrow">' + tr("L'unité des gages", "Forfeit unit") + "</span>" + seg("unit", [["gorgee", tr("Gorgées", "Sips")], ["shot", "Shots"], ["culsec", tr("Culs-secs", "Chugs")]]) +
-          '<p class="sm" style="margin:0">' + ({ gorgee: tr("« Bob boit 2 » = deux gorgées de sa boisson. Le plus doux.", "“Bob drinks 2” = two sips of their drink. The gentlest."), shot: tr("« Bob boit 2 » = deux shots : un vrai shot pour ceux qui boivent de l'alcool fort, sinon 3 gorgées de leur boisson par shot.", "“Bob drinks 2” = two shots: a real shot for spirit drinkers, otherwise 3 sips of their drink per shot."), culsec: tr("« Bob boit 2 » = finir son verre deux fois. Très fort : à garder pour les petites quantités.", "“Bob drinks 2” = finish their drink twice. Very strong: keep amounts small.") }[S.unit] || "") + "</p></div>" : "") +
-        '<div class="field"><span class="eyebrow">' + tr("Intensité", "Intensity") + "</span>" + seg("level", [["chill", "Chill ×½"], ["classique", tr("Classique", "Classic")], ["chaud", tr("Chaud ×2", "Wild ×2")], ["perso", "Perso"]]) +
-          '<p class="sm" style="margin:0">' + ({ chill: tr("Tous les nombres ci-dessous sont divisés par 2 (arrondis, au moins 1).", "All numbers below are halved (rounded, at least 1)."), classique: tr("Les nombres ci-dessous tels quels.", "The numbers below as they are."), chaud: tr("Tous les nombres ci-dessous sont doublés.", "All numbers below are doubled."), perso: tr("Les nombres ci-dessous tels quels : règle-les un par un.", "The numbers below as they are: set them one by one.") }[S.level] || "") + "</p></div>" +
-        (hard ? '<div class="field"><span class="eyebrow">' + tr("Garde-fous", "Safety") + '</span><div class="gs-box">' +
-        (S.capOff ? '<div class="gs-row"><span class="tx"><b>' + tr("Plafond par joueur", "Cap per player") + '</b><span class="sm">' + tr("Sans limite : seule la limite de chacun, dans son profil, compte.", "No limit: only each player's own limit, in their profile, applies.") + "</span></span></div>" :
-        step("cap", tr("Plafond par joueur", "Cap per player"), tr("Nombre maximum de gages à boire par joueur pour la soirée (" + gUnit(S, 2).replace(/^2 /, "") + "). Chacun a aussi sa limite dans son profil : la plus basse compte.", "Max forfeits a player drinks tonight (" + gUnit(S, 2).replace(/^2 /, "") + "). Everyone also has a limit in their profile: the lowest wins."), 1, 60)) +
-        '<div class="gs-row"><span class="tx"><b>' + tr("Sans limite", "No limit") + '</b><span class="sm">' + tr("Pas de plafond pour la soirée", "No cap for the night") + '</span></span><button type="button" class="gs-sw" data-gcapoff aria-pressed="' + !!S.capOff + '" aria-label="' + tr("Sans limite", "No limit") + '"' + dis + "><i></i></button></div>" +
-        step("water", tr("Rappel verre d'eau", "Water reminder"), S.water ? tr("Toutes les " + S.water + " " + gUnit(S, 2).replace(/^2 /, "") + " bues, le jeu propose un verre d'eau.", "Every " + S.water + " " + gUnit(S, 2).replace(/^2 /, "") + " drunk, the game suggests a glass of water.") : tr("Jamais", "Never"), 0, 30) +
-        '<div class="gs-row"><span class="tx"><b>' + tr("Joker eau", "Water joker") + '</b><span class="sm">' + tr("Une fois par partie, un verre d'eau à la place d'un gage", "Once per game, a glass of water instead of a forfeit") + '</span></span><button type="button" class="gs-sw" data-gjk aria-pressed="' + S.joker + '" aria-label="' + tr("Joker eau", "Water joker") + '"' + dis + "><i></i></button></div></div></div>" : "") +
-        '<div class="field"><span class="eyebrow">' + tr("Déclencheurs, jeu par jeu", "Triggers, game by game") + '</span><p class="sm" style="margin:0">' + (hard ? tr("Ce qui donne un gage dans chaque jeu, et combien. « boit » : le joueur boit. « distribue » : il choisit qui boit, en touchant les prénoms. 0 = désactivé.", "What gives a forfeit in each game, and how much. “drinks”: the player drinks. “hands out”: they pick who drinks by tapping names. 0 = off.") : tr("Ce qui donne un gage dans chaque jeu. 0 = désactivé.", "What gives a forfeit in each game. 0 = off.")) + '</p><div class="filters">' + games.map(x => '<button type="button" data-gg="' + x[0] + '" aria-pressed="' + (x[0] === game) + '">' + esc(x[1]) + "</button>").join("") + '</div><div class="gs-box">' +
-        evs.map(e => { const b = gBase(S, gid, e.ev), k = (game === "_fin" ? gid : game) + ":" + e.ev; return '<div class="gs-row"><span class="tx"><b>' + esc(e.label) + '</b><span class="sm gk-' + e.kind + '">' + kindTxt(e.kind) + (hard && b && mult !== 1 ? " · " + gUnit(S, Math.max(1, Math.round(b * mult))) : "") + '</span></span><button type="button" class="gs-b" data-gtr="' + esc(e.ev) + '" data-d="-1" aria-label="' + tr("Moins", "Less") + '"' + dis + '>−</button><b class="gs-n">' + b + '</b><button type="button" class="gs-b" data-gtr="' + esc(e.ev) + '" data-d="1" aria-label="' + tr("Plus", "More") + '"' + dis + ">+</button></div>"; }).join("") +
-        "</div></div>" +
-        '<div class="field"><span class="eyebrow">' + (hard ? tr("Gages sans alcool", "No-alcohol forfeits") : tr("Les gages", "The forfeits")) + '</span><p class="sm" style="margin:0">' + (hard ? tr("Pour ceux qui ne boivent pas ou qui ont atteint leur plafond. Vide = la liste du jeu.", "For players who don't drink or hit their cap. Empty = the built-in list.") : tr("Ajoute tes propres gages. Vide = la liste du jeu.", "Add your own forfeits. Empty = the built-in list.")) + '</p><div class="gs-box">' +
-        A(S.custom).map((t, i) => '<div class="gs-row"><span class="tx"><b>' + esc(t) + '</b></span>' + (editable ? '<button type="button" class="gs-b" data-gdel="' + i + '" aria-label="' + tr("Retirer", "Remove") + '">×</button>' : "") + "</div>").join("") +
-        (editable ? '<div class="gs-row"><input class="txt" id="gs-new" maxlength="120" placeholder="' + tr("Ex. : fais 10 pompes", "E.g. do 10 push-ups") + '"><button type="button" class="gs-b" data-gadd aria-label="' + tr("Ajouter", "Add") + '">+</button></div>' : "") + "</div></div>";
-      const tk = Object.keys(tally() || {});
-      if(tk.length){
-        const T = tally();
-        h += '<div class="field"><span class="eyebrow">' + tr("Compteur de la soirée", "Tonight's counter") + '</span><div class="gs-box">' +
-          tk.sort((a, b) => T[b].s - T[a].s).map(n => '<div class="gs-row"><span class="tx"><b>' + esc(n) + '</b><span class="sm">' + (!hard ? tr(T[n].t + " gage" + (T[n].t > 1 ? "s" : "") + " fait" + (T[n].t > 1 ? "s" : ""), T[n].t + " forfeit" + (T[n].t > 1 ? "s" : "") + " done") + "</span></span></div>" : "") + (!hard ? "" : tr(gUnit(S, T[n].s) + " bues (≈ " + String(Math.round((+T[n].v || 0) * 10) / 10).replace(".", ",") + " verre" + ((+T[n].v || 0) > 1 ? "s" : "") + ") · " + T[n].g + " distribuées · " + T[n].t + " gages sans alcool · " + T[n].w + " verres d'eau", gUnit(S, T[n].s) + " drunk (≈ " + (Math.round((+T[n].v || 0) * 10) / 10) + " drinks) · " + T[n].g + " handed out · " + T[n].t + " no-alcohol forfeits · " + T[n].w + " water") + '</span></span><b class="gs-n">' + T[n].s + "</b></div>")).join("") + "</div>" +
-          (editable && onReset ? '<button class="link" type="button" data-greset2>' + tr("Remettre le compteur à zéro", "Reset the counter") + "</button>" : "") + "</div>";
+      const amtTxt = n => (!n ? tr("désactivé", "off") : hard ? gUnit(S, n) : tr("un gage", "a forfeit"));
+      const stepper = (attr, n) => '<button type="button" class="gs-b" ' + attr + ' data-d="-1" aria-label="' + tr("Moins", "Less") + '"' + dis + '>−</button><b class="gs-n gd-n">' + esc(amtTxt(n)) + '</b><button type="button" class="gs-b" ' + attr + ' data-d="1" aria-label="' + tr("Plus", "More") + '"' + dis + ">+</button>";
+      const seg = (attr, cur, opts) => '<div class="seg">' + opts.map(o => '<button type="button" ' + attr + '="' + o[0] + '" aria-pressed="' + (cur === o[0]) + '"' + dis + ">" + o[1] + "</button>").join("") + "</div>";
+      const sw = (attr, on, label) => '<button type="button" class="gs-sw" ' + attr + ' aria-pressed="' + !!on + '" aria-label="' + esc(label) + '"' + dis + "><i></i></button>";
+      const step = (k, label, sub) => '<div class="gs-row"><span class="tx"><b>' + label + '</b><span class="sm">' + sub + '</span></span><button type="button" class="gs-b" data-gst="' + k + '" data-d="-1" aria-label="' + tr("Moins", "Less") + '"' + dis + '>−</button><b class="gs-n">' + S[k] + '</b><button type="button" class="gs-b" data-gst="' + k + '" data-d="1" aria-label="' + tr("Plus", "More") + '"' + dis + ">+</button></div>";
+      const link = (v, title, sub) => '<div class="gs-row"><button type="button" class="pf-go" data-gview="' + v + '"><span class="t">' + title + '<span class="sm" style="display:block; font-weight:600">' + sub + "</span></span>" + CHEV + "</button></div>";
+      let h = '<div class="gs pf2">';
+      if(view === "main"){
+        const nApart = gGames().filter(d => apart(S, d.id)).length, unitWord = gUnit(S, 2).replace(/^2 /, "");
+        h += '<div class="gs-box"><div class="gs-row"><span class="tx"><b>' + tr("Gages activés", "Forfeits on") + '</b><span class="sm">' + (hard ? tr("Les jeux affichent les gages à la fin des manches. Chacun peut jouer sans alcool.", "Games show forfeits at the end of rounds. Anyone can play without alcohol.") : tr("Les jeux donnent des gages à la fin des manches : défis, chansons, pompes…", "Games give forfeits at the end of rounds: dares, songs, push-ups…")) + "</span></span>" + sw("data-gon", S.on, tr("Gages activés", "Forfeits on")) + "</div></div>" +
+          (editable ? "" : '<p class="note-box">' + tr("Seul l'hôte modifie ces réglages.", "Only the host can change these settings.") + "</p>") +
+          (hard ? '<div class="field"><span class="eyebrow">' + tr("On boit en", "Drink in") + "</span>" + seg("data-gunit", S.unit, [["gorgee", tr("Gorgées", "Sips")], ["shot", "Shots"], ["culsec", tr("Culs-secs", "Chugs")]]) +
+            '<p class="sm pf-desc">' + ({ gorgee: tr("« Bob boit 2 » = deux gorgées de sa boisson. Le plus doux.", "“Bob drinks 2” = two sips of their drink. The gentlest."), shot: tr("« Bob boit 2 » = deux shots, ou 3 gorgées de sa boisson par shot s'il ne boit pas d'alcool fort.", "“Bob drinks 2” = two shots, or 3 sips of their drink per shot if they don't drink spirits."), culsec: tr("« Bob boit 2 » = finir son verre deux fois. Très fort.", "“Bob drinks 2” = finish their drink twice. Very strong.") }[S.unit] || "") + "</p></div>" : "") +
+          '<div class="field"><span class="eyebrow">' + tr("Niveau pour tous les jeux", "Level for all games") + "</span>" + seg("data-glevel", lv, LV.map(k => [k, GN[k]])) +
+            '<p class="sm pf-desc">' + ({ chill: tr("Gages légers : environ moitié moins à boire. Idéal pour commencer la soirée.", "Light forfeits: about half as much. Great to start the night."), classique: tr("Les gages prévus par chaque jeu, tels quels.", "Each game's forfeits as they are."), chaud: tr("Tous les gages sont doublés. Pour les soirées qui dérapent.", "All forfeits doubled. For wild nights.") }[lv]) +
+            tr(" Un jeu peut avoir son propre niveau dans « Déclencheurs par jeu ».", " A game can have its own level in “Triggers by game”.") + "</p></div>" +
+          (hard ? '<div class="field"><span class="eyebrow">' + tr("Garde-fous", "Safety") + '</span><div class="gs-box">' +
+            (S.capOff ? "" : step("cap", tr("Plafond par joueur", "Cap per player"), tr(unitWord.charAt(0).toUpperCase() + unitWord.slice(1) + " max par joueur pour la soirée. La limite de chacun, dans son profil, compte aussi.", "Max " + unitWord + " per player tonight. Each player's own limit also applies."))) +
+            '<div class="gs-row"><span class="tx"><b>' + tr("Sans plafond", "No cap") + "</b>" + (S.capOff ? '<span class="sm">' + tr("Seule la limite de chacun, dans son profil, compte.", "Only each player's own limit applies.") + "</span>" : "") + "</span>" + sw("data-gcapoff", S.capOff, tr("Sans plafond", "No cap")) + "</div>" +
+            step("water", tr("Verre d'eau", "Water"), S.water ? tr("Proposé toutes les " + S.water + " " + unitWord, "Suggested every " + S.water + " " + unitWord) : tr("Jamais", "Never")) +
+            '<div class="gs-row"><span class="tx"><b>' + tr("Joker eau", "Water joker") + '</b><span class="sm">' + tr("Une fois par partie, de l'eau à la place d'un gage", "Once per game, water instead of a forfeit") + "</span></span>" + sw("data-gjk", S.joker, tr("Joker eau", "Water joker")) + "</div></div></div>" : "") +
+          '<div class="field"><span class="eyebrow">' + tr("Dans les jeux", "In the games") + '</span><div class="gs-box">' +
+            link("jeux", tr("Déclencheurs par jeu", "Triggers by game"), nApart ? tr(nApart + (nApart > 1 ? " jeux à part" : " jeu à part") + ", les autres au niveau " + GN[lv], nApart + " game" + (nApart > 1 ? "s" : "") + " set apart, the rest at " + GN[lv]) : tr("Tous au niveau " + GN[lv], "All at " + GN[lv])) +
+            link("fin", tr("Fin de partie", "End of game"), hard ? tr("Le gagnant distribue " + gBase(S, (SB.games[0] || {}).id, "_win") + " · les autres boivent " + gBase(S, (SB.games[0] || {}).id, "_lose"), "Winner hands out " + gBase(S, (SB.games[0] || {}).id, "_win") + " · the others drink " + gBase(S, (SB.games[0] || {}).id, "_lose")) : tr("Les perdants ont un gage", "Losers get a forfeit")) +
+            link("sans", hard ? tr("Gages sans alcool", "No-alcohol forfeits") : tr("Les gages", "The forfeits"), A(S.custom).length ? tr(A(S.custom).length + " perso", A(S.custom).length + " custom") : tr("Liste du jeu", "Built-in list")) +
+          "</div></div>";
+        const tk = Object.keys(tally() || {});
+        if(tk.length){
+          const T = tally();
+          h += '<div class="field"><span class="eyebrow">' + tr("Compteur de la soirée", "Tonight's counter") + '</span><div class="gs-box">' +
+            tk.sort((a, b) => T[b].s - T[a].s).map(n => '<div class="gs-row"><span class="tx"><b>' + esc(n) + '</b><span class="sm">' + (!hard ? tr(T[n].t + " gage" + (T[n].t > 1 ? "s" : "") + " fait" + (T[n].t > 1 ? "s" : ""), T[n].t + " forfeit" + (T[n].t > 1 ? "s" : "") + " done") + "</span></span></div>" : tr(gUnit(S, T[n].s) + " bues (≈ " + String(Math.round((+T[n].v || 0) * 10) / 10).replace(".", ",") + " verre" + ((+T[n].v || 0) > 1 ? "s" : "") + ") · " + T[n].g + " distribuées · " + T[n].t + " gages sans alcool · " + T[n].w + " verres d'eau", gUnit(S, T[n].s) + " drunk (≈ " + (Math.round((+T[n].v || 0) * 10) / 10) + " drinks) · " + T[n].g + " handed out · " + T[n].t + " no-alcohol forfeits · " + T[n].w + " water") + '</span></span><b class="gs-n">' + T[n].s + "</b></div>")).join("") + "</div>" +
+            (editable && onReset ? '<button class="link" type="button" data-greset2>' + tr("Remettre le compteur à zéro", "Reset the counter") + "</button>" : "") + "</div>";
+        }
+      } else if(view === "jeux"){
+        h += backRow() + '<p class="sm pf-desc">' + tr("Par défaut, chaque jeu suit le niveau choisi pour tous (" + GN[lv] + "). Touche un jeu seulement si tu veux qu'il soit différent.", "By default, every game follows the level chosen for all (" + GN[lv] + "). Only open a game if you want it to be different.") + "</p>" +
+          (hard ? '<div class="gd-legend"><span><i class="gk-boit"></i>' + tr("boit", "drinks") + '</span><span><i class="gk-distribue"></i>' + tr("distribue (il choisit qui boit)", "hands out (picks who drinks)") + '</span><span><i class="gk-tous"></i>' + tr("tout le monde", "everyone") + "</span></div>" : "");
+        const fams = FILTERS.filter(f => ["votes", "bluff", "cartes", "musique"].indexOf(f[0]) >= 0).map(f => [f[1], gGames().filter(d => CATS[d.id] === f[0])]);
+        const rest = gGames().filter(d => ["votes", "bluff", "cartes", "musique"].indexOf(CATS[d.id]) < 0);
+        if(rest.length) fams.push([tr("Autres", "Others"), rest]);
+        fams.filter(f => f[1].length).forEach(f => {
+          h += '<div class="field"><span class="eyebrow">' + esc(f[0]) + '</span><div class="gs-box gd-list">';
+          f[1].forEach(d => {
+            const own = (S.glv || {})[d.id], hand = gameKeys(S, d.id).length > 0, glv = own || lv, open = openG === d.id, evs = evsOf(d.id);
+            const sum = evs.length + (evs.length > 1 ? tr(" déclencheurs", " triggers") : tr(" déclencheur", " trigger")) + " · " + (own === "off" ? tr("aucun gage", "no forfeits") : hand ? tr("réglé à la main", "set by hand") : own ? tr("niveau ", "level ") + GN[own] : tr("suit le niveau ", "follows ") + GN[lv]);
+            h += '<div class="gd-g"><button type="button" class="gd-h" data-gopen="' + d.id + '" aria-expanded="' + open + '"><span class="tx"><b>' + esc(d.name) + '</b><span class="sm">' + esc(sum) + "</span></span>" + (apart(S, d.id) ? '<span class="gd-tag">' + tr("à part", "custom") + "</span>" : "") + '<svg class="gd-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>';
+            if(open){
+              const curP = own === "off" ? "off" : hand ? "" : glv;
+              h += '<div class="gd-body">' + seg('data-gpre="' + d.id + '" data-p', curP, [["off", "Off"]].concat(LV.map(k => [k, GN[k]]))) +
+                evs.map(e => { const n = gAmount(S, d.id, e.ev); return '<div class="gd-t"><b>' + esc(e.label) + '</b><div class="gd-r"><span class="gd-pill gk-' + e.kind + '">' + kindTxt(e.kind) + '</span><span style="flex:1"></span>' + stepper('data-gtr="' + esc(e.ev) + '" data-gid="' + d.id + '"', n) + "</div></div>"; }).join("");
+              const e0 = evs[0], n0 = e0 ? gAmount(S, d.id, e0.ev) : 0;
+              if(e0) h += '<p class="sm" style="margin:0">' + esc(!n0 ? tr("Exemple : « " + e0.label + " » ne donne plus de gage.", "Example: “" + e0.label + "” no longer gives a forfeit.") : tr("Exemple : « " + e0.label + " » → " + (e0.kind === "tous" ? "tout le monde " + (hard ? "boit " + gUnit(S, n0) : "a un gage") : "Bob " + (hard ? kindTxt(e0.kind) + " " + gUnit(S, n0) : "a un gage")) + ".", "Example: “" + e0.label + "” → " + (e0.kind === "tous" ? "everyone " + (hard ? "drinks " + gUnit(S, n0) : "gets a forfeit") : "Bob " + (hard ? kindTxt(e0.kind) + " " + gUnit(S, n0) : "gets a forfeit")) + ".")) + "</p>";
+              if(apart(S, d.id) && editable) h += '<button class="link" type="button" data-greset="' + d.id + '" style="align-self:flex-start">' + tr("Revenir au niveau de tous les jeux", "Back to the level for all games") + "</button>";
+              h += "</div>";
+            }
+            h += "</div>";
+          });
+          h += "</div></div>";
+        });
+      } else if(view === "fin"){
+        const g0 = (SB.games[0] || {}).id;
+        h += backRow() + '<p class="sm pf-desc">' + tr("À la fin de chaque partie, quel que soit le jeu. Le niveau du jeu s'applique aussi.", "At the end of every game, whatever the game. The game's level applies too.") + '</p><div class="gs-box">' +
+          GEND.filter(e => hard || e.kind !== "distribue").map(e => { const b = gBase(S, g0, e.ev); return '<div class="gs-row"><span class="tx"><b>' + esc(e.label) + '</b><span class="sm gk-' + e.kind + '">' + kindTxt(e.kind) + '</span></span><button type="button" class="gs-b" data-gfin="' + e.ev + '" data-d="-1" aria-label="' + tr("Moins", "Less") + '"' + dis + '>−</button><b class="gs-n gd-n">' + esc(amtTxt(b)) + '</b><button type="button" class="gs-b" data-gfin="' + e.ev + '" data-d="1" aria-label="' + tr("Plus", "More") + '"' + dis + ">+</button></div>"; }).join("") + "</div>";
+      } else if(view === "sans"){
+        h += backRow() + '<p class="sm pf-desc">' + (hard ? tr("Pour ceux qui ne boivent pas ou qui ont atteint leur plafond. Vide = la liste du jeu.", "For players who don't drink or hit their cap. Empty = the built-in list.") : tr("Ajoute tes propres gages. Vide = la liste du jeu.", "Add your own forfeits. Empty = the built-in list.")) + '</p><div class="gs-box">' +
+          A(S.custom).map((t, i) => '<div class="gs-row"><span class="tx"><b>' + esc(t) + '</b></span>' + (editable ? '<button type="button" class="gs-b" data-gdel="' + i + '" aria-label="' + tr("Retirer", "Remove") + '">×</button>' : "") + "</div>").join("") +
+          (editable ? '<div class="gs-row"><input class="txt" id="gs-new" maxlength="120" placeholder="' + tr("Ex. : fais 10 pompes", "E.g. do 10 push-ups") + '"><button type="button" class="gs-b" data-gadd aria-label="' + tr("Ajouter", "Add") + '">+</button></div>' : "") + "</div>";
       }
       root.innerHTML = h + "</div>";
+      $("#pg-title").textContent = TITLES()[view];
       const upd = p => { set(Object.assign(get(), p)); draw(); };
-      $$("[data-gs]", root).forEach(b => b.addEventListener("click", () => upd({ [b.dataset.gs]: b.dataset.v })));
+      $$("[data-gback]", root).forEach(b => b.addEventListener("click", () => go("main")));
+      $$("[data-gview]", root).forEach(b => b.addEventListener("click", () => go(b.dataset.gview)));
+      if(!editable) return;
+      $$("[data-gunit]", root).forEach(b => b.addEventListener("click", () => upd({ unit: b.dataset.gunit })));
+      $$("[data-glevel]", root).forEach(b => b.addEventListener("click", () => { buzz(6); const S2 = get(), g = Object.assign({}, S2.glv); Object.keys(g).forEach(k => { if(g[k] === b.dataset.glevel && !gameKeys(S2, k).length) delete g[k]; }); upd({ level: b.dataset.glevel, glv: g }); }));
       $$("[data-gst]", root).forEach(b => b.addEventListener("click", () => { const k = b.dataset.gst, lim = k === "cap" ? [1, 60] : [0, 30]; upd({ [k]: Math.max(lim[0], Math.min(lim[1], (+get()[k] || 0) + +b.dataset.d)) }); }));
-      $$("[data-gtr]", root).forEach(b => b.addEventListener("click", () => { const S2 = get(), k = (game === "_fin" ? gid : game) + ":" + b.dataset.gtr, t = Object.assign({}, S2.trig); t[k] = Math.max(0, Math.min(10, gBase(S2, game === "_fin" ? gid : game, b.dataset.gtr) + +b.dataset.d)); if(game === "_fin") SB.games.forEach(d => { t[d.id + ":" + b.dataset.gtr] = t[k]; }); upd({ trig: t }); }));
-      $$("[data-gg]", root).forEach(b => b.addEventListener("click", () => { game = b.dataset.gg; draw(); }));
-      const on = $("[data-gon]", root); if(on && editable) on.addEventListener("click", () => upd({ on: !get().on }));
-      const jk = $("[data-gjk]", root); if(jk && editable) jk.addEventListener("click", () => upd({ joker: !get().joker }));
-      const co = $("[data-gcapoff]", root); if(co && editable) co.addEventListener("click", () => upd({ capOff: !get().capOff }));
+      $$("[data-gopen]", root).forEach(b => b.addEventListener("click", () => { openG = openG === b.dataset.gopen ? "" : b.dataset.gopen; buzz(6); draw(); }));
+      // Niveau d'un jeu : Off / Basique / Moyen / Hard. Choisir le niveau de tous les jeux le refait suivre le niveau général.
+      $$("[data-gpre]", root).forEach(b => b.addEventListener("click", () => {
+        const S2 = get(), gid = b.dataset.gpre, p = b.dataset.p, g = Object.assign({}, S2.glv), t = Object.assign({}, S2.trig);
+        gameKeys(S2, gid).forEach(k => { delete t[k]; });
+        if(p === lvOf(S2)) delete g[gid]; else g[gid] = p;
+        buzz(6); upd({ glv: g, trig: t });
+      }));
+      // Réglage à la main : on fige les valeurs affichées du jeu (niveau Moyen = tels quels), puis on change celle-là.
+      $$("[data-gtr]", root).forEach(b => b.addEventListener("click", () => {
+        const S2 = get(), gid = b.dataset.gid, ev = b.dataset.gtr, g = Object.assign({}, S2.glv), t = Object.assign({}, S2.trig);
+        evsOf(gid).forEach(e => { t[gid + ":" + e.ev] = gAmount(S2, gid, e.ev); });
+        t[gid + ":" + ev] = Math.max(0, Math.min(10, t[gid + ":" + ev] + +b.dataset.d));
+        g[gid] = "classique"; buzz(6); upd({ glv: g, trig: t });
+      }));
+      $$("[data-greset]", root).forEach(b => b.addEventListener("click", () => { const S2 = get(), gid = b.dataset.greset, g = Object.assign({}, S2.glv), t = Object.assign({}, S2.trig); delete g[gid]; gameKeys(S2, gid).forEach(k => { delete t[k]; }); buzz(6); upd({ glv: g, trig: t }); }));
+      $$("[data-gfin]", root).forEach(b => b.addEventListener("click", () => { const S2 = get(), t = Object.assign({}, S2.trig), ev = b.dataset.gfin, v = Math.max(0, Math.min(10, gBase(S2, (SB.games[0] || {}).id, ev) + +b.dataset.d)); SB.games.forEach(d => { t[d.id + ":" + ev] = v; }); upd({ trig: t }); }));
+      const on = $("[data-gon]", root); if(on) on.addEventListener("click", () => upd({ on: !get().on }));
+      const jk = $("[data-gjk]", root); if(jk) jk.addEventListener("click", () => upd({ joker: !get().joker }));
+      const co = $("[data-gcapoff]", root); if(co) co.addEventListener("click", () => upd({ capOff: !get().capOff }));
       $$("[data-gdel]", root).forEach(b => b.addEventListener("click", () => { const c = A(get().custom).slice(); c.splice(+b.dataset.gdel, 1); upd({ custom: c }); }));
       const add = $("[data-gadd]", root); if(add) add.addEventListener("click", () => { const v = clean($("#gs-new", root).value, 120); if(v) upd({ custom: A(get().custom).concat([v]) }); });
       const rs = $("[data-greset2]", root); if(rs) armTap(rs, () => { onReset(); draw(); }, tr("Touche encore pour remettre à zéro", "Tap again to reset"));
@@ -2416,7 +2488,7 @@ function renderHomeProfile(){
   const key = JSON.stringify([S.on, S.level, S.unit, gp, LANG]);
   if(el.dataset.key === key) return; el.dataset.key = key;
   el.innerHTML = '<button type="button" data-hme><b>' + tr("Mon profil", "My profile") + '</b><span class="sm">' + esc(gProfShort()) + "</span></button>" +
-    '<button type="button" data-hgs><b>' + tr("Mes gages", "My forfeits") + '</b><span class="sm">' + (S.on ? esc({ chill: "Chill", classique: tr("Classique", "Classic"), chaud: tr("Apéro chaud", "Wild night"), perso: "Perso" }[S.level]) + " · " + gUnit(S, 2).replace(/^2 /, "") : tr("Désactivés", "Off")) + "</span></button>";
+    '<button type="button" data-hgs><b>' + tr("Mes gages", "My forfeits") + '</b><span class="sm">' + (S.on ? esc(GLV_NAME()[S.level] || "") + " · " + gUnit(S, 2).replace(/^2 /, "") : tr("Désactivés", "Off")) + "</span></button>";
   $("[data-hme]", el).addEventListener("click", () => gProfilePage());
   $("[data-hgs]", el).addEventListener("click", () => gSettingsPage(gLocalSettings, gSaveSettings, true, () => ({}), null));
 }
@@ -2564,7 +2636,7 @@ function gSalonBar(g){
   const S = gSettings(g && g.gages), gp = store().gp || {}, hard = roomHard();
   const at = alcTotals(), key = JSON.stringify([S.on, S.level, S.unit, N.host, gp, hard, at]);
   if(el.dataset.key === key) return; el.dataset.key = key;
-  el.innerHTML = '<button type="button" data-gset><b>' + tr("Gages", "Forfeits") + '</b><span class="sm">' + (S.on ? (hard ? esc({ chill: "Chill", classique: tr("Classique", "Classic"), chaud: tr("Apéro chaud", "Wild night"), perso: "Perso" }[S.level]) + " · " + gUnit(S, 2).replace(/^2 /, "") : tr("Activés", "On")) : tr("Désactivés", "Off")) + "</span></button>" +
+  el.innerHTML = '<button type="button" data-gset><b>' + tr("Gages", "Forfeits") + '</b><span class="sm">' + (S.on ? (hard ? esc(GLV_NAME()[S.level] || "") + " · " + gUnit(S, 2).replace(/^2 /, "") : tr("Activés", "On")) : tr("Désactivés", "Off")) + "</span></button>" +
     '<button type="button" data-gme><b>' + tr("Mon profil", "My profile") + '</b><span class="sm">' + (hard ? esc(gProfShort()) : tr("Photo, prénom, mode", "Photo, name, mode")) + "</span></button>" +
     (hard ? '<button type="button" data-galc style="grid-column:1/-1"><b>' + tr("Compteur d'alcool", "Drink counter") + '</b><span class="sm">' + esc(tr("Qui a bu quoi ce soir · moi : ", "Who drank what tonight · me: ") + alcStd(at.tot)) + "</span></button>" : "");
   const ga = $("[data-galc]", el); if(ga) ga.addEventListener("click", () => alcTablePage(alcNetRows));
@@ -2577,7 +2649,7 @@ function gLocalBar(){
   if(!el){ el = document.createElement("div"); el.id = "ll-gages"; el.className = "gbar"; box.parentNode.insertBefore(el, box); }
   const S = gLocalSettings();
   const hard = myHard();
-  el.innerHTML = '<button type="button" data-gset><b>' + tr("Gages", "Forfeits") + '</b><span class="sm">' + (S.on ? (hard ? esc({ chill: "Chill", classique: tr("Classique", "Classic"), chaud: tr("Apéro chaud", "Wild night"), perso: "Perso" }[S.level]) : tr("Activés", "On")) : tr("Désactivés", "Off")) + "</span></button>" +
+  el.innerHTML = '<button type="button" data-gset><b>' + tr("Gages", "Forfeits") + '</b><span class="sm">' + (S.on ? (hard ? esc(GLV_NAME()[S.level] || "") : tr("Activés", "On")) : tr("Désactivés", "Off")) + "</span></button>" +
     (hard ? "" : '<span hidden data-gsob></span>') + (!hard ? "" : '<button type="button" data-gsob><b>' + tr("Qui boit quoi ?", "Who drinks what?") + '</b><span class="sm">' + tr("Boisson et limite de chacun", "Everyone's drink and limit") + "</span></button>" +
       '<button type="button" data-galc style="grid-column:1/-1"><b>' + tr("Compteur d'alcool", "Drink counter") + '</b><span class="sm">' + esc(tr("Qui a bu quoi ce soir · moi : ", "Who drank what tonight · me: ") + alcStd(alcTotals().tot)) + "</span></button>");
   const ga = $("[data-galc]", el); if(ga) ga.addEventListener("click", () => alcTablePage(alcLocalRows));

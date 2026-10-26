@@ -1,15 +1,17 @@
 {
- "version": "4.31.0",
+ "version": "4.32.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Compteur d'alcool : le + demande ce que tu viens de boire (demi, pinte, bière forte, cidre, vin, champagne, cocktail, long drink, shot) et compte chaque verre à sa vraie valeur en verres standard. Plus besoin de changer de boisson dans le profil"
+  "Gages redessinés : un niveau pour tous les jeux (Basique, Moyen, Hard) règle tout d'un coup, sans toucher aux paramètres de chaque jeu",
+  "« Déclencheurs par jeu » a son propre écran : les jeux sont rangés par famille, chacun suit le niveau général ou en a un à part (Off, Basique, Moyen, Hard). Chaque déclencheur est écrit en clair avec une étiquette boit / distribue / tout le monde et le vrai nombre de gorgées, plus un exemple",
+  "Fin de partie et gages sans alcool ont aussi leur écran. « Terminé » ou retour ramène à la page Gages"
  ],
  "files": {
   "core.js": {
-   "h": "a88a2581be9451c54538d275c1878d97da5f98830ce4cee22e7b15ee6e2b3539",
-   "s": 296310
+   "h": "3c829841fe70316de6d4c938e4ddf860bbb225de079e307baa499bc330651980",
+   "s": 303957
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -216,8 +218,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "b37d58c32ba67a52c19abe0df89ee06c618a43a83619b6d51c07c1e5996f8e0a",
-   "s": 58742
+   "h": "a3758da0fc99cb6a5d511bdeb165157f3d2721366d26a3633c9e5e86d02ff6e5",
+   "s": 60334
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
