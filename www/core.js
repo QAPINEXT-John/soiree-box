@@ -68,7 +68,7 @@ const EN_HTML = {
   "Salon fermé": "Room closed", "L'hôte est parti": "The host left",
   "La personne qui a créé le salon a fermé l'appli. Crée un nouveau salon pour continuer.": "The person who created the room closed the app. Create a new room to keep playing.",
   "Retour à l'accueil": "Back to home", "Sur ce téléphone": "On this phone", "Accueil": "Home", "Un seul téléphone": "One phone",
-  "Choisis un jeu. Le téléphone passe de main en main, ou tu joues contre des robots.": "Pick a game. Pass the phone around, or play against bots.",
+  "Entre vos prénoms une fois, puis choisis un jeu. Le téléphone passe de main en main, ou tu joues contre des robots.": "Enter your names once, then pick a game. Pass the phone around, or play against bots.",
   "Retour": "Back", "+ Ajouter un joueur": "+ Add a player", "C'est parti": "Let's go", "Terminé": "Done",
   "Lancer un jeu": "Start a game", "Fermer": "Close"
 };
@@ -808,7 +808,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.21.1";
+const VERSION = "4.22.0";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -1658,17 +1658,53 @@ const L = { def: null, tick: null };
 function openLocalList(){
   accent(""); keepAwake(false); L.def = null; L.tick = null;
   const gs0 = $("#gage-sheet"); if(gs0) gs0.remove();
-  const t = $("#ll-tiles");
-  t.innerHTML = SB.games.filter(d => d.local && gameOk(d, myKid(), myHard())).sort((a, b) => isWip(a) - isWip(b)).map(d => {
-    const lp = d.local.players;
-    const meta = (lp ? (lp.min === 1 ? tr("Seul ou jusqu'à " + lp.max + " · robots", "Solo or up to " + lp.max + " · bots") : rangeTxt(lp)) : tr("Tout le groupe", "Whole group")) + (d.hot && myHard() ? " · 18+" : "");
-    return tileHTML(d, { metaHTML: meta });
-  }).join("");
-  $$(".tile", t).forEach(b => b.addEventListener("click", () => { const d = SB.byId[b.dataset.id]; if(d.local.players) openLocalPlayers(d); else startLocal(d, []); }));
+  renderLLPlayers();
+  renderLLTiles();
   const lt = $("#ll-tally"), th = tallyHTML(LT.tally, LT.played);
   if(lt){ lt.hidden = !th; lt.innerHTML = th; }
   gLocalBar();
   show("llist");
+}
+/* Les joueurs, saisis une fois sur la première page « Un seul téléphone » : chaque jeu les reprend directement. */
+const llNames = () => { const out = []; A(store().localNames).forEach(x => { const n = clean(x, 16); if(n && !out.some(o => o.toLowerCase() === n.toLowerCase())) out.push(n); }); return out.slice(0, 20); };
+const llFits = (lp, n) => n >= lp.min && (!lp.max || n <= lp.max);
+function renderLLPlayers(focus){
+  const t = $("#ll-tiles"); if(!t) return;
+  let el = $("#ll-players");
+  if(!el){ el = document.createElement("div"); el.id = "ll-players"; el.className = "field"; t.parentNode.insertBefore(el, $("#ll-gages") || t); }
+  const names = llNames();
+  el.innerHTML = '<span class="eyebrow">' + tr("Les joueurs", "Players") + (names.length ? " (" + names.length + ")" : "") + "</span>" +
+    '<div class="llp">' + names.map((n, i) => '<span class="llp-c">' + esc(n) + '<button type="button" data-llx="' + i + '" aria-label="' + tr("Retirer ", "Remove ") + esc(n) + '">×</button></span>').join("") + "</div>" +
+    '<div class="row"><input class="txt" id="ll-new" maxlength="16" autocomplete="off" placeholder="' + (names.length ? tr("Ajouter un joueur", "Add a player") : tr("Prénom du premier joueur", "First player's name")) + '"><button class="btn ghost" type="button" data-lladd style="flex:none; width:auto; padding:0 18px">' + tr("Ajouter", "Add") + "</button></div>" +
+    (names.length ? "" : '<p class="sm" style="margin:0">' + tr("Entre vos prénoms une fois : tous les jeux les reprennent.", "Enter your names once: every game uses them.") + "</p>");
+  const inp = $("#ll-new", el);
+  const add = () => {
+    const n = clean(inp.value, 16); if(!n) return;
+    const cur = llNames();
+    if(cur.some(o => o.toLowerCase() === n.toLowerCase())){ toast(tr("« " + n + " » est déjà dans la liste.", "“" + n + "” is already in the list.")); return; }
+    if(cur.length >= 20){ toast(tr("20 joueurs maximum.", "20 players max.")); return; }
+    buzz(6); persist({ localNames: cur.concat([n]) }); renderLLPlayers(true); renderLLTiles();
+  };
+  $("[data-lladd]", el).addEventListener("click", add);
+  inp.addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); add(); } });
+  $$("[data-llx]", el).forEach(b => b.addEventListener("click", () => { const cur = llNames(); cur.splice(+b.dataset.llx, 1); persist({ localNames: cur }); buzz(6); renderLLPlayers(); renderLLTiles(); }));
+  if(focus) setTimeout(() => { try{ inp.focus(); }catch(e){} }, 30);
+}
+function renderLLTiles(){
+  const t = $("#ll-tiles"), n = llNames().length;
+  t.innerHTML = SB.games.filter(d => d.local && gameOk(d, myKid(), myHard())).sort((a, b) => isWip(a) - isWip(b)).map(d => {
+    const lp = d.local.players;
+    const need = lp && n && !llFits(lp, n) ? ' <b class="llp-need">' + (n < lp.min ? tr(lp.min + " joueurs min.", lp.min + " players min.") : tr(lp.max + " joueurs max.", lp.max + " players max.")) + "</b>" : "";
+    const meta = (lp ? (lp.min === 1 ? tr("Seul ou jusqu'à " + lp.max + " · robots", "Solo or up to " + lp.max + " · bots") : rangeTxt(lp)) : tr("Tout le groupe", "Whole group")) + (d.hot && myHard() ? " · 18+" : "") + need;
+    return tileHTML(d, { metaHTML: meta });
+  }).join("");
+  $$(".tile", t).forEach(b => b.addEventListener("click", () => {
+    const d = SB.byId[b.dataset.id], lp = d.local.players, names = llNames();
+    if(!lp){ startLocal(d, []); return; }
+    // Les joueurs sont déjà entrés et le nombre convient : on lance directement.
+    if(llFits(lp, names.length)){ startLocal(d, names); return; }
+    openLocalPlayers(d);
+  }));
 }
 let LP = { def: null, names: [] };
 const LT = { tally: [], played: 0 };
@@ -1681,7 +1717,9 @@ function openLocalPlayers(def){
   accent(def.id);
   $("#lp-title").textContent = def.name;
   $("#lp-range").textContent = lp.max ? tr("Joueurs (" + lp.min + " à " + lp.max + ")", "Players (" + lp.min + " to " + lp.max + ")") : tr("Joueurs (" + lp.min + " minimum)", "Players (" + lp.min + " minimum)");
-  $("#lp-err").hidden = true;
+  const n0 = llNames().length, er = $("#lp-err");
+  er.hidden = !n0 || llFits(lp, n0);
+  if(!er.hidden) er.textContent = n0 < lp.min ? tr("Ce jeu se joue à " + lp.min + " joueurs minimum : ajoute des prénoms.", "This game needs at least " + lp.min + " players: add some names.") : tr("Ce jeu se joue à " + lp.max + " joueurs maximum : retire des prénoms pour cette partie.", "This game is for " + lp.max + " players max: remove some names for this game.");
   renderLocalPlayers();
   show("lplayers");
 }

@@ -1,4 +1,8 @@
 {
+  "4.22.0": [
+    "Un seul téléphone : entre les prénoms des joueurs dès la première page. Ensuite, toucher un jeu le lance directement avec ces joueurs",
+    "Si un jeu demande plus ou moins de joueurs, sa tuile l'indique, et l'appli te propose d'ajuster la liste"
+  ],
   "4.21.1": [
     "Je n'ai jamais… sur un seul téléphone : nouveau mode « Aux points », sans élimination. Chaque « déjà fait » rapporte 1 point (2 sur une phrase en or), le plus de points gagne"
   ],

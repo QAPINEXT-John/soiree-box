@@ -1,15 +1,16 @@
 {
- "version": "4.21.1",
+ "version": "4.22.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Je n'ai jamais… sur un seul téléphone : nouveau mode « Aux points », sans élimination. Chaque « déjà fait » rapporte 1 point (2 sur une phrase en or), le plus de points gagne"
+  "Un seul téléphone : entre les prénoms des joueurs dès la première page. Ensuite, toucher un jeu le lance directement avec ces joueurs",
+  "Si un jeu demande plus ou moins de joueurs, sa tuile l'indique, et l'appli te propose d'ajuster la liste"
  ],
  "files": {
   "core.js": {
-   "h": "f122bd892967acc8de51ea916698e15c4c57cb4c3f54318be95fa857c6f406f0",
-   "s": 276936
+   "h": "5c2fd965bc503d36c5eac7dadab40cf66a2b2da7eb28056698afdae7816aa2c1",
+   "s": 280446
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -200,8 +201,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "3d6d3b8ce591540e1b4957c8fbcc973b45b81ee81601fdcce547687fd40702c3",
-   "s": 52455
+   "h": "8e71a3592116f14c5f33f7477c1567d76ae9d728fb6c96130e9def596fce1c8a",
+   "s": 53003
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
