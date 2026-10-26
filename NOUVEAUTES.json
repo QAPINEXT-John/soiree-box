@@ -1,4 +1,7 @@
 {
+  "4.27.1": [
+    "Règles pendant la partie : elles s'ouvrent dans un panneau par-dessus le jeu, qui reste visible et continue derrière. On ferme en touchant « Fermer », le jeu, ou encore le « ? »"
+  ],
   "4.27.0": [
     "Pendant une partie, un bouton « ? » en haut de l'écran ouvre les règles du jeu. « Terminé » ramène pile où on en était, dans tous les jeux, en ligne et sur un seul téléphone"
   ],

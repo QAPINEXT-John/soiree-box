@@ -755,6 +755,7 @@ let current = "home";
 function show(name){
   if(current === name) return;
   closeSheet();
+  if(name !== "game" && name !== "local") closeRulesOv();
   SCREENS.forEach(s => { $("#s-" + s).hidden = s !== name; });
   const el = $("#s-" + name); if(el){ el.scrollTop = 0; enter(el); }
   current = name; trail("Écran " + name);
@@ -780,6 +781,7 @@ function armedBack(msg, action){
   backArm = Date.now(); toast(msg); return true;
 }
 SB.back = function(){
+  if(closeRulesOv()) return true;
   if(sheetOpen){ closeSheet(); return true; }
   if(current === "page"){ SB.closePage(); return true; }
   if(current === "lplayers"){ openLocalList(); return true; }
@@ -808,7 +810,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.27.0";
+const VERSION = "4.27.1";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -1001,6 +1003,19 @@ function openRules(def, inGame){
       esc(rangeLong(def)) + (def.local ? tr(" · aussi sur un seul téléphone", " · also on a single phone") : "") + '</span></div>' +
       '<ol class="howto" style="margin:0; padding-left:30px; display:flex; flex-direction:column; gap:6px">' + A(def.rules).map(x => "<li>" + esc(x) + "</li>").join("") + "</ol>";
   }, () => accent(inGame ? def.id : ""));
+}
+
+// Règles par-dessus la partie : un panneau qui laisse voir le jeu derrière (la partie continue).
+function closeRulesOv(){ const o = document.getElementById("rules-ov"); if(!o) return false; o.classList.remove("on"); setTimeout(() => o.remove(), 200); return true; }
+function openRulesOv(def){
+  closeRulesOv();
+  const o = document.createElement("div"); o.id = "rules-ov"; o.className = "rules-ov acc-" + def.id;
+  o.innerHTML = '<div class="rules-in" role="dialog" aria-modal="true" aria-labelledby="ro-t"><div class="rules-hd"><span class="gsq">' + esc(def.glyph || "") + '</span><b id="ro-t">' + esc(def.name) + '</b><button type="button" class="link" data-roc>' + tr("Fermer", "Close") + "</button></div>" +
+    '<p class="sm" style="margin:0">' + esc(def.tag || "") + "</p>" +
+    '<ol class="howto">' + A(def.rules).map(x => "<li>" + esc(x) + "</li>").join("") + "</ol></div>";
+  document.body.appendChild(o);
+  o.addEventListener("click", e => { if(e.target === o || e.target.closest("[data-roc]")) closeRulesOv(); });
+  requestAnimationFrame(() => o.classList.add("on"));
 }
 
 /* =================== Accueil =================== */
@@ -1679,6 +1694,7 @@ function launch(def){
 /* =================== Un seul téléphone =================== */
 const L = { def: null, tick: null };
 function openLocalList(){
+  closeRulesOv();
   accent(""); keepAwake(false); L.def = null; L.tick = null;
   const gs0 = $("#gage-sheet"); if(gs0) gs0.remove();
   renderLLPlayers();
@@ -2564,7 +2580,7 @@ SB.boot = function(){
   // Rappel des règles pendant une partie (en réseau ou sur un seul téléphone).
   $$("[data-grules]").forEach(b => b.addEventListener("click", () => {
     const g = N.nr ? G() : null, def = current === "local" ? L.def : g && g.game ? SB.byId[g.game] : null;
-    if(def){ buzz(6); openRules(def, true); }
+    if(def){ buzz(6); if(document.getElementById("rules-ov")) closeRulesOv(); else openRulesOv(def); }
   }));
   $$("[data-bug]").forEach(b => {
     if(b.classList.contains("bugbtn")) b.innerHTML = BUGICON; else { const i = b.querySelector(".bi"); if(i) i.innerHTML = BUGICON; }
