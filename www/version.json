@@ -1,15 +1,15 @@
 {
- "version": "4.29.3",
+ "version": "4.29.4",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Blind test : la musique s'arrête quand on quitte la partie (avant, l'extrait continuait en fond)"
+  "Dans les menus, « robots » devient « bots » (jouer seul contre des bots)"
  ],
  "files": {
   "core.js": {
-   "h": "df7477833633c59cb11a88a333c4665407000b07275d69589f01ccc843832b6d",
-   "s": 289658
+   "h": "8a29870cfa19c4b0d9830e97ea6cd14cfbbd06b0b97333d0e1bce89ae64a1e0e",
+   "s": 289652
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -104,16 +104,16 @@
    "s": 66119
   },
   "games/dernierecarte.js": {
-   "h": "261f6f864598fa19a8be201aa5d3db4559e37b2684bf2f7989871c3be2059c45",
-   "s": 63828
+   "h": "7c7a748fc9dec39eadf43a21cfd74a15210f659570ace6a2c405662ebe5400df",
+   "s": 63820
   },
   "games/dixmais.js": {
    "h": "21e5cd474d7406cfd984dccc513e0726f3d15aa9465e67e330e8419a44a1395e",
    "s": 59827
   },
   "games/grille.js": {
-   "h": "7c4314706be865538bafd102483d1fd73e8a695dc9fbdccc201dbd162cb83a95",
-   "s": 53234
+   "h": "92cb0a46309698bae480d690a24ae7c5d1fcb1a32b71bf050d1fa9a9f99d2a0b",
+   "s": 53226
   },
   "games/jamais.js": {
    "h": "10cb1a7dce338f2ac90c949446b0a6bf3066ccefe0ca7343b54035932e4a804c",
@@ -132,8 +132,8 @@
    "s": 70478
   },
   "games/menteurs.js": {
-   "h": "feb5a4846cff6c4e3cb22bbc7c485bcc1be7cc6463401c04d91dc6cba1729083",
-   "s": 44488
+   "h": "edd399c1f61cfda797581e6d716f50bd0c544120407ee0400579942c5a8f5f3e",
+   "s": 44480
   },
   "games/motsint.js": {
    "h": "aaa32c1559f8fa3eabdcbe8e06abaf54d5547cb48043476f937299a249dd0686",
@@ -216,8 +216,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "56ba25843e95ed9b1420ee71f651e28b71e1024d3531c33ed82a47505ea3968f",
-   "s": 54936
+   "h": "707ed41f16ad447c676b7a2dadf21a72f95a9ef356437387388fad3fe9b8de88",
+   "s": 54932
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",

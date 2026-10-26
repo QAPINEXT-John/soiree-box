@@ -1,4 +1,7 @@
 {
+  "4.29.4": [
+    "Dans les menus, « robots » devient « bots » (jouer seul contre des bots)"
+  ],
   "4.29.3": [
     "Blind test : la musique s'arrête quand on quitte la partie (avant, l'extrait continuait en fond)"
   ],

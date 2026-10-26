@@ -59,7 +59,7 @@ SB.setLang = function(l){ if((l === "fr" || l === "en") && l !== LANG){ persist(
 const EN_HTML = {
   "Un salon, un code, et toute la bande joue, chacun sur son téléphone.": "One room, one code, and the whole crew plays, each on their own phone.",
   "Ton prénom": "Your name", "Léa": "Alex", "Créer un salon": "Create a room", "Code du salon": "Room code", "Rejoindre": "Join",
-  "Jouer sur un seul téléphone": "Play on one phone", "On se le passe, ou on joue contre des robots": "Pass it around, or play against bots",
+  "Jouer sur un seul téléphone": "Play on one phone", "On se le passe, ou on joue contre des bots": "Pass it around, or play against bots",
   "Les jeux": "Games", "Un bug, un souci ?": "Bug or problem?", "Signale-le": "Report it",
   "Salon": "Room", "Hors ligne…": "Offline…", "Signaler un bug": "Report a bug", "Règles du jeu": "Game rules", "Quitter": "Leave",
   "Code à partager": "Code to share", "Partager l'invitation": "Share the invite", "QR code du salon": "Room QR code", "Mon profil": "My profile", "Invitation": "Invite", "Choisis un jeu": "Pick a game",
@@ -68,7 +68,7 @@ const EN_HTML = {
   "Salon fermé": "Room closed", "L'hôte est parti": "The host left",
   "La personne qui a créé le salon a fermé l'appli. Crée un nouveau salon pour continuer.": "The person who created the room closed the app. Create a new room to keep playing.",
   "Retour à l'accueil": "Back to home", "Sur ce téléphone": "On this phone", "Accueil": "Home", "Un seul téléphone": "One phone",
-  "Entre vos prénoms une fois, puis choisis un jeu. Le téléphone passe de main en main, ou tu joues contre des robots.": "Enter your names once, then pick a game. Pass the phone around, or play against bots.",
+  "Entre vos prénoms une fois, puis choisis un jeu. Le téléphone passe de main en main, ou tu joues contre des bots.": "Enter your names once, then pick a game. Pass the phone around, or play against bots.",
   "Retour": "Back", "+ Ajouter un joueur": "+ Add a player", "C'est parti": "Let's go", "Terminé": "Done",
   "Lancer un jeu": "Start a game", "Fermer": "Close"
 };
@@ -813,7 +813,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.29.3";
+const VERSION = "4.29.4";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -1754,7 +1754,7 @@ function renderLLTiles(){
   t.innerHTML = SB.games.filter(d => d.local && gameOk(d, myKid(), myHard())).sort((a, b) => isWip(a) - isWip(b)).map(d => {
     const lp = d.local.players;
     const need = lp && n && !llFits(lp, n) ? ' <b class="llp-need">' + (n < lp.min ? tr(lp.min + " joueurs min.", lp.min + " players min.") : tr(lp.max + " joueurs max.", lp.max + " players max.")) + "</b>" : "";
-    const meta = (lp ? (lp.min === 1 ? tr("Seul ou jusqu'à " + lp.max + " · robots", "Solo or up to " + lp.max + " · bots") : rangeTxt(lp)) : tr("Tout le groupe", "Whole group")) + (d.hot && myHard() ? " · 18+" : "") + need;
+    const meta = (lp ? (lp.min === 1 ? tr("Seul ou jusqu'à " + lp.max + " · bots", "Solo or up to " + lp.max + " · bots") : rangeTxt(lp)) : tr("Tout le groupe", "Whole group")) + (d.hot && myHard() ? " · 18+" : "") + need;
     return tileHTML(d, { metaHTML: meta });
   }).join("");
   $$(".tile", t).forEach(b => b.addEventListener("click", () => {

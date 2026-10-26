@@ -657,11 +657,11 @@ const DEF = {
       function setup(){
         clearTimeout(timer);
         const total = names.length + bots;
-        screen(root, "su" + bots + rounds + JSON.stringify(R), CSS + '<p class="howto">' + (names.length > 1 ? tr("Les joueurs se passent le téléphone à leur tour : les mains restent cachées.", "Players pass the phone around on their turn: hands stay hidden.") : tr("Une partie contre les robots.", "A game against the bots.")) + "</p>" +
-          '<div class="field"><span class="eyebrow">' + tr("Robots", "Bots") + '</span><div class="seg">' + [0, 1, 2, 3].map(b => '<button type="button" data-b="' + b + '" aria-pressed="' + (b === bots) + '">' + b + "</button>").join("") + "</div></div>" +
+        screen(root, "su" + bots + rounds + JSON.stringify(R), CSS + '<p class="howto">' + (names.length > 1 ? tr("Les joueurs se passent le téléphone à leur tour : les mains restent cachées.", "Players pass the phone around on their turn: hands stay hidden.") : tr("Une partie contre les bots.", "A game against the bots.")) + "</p>" +
+          '<div class="field"><span class="eyebrow">' + tr("Bots", "Bots") + '</span><div class="seg">' + [0, 1, 2, 3].map(b => '<button type="button" data-b="' + b + '" aria-pressed="' + (b === bots) + '">' + b + "</button>").join("") + "</div></div>" +
           '<div class="field"><span class="eyebrow">' + tr("Manches", "Rounds") + '</span><div class="seg">' + [1, 3, 5].map(x => '<button type="button" data-r="' + x + '" aria-pressed="' + (x === rounds) + '">' + x + "</button>").join("") + "</div></div>" +
           '<div class="field"><span class="eyebrow">' + tr("Règles maison", "House rules") + '</span><div class="packs">' + RULES.map(x => '<button type="button" class="pack" data-s="' + x[0] + '" aria-pressed="' + R[x[0]] + '"><span class="box">✓</span><span class="tx"><span class="nm">' + x[2] + '</span><span class="ds">' + x[3] + "</span></span></button>").join("") + "</div></div>" +
-          (total < 2 ? '<p class="err">' + tr("Ajoute au moins un robot pour jouer seul.", "Add at least one bot to play solo.") + "</p>" : total > 10 ? '<p class="err">' + tr("10 joueurs maximum, robots compris.", "10 players max, bots included.") + "</p>" : "") +
+          (total < 2 ? '<p class="err">' + tr("Ajoute au moins un bot pour jouer seul.", "Add at least one bot to play solo.") + "</p>" : total > 10 ? '<p class="err">' + tr("10 joueurs maximum, bots compris.", "10 players max, bots included.") + "</p>" : "") +
           dock('<button class="btn acc" type="button" data-go' + (total < 2 || total > 10 ? " disabled" : "") + ">" + tr("Distribuer", "Deal") + "</button>"), r => {
           r.querySelectorAll("[data-b]").forEach(b => b.addEventListener("click", () => { bots = +b.dataset.b; persist({ dcBots: bots }); setup(); }));
           r.querySelectorAll("[data-r]").forEach(b => b.addEventListener("click", () => { rounds = +b.dataset.r; persist({ dcRounds: rounds }); setup(); }));

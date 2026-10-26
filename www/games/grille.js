@@ -581,11 +581,11 @@ const DEF = {
       function setup(){
         clearTimeout(timer);
         const total = names.length + bots;
-        screen(root, "su" + bots + goal + tw, CSS + '<p class="howto">' + (names.length > 1 ? tr("Les joueurs se passent le téléphone à leur tour.", "Players pass the phone around on their turn.") : tr("Une partie contre les robots.", "A game against the bots.")) + "</p>" +
-          '<div class="field"><span class="eyebrow">' + tr("Robots", "Bots") + '</span><div class="seg">' + [0, 1, 2, 3].map(b => '<button type="button" data-b="' + b + '" aria-pressed="' + (b === bots) + '">' + b + "</button>").join("") + "</div></div>" +
+        screen(root, "su" + bots + goal + tw, CSS + '<p class="howto">' + (names.length > 1 ? tr("Les joueurs se passent le téléphone à leur tour.", "Players pass the phone around on their turn.") : tr("Une partie contre les bots.", "A game against the bots.")) + "</p>" +
+          '<div class="field"><span class="eyebrow">' + tr("Bots", "Bots") + '</span><div class="seg">' + [0, 1, 2, 3].map(b => '<button type="button" data-b="' + b + '" aria-pressed="' + (b === bots) + '">' + b + "</button>").join("") + "</div></div>" +
           '<div class="field"><span class="eyebrow">' + tr("Objectif", "Target") + '</span><div class="seg">' + [[50, "50"], [100, "100"], [1, tr("1 manche", "1 round")]].map(x => '<button type="button" data-g="' + x[0] + '" aria-pressed="' + (x[0] === goal) + '">' + x[1] + "</button>").join("") + "</div></div>" +
           '<div class="field"><div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + tw + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Plot twists") + '</span><span class="ds">' + tr("Une règle change de temps en temps, au début d'une manche", "A rule changes now and then, at the start of a round") + "</span></span></button></div></div>" +
-          (total < 2 ? '<p class="err">' + tr("Ajoute au moins un robot pour jouer seul.", "Add at least one bot to play solo.") + "</p>" : total > 8 ? '<p class="err">' + tr("8 joueurs maximum, robots compris.", "8 players max, bots included.") + "</p>" : "") +
+          (total < 2 ? '<p class="err">' + tr("Ajoute au moins un bot pour jouer seul.", "Add at least one bot to play solo.") + "</p>" : total > 8 ? '<p class="err">' + tr("8 joueurs maximum, bots compris.", "8 players max, bots included.") + "</p>" : "") +
           dock('<button class="btn acc" type="button" data-go' + (total < 2 || total > 8 ? " disabled" : "") + ">" + tr("Distribuer", "Deal") + "</button>"), r => {
           r.querySelectorAll("[data-b]").forEach(b => b.addEventListener("click", () => { bots = +b.dataset.b; persist({ grBots: bots }); setup(); }));
           r.querySelectorAll("[data-g]").forEach(b => b.addEventListener("click", () => { goal = +b.dataset.g; persist({ grGoal: goal }); setup(); }));
