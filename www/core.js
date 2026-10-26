@@ -755,7 +755,7 @@ let current = "home";
 function show(name){
   if(current === name) return;
   closeSheet();
-  if(name !== "game" && name !== "local") closeRulesOv();
+  if(name !== "game" && name !== "local"){ closeRulesOv(); closeQuitOv(); }
   SCREENS.forEach(s => { $("#s-" + s).hidden = s !== name; });
   const el = $("#s-" + name); if(el){ el.scrollTop = 0; enter(el); }
   current = name; trail("Écran " + name);
@@ -781,6 +781,7 @@ function armedBack(msg, action){
   backArm = Date.now(); toast(msg); return true;
 }
 SB.back = function(){
+  if(closeQuitOv()) return true;
   if(closeRulesOv()) return true;
   if(sheetOpen){ closeSheet(); return true; }
   if(current === "page"){ SB.closePage(); return true; }
@@ -810,7 +811,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.27.1";
+const VERSION = "4.27.2";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -1005,6 +1006,23 @@ function openRules(def, inGame){
   }, () => accent(inGame ? def.id : ""));
 }
 
+// Bouton « quitter » des parties : une croix, puis une confirmation dans un panneau (le jeu reste derrière).
+const QUIT_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>';
+function quitButton(box, o){
+  box.innerHTML = '<button class="bugbtn quitbtn" type="button" aria-label="' + esc(o.label) + '">' + QUIT_SVG + "</button>";
+  box.firstChild.addEventListener("click", () => { buzz(8); openQuitOv(o); });
+}
+function closeQuitOv(){ const x = document.getElementById("quit-ov"); if(!x) return false; x.classList.remove("on"); setTimeout(() => x.remove(), 200); return true; }
+function openQuitOv(o){
+  closeQuitOv(); closeRulesOv();
+  const x = document.createElement("div"); x.id = "quit-ov"; x.className = "rules-ov";
+  x.innerHTML = '<div class="rules-in quit-in" role="dialog" aria-modal="true" aria-labelledby="qo-t"><b id="qo-t" class="quit-t">' + esc(o.title) + '</b><p class="sm" style="margin:0">' + esc(o.text) + "</p>" +
+    '<button class="btn warn-btn" type="button" data-qok>' + esc(o.ok) + '</button><button class="btn ghost" type="button" data-qno>' + tr("Continuer à jouer", "Keep playing") + "</button></div>";
+  document.body.appendChild(x);
+  x.addEventListener("click", e => { if(e.target === x || e.target.closest("[data-qno]")) closeQuitOv(); });
+  x.querySelector("[data-qok]").addEventListener("click", () => { buzz(12); closeQuitOv(); o.action(); });
+  requestAnimationFrame(() => x.classList.add("on"));
+}
 // Règles par-dessus la partie : un panneau qui laisse voir le jeu derrière (la partie continue).
 function closeRulesOv(){ const o = document.getElementById("rules-ov"); if(!o) return false; o.classList.remove("on"); setTimeout(() => o.remove(), 200); return true; }
 function openRulesOv(def){
@@ -1482,9 +1500,9 @@ function render(){
     const exKey = g.gid + (N.host ? "h" : "p");
     if(ex.dataset.key !== exKey){
       ex.dataset.key = exKey;
-      ex.innerHTML = '<button class="link warn" type="button">' + (N.host ? tr("Arrêter", "Stop") : tr("Quitter", "Leave")) + "</button>";
-      armTap(ex.firstChild, N.host ? () => runHost(c => c.end({ title: def.name, lines: [tr("Partie arrêtée par l'hôte.", "Game stopped by the host.")] })) : netLeave,
-        N.host ? tr("Touche encore pour revenir au salon", "Tap again to go back to the room") : tr("Touche encore pour quitter", "Tap again to leave"));
+      quitButton(ex, N.host
+        ? { label: tr("Arrêter la partie", "Stop the game"), title: tr("Arrêter la partie ?", "Stop the game?"), text: tr("Tout le monde revient au salon. La partie en cours sera perdue.", "Everyone goes back to the room. The current game will be lost."), ok: tr("Arrêter et revenir au salon", "Stop and go back to the room"), action: () => runHost(c => c.end({ title: def.name, lines: [tr("Partie arrêtée par l'hôte.", "Game stopped by the host.")] })) }
+        : { label: tr("Quitter le salon", "Leave the room"), title: tr("Quitter le salon ?", "Leave the room?"), text: tr("Tu quittes la partie et le salon. Tu pourras revenir avec le code.", "You leave the game and the room. You can come back with the code."), ok: tr("Quitter le salon", "Leave the room"), action: netLeave });
     }
     try{ def.render(ctx, root); }catch(e){ console.error(e); }
     if(N.host) gHostTick();
@@ -1783,8 +1801,7 @@ function startLocal(def, names){
   accent(def.id); keepAwake(true);
   $("#lc-title").textContent = def.name; $("#lc-gl").textContent = def.glyph || "";
   const ex = $("#lc-exit");
-  ex.innerHTML = '<button class="link warn" type="button">' + tr("Quitter", "Quit") + '</button>';
-  armTap(ex.firstChild, () => api.exit(), tr("Touche encore pour quitter", "Tap again to quit"));
+  quitButton(ex, { label: tr("Quitter la partie", "Quit the game"), title: tr("Quitter la partie ?", "Quit the game?"), text: tr("Tu reviens à la liste des jeux. La partie en cours sera perdue.", "You go back to the game list. The current game will be lost."), ok: tr("Quitter la partie", "Quit the game"), action: () => api.exit() });
   const root = $("#local-root"); root.innerHTML = ""; root.dataset.key = "";
   show("local");
   let won = false;

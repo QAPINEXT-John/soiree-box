@@ -1,4 +1,7 @@
 {
+  "4.27.2": [
+    "Nouveau bouton pour quitter une partie : une croix en haut à droite, qui demande confirmation dans un panneau (« Quitter » ou « Continuer à jouer ») au lieu du lien à toucher deux fois"
+  ],
   "4.27.1": [
     "Règles pendant la partie : elles s'ouvrent dans un panneau par-dessus le jeu, qui reste visible et continue derrière. On ferme en touchant « Fermer », le jeu, ou encore le « ? »"
   ],

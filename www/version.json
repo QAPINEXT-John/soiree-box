@@ -1,15 +1,15 @@
 {
- "version": "4.27.1",
+ "version": "4.27.2",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Règles pendant la partie : elles s'ouvrent dans un panneau par-dessus le jeu, qui reste visible et continue derrière. On ferme en touchant « Fermer », le jeu, ou encore le « ? »"
+  "Nouveau bouton pour quitter une partie : une croix en haut à droite, qui demande confirmation dans un panneau (« Quitter » ou « Continuer à jouer ») au lieu du lien à toucher deux fois"
  ],
  "files": {
   "core.js": {
-   "h": "f36ee9e703f91ec8b72ac253516ad8ac0eb79f8365d4447eec5eb096df5b710a",
-   "s": 287234
+   "h": "46e4310d92eef909894e07f116db71f0a1af1aaa5fec1969b776c97f593a5dae",
+   "s": 289353
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -212,8 +212,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "f48264fe3529b442fc4896c4fc8fdaca7a09455c22b4231713bb96050dc6774a",
-   "s": 54698
+   "h": "d1443d033e2fbd81e30ea232e5ea189e68fe0e36ad32755fd14c605f35cd3b1f",
+   "s": 54893
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
