@@ -1,15 +1,18 @@
 {
- "version": "4.32.2",
+ "version": "4.33.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Gages : le rappel verre d'eau suit aussi le niveau (en gorgées : toutes les 10 en Basique, 8 en Moyen, 6 en Hard ; adapté aux shots et culs-secs). Si tu l'as mis sur « Jamais », il le reste"
+  "Nouveau jeu : Quiz. QCM, estimations (le plus proche gagne) et vrai ou faux. Avant chaque question, chacun mise 1, 2 ou 3 points sur sa confiance : gagné, il les prend, raté, il les perd",
+  "Plus de 450 questions en 10 thèmes : culture G, pop culture, histoire, géo, sport, bouffe, insolite, soirée, culture coquine (18+) et enfants. On peut aussi écrire ses propres questions",
+  "Coups de théâtre : question en or, chrono éclair, tapis. Marche en salon et sur un seul téléphone",
+  "Le filtre « Musique » devient « Quiz » : on y trouve le Quiz et le Blind test"
  ],
  "files": {
   "core.js": {
-   "h": "e7c1c03ec3052ee0a77ed235eaa656967ac3dd9f3b13570408fde30077271dbf",
-   "s": 305580
+   "h": "e86f08de6cbb600ab603067bec6415de5fbaf7be1254f822224b5dcbcbc151c4",
+   "s": 305574
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -171,6 +174,14 @@
    "h": "182cc7fbac48f37318402f776030189ff25d1c4d71024ebef9af2020ec60fe35",
    "s": 42428
   },
+  "games/quiz-data.js": {
+   "h": "4fdd9b06c0c2cf512da09d6c97ddef0090dbb8757185cb175a147baed5f0d2f8",
+   "s": 122839
+  },
+  "games/quiz.js": {
+   "h": "6591874cfec7fed4e34ba541bd8f9d6bc0af80e911b5e8b6d32f578da340420f",
+   "s": 33635
+  },
   "games/redflag.js": {
    "h": "daf2f97fb5197a93642eb15eb388a314975952d44c5d40868eb5dd20050898c1",
    "s": 66228
@@ -216,8 +227,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "a3758da0fc99cb6a5d511bdeb165157f3d2721366d26a3633c9e5e86d02ff6e5",
-   "s": 60334
+   "h": "8fa0f66ea66decba8f47a796fbf0b149e6ab314da607a14aed1ed6e38aebbb1e",
+   "s": 60415
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",

@@ -1,47 +1,785 @@
 [
-{"t":"q","fr":{"q":"De quelle région vient le cassoulet ?","a":["Languedoc","Alsace","Bretagne","Provence"]},"en":{"q":"Which French region does cassoulet come from?","a":["Languedoc","Alsace","Brittany","Provence"]}},
-{"t":"q","fr":{"q":"Quel fromage est indispensable dans une tartiflette ?","a":["Reblochon","Comté","Beaufort","Cantal"]},"en":{"q":"Which cheese is a must in a tartiflette?","a":["Reblochon","Comté","Beaufort","Cantal"]}},
-{"t":"q","fr":{"q":"Quel fruit est la star de la tarte Tatin ?","a":["Pomme","Poire","Abricot","Prune"]},"en":{"q":"Which fruit is the star of a tarte Tatin?","a":["Apple","Pear","Apricot","Plum"]}},
-{"t":"q","fr":{"q":"De quel pays vient le guacamole ?","a":["Mexique","Espagne","Pérou","Brésil"]},"en":{"q":"Which country does guacamole come from?","a":["Mexico","Spain","Peru","Brazil"]}},
-{"t":"q","fr":{"q":"Avec quoi fait-on le houmous ?","a":["Pois chiches","Lentilles","Haricots blancs","Petits pois"]},"en":{"q":"What is hummus made from?","a":["Chickpeas","Lentils","White beans","Green peas"]}},
-{"t":"q","fr":{"q":"Quelle épice, la plus chère du monde, provient d'une fleur de crocus ?","a":["Safran","Curcuma","Paprika","Cumin"]},"en":{"q":"Which spice, the most expensive in the world, comes from a crocus flower?","a":["Saffron","Turmeric","Paprika","Cumin"]}},
-{"t":"q","fr":{"q":"À part le yaourt, quel légume est la base du tzatziki ?","a":["Concombre","Courgette","Aubergine","Poivron"]},"en":{"q":"Besides yogurt, which vegetable is the base of tzatziki?","a":["Cucumber","Zucchini","Eggplant","Bell pepper"]}},
-{"t":"q","fr":{"q":"Le gaspacho, soupe servie froide, vient de quel pays ?","a":["Espagne","Italie","Portugal","Grèce"]},"en":{"q":"Gazpacho, a soup served cold, comes from which country?","a":["Spain","Italy","Portugal","Greece"]}},
-{"t":"q","fr":{"q":"Quel fromage italien met-on dans le tiramisu ?","a":["Mascarpone","Ricotta","Mozzarella","Gorgonzola"]},"en":{"q":"Which Italian cheese goes into tiramisu?","a":["Mascarpone","Ricotta","Mozzarella","Gorgonzola"]}},
-{"t":"q","fr":{"q":"Quelle herbe est la base du pesto genovese ?","a":["Basilic","Persil","Coriandre","Menthe"]},"en":{"q":"Which herb is the base of pesto genovese?","a":["Basil","Parsley","Coriander","Mint"]}},
-{"t":"q","fr":{"q":"Quel légume est la base du baba ganoush ?","a":["Aubergine","Courgette","Poivron","Potiron"]},"en":{"q":"Which vegetable is the base of baba ganoush?","a":["Eggplant","Zucchini","Bell pepper","Pumpkin"]}},
-{"t":"q","fr":{"q":"De quel pays vient la feta ?","a":["Grèce","Turquie","Italie","Bulgarie"]},"en":{"q":"Which country does feta come from?","a":["Greece","Turkey","Italy","Bulgaria"]}},
-{"t":"q","fr":{"q":"De quelle ville vient la bouillabaisse ?","a":["Marseille","Nice","Toulon","Montpellier"]},"en":{"q":"Which city does bouillabaisse come from?","a":["Marseille","Nice","Toulon","Montpellier"]}},
-{"t":"q","fr":{"q":"Quelle variété de riz est un classique du risotto ?","a":["Arborio","Basmati","Jasmin","Riz sauvage"]},"en":{"q":"Which rice variety is a classic for risotto?","a":["Arborio","Basmati","Jasmine","Wild rice"]}},
-{"t":"q","fr":{"q":"Le kouign-amann est une spécialité de quelle région ?","a":["Bretagne","Normandie","Alsace","Pays basque"]},"en":{"q":"Kouign-amann is a specialty of which French region?","a":["Brittany","Normandy","Alsace","Basque Country"]}},
-{"t":"q","fr":{"q":"Quel fromage normand est souvent moulé en forme de cœur ?","a":["Neufchâtel","Camembert","Livarot","Pont-l'évêque"]},"en":{"q":"Which Normandy cheese is often shaped like a heart?","a":["Neufchâtel","Camembert","Livarot","Pont-l'Évêque"]}},
-{"t":"q","fr":{"q":"Quel pays est le premier producteur mondial de cacao ?","a":["Côte d'Ivoire","Ghana","Brésil","Équateur"]},"en":{"q":"Which country is the world's top cocoa producer?","a":["Ivory Coast","Ghana","Brazil","Ecuador"]}},
-{"t":"q","fr":{"q":"De quel pays vient le kimchi ?","a":["Corée","Japon","Chine","Vietnam"]},"en":{"q":"Which country does kimchi come from?","a":["Korea","Japan","China","Vietnam"]}},
-{"t":"q","fr":{"q":"De quelle région vient la ratatouille ?","a":["Provence","Bretagne","Alsace","Auvergne"]},"en":{"q":"Which French region does ratatouille come from?","a":["Provence","Brittany","Alsace","Auvergne"]}},
-{"t":"q","fr":{"q":"Quel champignon surnomme-t-on le « diamant noir » ?","a":["Truffe noire","Morille","Cèpe","Girolle"]},"en":{"q":"Which mushroom is nicknamed the \"black diamond\"?","a":["Black truffle","Morel","Porcini","Chanterelle"]}},
-{"t":"q","fr":{"q":"Quel fruit sec est obligatoire dans le nougat de Montélimar ?","a":["Amande","Noisette","Noix","Cacahuète"]},"en":{"q":"Which nut is mandatory in Montélimar nougat?","a":["Almond","Hazelnut","Walnut","Peanut"]}},
-{"t":"q","fr":{"q":"Quelle sauce associe jaunes d'œufs, beurre, échalote et estragon ?","a":["Béarnaise","Hollandaise","Mayonnaise","Mornay"]},"en":{"q":"Which sauce combines egg yolks, butter, shallot and tarragon?","a":["Béarnaise","Hollandaise","Mayonnaise","Mornay"]}},
-{"t":"q","fr":{"q":"Quel légume donne sa couleur rouge au bortsch ?","a":["Betterave","Tomate","Poivron rouge","Radis"]},"en":{"q":"Which vegetable gives borscht its red color?","a":["Beetroot","Tomato","Red pepper","Radish"]}},
-{"t":"q","fr":{"q":"Le comté est fait avec le lait de quel animal ?","a":["Vache","Chèvre","Brebis","Bufflonne"]},"en":{"q":"Comté cheese is made from which animal's milk?","a":["Cow","Goat","Sheep","Buffalo"]}},
-{"t":"q","fr":{"q":"Quelle pâtisserie a la forme d'une roue de vélo ?","a":["Paris-Brest","Saint-Honoré","Opéra","Mille-feuille"]},"en":{"q":"Which French pastry is shaped like a bicycle wheel?","a":["Paris-Brest","Saint-Honoré","Opéra","Mille-feuille"]}},
-{"t":"q","fr":{"q":"Le ceviche, poisson cru mariné au citron, est le plat national de quel pays ?","a":["Pérou","Mexique","Chili","Colombie"]},"en":{"q":"Ceviche, raw fish cured in lime, is the national dish of which country?","a":["Peru","Mexico","Chile","Colombia"]}},
-{"t":"q","fr":{"q":"Lequel de ces fruits est un agrume ?","a":["Pamplemousse","Kiwi","Litchi","Mangue"]},"en":{"q":"Which of these fruits is a citrus fruit?","a":["Grapefruit","Kiwi","Lychee","Mango"]}},
-{"t":"n","n":10,"fr":{"q":"Combien de pattes a un homard, pinces comprises ?","u":"pattes"},"en":{"q":"How many legs does a lobster have, claws included?","u":"legs"}},
-{"t":"n","n":1886,"fr":{"q":"En quelle année le Coca-Cola a-t-il été inventé ?","u":""},"en":{"q":"In what year was Coca-Cola invented?","u":""}},
-{"t":"n","n":1900,"fr":{"q":"En quelle année est paru le premier guide Michelin ?","u":""},"en":{"q":"In what year was the first Michelin Guide published?","u":""}},
-{"t":"n","n":1964,"fr":{"q":"En quelle année le Nutella a-t-il été lancé sous ce nom ?","u":""},"en":{"q":"In what year was Nutella launched under that name?","u":""}},
-{"t":"n","n":5,"fr":{"q":"Combien de saveurs de base reconnaît-on aujourd'hui, umami compris ?","u":"saveurs"},"en":{"q":"How many basic tastes are recognized today, umami included?","u":"tastes"}},
-{"t":"n","n":2022,"fr":{"q":"En quelle année la baguette a-t-elle été inscrite au patrimoine de l'UNESCO ?","u":""},"en":{"q":"In what year was the French baguette added to UNESCO's heritage list?","u":""}},
-{"t":"n","n":2010,"fr":{"q":"En quelle année le repas gastronomique des Français est-il entré au patrimoine de l'UNESCO ?","u":""},"en":{"q":"In what year was the French gastronomic meal added to UNESCO's heritage list?","u":""}},
-{"t":"n","n":500,"fr":{"q":"Combien de grammes fait une livre, chez le boucher français ?","u":"g"},"en":{"q":"How many grams is a French \"livre\" (pound) at the butcher's?","u":"g"}},
-{"t":"n","n":3,"fr":{"q":"Combien de cuillères à café faut-il pour faire une cuillère à soupe ?","u":"cuillères"},"en":{"q":"How many teaspoons make one tablespoon?","u":"teaspoons"}},
-{"t":"vf","v":true,"fr":{"q":"Pour un botaniste, la tomate est un fruit.","x":"Vrai : elle se forme à partir de la fleur et contient les graines, c'est donc un fruit."},"en":{"q":"To a botanist, the tomato is a fruit.","x":"True: it develops from the flower and holds the seeds, so it's a fruit."}},
-{"t":"vf","v":true,"fr":{"q":"Le chocolat blanc contient un ingrédient tiré de la fève de cacao.","x":"Vrai : il est fait avec du beurre de cacao, la matière grasse de la fève."},"en":{"q":"White chocolate contains an ingredient that comes from the cocoa bean.","x":"True: it's made with cocoa butter, the fat from the bean."}},
-{"t":"vf","v":false,"fr":{"q":"La cacahuète est une noix.","x":"Faux : c'est une légumineuse, de la même famille que le pois et le haricot."},"en":{"q":"The peanut is a nut.","x":"False: it's a legume, in the same family as peas and beans."}},
-{"t":"vf","v":false,"fr":{"q":"Pour un botaniste, la fraise est une baie.","x":"Faux : c'est un faux-fruit, les vrais fruits sont les petits grains sur sa peau."},"en":{"q":"To a botanist, the strawberry is a berry.","x":"False: it's a false fruit; the real fruits are the little seeds on its skin."}},
-{"t":"vf","v":true,"fr":{"q":"Pour un botaniste, la banane est une baie.","x":"Vrai : botaniquement, la banane est bien une baie."},"en":{"q":"To a botanist, the banana is a berry.","x":"True: botanically speaking, the banana is indeed a berry."}},
-{"t":"vf","v":false,"fr":{"q":"Le camembert est un fromage breton.","x":"Faux : le camembert vient de Normandie."},"en":{"q":"Camembert is a cheese from Brittany.","x":"False: Camembert comes from Normandy."}},
-{"t":"vf","v":true,"fr":{"q":"Le grain de café est la graine d'un fruit.","x":"Vrai : c'est le noyau de la cerise du caféier."},"en":{"q":"The coffee bean is the seed of a fruit.","x":"True: it's the pit of the coffee cherry."}},
-{"t":"vf","v":false,"fr":{"q":"L'ananas pousse sur un arbre.","x":"Faux : il pousse au ras du sol, au cœur d'une plante basse."},"en":{"q":"Pineapples grow on trees.","x":"False: they grow close to the ground, in the middle of a low plant."}},
-{"t":"vf","v":false,"fr":{"q":"Le cacaoyer est originaire d'Afrique.","x":"Faux : il vient d'Amérique centrale et du Sud, même si l'Afrique en produit le plus aujourd'hui."},"en":{"q":"The cocoa tree is native to Africa.","x":"False: it comes from Central and South America, even though Africa grows the most today."}}
+ {
+  "t": "q",
+  "fr": {
+   "q": "De quelle région vient le cassoulet ?",
+   "a": [
+    "Languedoc",
+    "Alsace",
+    "Bretagne",
+    "Provence"
+   ]
+  },
+  "en": {
+   "q": "Which French region does cassoulet come from?",
+   "a": [
+    "Languedoc",
+    "Alsace",
+    "Brittany",
+    "Provence"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel fromage est indispensable dans une tartiflette ?",
+   "a": [
+    "Reblochon",
+    "Comté",
+    "Beaufort",
+    "Cantal"
+   ]
+  },
+  "en": {
+   "q": "Which cheese is a must in a tartiflette?",
+   "a": [
+    "Reblochon",
+    "Comté",
+    "Beaufort",
+    "Cantal"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel fruit est la star de la tarte Tatin ?",
+   "a": [
+    "Pomme",
+    "Poire",
+    "Abricot",
+    "Prune"
+   ]
+  },
+  "en": {
+   "q": "Which fruit is the star of a tarte Tatin?",
+   "a": [
+    "Apple",
+    "Pear",
+    "Apricot",
+    "Plum"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "De quel pays vient le guacamole ?",
+   "a": [
+    "Mexique",
+    "Espagne",
+    "Pérou",
+    "Brésil"
+   ]
+  },
+  "en": {
+   "q": "Which country does guacamole come from?",
+   "a": [
+    "Mexico",
+    "Spain",
+    "Peru",
+    "Brazil"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Avec quoi fait-on le houmous ?",
+   "a": [
+    "Pois chiches",
+    "Lentilles",
+    "Haricots blancs",
+    "Petits pois"
+   ]
+  },
+  "en": {
+   "q": "What is hummus made from?",
+   "a": [
+    "Chickpeas",
+    "Lentils",
+    "White beans",
+    "Green peas"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle épice, la plus chère du monde, provient d'une fleur de crocus ?",
+   "a": [
+    "Safran",
+    "Curcuma",
+    "Paprika",
+    "Cumin"
+   ]
+  },
+  "en": {
+   "q": "Which spice, the most expensive in the world, comes from a crocus flower?",
+   "a": [
+    "Saffron",
+    "Turmeric",
+    "Paprika",
+    "Cumin"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "À part le yaourt, quel légume est la base du tzatziki ?",
+   "a": [
+    "Concombre",
+    "Courgette",
+    "Aubergine",
+    "Poivron"
+   ]
+  },
+  "en": {
+   "q": "Besides yogurt, which vegetable is the base of tzatziki?",
+   "a": [
+    "Cucumber",
+    "Zucchini",
+    "Eggplant",
+    "Bell pepper"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Le gaspacho, soupe servie froide, vient de quel pays ?",
+   "a": [
+    "Espagne",
+    "Italie",
+    "Portugal",
+    "Grèce"
+   ]
+  },
+  "en": {
+   "q": "Gazpacho, a soup served cold, comes from which country?",
+   "a": [
+    "Spain",
+    "Italy",
+    "Portugal",
+    "Greece"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel fromage italien met-on dans le tiramisu ?",
+   "a": [
+    "Mascarpone",
+    "Ricotta",
+    "Mozzarella",
+    "Gorgonzola"
+   ]
+  },
+  "en": {
+   "q": "Which Italian cheese goes into tiramisu?",
+   "a": [
+    "Mascarpone",
+    "Ricotta",
+    "Mozzarella",
+    "Gorgonzola"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle herbe est la base du pesto genovese ?",
+   "a": [
+    "Basilic",
+    "Persil",
+    "Coriandre",
+    "Menthe"
+   ]
+  },
+  "en": {
+   "q": "Which herb is the base of pesto genovese?",
+   "a": [
+    "Basil",
+    "Parsley",
+    "Coriander",
+    "Mint"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel légume est la base du baba ganoush ?",
+   "a": [
+    "Aubergine",
+    "Courgette",
+    "Poivron",
+    "Potiron"
+   ]
+  },
+  "en": {
+   "q": "Which vegetable is the base of baba ganoush?",
+   "a": [
+    "Eggplant",
+    "Zucchini",
+    "Bell pepper",
+    "Pumpkin"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "De quel pays vient la feta ?",
+   "a": [
+    "Grèce",
+    "Turquie",
+    "Italie",
+    "Bulgarie"
+   ]
+  },
+  "en": {
+   "q": "Which country does feta come from?",
+   "a": [
+    "Greece",
+    "Turkey",
+    "Italy",
+    "Bulgaria"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "De quelle ville vient la bouillabaisse ?",
+   "a": [
+    "Marseille",
+    "Nice",
+    "Toulon",
+    "Montpellier"
+   ]
+  },
+  "en": {
+   "q": "Which city does bouillabaisse come from?",
+   "a": [
+    "Marseille",
+    "Nice",
+    "Toulon",
+    "Montpellier"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle variété de riz est un classique du risotto ?",
+   "a": [
+    "Arborio",
+    "Basmati",
+    "Jasmin",
+    "Riz sauvage"
+   ]
+  },
+  "en": {
+   "q": "Which rice variety is a classic for risotto?",
+   "a": [
+    "Arborio",
+    "Basmati",
+    "Jasmine",
+    "Wild rice"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Le kouign-amann est une spécialité de quelle région ?",
+   "a": [
+    "Bretagne",
+    "Normandie",
+    "Alsace",
+    "Pays basque"
+   ]
+  },
+  "en": {
+   "q": "Kouign-amann is a specialty of which French region?",
+   "a": [
+    "Brittany",
+    "Normandy",
+    "Alsace",
+    "Basque Country"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel fromage normand est souvent moulé en forme de cœur ?",
+   "a": [
+    "Neufchâtel",
+    "Camembert",
+    "Livarot",
+    "Pont-l'Évêque"
+   ]
+  },
+  "en": {
+   "q": "Which Normandy cheese is often shaped like a heart?",
+   "a": [
+    "Neufchâtel",
+    "Camembert",
+    "Livarot",
+    "Pont-l'Évêque"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel pays est le premier producteur mondial de cacao ?",
+   "a": [
+    "Côte d'Ivoire",
+    "Ghana",
+    "Brésil",
+    "Équateur"
+   ]
+  },
+  "en": {
+   "q": "Which country is the world's top cocoa producer?",
+   "a": [
+    "Ivory Coast",
+    "Ghana",
+    "Brazil",
+    "Ecuador"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "De quel pays vient le kimchi ?",
+   "a": [
+    "Corée",
+    "Japon",
+    "Chine",
+    "Vietnam"
+   ]
+  },
+  "en": {
+   "q": "Which country does kimchi come from?",
+   "a": [
+    "Korea",
+    "Japan",
+    "China",
+    "Vietnam"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "De quelle région vient la ratatouille ?",
+   "a": [
+    "Provence",
+    "Bretagne",
+    "Alsace",
+    "Auvergne"
+   ]
+  },
+  "en": {
+   "q": "Which French region does ratatouille come from?",
+   "a": [
+    "Provence",
+    "Brittany",
+    "Alsace",
+    "Auvergne"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel champignon surnomme-t-on le « diamant noir » ?",
+   "a": [
+    "Truffe noire",
+    "Morille",
+    "Cèpe",
+    "Girolle"
+   ]
+  },
+  "en": {
+   "q": "Which mushroom is nicknamed the \"black diamond\"?",
+   "a": [
+    "Black truffle",
+    "Morel",
+    "Porcini",
+    "Chanterelle"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel fruit sec est obligatoire dans le nougat de Montélimar ?",
+   "a": [
+    "Amande",
+    "Noisette",
+    "Noix",
+    "Cacahuète"
+   ]
+  },
+  "en": {
+   "q": "Which nut is mandatory in Montélimar nougat?",
+   "a": [
+    "Almond",
+    "Hazelnut",
+    "Walnut",
+    "Peanut"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle sauce associe jaunes d'œufs, beurre, échalote et estragon ?",
+   "a": [
+    "Béarnaise",
+    "Hollandaise",
+    "Mayonnaise",
+    "Mornay"
+   ]
+  },
+  "en": {
+   "q": "Which sauce combines egg yolks, butter, shallot and tarragon?",
+   "a": [
+    "Béarnaise",
+    "Hollandaise",
+    "Mayonnaise",
+    "Mornay"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel légume donne sa couleur rouge au bortsch ?",
+   "a": [
+    "Betterave",
+    "Tomate",
+    "Poivron rouge",
+    "Radis"
+   ]
+  },
+  "en": {
+   "q": "Which vegetable gives borscht its red color?",
+   "a": [
+    "Beetroot",
+    "Tomato",
+    "Red pepper",
+    "Radish"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Le comté est fait avec le lait de quel animal ?",
+   "a": [
+    "Vache",
+    "Chèvre",
+    "Brebis",
+    "Bufflonne"
+   ]
+  },
+  "en": {
+   "q": "Comté cheese is made from which animal's milk?",
+   "a": [
+    "Cow",
+    "Goat",
+    "Sheep",
+    "Buffalo"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle pâtisserie a la forme d'une roue de vélo ?",
+   "a": [
+    "Paris-Brest",
+    "Saint-Honoré",
+    "Opéra",
+    "Mille-feuille"
+   ]
+  },
+  "en": {
+   "q": "Which French pastry is shaped like a bicycle wheel?",
+   "a": [
+    "Paris-Brest",
+    "Saint-Honoré",
+    "Opéra",
+    "Mille-feuille"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Le ceviche, poisson cru mariné au citron, est le plat national de quel pays ?",
+   "a": [
+    "Pérou",
+    "Mexique",
+    "Chili",
+    "Colombie"
+   ]
+  },
+  "en": {
+   "q": "Ceviche, raw fish cured in lime, is the national dish of which country?",
+   "a": [
+    "Peru",
+    "Mexico",
+    "Chile",
+    "Colombia"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Lequel de ces fruits est un agrume ?",
+   "a": [
+    "Pamplemousse",
+    "Kiwi",
+    "Litchi",
+    "Mangue"
+   ]
+  },
+  "en": {
+   "q": "Which of these fruits is a citrus fruit?",
+   "a": [
+    "Grapefruit",
+    "Kiwi",
+    "Lychee",
+    "Mango"
+   ]
+  }
+ },
+ {
+  "t": "n",
+  "n": 10,
+  "fr": {
+   "q": "Combien de pattes a un homard, pinces comprises ?",
+   "u": "pattes"
+  },
+  "en": {
+   "q": "How many legs does a lobster have, claws included?",
+   "u": "legs"
+  }
+ },
+ {
+  "t": "n",
+  "n": 1886,
+  "fr": {
+   "q": "En quelle année le Coca-Cola a-t-il été inventé ?",
+   "u": ""
+  },
+  "en": {
+   "q": "In what year was Coca-Cola invented?",
+   "u": ""
+  }
+ },
+ {
+  "t": "n",
+  "n": 1900,
+  "fr": {
+   "q": "En quelle année est paru le premier guide Michelin ?",
+   "u": ""
+  },
+  "en": {
+   "q": "In what year was the first Michelin Guide published?",
+   "u": ""
+  }
+ },
+ {
+  "t": "n",
+  "n": 1964,
+  "fr": {
+   "q": "En quelle année le Nutella a-t-il été lancé sous ce nom ?",
+   "u": ""
+  },
+  "en": {
+   "q": "In what year was Nutella launched under that name?",
+   "u": ""
+  }
+ },
+ {
+  "t": "n",
+  "n": 5,
+  "fr": {
+   "q": "Combien de saveurs de base reconnaît-on aujourd'hui, umami compris ?",
+   "u": "saveurs"
+  },
+  "en": {
+   "q": "How many basic tastes are recognized today, umami included?",
+   "u": "tastes"
+  }
+ },
+ {
+  "t": "n",
+  "n": 2022,
+  "fr": {
+   "q": "En quelle année la baguette a-t-elle été inscrite au patrimoine de l'UNESCO ?",
+   "u": ""
+  },
+  "en": {
+   "q": "In what year was the French baguette added to UNESCO's heritage list?",
+   "u": ""
+  }
+ },
+ {
+  "t": "n",
+  "n": 2010,
+  "fr": {
+   "q": "En quelle année le repas gastronomique des Français est-il entré au patrimoine de l'UNESCO ?",
+   "u": ""
+  },
+  "en": {
+   "q": "In what year was the French gastronomic meal added to UNESCO's heritage list?",
+   "u": ""
+  }
+ },
+ {
+  "t": "n",
+  "n": 500,
+  "fr": {
+   "q": "Combien de grammes fait une livre, chez le boucher français ?",
+   "u": "g"
+  },
+  "en": {
+   "q": "How many grams is a French \"livre\" (pound) at the butcher's?",
+   "u": "g"
+  }
+ },
+ {
+  "t": "n",
+  "n": 3,
+  "fr": {
+   "q": "Combien de cuillères à café faut-il pour faire une cuillère à soupe ?",
+   "u": "cuillères"
+  },
+  "en": {
+   "q": "How many teaspoons make one tablespoon?",
+   "u": "teaspoons"
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "Pour un botaniste, la tomate est un fruit.",
+   "x": "Vrai : elle se forme à partir de la fleur et contient les graines, c'est donc un fruit."
+  },
+  "en": {
+   "q": "To a botanist, the tomato is a fruit.",
+   "x": "True: it develops from the flower and holds the seeds, so it's a fruit."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "Le chocolat blanc contient un ingrédient tiré de la fève de cacao.",
+   "x": "Vrai : il est fait avec du beurre de cacao, la matière grasse de la fève."
+  },
+  "en": {
+   "q": "White chocolate contains an ingredient that comes from the cocoa bean.",
+   "x": "True: it's made with cocoa butter, the fat from the bean."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "La cacahuète est une noix.",
+   "x": "Faux : c'est une légumineuse, de la même famille que le pois et le haricot."
+  },
+  "en": {
+   "q": "The peanut is a nut.",
+   "x": "False: it's a legume, in the same family as peas and beans."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "Pour un botaniste, la fraise est une baie.",
+   "x": "Faux : c'est un faux-fruit, les vrais fruits sont les petits grains sur sa peau."
+  },
+  "en": {
+   "q": "To a botanist, the strawberry is a berry.",
+   "x": "False: it's a false fruit; the real fruits are the little seeds on its skin."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "Pour un botaniste, la banane est une baie.",
+   "x": "Vrai : botaniquement, la banane est bien une baie."
+  },
+  "en": {
+   "q": "To a botanist, the banana is a berry.",
+   "x": "True: botanically speaking, the banana is indeed a berry."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "Le camembert est un fromage breton.",
+   "x": "Faux : le camembert vient de Normandie."
+  },
+  "en": {
+   "q": "Camembert is a cheese from Brittany.",
+   "x": "False: Camembert comes from Normandy."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "Le grain de café est la graine d'un fruit.",
+   "x": "Vrai : c'est la graine contenue dans la cerise du caféier."
+  },
+  "en": {
+   "q": "The coffee bean is the seed of a fruit.",
+   "x": "True: it's the seed inside the coffee cherry."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "L'ananas pousse sur un arbre.",
+   "x": "Faux : il pousse au ras du sol, au cœur d'une plante basse."
+  },
+  "en": {
+   "q": "Pineapples grow on trees.",
+   "x": "False: they grow close to the ground, in the middle of a low plant."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "Le cacaoyer est originaire d'Afrique.",
+   "x": "Faux : il vient d'Amérique centrale et du Sud, même si l'Afrique en produit le plus aujourd'hui."
+  },
+  "en": {
+   "q": "The cocoa tree is native to Africa.",
+   "x": "False: it comes from Central and South America, even though Africa grows the most today."
+  }
+ }
 ]

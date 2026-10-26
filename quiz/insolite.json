@@ -1,0 +1,872 @@
+[
+ {
+  "t": "q",
+  "fr": {
+   "q": "De quelle couleur est le sang de la pieuvre ?",
+   "a": [
+    "Bleu",
+    "Vert",
+    "Jaune",
+    "Violet"
+   ]
+  },
+  "en": {
+   "q": "What colour is an octopus's blood?",
+   "a": [
+    "Blue",
+    "Green",
+    "Yellow",
+    "Purple"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel est le seul mammifère capable de vraiment voler ?",
+   "a": [
+    "La chauve-souris",
+    "L'écureuil volant",
+    "Le phalanger volant",
+    "Le colugo"
+   ]
+  },
+  "en": {
+   "q": "What is the only mammal capable of true flight?",
+   "a": [
+    "The bat",
+    "The flying squirrel",
+    "The sugar glider",
+    "The colugo"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle forme ont les crottes du wombat ?",
+   "a": [
+    "Des cubes",
+    "Des spirales",
+    "Des triangles",
+    "Des étoiles"
+   ]
+  },
+  "en": {
+   "q": "What shape is wombat poo?",
+   "a": [
+    "Cubes",
+    "Spirals",
+    "Triangles",
+    "Stars"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel est le plus grand organe du corps humain ?",
+   "a": [
+    "La peau",
+    "Le foie",
+    "Les poumons",
+    "Le cerveau"
+   ]
+  },
+  "en": {
+   "q": "What is the largest organ of the human body?",
+   "a": [
+    "The skin",
+    "The liver",
+    "The lungs",
+    "The brain"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel est le plus petit os du corps humain ?",
+   "a": [
+    "L'étrier",
+    "L'enclume",
+    "Le marteau",
+    "Le coccyx"
+   ]
+  },
+  "en": {
+   "q": "What is the smallest bone in the human body?",
+   "a": [
+    "The stapes (stirrup)",
+    "The incus (anvil)",
+    "The malleus (hammer)",
+    "The coccyx"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Lequel de ces fruits est, botaniquement, une baie ?",
+   "a": [
+    "La banane",
+    "La fraise",
+    "La framboise",
+    "La cerise"
+   ]
+  },
+  "en": {
+   "q": "Which of these fruits is botanically a berry?",
+   "a": [
+    "The banana",
+    "The strawberry",
+    "The raspberry",
+    "The cherry"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Lequel de ces animaux est incapable de sauter ?",
+   "a": [
+    "L'éléphant",
+    "Le cheval",
+    "Le chat",
+    "La chèvre"
+   ]
+  },
+  "en": {
+   "q": "Which of these animals is unable to jump?",
+   "a": [
+    "The elephant",
+    "The horse",
+    "The cat",
+    "The goat"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel mammifère a la gestation la plus longue ?",
+   "a": [
+    "L'éléphant",
+    "La baleine bleue",
+    "La girafe",
+    "Le rhinocéros"
+   ]
+  },
+  "en": {
+   "q": "Which mammal has the longest pregnancy?",
+   "a": [
+    "The elephant",
+    "The blue whale",
+    "The giraffe",
+    "The rhinoceros"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "De quelle couleur est la peau de l'ours polaire, sous sa fourrure ?",
+   "a": [
+    "Noire",
+    "Blanche",
+    "Rose",
+    "Grise"
+   ]
+  },
+  "en": {
+   "q": "What colour is a polar bear's skin under its fur?",
+   "a": [
+    "Black",
+    "White",
+    "Pink",
+    "Grey"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel minuscule animal a survécu à une exposition directe au vide spatial ?",
+   "a": [
+    "Le tardigrade",
+    "La fourmi",
+    "Le cafard",
+    "Le scorpion"
+   ]
+  },
+  "en": {
+   "q": "Which tiny animal has survived direct exposure to the vacuum of space?",
+   "a": [
+    "The tardigrade",
+    "The ant",
+    "The cockroach",
+    "The scorpion"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel aliment peut se conserver des milliers d'années sans se gâter ?",
+   "a": [
+    "Le miel",
+    "Le chocolat",
+    "Le beurre",
+    "Le fromage"
+   ]
+  },
+  "en": {
+   "q": "Which food can keep for thousands of years without spoiling?",
+   "a": [
+    "Honey",
+    "Chocolate",
+    "Butter",
+    "Cheese"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle partie du corps n'a aucun vaisseau sanguin ?",
+   "a": [
+    "La cornée",
+    "La langue",
+    "La lèvre",
+    "La paupière"
+   ]
+  },
+  "en": {
+   "q": "Which part of the body has no blood vessels at all?",
+   "a": [
+    "The cornea",
+    "The tongue",
+    "The lip",
+    "The eyelid"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel oiseau est capable de voler en marche arrière ?",
+   "a": [
+    "Le colibri",
+    "L'aigle",
+    "Le moineau",
+    "Le pigeon"
+   ]
+  },
+  "en": {
+   "q": "Which bird can fly backwards?",
+   "a": [
+    "The hummingbird",
+    "The eagle",
+    "The sparrow",
+    "The pigeon"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel animal a un œil plus gros que son cerveau ?",
+   "a": [
+    "L'autruche",
+    "Le lion",
+    "Le chien",
+    "Le dauphin"
+   ]
+  },
+  "en": {
+   "q": "Which animal has an eye bigger than its brain?",
+   "a": [
+    "The ostrich",
+    "The lion",
+    "The dog",
+    "The dolphin"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel métal est liquide à température ambiante ?",
+   "a": [
+    "Le mercure",
+    "Le plomb",
+    "L'étain",
+    "Le zinc"
+   ]
+  },
+  "en": {
+   "q": "Which metal is liquid at room temperature?",
+   "a": [
+    "Mercury",
+    "Lead",
+    "Tin",
+    "Zinc"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "En 1386 à Falaise, quel animal a été jugé et exécuté comme un criminel ?",
+   "a": [
+    "Une truie",
+    "Un loup",
+    "Un chien",
+    "Un taureau"
+   ]
+  },
+  "en": {
+   "q": "In 1386 in Falaise (France), which animal was tried and executed like a criminal?",
+   "a": [
+    "A sow",
+    "A wolf",
+    "A dog",
+    "A bull"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel tsar a instauré un impôt sur les barbes ?",
+   "a": [
+    "Pierre le Grand",
+    "Ivan le Terrible",
+    "Nicolas II",
+    "Alexandre Ier"
+   ]
+  },
+  "en": {
+   "q": "Which tsar introduced a tax on beards?",
+   "a": [
+    "Peter the Great",
+    "Ivan the Terrible",
+    "Nicholas II",
+    "Alexander I"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel empereur romain est resté célèbre pour sa taxe sur l'urine ?",
+   "a": [
+    "Vespasien",
+    "Trajan",
+    "Caligula",
+    "Auguste"
+   ]
+  },
+  "en": {
+   "q": "Which Roman emperor is famous for his tax on urine?",
+   "a": [
+    "Vespasian",
+    "Trajan",
+    "Caligula",
+    "Augustus"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel est le plus gros animal vivant aujourd'hui ?",
+   "a": [
+    "La baleine bleue",
+    "L'éléphant d'Afrique",
+    "Le requin-baleine",
+    "Le cachalot"
+   ]
+  },
+  "en": {
+   "q": "What is the largest animal alive today?",
+   "a": [
+    "The blue whale",
+    "The African elephant",
+    "The whale shark",
+    "The sperm whale"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle planète tourne sur elle-même dans le sens inverse de la Terre ?",
+   "a": [
+    "Vénus",
+    "Mars",
+    "Jupiter",
+    "Mercure"
+   ]
+  },
+  "en": {
+   "q": "Which planet spins in the opposite direction to Earth?",
+   "a": [
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Mercury"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel animal sécrète un liquide rougeâtre qui lui sert de crème solaire ?",
+   "a": [
+    "L'hippopotame",
+    "Le rhinocéros",
+    "L'éléphant",
+    "Le buffle"
+   ]
+  },
+  "en": {
+   "q": "Which animal secretes a reddish fluid that acts as sunscreen?",
+   "a": [
+    "The hippopotamus",
+    "The rhinoceros",
+    "The elephant",
+    "The buffalo"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle race de chien a la langue bleu-noir ?",
+   "a": [
+    "Le chow-chow",
+    "Le carlin",
+    "Le dalmatien",
+    "Le husky"
+   ]
+  },
+  "en": {
+   "q": "Which dog breed has a blue-black tongue?",
+   "a": [
+    "The Chow Chow",
+    "The Pug",
+    "The Dalmatian",
+    "The Husky"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel animal ne descend de son arbre qu'environ une fois par semaine, pour faire ses besoins ?",
+   "a": [
+    "Le paresseux",
+    "Le koala",
+    "Le lémurien",
+    "L'orang-outan"
+   ]
+  },
+  "en": {
+   "q": "Which animal comes down from its tree only about once a week, to go to the toilet?",
+   "a": [
+    "The sloth",
+    "The koala",
+    "The lemur",
+    "The orangutan"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel organe humain est capable de repousser en partie après une ablation ?",
+   "a": [
+    "Le foie",
+    "Le cœur",
+    "Le pancréas",
+    "Les reins"
+   ]
+  },
+  "en": {
+   "q": "Which human organ can partly grow back after part of it is removed?",
+   "a": [
+    "The liver",
+    "The heart",
+    "The pancreas",
+    "The kidneys"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Lequel de ces mammifères pond des œufs ?",
+   "a": [
+    "L'ornithorynque",
+    "Le castor",
+    "La loutre",
+    "Le tatou"
+   ]
+  },
+  "en": {
+   "q": "Which of these mammals lays eggs?",
+   "a": [
+    "The platypus",
+    "The beaver",
+    "The otter",
+    "The armadillo"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Que contient la bosse du dromadaire ?",
+   "a": [
+    "De la graisse",
+    "De l'eau",
+    "Du lait",
+    "De l'air"
+   ]
+  },
+  "en": {
+   "q": "What does a dromedary's hump contain?",
+   "a": [
+    "Fat",
+    "Water",
+    "Milk",
+    "Air"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "En 1932, l'armée australienne a mené une « guerre » contre quel animal ?",
+   "a": [
+    "L'émeu",
+    "Le kangourou",
+    "Le lapin",
+    "Le dingo"
+   ]
+  },
+  "en": {
+   "q": "In 1932, the Australian army waged a \"war\" against which animal?",
+   "a": [
+    "The emu",
+    "The kangaroo",
+    "The rabbit",
+    "The dingo"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Comment s'appelait la chatte envoyée dans l'espace par la France en 1963 ?",
+   "a": [
+    "Félicette",
+    "Laïka",
+    "Minette",
+    "Câline"
+   ]
+  },
+  "en": {
+   "q": "What was the name of the cat France sent into space in 1963?",
+   "a": [
+    "Félicette",
+    "Laika",
+    "Minette",
+    "Câline"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel animal est surnommé « immortel » car il peut redevenir jeune ?",
+   "a": [
+    "Une méduse",
+    "Un homard",
+    "Une tortue",
+    "Un requin"
+   ]
+  },
+  "en": {
+   "q": "Which animal is nicknamed \"immortal\" because it can revert to a younger stage?",
+   "a": [
+    "A jellyfish",
+    "A lobster",
+    "A tortoise",
+    "A shark"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "À quelle famille de plantes appartient la cacahuète ?",
+   "a": [
+    "Les légumineuses",
+    "Les fruits à coque",
+    "Les céréales",
+    "Les agrumes"
+   ]
+  },
+  "en": {
+   "q": "Which plant family does the peanut belong to?",
+   "a": [
+    "Legumes",
+    "Tree nuts",
+    "Cereals",
+    "Citrus"
+   ]
+  }
+ },
+ {
+  "t": "n",
+  "n": 3,
+  "fr": {
+   "q": "Combien de cœurs a une pieuvre ?",
+   "u": "cœurs"
+  },
+  "en": {
+   "q": "How many hearts does an octopus have?",
+   "u": "hearts"
+  }
+ },
+ {
+  "t": "n",
+  "n": 8,
+  "fr": {
+   "q": "Combien de pattes a une araignée ?",
+   "u": "pattes"
+  },
+  "en": {
+   "q": "How many legs does a spider have?",
+   "u": "legs"
+  }
+ },
+ {
+  "t": "n",
+  "n": 4,
+  "fr": {
+   "q": "En combien de poches est divisé l'estomac d'une vache ?",
+   "u": "poches"
+  },
+  "en": {
+   "q": "How many compartments does a cow's stomach have?",
+   "u": "compartments"
+  }
+ },
+ {
+  "t": "n",
+  "n": 206,
+  "fr": {
+   "q": "Combien d'os compte le squelette d'un adulte ?",
+   "u": "os"
+  },
+  "en": {
+   "q": "How many bones are in an adult human skeleton?",
+   "u": "bones"
+  }
+ },
+ {
+  "t": "n",
+  "n": 5,
+  "fr": {
+   "q": "Combien d'yeux a une abeille ?",
+   "u": "yeux"
+  },
+  "en": {
+   "q": "How many eyes does a bee have?",
+   "u": "eyes"
+  }
+ },
+ {
+  "t": "n",
+  "n": 7,
+  "fr": {
+   "q": "Combien de vertèbres cervicales (dans le cou) a une girafe ?",
+   "u": "vertèbres"
+  },
+  "en": {
+   "q": "How many neck (cervical) vertebrae does a giraffe have?",
+   "u": "vertebrae"
+  }
+ },
+ {
+  "t": "n",
+  "n": 68,
+  "fr": {
+   "q": "Pendant combien d'années l'Américain Charles Osborne a-t-il eu le hoquet sans interruption ?",
+   "u": "ans"
+  },
+  "en": {
+   "q": "For how many years did American Charles Osborne have non-stop hiccups?",
+   "u": "years"
+  }
+ },
+ {
+  "t": "n",
+  "n": 8,
+  "fr": {
+   "q": "Combien de minutes environ met la lumière du Soleil pour atteindre la Terre ?",
+   "u": "minutes"
+  },
+  "en": {
+   "q": "Roughly how many minutes does sunlight take to reach Earth?",
+   "u": "minutes"
+  }
+ },
+ {
+  "t": "n",
+  "n": 20,
+  "fr": {
+   "q": "Combien de dents de lait a un enfant ?",
+   "u": "dents"
+  },
+  "en": {
+   "q": "How many baby teeth does a child have?",
+   "u": "teeth"
+  }
+ },
+ {
+  "t": "n",
+  "n": 10,
+  "fr": {
+   "q": "Combien de pattes a un homard, pinces comprises ?",
+   "u": "pattes"
+  },
+  "en": {
+   "q": "How many legs does a lobster have, claws included?",
+   "u": "legs"
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "La tour Eiffel grandit de plusieurs centimètres en été.",
+   "x": "Vrai : avec la chaleur, le fer se dilate et la tour gagne quelques centimètres."
+  },
+  "en": {
+   "q": "The Eiffel Tower grows several centimetres taller in summer.",
+   "x": "True: heat makes the iron expand and the tower gains a few centimetres."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "Les bananes sont légèrement radioactives.",
+   "x": "Vrai : elles contiennent du potassium 40, mais en quantité totalement inoffensive."
+  },
+  "en": {
+   "q": "Bananas are slightly radioactive.",
+   "x": "True: they contain potassium-40, but in a completely harmless amount."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "À Paris, un texte interdisant aux femmes de porter le pantalon n'a été officiellement déclaré caduc qu'en 2013.",
+   "x": "Vrai : l'ordonnance de 1800 n'était plus appliquée depuis longtemps ; en 2013, le gouvernement a déclaré qu'elle était implicitement abrogée."
+  },
+  "en": {
+   "q": "In Paris, a rule banning women from wearing trousers was only officially declared void in 2013.",
+   "x": "True: the 1800 ordinance had long gone unenforced; in 2013 the government declared it implicitly repealed."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "Les chats ne peuvent pas sentir le goût sucré.",
+   "x": "Vrai : il leur manque un récepteur du goût sucré fonctionnel."
+  },
+  "en": {
+   "q": "Cats cannot taste sweetness.",
+   "x": "True: they lack a working sweet taste receptor."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "Les papillons ont des récepteurs du goût sur leurs pattes.",
+   "x": "Vrai : en se posant sur une plante, ils la « goûtent » avec leurs pattes."
+  },
+  "en": {
+   "q": "Butterflies have taste receptors on their feet.",
+   "x": "True: when they land on a plant, they \"taste\" it with their feet."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "Le poisson rouge n'a que 3 secondes de mémoire.",
+   "x": "Faux : des expériences montrent qu'il peut se souvenir de choses pendant des mois."
+  },
+  "en": {
+   "q": "Goldfish only have a 3-second memory.",
+   "x": "False: experiments show they can remember things for months."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "On n'utilise que 10 % de notre cerveau.",
+   "x": "Faux : l'imagerie médicale montre que toutes les zones du cerveau sont utilisées."
+  },
+  "en": {
+   "q": "We only use 10% of our brain.",
+   "x": "False: brain imaging shows that every area of the brain is used."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "Les taureaux chargent parce que la couleur rouge les énerve.",
+   "x": "Faux : ils voient mal le rouge, c'est le mouvement de la cape qui les fait charger."
+  },
+  "en": {
+   "q": "Bulls charge because the colour red makes them angry.",
+   "x": "False: they barely see red; it's the movement of the cape that makes them charge."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "Les Vikings portaient des casques à cornes au combat.",
+   "x": "Faux : aucune preuve archéologique, cette image vient de costumes d'opéra du XIXe siècle."
+  },
+  "en": {
+   "q": "Vikings wore horned helmets in battle.",
+   "x": "False: there is no archaeological evidence; the image comes from 19th-century opera costumes."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "Napoléon était particulièrement petit pour son époque.",
+   "x": "Faux : il mesurait environ 1,69 m, une taille moyenne voire un peu au-dessus pour l'époque."
+  },
+  "en": {
+   "q": "Napoleon was particularly short for his time.",
+   "x": "False: he was about 1.69 m (5'7\"), average or slightly above for the era."
+  }
+ }
+]

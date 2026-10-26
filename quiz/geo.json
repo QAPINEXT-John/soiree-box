@@ -1,57 +1,959 @@
 [
-{"t":"q","fr":{"q":"Quelle est la capitale de l'Australie ?","a":["Canberra","Sydney","Melbourne","Perth"]},"en":{"q":"What is the capital of Australia?","a":["Canberra","Sydney","Melbourne","Perth"]}},
-{"t":"q","fr":{"q":"Quelle est la capitale du Canada ?","a":["Ottawa","Toronto","Montréal","Vancouver"]},"en":{"q":"What is the capital of Canada?","a":["Ottawa","Toronto","Montreal","Vancouver"]}},
-{"t":"q","fr":{"q":"Quelle est la capitale du Brésil ?","a":["Brasília","Rio de Janeiro","São Paulo","Salvador"]},"en":{"q":"What is the capital of Brazil?","a":["Brasília","Rio de Janeiro","São Paulo","Salvador"]}},
-{"t":"q","fr":{"q":"Quelle est la capitale de la Turquie ?","a":["Ankara","Istanbul","Izmir","Antalya"]},"en":{"q":"What is the capital of Turkey?","a":["Ankara","Istanbul","Izmir","Antalya"]}},
-{"t":"q","fr":{"q":"Quelle est la capitale de la Nouvelle-Zélande ?","a":["Wellington","Auckland","Christchurch","Queenstown"]},"en":{"q":"What is the capital of New Zealand?","a":["Wellington","Auckland","Christchurch","Queenstown"]}},
-{"t":"q","fr":{"q":"Quelle est la capitale du Maroc ?","a":["Rabat","Casablanca","Marrakech","Fès"]},"en":{"q":"What is the capital of Morocco?","a":["Rabat","Casablanca","Marrakesh","Fez"]}},
-{"t":"q","fr":{"q":"Quelle est la capitale du Vietnam ?","a":["Hanoï","Hô Chi Minh-Ville","Da Nang","Hué"]},"en":{"q":"What is the capital of Vietnam?","a":["Hanoi","Ho Chi Minh City","Da Nang","Hue"]}},
-{"t":"q","fr":{"q":"Quelle est la capitale du Pakistan ?","a":["Islamabad","Karachi","Lahore","Peshawar"]},"en":{"q":"What is the capital of Pakistan?","a":["Islamabad","Karachi","Lahore","Peshawar"]}},
-{"t":"q","fr":{"q":"Quel pays a un drapeau blanc avec un simple disque rouge au centre ?","a":["Japon","Bangladesh","Corée du Sud","Vietnam"]},"en":{"q":"Which country's flag is white with a plain red disc in the middle?","a":["Japan","Bangladesh","South Korea","Vietnam"]}},
-{"t":"q","fr":{"q":"Trois bandes verticales vert, blanc, rouge, sans aucun emblème : c'est le drapeau de…","a":["L'Italie","L'Irlande","Le Mexique","La Hongrie"]},"en":{"q":"Three vertical stripes, green, white, red, with no emblem: whose flag is it?","a":["Italy","Ireland","Mexico","Hungary"]}},
-{"t":"q","fr":{"q":"Drapeau rouge avec une croix blanche décalée vers la gauche : quel pays ?","a":["Danemark","Suisse","Norvège","Angleterre"]},"en":{"q":"Red flag with a white cross shifted to the left: which country?","a":["Denmark","Switzerland","Norway","England"]}},
-{"t":"q","fr":{"q":"Drapeau bleu avec une croix jaune : quel pays ?","a":["Suède","Finlande","Islande","Norvège"]},"en":{"q":"Blue flag with a yellow cross: which country?","a":["Sweden","Finland","Iceland","Norway"]}},
-{"t":"q","fr":{"q":"Quelle ville est la préfecture du Finistère ?","a":["Quimper","Brest","Morlaix","Lorient"]},"en":{"q":"Which town is the prefecture of the Finistère department?","a":["Quimper","Brest","Morlaix","Lorient"]}},
-{"t":"q","fr":{"q":"Quel département porte le numéro 13 ?","a":["Bouches-du-Rhône","Var","Vaucluse","Hérault"]},"en":{"q":"Which French department has the number 13?","a":["Bouches-du-Rhône","Var","Vaucluse","Hérault"]}},
-{"t":"q","fr":{"q":"Quel département porte le numéro 33 ?","a":["Gironde","Landes","Dordogne","Charente"]},"en":{"q":"Which French department has the number 33?","a":["Gironde","Landes","Dordogne","Charente"]}},
-{"t":"q","fr":{"q":"Quel est le chef-lieu de la région Occitanie ?","a":["Toulouse","Montpellier","Perpignan","Nîmes"]},"en":{"q":"What is the capital of the Occitanie region?","a":["Toulouse","Montpellier","Perpignan","Nîmes"]}},
-{"t":"q","fr":{"q":"Quel est le chef-lieu de la région Grand Est ?","a":["Strasbourg","Metz","Reims","Nancy"]},"en":{"q":"What is the capital of the Grand Est region?","a":["Strasbourg","Metz","Reims","Nancy"]}},
-{"t":"q","fr":{"q":"Quel est le plus haut sommet des Pyrénées ?","a":["Pic d'Aneto","Vignemale","Mont Perdu","Pic du Midi de Bigorre"]},"en":{"q":"What is the highest peak in the Pyrenees?","a":["Aneto","Vignemale","Monte Perdido","Pic du Midi de Bigorre"]}},
-{"t":"q","fr":{"q":"Quel est le plus grand pays du monde en superficie ?","a":["Russie","Canada","Chine","États-Unis"]},"en":{"q":"What is the largest country in the world by area?","a":["Russia","Canada","China","United States"]}},
-{"t":"q","fr":{"q":"Quel pays est entièrement entouré par l'Afrique du Sud ?","a":["Lesotho","Eswatini","Botswana","Namibie"]},"en":{"q":"Which country is completely surrounded by South Africa?","a":["Lesotho","Eswatini","Botswana","Namibia"]}},
-{"t":"q","fr":{"q":"Quel fleuve traverse Londres ?","a":["La Tamise","La Severn","La Mersey","La Trent"]},"en":{"q":"Which river flows through London?","a":["The Thames","The Severn","The Mersey","The Trent"]}},
-{"t":"q","fr":{"q":"Quel fleuve traverse à la fois Vienne et Budapest ?","a":["Le Danube","Le Rhin","L'Elbe","La Vistule"]},"en":{"q":"Which river flows through both Vienna and Budapest?","a":["The Danube","The Rhine","The Elbe","The Vistula"]}},
-{"t":"q","fr":{"q":"Dans quel pays se trouve la ville de Tombouctou ?","a":["Mali","Niger","Mauritanie","Burkina Faso"]},"en":{"q":"In which country is the city of Timbuktu?","a":["Mali","Niger","Mauritania","Burkina Faso"]}},
-{"t":"q","fr":{"q":"Dans quelle chaîne de montagnes se trouve l'Everest ?","a":["Himalaya","Andes","Rocheuses","Alpes"]},"en":{"q":"In which mountain range is Mount Everest?","a":["Himalayas","Andes","Rockies","Alps"]}},
-{"t":"q","fr":{"q":"Dans quel pays se trouve le Machu Picchu ?","a":["Pérou","Bolivie","Équateur","Chili"]},"en":{"q":"In which country is Machu Picchu?","a":["Peru","Bolivia","Ecuador","Chile"]}},
-{"t":"q","fr":{"q":"Quel détroit sépare l'Espagne du Maroc ?","a":["Gibraltar","Bosphore","Messine","Ormuz"]},"en":{"q":"Which strait separates Spain from Morocco?","a":["Gibraltar","Bosporus","Messina","Hormuz"]}},
-{"t":"q","fr":{"q":"Quelle est la plus grande île de la Méditerranée ?","a":["Sicile","Sardaigne","Chypre","Corse"]},"en":{"q":"What is the largest island in the Mediterranean?","a":["Sicily","Sardinia","Cyprus","Corsica"]}},
-{"t":"q","fr":{"q":"Quel est le plus grand lac d'Afrique ?","a":["Lac Victoria","Lac Tanganyika","Lac Malawi","Lac Tchad"]},"en":{"q":"What is the largest lake in Africa?","a":["Lake Victoria","Lake Tanganyika","Lake Malawi","Lake Chad"]}},
-{"t":"q","fr":{"q":"À Lyon, quelle rivière rejoint le Rhône ?","a":["La Saône","L'Isère","La Durance","Le Doubs"]},"en":{"q":"In Lyon, which river joins the Rhône?","a":["The Saône","The Isère","The Durance","The Doubs"]}},
-{"t":"q","fr":{"q":"Quel est le point culminant du Massif central ?","a":["Puy de Sancy","Puy de Dôme","Plomb du Cantal","Mont Mézenc"]},"en":{"q":"What is the highest point of the Massif Central?","a":["Puy de Sancy","Puy de Dôme","Plomb du Cantal","Mont Mézenc"]}},
-{"t":"q","fr":{"q":"Lequel de ces pays n'a aucun accès à la mer ?","a":["Bolivie","Pérou","Chili","Colombie"]},"en":{"q":"Which of these countries has no access to the sea?","a":["Bolivia","Peru","Chile","Colombia"]}},
-{"t":"q","fr":{"q":"Quelle chaîne de montagnes de Russie marque traditionnellement la limite entre l'Europe et l'Asie ?","a":["Oural","Carpates","Altaï","Balkans"]},"en":{"q":"Which Russian mountain range traditionally marks the boundary between Europe and Asia?","a":["Urals","Carpathians","Altai","Balkans"]}},
-{"t":"q","fr":{"q":"Quel est le point culminant de La Réunion ?","a":["Piton des Neiges","Piton de la Fournaise","Grand Bénare","Piton Maïdo"]},"en":{"q":"What is the highest point on Réunion Island?","a":["Piton des Neiges","Piton de la Fournaise","Grand Bénare","Piton Maïdo"]}},
-{"t":"n","n":4808,"fr":{"q":"Quelle est l'altitude du mont Blanc, à peu près ?","u":"m"},"en":{"q":"Roughly how high is Mont Blanc?","u":"m"}},
-{"t":"n","n":8849,"fr":{"q":"Quelle est l'altitude de l'Everest, à peu près ?","u":"m"},"en":{"q":"Roughly how high is Mount Everest?","u":"m"}},
-{"t":"n","n":5895,"fr":{"q":"Quelle est l'altitude du Kilimandjaro, à peu près ?","u":"m"},"en":{"q":"Roughly how high is Mount Kilimanjaro?","u":"m"}},
-{"t":"n","n":1465,"fr":{"q":"Quelle est l'altitude du puy de Dôme ?","u":"m"},"en":{"q":"How high is the Puy de Dôme?","u":"m"}},
-{"t":"n","n":13,"fr":{"q":"Combien de régions compte la France métropolitaine depuis 2016 ?","u":"régions"},"en":{"q":"How many regions has mainland France had since 2016?","u":"regions"}},
-{"t":"n","n":1006,"fr":{"q":"Quelle est la longueur de la Loire, à peu près ?","u":"km"},"en":{"q":"Roughly how long is the Loire river?","u":"km"}},
-{"t":"n","n":777,"fr":{"q":"Quelle est la longueur de la Seine, à peu près ?","u":"km"},"en":{"q":"Roughly how long is the Seine river?","u":"km"}},
-{"t":"n","n":6650,"fr":{"q":"Quelle est la longueur du Nil, à peu près ?","u":"km"},"en":{"q":"Roughly how long is the Nile?","u":"km"}},
-{"t":"n","n":50,"fr":{"q":"Combien d'États composent les États-Unis ?","u":"États"},"en":{"q":"How many states make up the United States?","u":"states"}},
-{"t":"n","n":10,"fr":{"q":"Combien de provinces compte le Canada (sans les territoires) ?","u":"provinces"},"en":{"q":"How many provinces does Canada have (not counting territories)?","u":"provinces"}},
-{"t":"n","n":1994,"fr":{"q":"En quelle année le tunnel sous la Manche a-t-il été inauguré ?","u":""},"en":{"q":"In what year did the Channel Tunnel open?","u":""}},
-{"t":"vf","v":true,"fr":{"q":"L'Australie est plus large, d'est en ouest, que le diamètre de la Lune.","x":"Vrai : l'Australie fait environ 4 000 km de large, la Lune 3 474 km de diamètre."},"en":{"q":"Australia is wider, east to west, than the diameter of the Moon.","x":"True: Australia is about 4,000 km wide, the Moon is 3,474 km across."}},
-{"t":"vf","v":false,"fr":{"q":"Le Sahara est le plus grand désert du monde.","x":"Faux : c'est l'Antarctique, un désert froid. Le Sahara est le plus grand désert chaud."},"en":{"q":"The Sahara is the largest desert in the world.","x":"False: it's Antarctica, a cold desert. The Sahara is the largest hot desert."}},
-{"t":"vf","v":true,"fr":{"q":"La plus longue frontière terrestre de la France, c'est avec le Brésil.","x":"Vrai : grâce à la Guyane, la frontière franco-brésilienne fait environ 730 km, plus que celle avec l'Espagne."},"en":{"q":"France's longest land border is with Brazil.","x":"True: thanks to French Guiana, the France–Brazil border is about 730 km, longer than the one with Spain."}},
-{"t":"vf","v":false,"fr":{"q":"Le Rhin prend sa source en France.","x":"Faux : le Rhin naît dans les Alpes suisses."},"en":{"q":"The Rhine has its source in France.","x":"False: the Rhine rises in the Swiss Alps."}},
-{"t":"vf","v":true,"fr":{"q":"Le Canada possède le plus long littoral du monde.","x":"Vrai : plus de 200 000 km de côtes, de loin le record mondial."},"en":{"q":"Canada has the longest coastline in the world.","x":"True: over 200,000 km of coastline, by far the world record."}},
-{"t":"vf","v":false,"fr":{"q":"La capitale de la Suisse est Genève.","x":"Faux : c'est Berne. Genève et Zurich sont plus grandes, mais pas capitales."},"en":{"q":"The capital of Switzerland is Geneva.","x":"False: it's Bern. Geneva and Zurich are bigger, but not the capital."}},
-{"t":"vf","v":true,"fr":{"q":"Le Nil se jette dans la mer Méditerranée.","x":"Vrai : il se jette dans la Méditerranée par un grand delta, au nord de l'Égypte."},"en":{"q":"The Nile flows into the Mediterranean Sea.","x":"True: it empties into the Mediterranean through a large delta in northern Egypt."}},
-{"t":"vf","v":false,"fr":{"q":"Le Portugal a une frontière commune avec la France.","x":"Faux : le Portugal n'a qu'un seul voisin terrestre, l'Espagne."},"en":{"q":"Portugal shares a border with France.","x":"False: Portugal has only one land neighbour, Spain."}},
-{"t":"vf","v":false,"fr":{"q":"L'Amazone se jette dans l'océan Pacifique.","x":"Faux : elle se jette dans l'océan Atlantique, au nord du Brésil."},"en":{"q":"The Amazon flows into the Pacific Ocean.","x":"False: it flows into the Atlantic Ocean, in northern Brazil."}},
-{"t":"vf","v":true,"fr":{"q":"Le Vatican est un pays entièrement enclavé dans la ville de Rome.","x":"Vrai : le plus petit État du monde est entièrement entouré par Rome."},"en":{"q":"Vatican City is a country entirely enclosed within the city of Rome.","x":"True: the world's smallest state is completely surrounded by Rome."}},
-{"t":"vf","v":true,"fr":{"q":"Le lac Baïkal, en Russie, est le lac le plus profond du monde.","x":"Vrai : il dépasse 1 600 m de profondeur."},"en":{"q":"Lake Baikal, in Russia, is the deepest lake in the world.","x":"True: it is over 1,600 m deep."}}
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle est la capitale de l'Australie ?",
+   "a": [
+    "Canberra",
+    "Sydney",
+    "Melbourne",
+    "Perth"
+   ]
+  },
+  "en": {
+   "q": "What is the capital of Australia?",
+   "a": [
+    "Canberra",
+    "Sydney",
+    "Melbourne",
+    "Perth"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle est la capitale du Canada ?",
+   "a": [
+    "Ottawa",
+    "Toronto",
+    "Montréal",
+    "Vancouver"
+   ]
+  },
+  "en": {
+   "q": "What is the capital of Canada?",
+   "a": [
+    "Ottawa",
+    "Toronto",
+    "Montreal",
+    "Vancouver"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle est la capitale du Brésil ?",
+   "a": [
+    "Brasília",
+    "Rio de Janeiro",
+    "São Paulo",
+    "Salvador"
+   ]
+  },
+  "en": {
+   "q": "What is the capital of Brazil?",
+   "a": [
+    "Brasília",
+    "Rio de Janeiro",
+    "São Paulo",
+    "Salvador"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle est la capitale de la Turquie ?",
+   "a": [
+    "Ankara",
+    "Istanbul",
+    "Izmir",
+    "Antalya"
+   ]
+  },
+  "en": {
+   "q": "What is the capital of Turkey?",
+   "a": [
+    "Ankara",
+    "Istanbul",
+    "Izmir",
+    "Antalya"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle est la capitale de la Nouvelle-Zélande ?",
+   "a": [
+    "Wellington",
+    "Auckland",
+    "Christchurch",
+    "Queenstown"
+   ]
+  },
+  "en": {
+   "q": "What is the capital of New Zealand?",
+   "a": [
+    "Wellington",
+    "Auckland",
+    "Christchurch",
+    "Queenstown"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle est la capitale du Maroc ?",
+   "a": [
+    "Rabat",
+    "Casablanca",
+    "Marrakech",
+    "Fès"
+   ]
+  },
+  "en": {
+   "q": "What is the capital of Morocco?",
+   "a": [
+    "Rabat",
+    "Casablanca",
+    "Marrakesh",
+    "Fez"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle est la capitale du Vietnam ?",
+   "a": [
+    "Hanoï",
+    "Hô Chi Minh-Ville",
+    "Da Nang",
+    "Hué"
+   ]
+  },
+  "en": {
+   "q": "What is the capital of Vietnam?",
+   "a": [
+    "Hanoi",
+    "Ho Chi Minh City",
+    "Da Nang",
+    "Hue"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle est la capitale du Pakistan ?",
+   "a": [
+    "Islamabad",
+    "Karachi",
+    "Lahore",
+    "Peshawar"
+   ]
+  },
+  "en": {
+   "q": "What is the capital of Pakistan?",
+   "a": [
+    "Islamabad",
+    "Karachi",
+    "Lahore",
+    "Peshawar"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel pays a un drapeau blanc avec un simple disque rouge au centre ?",
+   "a": [
+    "Japon",
+    "Bangladesh",
+    "Corée du Sud",
+    "Vietnam"
+   ]
+  },
+  "en": {
+   "q": "Which country's flag is white with a plain red disc in the middle?",
+   "a": [
+    "Japan",
+    "Bangladesh",
+    "South Korea",
+    "Vietnam"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Trois bandes verticales vert, blanc, rouge, sans aucun emblème : c'est le drapeau de…",
+   "a": [
+    "L'Italie",
+    "L'Irlande",
+    "Le Mexique",
+    "La Hongrie"
+   ]
+  },
+  "en": {
+   "q": "Three vertical stripes, green, white, red, with no emblem: whose flag is it?",
+   "a": [
+    "Italy",
+    "Ireland",
+    "Mexico",
+    "Hungary"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Drapeau rouge avec une croix blanche décalée vers la gauche : quel pays ?",
+   "a": [
+    "Danemark",
+    "Suisse",
+    "Norvège",
+    "Angleterre"
+   ]
+  },
+  "en": {
+   "q": "Red flag with a white cross shifted to the left: which country?",
+   "a": [
+    "Denmark",
+    "Switzerland",
+    "Norway",
+    "England"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Drapeau bleu avec une croix jaune : quel pays ?",
+   "a": [
+    "Suède",
+    "Finlande",
+    "Islande",
+    "Norvège"
+   ]
+  },
+  "en": {
+   "q": "Blue flag with a yellow cross: which country?",
+   "a": [
+    "Sweden",
+    "Finland",
+    "Iceland",
+    "Norway"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle ville est la préfecture du Finistère ?",
+   "a": [
+    "Quimper",
+    "Brest",
+    "Morlaix",
+    "Lorient"
+   ]
+  },
+  "en": {
+   "q": "Which town is the prefecture of the Finistère department?",
+   "a": [
+    "Quimper",
+    "Brest",
+    "Morlaix",
+    "Lorient"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel département porte le numéro 13 ?",
+   "a": [
+    "Bouches-du-Rhône",
+    "Var",
+    "Vaucluse",
+    "Hérault"
+   ]
+  },
+  "en": {
+   "q": "Which French department has the number 13?",
+   "a": [
+    "Bouches-du-Rhône",
+    "Var",
+    "Vaucluse",
+    "Hérault"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel département porte le numéro 33 ?",
+   "a": [
+    "Gironde",
+    "Landes",
+    "Dordogne",
+    "Charente"
+   ]
+  },
+  "en": {
+   "q": "Which French department has the number 33?",
+   "a": [
+    "Gironde",
+    "Landes",
+    "Dordogne",
+    "Charente"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel est le chef-lieu de la région Occitanie ?",
+   "a": [
+    "Toulouse",
+    "Montpellier",
+    "Perpignan",
+    "Nîmes"
+   ]
+  },
+  "en": {
+   "q": "What is the capital of the Occitanie region?",
+   "a": [
+    "Toulouse",
+    "Montpellier",
+    "Perpignan",
+    "Nîmes"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel est le chef-lieu de la région Grand Est ?",
+   "a": [
+    "Strasbourg",
+    "Metz",
+    "Reims",
+    "Nancy"
+   ]
+  },
+  "en": {
+   "q": "What is the capital of the Grand Est region?",
+   "a": [
+    "Strasbourg",
+    "Metz",
+    "Reims",
+    "Nancy"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel est le plus haut sommet des Pyrénées ?",
+   "a": [
+    "Pic d'Aneto",
+    "Vignemale",
+    "Mont Perdu",
+    "Pic du Midi de Bigorre"
+   ]
+  },
+  "en": {
+   "q": "What is the highest peak in the Pyrenees?",
+   "a": [
+    "Aneto",
+    "Vignemale",
+    "Monte Perdido",
+    "Pic du Midi de Bigorre"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel est le plus grand pays du monde en superficie ?",
+   "a": [
+    "Russie",
+    "Canada",
+    "Chine",
+    "États-Unis"
+   ]
+  },
+  "en": {
+   "q": "What is the largest country in the world by area?",
+   "a": [
+    "Russia",
+    "Canada",
+    "China",
+    "United States"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel pays est entièrement entouré par l'Afrique du Sud ?",
+   "a": [
+    "Lesotho",
+    "Eswatini",
+    "Botswana",
+    "Namibie"
+   ]
+  },
+  "en": {
+   "q": "Which country is completely surrounded by South Africa?",
+   "a": [
+    "Lesotho",
+    "Eswatini",
+    "Botswana",
+    "Namibia"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel fleuve traverse Londres ?",
+   "a": [
+    "La Tamise",
+    "La Severn",
+    "La Mersey",
+    "La Trent"
+   ]
+  },
+  "en": {
+   "q": "Which river flows through London?",
+   "a": [
+    "The Thames",
+    "The Severn",
+    "The Mersey",
+    "The Trent"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel fleuve traverse à la fois Vienne et Budapest ?",
+   "a": [
+    "Le Danube",
+    "Le Rhin",
+    "L'Elbe",
+    "La Vistule"
+   ]
+  },
+  "en": {
+   "q": "Which river flows through both Vienna and Budapest?",
+   "a": [
+    "The Danube",
+    "The Rhine",
+    "The Elbe",
+    "The Vistula"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Dans quel pays se trouve la ville de Tombouctou ?",
+   "a": [
+    "Mali",
+    "Niger",
+    "Mauritanie",
+    "Burkina Faso"
+   ]
+  },
+  "en": {
+   "q": "In which country is the city of Timbuktu?",
+   "a": [
+    "Mali",
+    "Niger",
+    "Mauritania",
+    "Burkina Faso"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Dans quelle chaîne de montagnes se trouve l'Everest ?",
+   "a": [
+    "Himalaya",
+    "Andes",
+    "Rocheuses",
+    "Alpes"
+   ]
+  },
+  "en": {
+   "q": "In which mountain range is Mount Everest?",
+   "a": [
+    "Himalayas",
+    "Andes",
+    "Rockies",
+    "Alps"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Dans quel pays se trouve le Machu Picchu ?",
+   "a": [
+    "Pérou",
+    "Bolivie",
+    "Équateur",
+    "Chili"
+   ]
+  },
+  "en": {
+   "q": "In which country is Machu Picchu?",
+   "a": [
+    "Peru",
+    "Bolivia",
+    "Ecuador",
+    "Chile"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel détroit sépare l'Espagne du Maroc ?",
+   "a": [
+    "Gibraltar",
+    "Bosphore",
+    "Messine",
+    "Ormuz"
+   ]
+  },
+  "en": {
+   "q": "Which strait separates Spain from Morocco?",
+   "a": [
+    "Gibraltar",
+    "Bosporus",
+    "Messina",
+    "Hormuz"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle est la plus grande île de la Méditerranée ?",
+   "a": [
+    "Sicile",
+    "Sardaigne",
+    "Chypre",
+    "Corse"
+   ]
+  },
+  "en": {
+   "q": "What is the largest island in the Mediterranean?",
+   "a": [
+    "Sicily",
+    "Sardinia",
+    "Cyprus",
+    "Corsica"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel est le plus grand lac d'Afrique ?",
+   "a": [
+    "Lac Victoria",
+    "Lac Tanganyika",
+    "Lac Malawi",
+    "Lac Tchad"
+   ]
+  },
+  "en": {
+   "q": "What is the largest lake in Africa?",
+   "a": [
+    "Lake Victoria",
+    "Lake Tanganyika",
+    "Lake Malawi",
+    "Lake Chad"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "À Lyon, quelle rivière rejoint le Rhône ?",
+   "a": [
+    "La Saône",
+    "L'Isère",
+    "La Durance",
+    "Le Doubs"
+   ]
+  },
+  "en": {
+   "q": "In Lyon, which river joins the Rhône?",
+   "a": [
+    "The Saône",
+    "The Isère",
+    "The Durance",
+    "The Doubs"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel est le point culminant du Massif central ?",
+   "a": [
+    "Puy de Sancy",
+    "Puy de Dôme",
+    "Plomb du Cantal",
+    "Mont Mézenc"
+   ]
+  },
+  "en": {
+   "q": "What is the highest point of the Massif Central?",
+   "a": [
+    "Puy de Sancy",
+    "Puy de Dôme",
+    "Plomb du Cantal",
+    "Mont Mézenc"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Lequel de ces pays n'a aucun accès à la mer ?",
+   "a": [
+    "Bolivie",
+    "Pérou",
+    "Chili",
+    "Colombie"
+   ]
+  },
+  "en": {
+   "q": "Which of these countries has no access to the sea?",
+   "a": [
+    "Bolivia",
+    "Peru",
+    "Chile",
+    "Colombia"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle chaîne de montagnes de Russie marque traditionnellement la limite entre l'Europe et l'Asie ?",
+   "a": [
+    "Oural",
+    "Carpates",
+    "Altaï",
+    "Balkans"
+   ]
+  },
+  "en": {
+   "q": "Which Russian mountain range traditionally marks the boundary between Europe and Asia?",
+   "a": [
+    "Urals",
+    "Carpathians",
+    "Altai",
+    "Balkans"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel est le point culminant de La Réunion ?",
+   "a": [
+    "Piton des Neiges",
+    "Piton de la Fournaise",
+    "Grand Bénare",
+    "Piton Maïdo"
+   ]
+  },
+  "en": {
+   "q": "What is the highest point on Réunion Island?",
+   "a": [
+    "Piton des Neiges",
+    "Piton de la Fournaise",
+    "Grand Bénare",
+    "Piton Maïdo"
+   ]
+  }
+ },
+ {
+  "t": "n",
+  "n": 4807,
+  "fr": {
+   "q": "Quelle est l'altitude du mont Blanc, à peu près ?",
+   "u": "m"
+  },
+  "en": {
+   "q": "Roughly how high is Mont Blanc?",
+   "u": "m"
+  }
+ },
+ {
+  "t": "n",
+  "n": 8849,
+  "fr": {
+   "q": "Quelle est l'altitude de l'Everest, à peu près ?",
+   "u": "m"
+  },
+  "en": {
+   "q": "Roughly how high is Mount Everest?",
+   "u": "m"
+  }
+ },
+ {
+  "t": "n",
+  "n": 5895,
+  "fr": {
+   "q": "Quelle est l'altitude du Kilimandjaro, à peu près ?",
+   "u": "m"
+  },
+  "en": {
+   "q": "Roughly how high is Mount Kilimanjaro?",
+   "u": "m"
+  }
+ },
+ {
+  "t": "n",
+  "n": 1465,
+  "fr": {
+   "q": "Quelle est l'altitude du puy de Dôme ?",
+   "u": "m"
+  },
+  "en": {
+   "q": "How high is the Puy de Dôme?",
+   "u": "m"
+  }
+ },
+ {
+  "t": "n",
+  "n": 13,
+  "fr": {
+   "q": "Combien de régions compte la France métropolitaine depuis 2016 ?",
+   "u": "régions"
+  },
+  "en": {
+   "q": "How many regions has mainland France had since 2016?",
+   "u": "regions"
+  }
+ },
+ {
+  "t": "n",
+  "n": 1006,
+  "fr": {
+   "q": "Quelle est la longueur de la Loire, à peu près ?",
+   "u": "km"
+  },
+  "en": {
+   "q": "Roughly how long is the Loire river?",
+   "u": "km"
+  }
+ },
+ {
+  "t": "n",
+  "n": 777,
+  "fr": {
+   "q": "Quelle est la longueur de la Seine, à peu près ?",
+   "u": "km"
+  },
+  "en": {
+   "q": "Roughly how long is the Seine river?",
+   "u": "km"
+  }
+ },
+ {
+  "t": "n",
+  "n": 6650,
+  "fr": {
+   "q": "Quelle est la longueur du Nil, à peu près ?",
+   "u": "km"
+  },
+  "en": {
+   "q": "Roughly how long is the Nile?",
+   "u": "km"
+  }
+ },
+ {
+  "t": "n",
+  "n": 50,
+  "fr": {
+   "q": "Combien d'États composent les États-Unis ?",
+   "u": "États"
+  },
+  "en": {
+   "q": "How many states make up the United States?",
+   "u": "states"
+  }
+ },
+ {
+  "t": "n",
+  "n": 10,
+  "fr": {
+   "q": "Combien de provinces compte le Canada (sans les territoires) ?",
+   "u": "provinces"
+  },
+  "en": {
+   "q": "How many provinces does Canada have (not counting territories)?",
+   "u": "provinces"
+  }
+ },
+ {
+  "t": "n",
+  "n": 1994,
+  "fr": {
+   "q": "En quelle année le tunnel sous la Manche a-t-il été inauguré ?",
+   "u": ""
+  },
+  "en": {
+   "q": "In what year did the Channel Tunnel open?",
+   "u": ""
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "L'Australie est plus large, d'est en ouest, que le diamètre de la Lune.",
+   "x": "Vrai : l'Australie fait environ 4 000 km de large, la Lune 3 474 km de diamètre."
+  },
+  "en": {
+   "q": "Australia is wider, east to west, than the diameter of the Moon.",
+   "x": "True: Australia is about 4,000 km wide, the Moon is 3,474 km across."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "Le Sahara est le plus grand désert du monde.",
+   "x": "Faux : c'est l'Antarctique, un désert froid. Le Sahara est le plus grand désert chaud."
+  },
+  "en": {
+   "q": "The Sahara is the largest desert in the world.",
+   "x": "False: it's Antarctica, a cold desert. The Sahara is the largest hot desert."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "La plus longue frontière terrestre de la France, c'est avec le Brésil.",
+   "x": "Vrai : grâce à la Guyane, la frontière franco-brésilienne fait environ 730 km, plus que celle avec l'Espagne."
+  },
+  "en": {
+   "q": "France's longest land border is with Brazil.",
+   "x": "True: thanks to French Guiana, the France–Brazil border is about 730 km, longer than the one with Spain."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "Le Rhin prend sa source en France.",
+   "x": "Faux : le Rhin naît dans les Alpes suisses."
+  },
+  "en": {
+   "q": "The Rhine has its source in France.",
+   "x": "False: the Rhine rises in the Swiss Alps."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "Le Canada possède le plus long littoral du monde.",
+   "x": "Vrai : plus de 200 000 km de côtes, de loin le record mondial."
+  },
+  "en": {
+   "q": "Canada has the longest coastline in the world.",
+   "x": "True: over 200,000 km of coastline, by far the world record."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "La capitale de la Suisse est Genève.",
+   "x": "Faux : c'est Berne. Genève et Zurich sont plus grandes, mais pas capitales."
+  },
+  "en": {
+   "q": "The capital of Switzerland is Geneva.",
+   "x": "False: it's Bern. Geneva and Zurich are bigger, but not the capital."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "Le Nil se jette dans la mer Méditerranée.",
+   "x": "Vrai : il se jette dans la Méditerranée par un grand delta, au nord de l'Égypte."
+  },
+  "en": {
+   "q": "The Nile flows into the Mediterranean Sea.",
+   "x": "True: it empties into the Mediterranean through a large delta in northern Egypt."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "Le Portugal a une frontière commune avec la France.",
+   "x": "Faux : le Portugal n'a qu'un seul voisin terrestre, l'Espagne."
+  },
+  "en": {
+   "q": "Portugal shares a border with France.",
+   "x": "False: Portugal has only one land neighbour, Spain."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "L'Amazone se jette dans l'océan Pacifique.",
+   "x": "Faux : elle se jette dans l'océan Atlantique, au nord du Brésil."
+  },
+  "en": {
+   "q": "The Amazon flows into the Pacific Ocean.",
+   "x": "False: it flows into the Atlantic Ocean, in northern Brazil."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "Le Vatican est un pays entièrement enclavé dans la ville de Rome.",
+   "x": "Vrai : le plus petit État du monde est entièrement entouré par Rome."
+  },
+  "en": {
+   "q": "Vatican City is a country entirely enclosed within the city of Rome.",
+   "x": "True: the world's smallest state is completely surrounded by Rome."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "Le lac Baïkal, en Russie, est le lac le plus profond du monde.",
+   "x": "Vrai : il dépasse 1 600 m de profondeur."
+  },
+  "en": {
+   "q": "Lake Baikal, in Russia, is the deepest lake in the world.",
+   "x": "True: it is over 1,600 m deep."
+  }
+ }
 ]

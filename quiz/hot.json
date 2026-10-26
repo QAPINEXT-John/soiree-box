@@ -1,42 +1,698 @@
 [
-{"t":"q","fr":{"q":"Selon Hésiode, de quoi est née Aphrodite ?","a":["De l'écume de la mer","D'un œuf de cygne","De la cuisse de Zeus","D'un rayon de lune"]},"en":{"q":"According to Hesiod, what was Aphrodite born from?","a":["Sea foam","A swan's egg","Zeus's thigh","A moonbeam"]}},
-{"t":"q","fr":{"q":"À qui attribue-t-on le Kama-sutra ?","a":["Vatsyayana","Kalidasa","Valmiki","Rabindranath Tagore"]},"en":{"q":"Who is the Kama Sutra attributed to?","a":["Vatsyayana","Kalidasa","Valmiki","Rabindranath Tagore"]}},
-{"t":"q","fr":{"q":"Qui a écrit « L'Amant », prix Goncourt 1984 ?","a":["Marguerite Duras","Colette","Françoise Sagan","Annie Ernaux"]},"en":{"q":"Who wrote \"The Lover\", winner of the 1984 Prix Goncourt?","a":["Marguerite Duras","Colette","Françoise Sagan","Annie Ernaux"]}},
-{"t":"q","fr":{"q":"Avec qui Serge Gainsbourg chante-t-il « Je t'aime… moi non plus » en 1969 ?","a":["Jane Birkin","France Gall","Françoise Hardy","Catherine Deneuve"]},"en":{"q":"Who sang \"Je t'aime… moi non plus\" with Serge Gainsbourg in 1969?","a":["Jane Birkin","France Gall","Françoise Hardy","Catherine Deneuve"]}},
-{"t":"q","fr":{"q":"Qui a peint « L'Origine du monde » (1866) ?","a":["Gustave Courbet","Édouard Manet","Ingres","Eugène Delacroix"]},"en":{"q":"Who painted \"The Origin of the World\" (1866)?","a":["Gustave Courbet","Édouard Manet","Ingres","Eugène Delacroix"]}},
-{"t":"q","fr":{"q":"Quelle actrice croise et décroise les jambes dans « Basic Instinct » (1992) ?","a":["Sharon Stone","Kim Basinger","Michelle Pfeiffer","Demi Moore"]},"en":{"q":"Which actress famously crosses her legs in \"Basic Instinct\" (1992)?","a":["Sharon Stone","Kim Basinger","Michelle Pfeiffer","Demi Moore"]}},
-{"t":"q","fr":{"q":"Le « point G » doit son nom à quel gynécologue ?","a":["Ernst Gräfenberg","Wilhelm Grimm","Rube Goldberg","Carl Gauss"]},"en":{"q":"The \"G-spot\" is named after which gynecologist?","a":["Ernst Gräfenberg","Wilhelm Grimm","Rube Goldberg","Carl Gauss"]}},
-{"t":"q","fr":{"q":"À l'origine, le Viagra était étudié pour soigner…","a":["L'angine de poitrine","La calvitie","L'insomnie","L'obésité"]},"en":{"q":"Viagra was originally being studied to treat…","a":["Angina","Baldness","Insomnia","Obesity"]}},
-{"t":"q","fr":{"q":"Quel biologiste est considéré comme le père de la pilule contraceptive ?","a":["Gregory Pincus","Alfred Kinsey","William Masters","Jonas Salk"]},"en":{"q":"Which biologist is considered the father of the birth control pill?","a":["Gregory Pincus","Alfred Kinsey","William Masters","Jonas Salk"]}},
-{"t":"q","fr":{"q":"Quelle loi a autorisé la contraception en France en 1967 ?","a":["La loi Neuwirth","La loi Veil","La loi Évin","La loi Badinter"]},"en":{"q":"Which law legalized contraception in France in 1967?","a":["The Neuwirth law","The Veil law","The Évin law","The Badinter law"]}},
-{"t":"q","fr":{"q":"De quelle ville était originaire le séducteur Giacomo Casanova ?","a":["Venise","Rome","Naples","Florence"]},"en":{"q":"Which city was the seducer Giacomo Casanova from?","a":["Venice","Rome","Naples","Florence"]}},
-{"t":"q","fr":{"q":"Le mot « masochisme » vient du nom de quel écrivain ?","a":["Leopold von Sacher-Masoch","Le marquis de Sade","Giacomo Casanova","Charles Baudelaire"]},"en":{"q":"The word \"masochism\" comes from the name of which writer?","a":["Leopold von Sacher-Masoch","The Marquis de Sade","Giacomo Casanova","Charles Baudelaire"]}},
-{"t":"q","fr":{"q":"Quel recueil a été condamné en 1857 pour outrage à la morale publique ?","a":["Les Fleurs du mal","Les Contemplations","Alcools","Les Méditations poétiques"]},"en":{"q":"Which poetry collection was convicted of offending public morals in 1857?","a":["The Flowers of Evil","Les Contemplations","Alcools","Poetic Meditations"]}},
-{"t":"q","fr":{"q":"Quel dieu au phallus démesuré a donné son nom au « priapisme » ?","a":["Priape","Pan","Hermès","Dionysos"]},"en":{"q":"Which god with an oversized phallus gave his name to \"priapism\"?","a":["Priapus","Pan","Hermes","Dionysus"]}},
-{"t":"q","fr":{"q":"Les Français disaient « capote anglaise ». Et les Anglais ?","a":["French letter","Spanish cap","Dutch hat","Italian glove"]},"en":{"q":"The French said \"English hood\" for a condom. What did the English say?","a":["French letter","Spanish cap","Dutch hat","Italian glove"]}},
-{"t":"q","fr":{"q":"Quelle expression désigne poétiquement l'orgasme en français ?","a":["La petite mort","La belle étoile","Le coup de foudre","La lune de miel"]},"en":{"q":"Which French expression is a poetic name for orgasm?","a":["The little death","The beautiful star","The lightning strike","The honeymoon"]}},
-{"t":"q","fr":{"q":"Au Japon, le jour où les hommes rendent les chocolats de la Saint-Valentin s'appelle…","a":["White Day","Pink Day","Sakura Day","Sweet Day"]},"en":{"q":"In Japan, the day men return Valentine's chocolates is called…","a":["White Day","Pink Day","Sakura Day","Sweet Day"]}},
-{"t":"q","fr":{"q":"Le speed dating a été inventé en 1998 par…","a":["Un rabbin","Un psychologue","Un barman","Un DJ"]},"en":{"q":"Speed dating was invented in 1998 by…","a":["A rabbi","A psychologist","A bartender","A DJ"]}},
-{"t":"q","fr":{"q":"Qui a peint « Le Baiser », couvert de feuilles d'or, en 1907-1908 ?","a":["Gustav Klimt","Vassily Kandinsky","Alfons Mucha","Amedeo Modigliani"]},"en":{"q":"Who painted the gold-leafed \"The Kiss\" in 1907-1908?","a":["Gustav Klimt","Wassily Kandinsky","Alphonse Mucha","Amedeo Modigliani"]}},
-{"t":"q","fr":{"q":"Sous quel pseudonyme a paru « Histoire d'O » en 1954 ?","a":["Pauline Réage","Emmanuelle Arsan","Anaïs Nin","Colette"]},"en":{"q":"Under what pen name was \"Story of O\" published in 1954?","a":["Pauline Réage","Emmanuelle Arsan","Anaïs Nin","Colette"]}},
-{"t":"q","fr":{"q":"Quel poète latin a écrit « L'Art d'aimer », manuel de séduction ?","a":["Ovide","Virgile","Horace","Catulle"]},"en":{"q":"Which Latin poet wrote \"The Art of Love\", a seduction manual?","a":["Ovid","Virgil","Horace","Catullus"]}},
-{"t":"q","fr":{"q":"Quelle mortelle est l'amante d'Éros (Cupidon) dans le mythe raconté par Apulée ?","a":["Psyché","Pénélope","Hélène","Ariane"]},"en":{"q":"Which mortal is the lover of Eros (Cupid) in the myth told by Apuleius?","a":["Psyche","Penelope","Helen","Ariadne"]}},
-{"t":"q","fr":{"q":"Quels tissus du pénis se gorgent de sang lors de l'érection ?","a":["Les corps caverneux","Le corps calleux","Le corps jaune","Les corps ciliaires"]},"en":{"q":"Which penile tissues fill with blood during an erection?","a":["The corpora cavernosa","The corpus callosum","The corpus luteum","The ciliary bodies"]}},
-{"t":"q","fr":{"q":"Quelle star faisait la couverture du tout premier Playboy (1953) ?","a":["Marilyn Monroe","Brigitte Bardot","Jayne Mansfield","Bettie Page"]},"en":{"q":"Which star was on the cover of the very first Playboy (1953)?","a":["Marilyn Monroe","Brigitte Bardot","Jayne Mansfield","Bettie Page"]}},
-{"t":"n","n":1960,"fr":{"q":"En quelle année la première pilule contraceptive a-t-elle été autorisée aux États-Unis ?","u":""},"en":{"q":"In what year was the first birth control pill approved in the United States?","u":""}},
-{"t":"n","n":2012,"fr":{"q":"En quelle année l'application de rencontre Tinder a-t-elle été lancée ?","u":""},"en":{"q":"In what year was the dating app Tinder launched?","u":""}},
-{"t":"n","n":1889,"fr":{"q":"En quelle année le Moulin Rouge a-t-il ouvert à Paris ?","u":""},"en":{"q":"In what year did the Moulin Rouge open in Paris?","u":""}},
-{"t":"n","n":1974,"fr":{"q":"En quelle année est sorti le film érotique « Emmanuelle » de Just Jaeckin ?","u":""},"en":{"q":"In what year was Just Jaeckin's erotic film \"Emmanuelle\" released?","u":""}},
-{"t":"n","n":1928,"fr":{"q":"En quelle année a été publié pour la première fois « L'Amant de lady Chatterley » ?","u":""},"en":{"q":"In what year was \"Lady Chatterley's Lover\" first published?","u":""}},
-{"t":"n","n":64,"fr":{"q":"Combien d'« arts » le Kama-sutra énumère-t-il traditionnellement ?","u":"arts"},"en":{"q":"How many \"arts\" does the Kama Sutra traditionally list?","u":"arts"}},
-{"t":"n","n":5,"fr":{"q":"Combien de jours, au maximum, un spermatozoïde peut-il survivre dans l'appareil génital féminin ?","u":"jours"},"en":{"q":"Up to how many days can a sperm cell survive inside the female reproductive tract?","u":"days"}},
-{"t":"n","n":1998,"fr":{"q":"En quelle année l'urologue Helen O'Connell a-t-elle publié la première description anatomique complète du clitoris ?","u":""},"en":{"q":"In what year did urologist Helen O'Connell publish the first complete anatomical description of the clitoris?","u":""}},
-{"t":"vf","v":false,"fr":{"q":"Flaubert a été condamné en 1857 pour « Madame Bovary ».","x":"Faux : il a été acquitté, contrairement à Baudelaire la même année."},"en":{"q":"Flaubert was convicted in 1857 over \"Madame Bovary\".","x":"False: he was acquitted, unlike Baudelaire the same year."}},
-{"t":"vf","v":false,"fr":{"q":"La science a prouvé que les huîtres sont un puissant aphrodisiaque.","x":"Faux : aucune étude sérieuse ne l'a démontré, c'est surtout une légende."},"en":{"q":"Science has proven that oysters are a powerful aphrodisiac.","x":"False: no solid study has shown it; it's mostly legend."}},
-{"t":"vf","v":false,"fr":{"q":"Comme le chien ou le chat, l'homme possède un petit os dans le pénis.","x":"Faux : contrairement à beaucoup de mammifères, l'homme n'a pas d'os pénien."},"en":{"q":"Like dogs and cats, human males have a small bone in the penis.","x":"False: unlike many mammals, humans have no penile bone."}},
-{"t":"vf","v":false,"fr":{"q":"La Saint-Valentin doit son nom à un dieu romain de l'amour.","x":"Faux : elle doit son nom à saint Valentin, un martyr chrétien."},"en":{"q":"Valentine's Day is named after a Roman god of love.","x":"False: it is named after Saint Valentine, a Christian martyr."}},
-{"t":"vf","v":true,"fr":{"q":"« Le Baiser de l'Hôtel de Ville » de Doisneau était une photo mise en scène.","x":"Vrai : Doisneau avait fait poser un couple de jeunes comédiens."},"en":{"q":"Doisneau's \"Kiss by the Hôtel de Ville\" was a staged photo.","x":"True: Doisneau had a young couple of actors pose for it."}},
-{"t":"vf","v":true,"fr":{"q":"« Cinquante nuances de Grey » était à l'origine une fan fiction de « Twilight ».","x":"Vrai : E. L. James l'a d'abord publiée en ligne, inspirée de Twilight."},"en":{"q":"\"Fifty Shades of Grey\" started out as \"Twilight\" fan fiction.","x":"True: E. L. James first posted it online, inspired by Twilight."}},
-{"t":"vf","v":true,"fr":{"q":"L'ovule est la plus grosse cellule du corps humain.","x":"Vrai : il mesure environ 0,1 mm, à la limite du visible à l'œil nu."},"en":{"q":"The egg cell is the largest cell in the human body.","x":"True: it is about 0.1 mm, right at the limit of what the naked eye can see."}},
-{"t":"vf","v":true,"fr":{"q":"Le nom Durex vient de « Durability, Reliability, Excellence ».","x":"Vrai : c'est l'explication donnée par la marque elle-même."},"en":{"q":"The name Durex comes from \"Durability, Reliability, Excellence\".","x":"True: that's the explanation given by the brand itself."}}
+ {
+  "t": "q",
+  "fr": {
+   "q": "Selon Hésiode, de quoi est née Aphrodite ?",
+   "a": [
+    "De l'écume de la mer",
+    "D'un œuf de cygne",
+    "De la cuisse de Zeus",
+    "D'un rayon de lune"
+   ]
+  },
+  "en": {
+   "q": "According to Hesiod, what was Aphrodite born from?",
+   "a": [
+    "Sea foam",
+    "A swan's egg",
+    "Zeus's thigh",
+    "A moonbeam"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "À qui attribue-t-on le Kama-sutra ?",
+   "a": [
+    "Vatsyayana",
+    "Kalidasa",
+    "Valmiki",
+    "Rabindranath Tagore"
+   ]
+  },
+  "en": {
+   "q": "Who is the Kama Sutra attributed to?",
+   "a": [
+    "Vatsyayana",
+    "Kalidasa",
+    "Valmiki",
+    "Rabindranath Tagore"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Qui a écrit « L'Amant », prix Goncourt 1984 ?",
+   "a": [
+    "Marguerite Duras",
+    "Colette",
+    "Françoise Sagan",
+    "Annie Ernaux"
+   ]
+  },
+  "en": {
+   "q": "Who wrote \"The Lover\", winner of the 1984 Prix Goncourt?",
+   "a": [
+    "Marguerite Duras",
+    "Colette",
+    "Françoise Sagan",
+    "Annie Ernaux"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Avec qui Serge Gainsbourg chante-t-il « Je t'aime… moi non plus » en 1969 ?",
+   "a": [
+    "Jane Birkin",
+    "France Gall",
+    "Françoise Hardy",
+    "Catherine Deneuve"
+   ]
+  },
+  "en": {
+   "q": "Who sang \"Je t'aime… moi non plus\" with Serge Gainsbourg in 1969?",
+   "a": [
+    "Jane Birkin",
+    "France Gall",
+    "Françoise Hardy",
+    "Catherine Deneuve"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Qui a peint « L'Origine du monde » (1866) ?",
+   "a": [
+    "Gustave Courbet",
+    "Édouard Manet",
+    "Ingres",
+    "Eugène Delacroix"
+   ]
+  },
+  "en": {
+   "q": "Who painted \"The Origin of the World\" (1866)?",
+   "a": [
+    "Gustave Courbet",
+    "Édouard Manet",
+    "Ingres",
+    "Eugène Delacroix"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle actrice croise et décroise les jambes dans « Basic Instinct » (1992) ?",
+   "a": [
+    "Sharon Stone",
+    "Kim Basinger",
+    "Michelle Pfeiffer",
+    "Demi Moore"
+   ]
+  },
+  "en": {
+   "q": "Which actress famously crosses her legs in \"Basic Instinct\" (1992)?",
+   "a": [
+    "Sharon Stone",
+    "Kim Basinger",
+    "Michelle Pfeiffer",
+    "Demi Moore"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Le « point G » doit son nom à quel gynécologue ?",
+   "a": [
+    "Ernst Gräfenberg",
+    "Wilhelm Grimm",
+    "Rube Goldberg",
+    "Carl Gauss"
+   ]
+  },
+  "en": {
+   "q": "The \"G-spot\" is named after which gynecologist?",
+   "a": [
+    "Ernst Gräfenberg",
+    "Wilhelm Grimm",
+    "Rube Goldberg",
+    "Carl Gauss"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "À l'origine, le Viagra était étudié pour soigner…",
+   "a": [
+    "L'angine de poitrine",
+    "La calvitie",
+    "L'insomnie",
+    "L'obésité"
+   ]
+  },
+  "en": {
+   "q": "Viagra was originally being studied to treat…",
+   "a": [
+    "Angina",
+    "Baldness",
+    "Insomnia",
+    "Obesity"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel biologiste est considéré comme le père de la pilule contraceptive ?",
+   "a": [
+    "Gregory Pincus",
+    "Alfred Kinsey",
+    "William Masters",
+    "Jonas Salk"
+   ]
+  },
+  "en": {
+   "q": "Which biologist is considered the father of the birth control pill?",
+   "a": [
+    "Gregory Pincus",
+    "Alfred Kinsey",
+    "William Masters",
+    "Jonas Salk"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle loi a autorisé la contraception en France en 1967 ?",
+   "a": [
+    "La loi Neuwirth",
+    "La loi Veil",
+    "La loi Évin",
+    "La loi Badinter"
+   ]
+  },
+  "en": {
+   "q": "Which law legalized contraception in France in 1967?",
+   "a": [
+    "The Neuwirth law",
+    "The Veil law",
+    "The Évin law",
+    "The Badinter law"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "De quelle ville était originaire le séducteur Giacomo Casanova ?",
+   "a": [
+    "Venise",
+    "Rome",
+    "Naples",
+    "Florence"
+   ]
+  },
+  "en": {
+   "q": "Which city was the seducer Giacomo Casanova from?",
+   "a": [
+    "Venice",
+    "Rome",
+    "Naples",
+    "Florence"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Le mot « masochisme » vient du nom de quel écrivain ?",
+   "a": [
+    "Leopold von Sacher-Masoch",
+    "Le marquis de Sade",
+    "Giacomo Casanova",
+    "Charles Baudelaire"
+   ]
+  },
+  "en": {
+   "q": "The word \"masochism\" comes from the name of which writer?",
+   "a": [
+    "Leopold von Sacher-Masoch",
+    "The Marquis de Sade",
+    "Giacomo Casanova",
+    "Charles Baudelaire"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel recueil a été condamné en 1857 pour outrage à la morale publique ?",
+   "a": [
+    "Les Fleurs du mal",
+    "Les Contemplations",
+    "Alcools",
+    "Les Méditations poétiques"
+   ]
+  },
+  "en": {
+   "q": "Which poetry collection was convicted of offending public morals in 1857?",
+   "a": [
+    "The Flowers of Evil",
+    "Les Contemplations",
+    "Alcools",
+    "Poetic Meditations"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel dieu au phallus démesuré a donné son nom au « priapisme » ?",
+   "a": [
+    "Priape",
+    "Pan",
+    "Hermès",
+    "Dionysos"
+   ]
+  },
+  "en": {
+   "q": "Which god with an oversized phallus gave his name to \"priapism\"?",
+   "a": [
+    "Priapus",
+    "Pan",
+    "Hermes",
+    "Dionysus"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Les Français disaient « capote anglaise ». Et les Anglais ?",
+   "a": [
+    "French letter",
+    "Spanish cap",
+    "Dutch hat",
+    "Italian glove"
+   ]
+  },
+  "en": {
+   "q": "The French said \"English hood\" for a condom. What did the English say?",
+   "a": [
+    "French letter",
+    "Spanish cap",
+    "Dutch hat",
+    "Italian glove"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle expression désigne poétiquement l'orgasme en français ?",
+   "a": [
+    "La petite mort",
+    "La belle étoile",
+    "Le coup de foudre",
+    "La lune de miel"
+   ]
+  },
+  "en": {
+   "q": "Which French expression is a poetic name for orgasm?",
+   "a": [
+    "The little death",
+    "The beautiful star",
+    "The lightning strike",
+    "The honeymoon"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Au Japon, le jour où les hommes rendent les chocolats de la Saint-Valentin s'appelle…",
+   "a": [
+    "White Day",
+    "Pink Day",
+    "Sakura Day",
+    "Sweet Day"
+   ]
+  },
+  "en": {
+   "q": "In Japan, the day men return Valentine's chocolates is called…",
+   "a": [
+    "White Day",
+    "Pink Day",
+    "Sakura Day",
+    "Sweet Day"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Le speed dating a été inventé en 1998 par…",
+   "a": [
+    "Un rabbin",
+    "Un psychologue",
+    "Un barman",
+    "Un DJ"
+   ]
+  },
+  "en": {
+   "q": "Speed dating was invented in 1998 by…",
+   "a": [
+    "A rabbi",
+    "A psychologist",
+    "A bartender",
+    "A DJ"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Qui a peint « Le Baiser », couvert de feuilles d'or, en 1907-1908 ?",
+   "a": [
+    "Gustav Klimt",
+    "Vassily Kandinsky",
+    "Alfons Mucha",
+    "Amedeo Modigliani"
+   ]
+  },
+  "en": {
+   "q": "Who painted the gold-leafed \"The Kiss\" in 1907-1908?",
+   "a": [
+    "Gustav Klimt",
+    "Wassily Kandinsky",
+    "Alphonse Mucha",
+    "Amedeo Modigliani"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Sous quel pseudonyme a paru « Histoire d'O » en 1954 ?",
+   "a": [
+    "Pauline Réage",
+    "Emmanuelle Arsan",
+    "Anaïs Nin",
+    "Colette"
+   ]
+  },
+  "en": {
+   "q": "Under what pen name was \"Story of O\" published in 1954?",
+   "a": [
+    "Pauline Réage",
+    "Emmanuelle Arsan",
+    "Anaïs Nin",
+    "Colette"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel poète latin a écrit « L'Art d'aimer », manuel de séduction ?",
+   "a": [
+    "Ovide",
+    "Virgile",
+    "Horace",
+    "Catulle"
+   ]
+  },
+  "en": {
+   "q": "Which Latin poet wrote \"The Art of Love\", a seduction manual?",
+   "a": [
+    "Ovid",
+    "Virgil",
+    "Horace",
+    "Catullus"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle mortelle est l'amante d'Éros (Cupidon) dans le mythe raconté par Apulée ?",
+   "a": [
+    "Psyché",
+    "Pénélope",
+    "Hélène",
+    "Ariane"
+   ]
+  },
+  "en": {
+   "q": "Which mortal is the lover of Eros (Cupid) in the myth told by Apuleius?",
+   "a": [
+    "Psyche",
+    "Penelope",
+    "Helen",
+    "Ariadne"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quels tissus du pénis se gorgent de sang lors de l'érection ?",
+   "a": [
+    "Les corps caverneux",
+    "Le corps calleux",
+    "Le corps jaune",
+    "Les corps ciliaires"
+   ]
+  },
+  "en": {
+   "q": "Which penile tissues fill with blood during an erection?",
+   "a": [
+    "The corpora cavernosa",
+    "The corpus callosum",
+    "The corpus luteum",
+    "The ciliary bodies"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle star faisait la couverture du tout premier Playboy (1953) ?",
+   "a": [
+    "Marilyn Monroe",
+    "Brigitte Bardot",
+    "Jayne Mansfield",
+    "Bettie Page"
+   ]
+  },
+  "en": {
+   "q": "Which star was on the cover of the very first Playboy (1953)?",
+   "a": [
+    "Marilyn Monroe",
+    "Brigitte Bardot",
+    "Jayne Mansfield",
+    "Bettie Page"
+   ]
+  }
+ },
+ {
+  "t": "n",
+  "n": 1960,
+  "fr": {
+   "q": "En quelle année la première pilule contraceptive a-t-elle été autorisée aux États-Unis ?",
+   "u": ""
+  },
+  "en": {
+   "q": "In what year was the first birth control pill approved in the United States?",
+   "u": ""
+  }
+ },
+ {
+  "t": "n",
+  "n": 2012,
+  "fr": {
+   "q": "En quelle année l'application de rencontre Tinder a-t-elle été lancée ?",
+   "u": ""
+  },
+  "en": {
+   "q": "In what year was the dating app Tinder launched?",
+   "u": ""
+  }
+ },
+ {
+  "t": "n",
+  "n": 1889,
+  "fr": {
+   "q": "En quelle année le Moulin Rouge a-t-il ouvert à Paris ?",
+   "u": ""
+  },
+  "en": {
+   "q": "In what year did the Moulin Rouge open in Paris?",
+   "u": ""
+  }
+ },
+ {
+  "t": "n",
+  "n": 1974,
+  "fr": {
+   "q": "En quelle année est sorti le film érotique « Emmanuelle » de Just Jaeckin ?",
+   "u": ""
+  },
+  "en": {
+   "q": "In what year was Just Jaeckin's erotic film \"Emmanuelle\" released?",
+   "u": ""
+  }
+ },
+ {
+  "t": "n",
+  "n": 1928,
+  "fr": {
+   "q": "En quelle année a été publié pour la première fois « L'Amant de lady Chatterley » ?",
+   "u": ""
+  },
+  "en": {
+   "q": "In what year was \"Lady Chatterley's Lover\" first published?",
+   "u": ""
+  }
+ },
+ {
+  "t": "n",
+  "n": 64,
+  "fr": {
+   "q": "Combien d'« arts » le Kama-sutra énumère-t-il traditionnellement ?",
+   "u": "arts"
+  },
+  "en": {
+   "q": "How many \"arts\" does the Kama Sutra traditionally list?",
+   "u": "arts"
+  }
+ },
+ {
+  "t": "n",
+  "n": 5,
+  "fr": {
+   "q": "Combien de jours, au maximum, un spermatozoïde peut-il survivre dans l'appareil génital féminin ?",
+   "u": "jours"
+  },
+  "en": {
+   "q": "Up to how many days can a sperm cell survive inside the female reproductive tract?",
+   "u": "days"
+  }
+ },
+ {
+  "t": "n",
+  "n": 1998,
+  "fr": {
+   "q": "En quelle année l'urologue australienne Helen O'Connell a-t-elle publié son étude de référence sur l'anatomie complète du clitoris ?",
+   "u": ""
+  },
+  "en": {
+   "q": "In what year did Australian urologist Helen O'Connell publish her landmark study of the full anatomy of the clitoris?",
+   "u": ""
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "Flaubert a été condamné en 1857 pour « Madame Bovary ».",
+   "x": "Faux : il a été acquitté, contrairement à Baudelaire la même année."
+  },
+  "en": {
+   "q": "Flaubert was convicted in 1857 over \"Madame Bovary\".",
+   "x": "False: he was acquitted, unlike Baudelaire the same year."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "La science a prouvé que les huîtres sont un puissant aphrodisiaque.",
+   "x": "Faux : aucune étude sérieuse ne l'a démontré, c'est surtout une légende."
+  },
+  "en": {
+   "q": "Science has proven that oysters are a powerful aphrodisiac.",
+   "x": "False: no solid study has shown it; it's mostly legend."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "Comme le chien ou le chat, l'homme possède un petit os dans le pénis.",
+   "x": "Faux : contrairement à beaucoup de mammifères, l'homme n'a pas d'os pénien."
+  },
+  "en": {
+   "q": "Like dogs and cats, human males have a small bone in the penis.",
+   "x": "False: unlike many mammals, humans have no penile bone."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "La Saint-Valentin doit son nom à un dieu romain de l'amour.",
+   "x": "Faux : elle doit son nom à saint Valentin, un martyr chrétien."
+  },
+  "en": {
+   "q": "Valentine's Day is named after a Roman god of love.",
+   "x": "False: it is named after Saint Valentine, a Christian martyr."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "« Le Baiser de l'Hôtel de Ville » de Doisneau était une photo mise en scène.",
+   "x": "Vrai : Doisneau avait fait poser un couple de jeunes comédiens."
+  },
+  "en": {
+   "q": "Doisneau's \"Kiss by the Hôtel de Ville\" was a staged photo.",
+   "x": "True: Doisneau had a young couple of actors pose for it."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "« Cinquante nuances de Grey » était à l'origine une fan fiction de « Twilight ».",
+   "x": "Vrai : E. L. James l'a d'abord publiée en ligne, inspirée de Twilight."
+  },
+  "en": {
+   "q": "\"Fifty Shades of Grey\" started out as \"Twilight\" fan fiction.",
+   "x": "True: E. L. James first posted it online, inspired by Twilight."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "L'ovule est la plus grosse cellule du corps humain (en volume).",
+   "x": "Vrai : il mesure environ 0,1 mm de diamètre, à la limite du visible à l'œil nu (les neurones sont plus longs, mais bien plus fins)."
+  },
+  "en": {
+   "q": "The egg cell is the largest cell in the human body (by volume).",
+   "x": "True: it is about 0.1 mm across, right at the limit of what the naked eye can see (neurons are longer, but much thinner)."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "Le nom Durex vient de « Durability, Reliability, Excellence ».",
+   "x": "Vrai : c'est l'explication donnée par la marque elle-même."
+  },
+  "en": {
+   "q": "The name Durex comes from \"Durability, Reliability, Excellence\".",
+   "x": "True: that's the explanation given by the brand itself."
+  }
+ }
 ]
