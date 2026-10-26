@@ -1,14 +1,14 @@
 {
- "version": "4.22.1",
+ "version": "4.22.2",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Un seul téléphone, « Qui boit quoi ? » : la limite de chaque joueur se règle avec − et +, avec une case « Sans limite ». Tous les choix de boisson sont visibles"
+  "Qui est le plus… : nouveau paquet « Amis de merde », 51 questions méchantes sur vos potes (radins, traîtres, boulets…)"
  ],
  "files": {
   "core.js": {
-   "h": "cf412bf772567f75918f6f2c708d25f9626650b61bf3e786bac62ff60edb9568",
+   "h": "083503e4a682816ea5f465772445b42d35296a849381914a37e515085afac2c9",
    "s": 282598
   },
   "firebase-app-compat.js": {
@@ -160,8 +160,8 @@
    "s": 50105
   },
   "games/quiplus.js": {
-   "h": "a05ddf60cbeec08171b0605147ad7e19ce3ea06a5ea99cc26ebbc2e8ed7c06c6",
-   "s": 37677
+   "h": "182cc7fbac48f37318402f776030189ff25d1c4d71024ebef9af2020ec60fe35",
+   "s": 42428
   },
   "games/redflag.js": {
    "h": "daf2f97fb5197a93642eb15eb388a314975952d44c5d40868eb5dd20050898c1",

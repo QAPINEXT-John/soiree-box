@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="fr.soireebox.app"
     android:versionCode="36"
-    android:versionName="4.22.1">
+    android:versionName="4.22.2">
 
     <uses-sdk android:minSdkVersion="23" android:targetSdkVersion="34" />
     <uses-permission android:name="android.permission.INTERNET" />
