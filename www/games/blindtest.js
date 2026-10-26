@@ -72,7 +72,8 @@ async function buildPool(themes, need){
   sel.forEach(t => {
     if(t.chart) jobs.push(jsonp(API + "chart/0/tracks?limit=100").then(d => A(d && d.data).map(trackOf)));
     if(t.perso) jobs.push(jsonp(API + "playlist/" + playlistId(myPlaylist()) + "/tracks?limit=300").then(d => A(d && d.data).map(trackOf)));
-    if(t.artists) shuffle(t.artists).slice(0, 12).forEach(a => jobs.push(jsonp(API + "search?q=" + encodeURIComponent('artist:"' + a + '"') + "&limit=8").then(d => A(d && d.data).filter(x => x && x.artist && norm(x.artist.name).indexOf(norm(a)) >= 0).map(trackOf)).catch(() => [])));
+    // La recherche avancée de Deezer (artist:"…") renvoie n'importe quoi : on passe par la fiche de l'artiste et ses titres les plus écoutés.
+    if(t.artists) shuffle(t.artists).slice(0, 12).forEach(a => jobs.push(artistTop(a).catch(() => [])));
     // Disney : on cherche le titre et on ne garde que la version du film (album ou artiste qui citent le film ou Disney),
     // jamais une reprise, une version karaoké ou instrumentale. L'« artiste » affiché devient le nom du film.
     if(t.songs) shuffle(t.songs).slice(0, 16).forEach(x => jobs.push((t.by === "artist" ? artistSong(x, t.kind) : disneyTrack(x)).catch(() => [])));
@@ -110,7 +111,7 @@ function disneyTrack(x){
     return tt.indexOf(want) === 0 && meta.indexOf(film) >= 0;
   });
   const done = hit => { const tk = trackOf(hit); if(tk){ tk.a = x[1]; tk.f = "film"; } return tk ? [tk] : []; };
-  return jsonp(API + "search?q=" + encodeURIComponent('track:"' + x[0] + '" album:"' + x[1] + '"') + "&limit=25").then(d => pick(d) || jsonp(API + "search?q=" + encodeURIComponent(x[0]) + "&limit=50").then(pick)).then(done);
+  return jsonp(API + "search?q=" + encodeURIComponent(x[0] + " " + x[1]) + "&limit=25").then(d => pick(d) || jsonp(API + "search?q=" + encodeURIComponent(x[0]) + "&limit=50").then(pick)).then(done);
 }
 /* Anime : on cherche le générique par titre + interprète, et on n'accepte que le bon interprète
    (jamais une reprise, une version piano, guitare, 8-bit…). Le titre peut être écrit en japonais chez Deezer :
@@ -126,7 +127,16 @@ function artistSong(x, kind){
     return tt.indexOf(want) === 0 || !tt; // titre en japonais : norm() le vide, on fait confiance à la recherche titre + interprète
   });
   const done = hit => { const tk = trackOf(hit); if(tk){ tk.t = x[0]; tk.a = x[1]; tk.f = kind; } return tk ? [tk] : []; };
-  return jsonp(API + "search?q=" + encodeURIComponent('track:"' + x[0] + '" artist:"' + x[2] + '"') + "&limit=25").then(d => pick(d) || jsonp(API + "search?q=" + encodeURIComponent(x[0] + " " + x[2]) + "&limit=25").then(pick)).then(done);
+  return jsonp(API + "search?q=" + encodeURIComponent(x[0] + " " + x[2]) + "&limit=25").then(d => pick(d) || jsonp(API + "search?q=" + encodeURIComponent(x[0]) + "&limit=50").then(pick)).then(done);
+}
+// Titres les plus écoutés d'un artiste (le bon artiste : on vérifie le nom).
+function artistTop(name){
+  const want = norm(name);
+  return jsonp(API + "search/artist?q=" + encodeURIComponent(name) + "&limit=5").then(d => {
+    const L = A(d && d.data), ar = L.find(x => x && norm(x.name) === want) || L.find(x => x && norm(x.name).indexOf(want) === 0) || null;
+    if(!ar || !ar.id) return [];
+    return jsonp(API + "artist/" + ar.id + "/top?limit=12").then(t => A(t && t.data).filter(x => x && x.artist && x.artist.id === ar.id).map(trackOf));
+  });
 }
 SB.music = { THEMES, buildPool, play, pause, resume, playlistId, myPlaylist, jsonp, norm, noVoice: x => noVoice(trackOf(x)) };
 SB.music.packs = () => THEMES.filter(t => !t.perso || playlistId(myPlaylist()));

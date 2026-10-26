@@ -1,15 +1,14 @@
 {
- "version": "4.29.0",
+ "version": "4.29.1",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Blind test : nouveau thème Manga & anime, avec les génériques d'anime (Naruto, One Piece, L'Attaque des Titans, Demon Slayer, Death Note…) et ceux du Club Dorothée (Dragon Ball Z, Les Chevaliers du Zodiaque, Nicky Larson, Goldorak…). On devine l'anime. Seulement les versions originales chantées, jamais de reprises",
-  "Blind test : nouveau thème Metal (Metallica, Iron Maiden, Rammstein, Slipknot, System of a Down, Gojira, Mass Hysteria…)"
+  "Blind test : correction du chargement des extraits (« Impossible de charger les extraits Deezer ») sur plusieurs thèmes, et plus de morceaux d'autres artistes mélangés dans les thèmes"
  ],
  "files": {
   "core.js": {
-   "h": "94ac5eeccc1e27f39e64c836a50a66d956a99c5d1db5311ed57958075e0b09fe",
+   "h": "5f081c26c16a538fb4268887f4a6ec84f5ad366ba6d276e982da0d396ba01a5e",
    "s": 289425
   },
   "firebase-app-compat.js": {
@@ -93,8 +92,8 @@
    "s": 64350
   },
   "games/blindtest.js": {
-   "h": "396b71e03553d0a409ad1fab8639b53162c1c3df6e072de457e3c1d685be0913",
-   "s": 45488
+   "h": "315b784e3ce134424fd5cfa7cd2aff50b384f2edb552b6b8d89c817b294e9646",
+   "s": 45949
   },
   "games/debat.js": {
    "h": "de9ab7e3e4e7bc4f40552efcee34003c9f5558528c97752f47361a204bd635a4",

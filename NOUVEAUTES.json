@@ -1,4 +1,7 @@
 {
+  "4.29.1": [
+    "Blind test : correction du chargement des extraits (« Impossible de charger les extraits Deezer ») sur plusieurs thèmes, et plus de morceaux d'autres artistes mélangés dans les thèmes"
+  ],
   "4.29.0": [
     "Blind test : nouveau thème Manga & anime, avec les génériques d'anime (Naruto, One Piece, L'Attaque des Titans, Demon Slayer, Death Note…) et ceux du Club Dorothée (Dragon Ball Z, Les Chevaliers du Zodiaque, Nicky Larson, Goldorak…). On devine l'anime. Seulement les versions originales chantées, jamais de reprises",
     "Blind test : nouveau thème Metal (Metallica, Iron Maiden, Rammstein, Slipknot, System of a Down, Gojira, Mass Hysteria…)"
