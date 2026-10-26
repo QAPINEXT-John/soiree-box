@@ -1,17 +1,15 @@
 {
- "version": "4.32.0",
+ "version": "4.32.1",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Gages redessinés : un niveau pour tous les jeux (Basique, Moyen, Hard) règle tout d'un coup, sans toucher aux paramètres de chaque jeu",
-  "« Déclencheurs par jeu » a son propre écran : les jeux sont rangés par famille, chacun suit le niveau général ou en a un à part (Off, Basique, Moyen, Hard). Chaque déclencheur est écrit en clair avec une étiquette boit / distribue / tout le monde et le vrai nombre de gorgées, plus un exemple",
-  "Fin de partie et gages sans alcool ont aussi leur écran. « Terminé » ou retour ramène à la page Gages"
+  "Gages : le plafond par joueur suit le niveau choisi (en gorgées : 8 en Basique, 15 en Moyen, 30 en Hard ; aussi adapté aux shots et culs-secs). On peut toujours l'ajuster à la main ensuite"
  ],
  "files": {
   "core.js": {
-   "h": "3c829841fe70316de6d4c938e4ddf860bbb225de079e307baa499bc330651980",
-   "s": 303957
+   "h": "7273c0f6272e2820c82e084e6fea745c745c3d8b19d066c5378adb2f20f5b161",
+   "s": 304711
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
