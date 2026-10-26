@@ -1,14 +1,14 @@
 {
- "version": "4.29.1",
+ "version": "4.29.2",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Blind test : correction du chargement des extraits (« Impossible de charger les extraits Deezer ») sur plusieurs thèmes, et plus de morceaux d'autres artistes mélangés dans les thèmes"
+  "Blind test : correction du chargement des extraits (« Impossible de charger les extraits Deezer »). Deezer limite le nombre de demandes par seconde : l'appli les étale maintenant, et garde les réponses 20 minutes pour les parties suivantes"
  ],
  "files": {
   "core.js": {
-   "h": "5f081c26c16a538fb4268887f4a6ec84f5ad366ba6d276e982da0d396ba01a5e",
+   "h": "53e062f5d72c3383a00aa75fc63ef0141fe246f38e473f5712e3439db09e0e47",
    "s": 289425
   },
   "firebase-app-compat.js": {
@@ -92,8 +92,8 @@
    "s": 64350
   },
   "games/blindtest.js": {
-   "h": "315b784e3ce134424fd5cfa7cd2aff50b384f2edb552b6b8d89c817b294e9646",
-   "s": 45949
+   "h": "8b7e989d2adf97ffbf8c165f1d7473777a9c10c17f9e8923c9b10f248c63e1be",
+   "s": 47137
   },
   "games/debat.js": {
    "h": "de9ab7e3e4e7bc4f40552efcee34003c9f5558528c97752f47361a204bd635a4",

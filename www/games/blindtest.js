@@ -7,7 +7,7 @@
 const { esc, A, shuffle, screen, txt, store, persist, pick, tr, buzz, clean } = SB.u;
 
 /* ---------- Deezer : JSONP (l'API ne permet pas les appels directs depuis une page web) ---------- */
-function jsonp(url, ms){
+function jsonp1(url, ms){
   return new Promise((res, rej) => {
     const cb = "dzcb" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), s = document.createElement("script");
     const done = () => { clearTimeout(t); try{ delete window[cb]; }catch(e){ window[cb] = undefined; } s.remove(); };
@@ -17,6 +17,25 @@ function jsonp(url, ms){
     s.src = url + (url.indexOf("?") >= 0 ? "&" : "?") + "output=jsonp&callback=" + cb;
     document.head.appendChild(s);
   });
+}
+/* Deezer limite à 50 requêtes par 5 secondes : file d'attente (6 à la fois, 40 max par 5 s),
+   on réessaie si Deezer répond « quota dépassé », et on garde les réponses 20 minutes. */
+const DZQ = [], DZT = [], DZC = new Map(); let dzRun = 0;
+function dzPump(){
+  while(dzRun < 6 && DZQ.length){
+    const now = Date.now(); while(DZT.length && now - DZT[0] > 5200) DZT.shift();
+    if(DZT.length >= 40){ setTimeout(dzPump, 5300 - (now - DZT[0])); return; }
+    const job = DZQ.shift(); DZT.push(now); dzRun++;
+    jsonp1(job.url, job.ms).then(d => {
+      if(d && d.error && (d.error.code === 4 || /quota/i.test(d.error.message || "")) && job.tries < 3){ job.tries++; setTimeout(() => { DZQ.unshift(job); dzPump(); }, 1500 * job.tries); return; }
+      if(d && !d.error) DZC.set(job.url, { t: Date.now(), d });
+      job.res(d);
+    }, job.rej).finally(() => { dzRun--; dzPump(); });
+  }
+}
+function jsonp(url, ms){
+  const c = DZC.get(url); if(c && Date.now() - c.t < 1200000) return Promise.resolve(c.d);
+  return new Promise((res, rej) => { DZQ.push({ url, ms, res, rej, tries: 0 }); dzPump(); });
 }
 const API = "https://api.deezer.com/";
 const trackOf = x => (x && x.preview && x.title && x.artist ? { id: x.id, t: clean(String(x.title_short || x.title).replace(/\s*[(\[](de|du film|from|tir[ée]e? d)[^)\]]*[)\]]\s*$/i, ""), 80), a: clean(x.artist.name, 60), p: x.preview, c: (x.album && (x.album.cover_medium || x.album.cover)) || "", e: x.explicit_lyrics ? 1 : 0, al: clean((x.album && x.album.title) || "", 80), raw: clean(x.title, 120) } : null);
@@ -73,10 +92,10 @@ async function buildPool(themes, need){
     if(t.chart) jobs.push(jsonp(API + "chart/0/tracks?limit=100").then(d => A(d && d.data).map(trackOf)));
     if(t.perso) jobs.push(jsonp(API + "playlist/" + playlistId(myPlaylist()) + "/tracks?limit=300").then(d => A(d && d.data).map(trackOf)));
     // La recherche avancée de Deezer (artist:"…") renvoie n'importe quoi : on passe par la fiche de l'artiste et ses titres les plus écoutés.
-    if(t.artists) shuffle(t.artists).slice(0, 12).forEach(a => jobs.push(artistTop(a).catch(() => [])));
+    if(t.artists) shuffle(t.artists).slice(0, Math.max(5, Math.ceil(10 / sel.length))).forEach(a => jobs.push(artistTop(a).catch(() => [])));
     // Disney : on cherche le titre et on ne garde que la version du film (album ou artiste qui citent le film ou Disney),
     // jamais une reprise, une version karaoké ou instrumentale. L'« artiste » affiché devient le nom du film.
-    if(t.songs) shuffle(t.songs).slice(0, 16).forEach(x => jobs.push((t.by === "artist" ? artistSong(x, t.kind) : disneyTrack(x)).catch(() => [])));
+    if(t.songs) shuffle(t.songs).slice(0, Math.max(10, Math.ceil(20 / sel.length))).forEach(x => jobs.push((t.by === "artist" ? artistSong(x, t.kind) : disneyTrack(x)).catch(() => [])));
   });
   const all = [].concat(...(await Promise.all(jobs.map(j => j.catch(() => [])))));
   const seen = new Set(), out = [];
