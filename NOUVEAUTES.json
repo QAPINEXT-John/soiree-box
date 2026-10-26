@@ -1,4 +1,7 @@
 {
+  "4.32.2": [
+    "Gages : le rappel verre d'eau suit aussi le niveau (en gorgées : toutes les 10 en Basique, 8 en Moyen, 6 en Hard ; adapté aux shots et culs-secs). Si tu l'as mis sur « Jamais », il le reste"
+  ],
   "4.32.1": [
     "Gages : le plafond par joueur suit le niveau choisi (en gorgées : 8 en Basique, 15 en Moyen, 30 en Hard ; aussi adapté aux shots et culs-secs). On peut toujours l'ajuster à la main ensuite"
   ],

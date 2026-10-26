@@ -1,15 +1,15 @@
 {
- "version": "4.32.1",
+ "version": "4.32.2",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Gages : le plafond par joueur suit le niveau choisi (en gorgées : 8 en Basique, 15 en Moyen, 30 en Hard ; aussi adapté aux shots et culs-secs). On peut toujours l'ajuster à la main ensuite"
+  "Gages : le rappel verre d'eau suit aussi le niveau (en gorgées : toutes les 10 en Basique, 8 en Moyen, 6 en Hard ; adapté aux shots et culs-secs). Si tu l'as mis sur « Jamais », il le reste"
  ],
  "files": {
   "core.js": {
-   "h": "7273c0f6272e2820c82e084e6fea745c745c3d8b19d066c5378adb2f20f5b161",
-   "s": 304711
+   "h": "e7c1c03ec3052ee0a77ed235eaa656967ac3dd9f3b13570408fde30077271dbf",
+   "s": 305580
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",

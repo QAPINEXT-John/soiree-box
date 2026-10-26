@@ -815,7 +815,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.32.1";
+const VERSION = "4.32.2";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -1830,6 +1830,9 @@ const GDEF = { on: false, unit: "gorgee", level: "classique", cap: 15, capOff: f
 // Plafond conseillé selon l'unité et le niveau : il change tout seul quand on change de niveau ou d'unité (on peut l'ajuster après).
 const GCAP = { gorgee: { chill: 8, classique: 15, chaud: 30 }, shot: { chill: 3, classique: 5, chaud: 10 }, culsec: { chill: 1, classique: 2, chaud: 4 } };
 const gCapFor = (unit, level) => (GCAP[unit] || GCAP.gorgee)[level === "chill" || level === "chaud" ? level : "classique"];
+// Verre d'eau conseillé (toutes les N unités bues) : plus le niveau est fort, plus il revient souvent.
+const GWATER = { gorgee: { chill: 10, classique: 8, chaud: 6 }, shot: { chill: 4, classique: 3, chaud: 2 }, culsec: { chill: 2, classique: 1, chaud: 1 } };
+const gWaterFor = (unit, level) => (GWATER[unit] || GWATER.gorgee)[level === "chill" || level === "chaud" ? level : "classique"];
 const GLV_NAME = () => ({ off: tr("Aucun gage", "No forfeits"), chill: tr("Basique", "Basic"), classique: tr("Moyen", "Medium"), chaud: "Hard", perso: tr("Moyen", "Medium") });
 const GMULT = { chill: .5, classique: 1, chaud: 2, perso: 1 };
 const GEND = [
@@ -2060,7 +2063,7 @@ function gSettingsPage(get, set, editable, tally, onReset){
           (hard ? '<div class="field"><span class="eyebrow">' + tr("Garde-fous", "Safety") + '</span><div class="gs-box">' +
             (S.capOff ? "" : step("cap", tr("Plafond par joueur", "Cap per player"), tr(unitWord.charAt(0).toUpperCase() + unitWord.slice(1) + " max par joueur pour la soirée", "Max " + unitWord + " per player tonight") + (S.cap === gCapFor(S.unit, lv) ? tr(" · conseillé pour le niveau " + GN[lv], " · suggested for " + GN[lv]) : tr(" · conseillé : " + gCapFor(S.unit, lv) + " en " + GN[lv], " · suggested: " + gCapFor(S.unit, lv) + " at " + GN[lv])) + tr(". La limite de chacun, dans son profil, compte aussi.", ". Each player's own limit also applies."))) +
             '<div class="gs-row"><span class="tx"><b>' + tr("Sans plafond", "No cap") + "</b>" + (S.capOff ? '<span class="sm">' + tr("Seule la limite de chacun, dans son profil, compte.", "Only each player's own limit applies.") + "</span>" : "") + "</span>" + sw("data-gcapoff", S.capOff, tr("Sans plafond", "No cap")) + "</div>" +
-            step("water", tr("Verre d'eau", "Water"), S.water ? tr("Proposé toutes les " + S.water + " " + unitWord, "Suggested every " + S.water + " " + unitWord) : tr("Jamais", "Never")) +
+            step("water", tr("Verre d'eau", "Water"), (S.water ? tr("Proposé " + (S.unit === "gorgee" ? "toutes" : "tous") + " les " + S.water + " " + unitWord, "Suggested every " + S.water + " " + unitWord) : tr("Jamais", "Never")) + (S.water === gWaterFor(S.unit, lv) ? tr(" · conseillé pour le niveau " + GN[lv], " · suggested for " + GN[lv]) : tr(" · conseillé : " + (S.unit === "gorgee" ? "toutes" : "tous") + " les " + gWaterFor(S.unit, lv) + " en " + GN[lv], " · suggested: every " + gWaterFor(S.unit, lv) + " at " + GN[lv]))) +
             '<div class="gs-row"><span class="tx"><b>' + tr("Joker eau", "Water joker") + '</b><span class="sm">' + tr("Une fois par partie, de l'eau à la place d'un gage", "Once per game, water instead of a forfeit") + "</span></span>" + sw("data-gjk", S.joker, tr("Joker eau", "Water joker")) + "</div></div></div>" : "") +
           '<div class="field"><span class="eyebrow">' + tr("Dans les jeux", "In the games") + '</span><div class="gs-box">' +
             link("jeux", tr("Déclencheurs par jeu", "Triggers by game"), nApart ? tr(nApart + (nApart > 1 ? " jeux à part" : " jeu à part") + ", les autres au niveau " + GN[lv], nApart + " game" + (nApart > 1 ? "s" : "") + " set apart, the rest at " + GN[lv]) : tr("Tous au niveau " + GN[lv], "All at " + GN[lv])) +
@@ -2114,8 +2117,8 @@ function gSettingsPage(get, set, editable, tally, onReset){
       $$("[data-gback]", root).forEach(b => b.addEventListener("click", () => go("main")));
       $$("[data-gview]", root).forEach(b => b.addEventListener("click", () => go(b.dataset.gview)));
       if(!editable) return;
-      $$("[data-gunit]", root).forEach(b => b.addEventListener("click", () => upd({ unit: b.dataset.gunit, cap: gCapFor(b.dataset.gunit, get().level) })));
-      $$("[data-glevel]", root).forEach(b => b.addEventListener("click", () => { buzz(6); const S2 = get(), g = Object.assign({}, S2.glv); Object.keys(g).forEach(k => { if(g[k] === b.dataset.glevel && !gameKeys(S2, k).length) delete g[k]; }); upd({ level: b.dataset.glevel, glv: g, cap: gCapFor(S2.unit, b.dataset.glevel) }); }));
+      $$("[data-gunit]", root).forEach(b => b.addEventListener("click", () => upd({ unit: b.dataset.gunit, cap: gCapFor(b.dataset.gunit, get().level), water: get().water ? gWaterFor(b.dataset.gunit, get().level) : 0 })));
+      $$("[data-glevel]", root).forEach(b => b.addEventListener("click", () => { buzz(6); const S2 = get(), g = Object.assign({}, S2.glv); Object.keys(g).forEach(k => { if(g[k] === b.dataset.glevel && !gameKeys(S2, k).length) delete g[k]; }); upd({ level: b.dataset.glevel, glv: g, cap: gCapFor(S2.unit, b.dataset.glevel), water: S2.water ? gWaterFor(S2.unit, b.dataset.glevel) : 0 }); }));
       $$("[data-gst]", root).forEach(b => b.addEventListener("click", () => { const k = b.dataset.gst, lim = k === "cap" ? [1, 60] : [0, 30]; upd({ [k]: Math.max(lim[0], Math.min(lim[1], (+get()[k] || 0) + +b.dataset.d)) }); }));
       $$("[data-gopen]", root).forEach(b => b.addEventListener("click", () => { openG = openG === b.dataset.gopen ? "" : b.dataset.gopen; buzz(6); draw(); }));
       // Niveau d'un jeu : Off / Basique / Moyen / Hard. Choisir le niveau de tous les jeux le refait suivre le niveau général.
