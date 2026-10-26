@@ -23,6 +23,8 @@ const FILES = [
   "games/actionverite.js",
   "games/agents.js",
   "games/blindtest.js",
+  "games/quiz-data.js",
+  "games/quiz.js",
   "games/debat.js",
   "games/defis.js",
   "games/dernierecarte.js",
