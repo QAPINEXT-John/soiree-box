@@ -808,7 +808,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.20.0";
+const VERSION = "4.20.1";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -967,7 +967,7 @@ SB.okPacks = (sel, packs) => {
 };
 function syncSoftClass(){ document.documentElement.classList.toggle("soft", !roomHard()); }
 const FSEL = { home: "all", salon: "all" };
-function inFilter(d, f){ if(isWip(d)) return f === "wip"; return f === "all" || (f === "hot" ? !!d.hot : CATS[d.id] === f); }
+function inFilter(d, f){ if(isWip(d)) return f === "wip" || f === "all"; return f === "all" || (f === "hot" ? !!d.hot : CATS[d.id] === f); }
 function filterHTML(which){
   const hard = which === "salon" ? roomHard() : myHard(), kid = which === "salon" ? roomKid() : myKid();
   if((!hard && FSEL[which] === "hot") || (kid && FSEL[which] === "wip")) FSEL[which] = "all";
@@ -986,8 +986,9 @@ function tileHTML(def, opts){
   opts = opts || {};
   const range = rangeTxt(def);
   const meta = esc(range) + (def.hot && myHard() ? " · 18+" : "") + (def.local && def.local.players && def.local.players.min === 1 ? " · solo" : "");
-  return '<button type="button" class="tile acc-' + esc(def.id) + (isWip(def) ? " wip" : "") + '" data-id="' + esc(def.id) + '"' + (opts.disabled ? " disabled" : "") + (opts.pressed ? ' aria-pressed="true"' : "") + '>' +
-    '<span class="gl">' + esc(def.glyph || def.name.slice(0, 2)) + '</span><span class="nm">' + esc(def.name) + '</span><span class="ds">' + esc(def.pitch || def.tag || "") + '</span><span class="meta">' + (isWip(def) ? '<b class="wipb">' + tr("En travaux", "Beta") + '</b> · ' : "") + (opts.metaHTML || meta) + "</span>" + CHECK + "</button>";
+  const wip = isWip(def);
+  return '<button type="button" class="tile acc-' + esc(def.id) + (wip ? " wip" : "") + '" data-id="' + esc(def.id) + '"' + (opts.disabled || wip ? " disabled" : "") + (wip ? ' aria-label="' + esc(def.name) + tr(" : en travaux", ": under construction") + '"' : "") + (opts.pressed ? ' aria-pressed="true"' : "") + '>' +
+    '<span class="gl">' + esc(def.glyph || def.name.slice(0, 2)) + '</span><span class="nm">' + esc(def.name) + '</span><span class="ds">' + esc(def.pitch || def.tag || "") + '</span><span class="meta">' + (isWip(def) ? '<b class="wipb">' + tr("En travaux", "Beta") + '</b> · ' : "") + (opts.metaHTML || meta) + "</span>" + CHECK + (wip ? '<span class="tape" aria-hidden="true"><i></i><i><b>' + tr("EN TRAVAUX", "UNDER CONSTRUCTION") + "</b></i></span>" : "") + "</button>";
 }
 function rulesHTML(def){
   const r = A(def.rules);
@@ -1589,7 +1590,7 @@ function renderSalon(g){
   if(fb.dataset.ok !== String(roomHard()) + roomKid()){ fb.dataset.ok = String(roomHard()) + roomKid(); bindFilter(fb, "salon", () => { tiles.dataset.key = ""; renderSalon(G()); }); }
   if(tiles.dataset.key !== tKey){
     tiles.dataset.key = tKey;
-    tiles.innerHTML = SB.games.filter(d => (inFilter(d, FSEL.salon) && gameOk(d, roomKid(), roomHard())) || d.id === sel).map(d => {
+    tiles.innerHTML = SB.games.filter(d => (inFilter(d, FSEL.salon) && gameOk(d, roomKid(), roomHard())) || d.id === sel).sort((a, b) => isWip(a) - isWip(b)).map(d => {
       const n = np.length, ok = n >= d.min && (!d.max || n <= d.max);
       const range = rangeTxt(d);
       const meta = (ok ? esc(range) : '<span class="bad">' + esc(range) + "</span>") + (d.hot && roomHard() ? " · 18+" : "");
@@ -2470,7 +2471,7 @@ SB.boot = function(){
   const ht = $("#h-tiles");
   const drawHome = () => {
     $("#h-count").textContent = plural2(SB.games.filter(d => !isWip(d) && gameOk(d, myKid(), myHard())).length, "jeu", "jeux", "game");
-    ht.innerHTML = SB.games.filter(d => inFilter(d, FSEL.home) && gameOk(d, myKid(), myHard())).map(d => tileHTML(d)).join("");
+    ht.innerHTML = SB.games.filter(d => inFilter(d, FSEL.home) && gameOk(d, myKid(), myHard())).sort((a, b) => isWip(a) - isWip(b)).map(d => tileHTML(d)).join("");
     $$(".tile", ht).forEach(b => b.addEventListener("click", () => openRules(SB.byId[b.dataset.id])));
   };
   bindFilter($("#h-filter"), "home", drawHome);

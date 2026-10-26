@@ -1,17 +1,16 @@
 {
- "version": "4.20.0",
+ "version": "4.20.1",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Nouveau jeu : Débats. Pour ou contre ? Deux orateurs, un chrono, le public vote pour le plus convaincant et redonne son avis : on voit qui a changé d'avis",
-  "Catégories Léger, Société, Philo & sciences, Love, Hot (18+) et Enfants ; mode Libre où tout le monde débat",
-  "Coups de théâtre : débat express, avocat du diable, mot interdit, question du public. Aucun gage dans ce jeu"
+  "Photo roulette est en travaux : visible à la fin de la liste avec des bandes de chantier, mais on ne peut plus l'ouvrir",
+  "Débats : nouvelle vignette « VS »"
  ],
  "files": {
   "core.js": {
-   "h": "3336b8f230466470258d62315599a2d081bb10ef5b41a67433391f03c45a6c1f",
-   "s": 276567
+   "h": "711373743806535af8973e61aeb1fb67726a3bfe2f91443753ec9931c21d0b96",
+   "s": 276909
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -94,8 +93,8 @@
    "s": 64350
   },
   "games/debat.js": {
-   "h": "31623a5b0a61919f18cebd2f96609b1935b7474acea0981a3801e3a473e4ea76",
-   "s": 51449
+   "h": "de9ab7e3e4e7bc4f40552efcee34003c9f5558528c97752f47361a204bd635a4",
+   "s": 51421
   },
   "games/defis.js": {
    "h": "4d939598885c73acaa9732bcce7ac082ef8f707794ee999a6df5902ecbe06fff",
@@ -198,8 +197,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "ae272bfdc9bf6d6c627f2328e4b4a5981eee53444461da38253c4083ef7c0215",
-   "s": 51456
+   "h": "64602ffb15d822c65286627011987da2cb2ac84ea205cae0120abe16472829df",
+   "s": 52415
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",

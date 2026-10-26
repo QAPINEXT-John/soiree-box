@@ -82,7 +82,7 @@ function awards(ids, s, nameOf){
 const lead = (ids, p) => ids.slice().sort((a, b) => (p[b] || 0) - (p[a] || 0));
 
 SB.register({
-  id: "debat", name: tr("Débats", "Debates"), glyph: tr("Pour/contre", "For/against"), pitch: tr("Un sujet, deux orateurs, un chrono. Le public tranche.", "One topic, two speakers, a clock. The audience decides."), hot: true,
+  id: "debat", name: tr("Débats", "Debates"), glyph: "VS", pitch: tr("Un sujet, deux orateurs, un chrono. Le public tranche.", "One topic, two speakers, a clock. The audience decides."), hot: true,
   accent: { light: "#7a5cff", dark: "#a08cff" },
   tag: tr("Pour ou contre ? Deux joueurs débattent chrono en main, le public vote pour le plus convaincant. Sujets légers, de société, philo, love ou hot.", "For or against? Two players debate against the clock, the audience votes for the most convincing. Light, society, philosophy, love or hot topics."),
   min: 2, max: 20, ticks: true, gagesEnd: false,

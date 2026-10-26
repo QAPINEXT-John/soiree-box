@@ -1,4 +1,8 @@
 {
+  "4.20.1": [
+    "Photo roulette est en travaux : visible à la fin de la liste avec des bandes de chantier, mais on ne peut plus l'ouvrir",
+    "Débats : nouvelle vignette « VS »"
+  ],
   "4.20.0": [
     "Nouveau jeu : Débats. Pour ou contre ? Deux orateurs, un chrono, le public vote pour le plus convaincant et redonne son avis : on voit qui a changé d'avis",
     "Catégories Léger, Société, Philo & sciences, Love, Hot (18+) et Enfants ; mode Libre où tout le monde débat",
