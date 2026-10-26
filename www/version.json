@@ -1,15 +1,17 @@
 {
- "version": "4.27.2",
+ "version": "4.28.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Nouveau bouton pour quitter une partie : une croix en haut à droite, qui demande confirmation dans un panneau (« Quitter » ou « Continuer à jouer ») au lieu du lien à toucher deux fois"
+  "Nouveau jeu : Blind test. Des extraits de 30 secondes de vrais morceaux (Deezer, sans compte). Mode QCM (4 réponses sur chaque téléphone, le plus rapide marque plus) ou buzzer (l'hôte valide). Thèmes : top du moment, tubes français, rap, années 80, 90-2000, variété, dance, rock, Disney, ou ta propre playlist Deezer",
+  "Nouveau jeu : Karaoké. Chacun choisit une chanson parmi 3, la musique part et il chante de mémoire (aucune parole affichée), parfois avec un défi : chuchoter, yaourt, opéra, accent, robot, danse, mime ou duo. Les autres notent sur 10",
+  "Nouveau filtre « Musique » sur l'accueil et dans le salon. Le son sort du téléphone de l'hôte : branchez une enceinte !"
  ],
  "files": {
   "core.js": {
-   "h": "46e4310d92eef909894e07f116db71f0a1af1aaa5fec1969b776c97f593a5dae",
-   "s": 289353
+   "h": "9cb2e9db3bf2fa5789582676d688e924e84bd67db07ee24cccad6cbd5b82b610",
+   "s": 289456
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -91,6 +93,10 @@
    "h": "b3a548277fdf2f578da3443f76c040733124b3624e6db0efcea4c4ed612eabc5",
    "s": 64350
   },
+  "games/blindtest.js": {
+   "h": "27fe8ac8cb3e798a1425c3c414c745193a91522810b3013c74ca319d42d793c6",
+   "s": 36959
+  },
   "games/debat.js": {
    "h": "de9ab7e3e4e7bc4f40552efcee34003c9f5558528c97752f47361a204bd635a4",
    "s": 51421
@@ -114,6 +120,10 @@
   "games/jamais.js": {
    "h": "10cb1a7dce338f2ac90c949446b0a6bf3066ccefe0ca7343b54035932e4a804c",
    "s": 45583
+  },
+  "games/karaoke.js": {
+   "h": "16bf8235074d714fabf4c223f80b738ecffa0f77baf3017557bfec928b2e6a4d",
+   "s": 29385
   },
   "games/killer.js": {
    "h": "b198ef2b9c1d1e320e9350fd30829a4a3bb32a2886d9071ddccba47106104b9a",
@@ -212,8 +222,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "d1443d033e2fbd81e30ea232e5ea189e68fe0e36ad32755fd14c605f35cd3b1f",
-   "s": 54893
+   "h": "179f86b26d8595b067775c6e775a6acc32b290bb1fc1942c06b4d2deb24c2e4c",
+   "s": 54977
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
