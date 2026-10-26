@@ -1,4 +1,10 @@
 {
+  "4.19.0": [
+    "Nouveau jeu : Agents secrets. Deux équipes, 25 mots, un espion par équipe qui donne un indice (un mot, un nombre). Les agents votent sur leur téléphone",
+    "Mode Duo à 2 en coopération : chacun voit sa carte, 15 agents à trouver en 9 tours",
+    "Paquets Classique, Copains, Pop culture, Soirée, Hot et Trash ; mots perso et prénoms dans la grille ; assassins, mot piégé, coups de théâtre et gages",
+    "Sur un seul téléphone : l'espion regarde la carte en cachette, puis l'équipe retourne les mots"
+  ],
   "4.18.2": [
     "C'est un 10 mais… : phrases Hot et Trash réécrites, plus explicites (on sait tout de suite de quoi on parle)",
     "Nouveau paquet Sans filtre (18+) : dégueu, toxique, illégal, le pire du pire hors du lit"
