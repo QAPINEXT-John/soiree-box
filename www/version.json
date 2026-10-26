@@ -1,16 +1,17 @@
 {
- "version": "4.20.1",
+ "version": "4.21.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Photo roulette est en travaux : visible à la fin de la liste avec des bandes de chantier, mais on ne peut plus l'ouvrir",
-  "Débats : nouvelle vignette « VS »"
+  "Nouveau jeu : Je n'ai jamais… Chacun répond en secret « Déjà fait » ou « Jamais », puis on découvre d'un coup qui l'a fait",
+  "Paquets Classique, Soirée, Love, Hot, Trash et Enfants ; réponses anonymes en option ; coups de théâtre (phrase en or, Raconte !, Devine qui, La plume) et gages",
+  "Sur un seul téléphone : la version aux doigts, le dernier avec des doigts levés gagne"
  ],
  "files": {
   "core.js": {
-   "h": "711373743806535af8973e61aeb1fb67726a3bfe2f91443753ec9931c21d0b96",
-   "s": 276909
+   "h": "4c47f6e357b4365a2cf0e46c381ef53031c508fd6f0b80417d7cd03d75e63465",
+   "s": 276936
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -112,6 +113,10 @@
    "h": "7c4314706be865538bafd102483d1fd73e8a695dc9fbdccc201dbd162cb83a95",
    "s": 53234
   },
+  "games/jamais.js": {
+   "h": "134a69dad875d3deb38cb672f9aa9d29b0db1cb719924dba51f3eb46aaadade0",
+   "s": 42626
+  },
   "games/killer.js": {
    "h": "b198ef2b9c1d1e320e9350fd30829a4a3bb32a2886d9071ddccba47106104b9a",
    "s": 66437
@@ -197,8 +202,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "64602ffb15d822c65286627011987da2cb2ac84ea205cae0120abe16472829df",
-   "s": 52415
+   "h": "3d6d3b8ce591540e1b4957c8fbcc973b45b81ee81601fdcce547687fd40702c3",
+   "s": 52455
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
