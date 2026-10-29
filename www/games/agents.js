@@ -207,7 +207,7 @@ function wordsEditor(){
 const TEAMC = t => (t === "r" ? "#e8414e" : "#3a7bff");
 
 SB.register({
-  id: "agents", name: tr("Agents secrets", "Secret Agents"), glyph: tr("Top secret", "Top secret"), pitch: tr("Deux équipes, 25 mots, un espion qui donne des indices.", "Two teams, 25 words, a spymaster giving clues."), hot: true,
+  id: "agents", name: tr("Agents secrets", "Secret Agents"), glyph: "Code Names", pitch: tr("Deux équipes, 25 mots, un espion qui donne des indices.", "Two teams, 25 words, a spymaster giving clues."), hot: true,
   accent: { light: "#d63b47", dark: "#ff6b74" },
   tag: tr("Votre espion connaît la carte secrète. Un mot, un nombre : retrouvez vos agents avant l'autre équipe, sans toucher l'assassin.", "Your spymaster knows the secret map. One word, one number: find your agents before the other team, without hitting the assassin."),
   min: 2, max: 16,

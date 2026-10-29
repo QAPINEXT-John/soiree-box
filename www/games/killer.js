@@ -256,7 +256,7 @@ function cdText(W, now){ const e = W.ev; if(!e || !e.until) return ""; const r =
 const UI = { gid: "", open: false, acc: false };
 
 const DEF = {
-  id: "killer", name: "Killer", glyph: tr("Tué !", "Dead!"), pitch: tr("Une cible, une mission secrète, toute la soirée.", "One target, one secret mission, all night long."), hot: true, ticks: true,
+  id: "killer", name: "Killer", glyph: tr("Cible", "Target"), pitch: tr("Une cible, une mission secrète, toute la soirée.", "One target, one secret mission, all night long."), hot: true, ticks: true,
   accent: { light: "#d6dbe4", dark: "#d6dbe4" },
   tag: tr("Une cible, une mission secrète. Réussis-la sans te faire griller et récupère la cible de ta victime.", "One target, one secret mission. Pull it off without getting caught and inherit your victim's target."),
   min: 4, max: 20,

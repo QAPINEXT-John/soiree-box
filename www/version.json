@@ -1,16 +1,14 @@
 {
- "version": "4.38.0",
+ "version": "4.38.1",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Blind test : nouvelle page « Mes playlists Deezer ». Plus besoin de coller un lien : cherche une playlist par son nom, ou retrouve ton profil Deezer et choisis parmi tes playlists publiques",
-  "Tu peux garder plusieurs playlists : chacune devient un thème du blind test, cochée automatiquement quand tu l'ajoutes",
-  "Le lien marche encore (onglet « Lien ») pour ceux qui préfèrent"
+  "Nouveaux gros titres sur les cartes de l'accueil : Uno (Dernière carte), Skyjo (Grille), Code Names (Agents secrets), Cible (Killer) et Limite limite (Punchline)"
  ],
  "files": {
   "core.js": {
-   "h": "44bdcd26fd1295adc29f43ff6efd3ac0769f53f946736b52d72db60cde555868",
+   "h": "49d11d4d9e48289d6cb03050fc4df38c286945a752381e9bf6f009cd43594509",
    "s": 309501
   },
   "firebase-app-compat.js": {
@@ -90,8 +88,8 @@
    "s": 106670
   },
   "games/agents.js": {
-   "h": "b3a548277fdf2f578da3443f76c040733124b3624e6db0efcea4c4ed612eabc5",
-   "s": 64350
+   "h": "66c33d19159c1c618216c310af1819c3f1e4e3abf8ebfc1459ead49c1c4ec8bf",
+   "s": 64332
   },
   "games/blindtest.js": {
    "h": "2b25a7827b1f450afb4ae2955bdb12444d89c22a6fb5f339a8719aad3fa949fd",
@@ -114,23 +112,23 @@
    "s": 66119
   },
   "games/dernierecarte.js": {
-   "h": "7c7a748fc9dec39eadf43a21cfd74a15210f659570ace6a2c405662ebe5400df",
-   "s": 63820
+   "h": "fed4b9eaa8e339be3da9ad2bf62c6cf2b5a5cfab8e8b43ef876df50e2e8a6962",
+   "s": 63808
   },
   "games/dixmais.js": {
    "h": "21e5cd474d7406cfd984dccc513e0726f3d15aa9465e67e330e8419a44a1395e",
    "s": 59827
   },
   "games/grille.js": {
-   "h": "92cb0a46309698bae480d690a24ae7c5d1fcb1a32b71bf050d1fa9a9f99d2a0b",
-   "s": 53226
+   "h": "9a1eaf269397276b3328de0cf7a0d6668e644c3b22670d4f9551f5d1022a5f9a",
+   "s": 53227
   },
   "games/jamais.js": {
    "h": "10cb1a7dce338f2ac90c949446b0a6bf3066ccefe0ca7343b54035932e4a804c",
    "s": 45583
   },
   "games/killer.js": {
-   "h": "b198ef2b9c1d1e320e9350fd30829a4a3bb32a2886d9071ddccba47106104b9a",
+   "h": "ab1d3ca601a0754fee9da86421f719cf9d2e41c0f2feedf58d340665f3b405d8",
    "s": 66437
   },
   "games/kink.js": {
@@ -170,8 +168,8 @@
    "s": 31527
   },
   "games/punchline.js": {
-   "h": "f309b85a723f61d699343c3778bed0465837772eb0360d3cac8e96a3c7760811",
-   "s": 113415
+   "h": "cc57b3ae63177b4c3160487cd2013ea0d5e5ef5aef881b2f82160fbaff987180",
+   "s": 113411
   },
   "games/purete.js": {
    "h": "50976454834faef2f0426cc778b16239ee03ff93dee231bfbe6639696688bea1",

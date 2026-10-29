@@ -1966,7 +1966,7 @@ const UI = { k: "", sel: [], blankOpen: false, blank: "", js: null };
 function liveIds(ctx){ return ctx.ids.filter(id => ctx.here(id)); }
 
 const DEF = {
-  id: "punchline", name: "Punchline", glyph: tr("___ !", "___!"), pitch: tr("Complète la phrase avec ta carte la plus trash.", "Fill in the blank with your trashiest card."), hot: true,
+  id: "punchline", name: "Punchline", glyph: "Limite limite", pitch: tr("Complète la phrase avec ta carte la plus trash.", "Fill in the blank with your trashiest card."), hot: true,
   accent: { light: "#ff4fd8", dark: "#ff4fd8" },
   tag: tr("Une phrase à trous, sept cartes en main : complète-la avec la réponse la plus drôle (ou la plus horrible). Le juge garde sa préférée.", "A fill-in-the-blank sentence, seven cards in hand: complete it with the funniest (or most horrible) answer. The judge keeps their favorite."),
   min: 3, max: 12,

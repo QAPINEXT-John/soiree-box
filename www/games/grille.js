@@ -434,7 +434,7 @@ const UI = { k: "", take: false, toss: false, pend: null, mine: [] };
 let LTOK = 0;
 
 const DEF = {
-  id: "grille", name: tr("Grille", "Grid"), glyph: "−2", pitch: tr("12 cartes cachées, vise le plus petit total.", "12 hidden cards, aim for the lowest total."), hot: false,
+  id: "grille", name: tr("Grille", "Grid"), glyph: "Skyjo", pitch: tr("12 cartes cachées, vise le plus petit total.", "12 hidden cards, aim for the lowest total."), hot: false,
   accent: { light: "#1aa6b7", dark: "#3ccbd9" },
   tag: tr("12 cartes face cachée en grille. Prends la défausse ou pioche, remplace tes grosses cartes, aligne 3 cartes identiques pour faire disparaître une colonne. Le plus petit total gagne.", "12 face-down cards in a grid. Take the discard or draw, swap out your big cards, line up 3 identical cards to clear a column. Lowest total wins."),
   min: 2, max: 8,
