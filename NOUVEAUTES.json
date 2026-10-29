@@ -1,4 +1,9 @@
 {
+  "4.38.0": [
+    "Blind test : nouvelle page « Mes playlists Deezer ». Plus besoin de coller un lien : cherche une playlist par son nom, ou retrouve ton profil Deezer et choisis parmi tes playlists publiques",
+    "Tu peux garder plusieurs playlists : chacune devient un thème du blind test, cochée automatiquement quand tu l'ajoutes",
+    "Le lien marche encore (onglet « Lien ») pour ceux qui préfèrent"
+  ],
   "4.37.1": [
     "Sur un seul téléphone, cocher un thème ou une option ne fait plus remonter l'écran tout en haut (Blind test, Quiz, Bombe… tous les jeux)",
     "Taux d'alcool : le poids se tape directement au clavier"

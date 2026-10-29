@@ -1,15 +1,16 @@
 {
- "version": "4.37.1",
+ "version": "4.38.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Sur un seul téléphone, cocher un thème ou une option ne fait plus remonter l'écran tout en haut (Blind test, Quiz, Bombe… tous les jeux)",
-  "Taux d'alcool : le poids se tape directement au clavier"
+  "Blind test : nouvelle page « Mes playlists Deezer ». Plus besoin de coller un lien : cherche une playlist par son nom, ou retrouve ton profil Deezer et choisis parmi tes playlists publiques",
+  "Tu peux garder plusieurs playlists : chacune devient un thème du blind test, cochée automatiquement quand tu l'ajoutes",
+  "Le lien marche encore (onglet « Lien ») pour ceux qui préfèrent"
  ],
  "files": {
   "core.js": {
-   "h": "8d4b8055e36a45c84fc117c788dabcadf040d57884147ec65655cecfedf84a17",
+   "h": "44bdcd26fd1295adc29f43ff6efd3ac0769f53f946736b52d72db60cde555868",
    "s": 309501
   },
   "firebase-app-compat.js": {
@@ -93,8 +94,8 @@
    "s": 64350
   },
   "games/blindtest.js": {
-   "h": "d6d7b223df3d711faff718eec367e37213d9b506e27f80df9e2886c23a37ef4a",
-   "s": 54923
+   "h": "2b25a7827b1f450afb4ae2955bdb12444d89c22a6fb5f339a8719aad3fa949fd",
+   "s": 63290
   },
   "games/bombe.js": {
    "h": "b7428de2e4f7d1e2aeca8cd99d6851ecba9e97f0e1f4a137c9669f910565fe18",

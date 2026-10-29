@@ -80,17 +80,24 @@ const THEMES = [
     ["Imagination", "Haikyuu!!", "SPYAIR"], ["departure!", "Hunter x Hunter", "Masatoshi Ono"], ["Hacking to the Gate", "Steins;Gate", "Kanako Ito"], ["Crossing Field", "Sword Art Online", "LiSA"],
     ["Bling-Bang-Bang-Born", "Mashle", "Creepy Nuts"], ["Peace Sign", "My Hero Academia", "Kenshi Yonezu"]
   ] },
-  { v: "perso", label: tr("Ma playlist Deezer", "My Deezer playlist"), desc: tr("Colle le lien d'une playlist Deezer publique", "Paste a public Deezer playlist link"), perso: 1 }
 ];
-const myPlaylist = () => String(store().dzPlaylist || "");
+/* Mes playlists Deezer : gardées sur le téléphone ({ id, t: titre, c: pochette, n: nb de titres, by: créateur }).
+   Chacune devient un thème du blind test (« pl:<id> »). L'ancien réglage (un seul lien) est repris. */
+function myPlaylists(){
+  const st = store(); let L = A(st.dzPlaylists).filter(x => x && /^\d+$/.test(String(x.id)));
+  const old = playlistId(st.dzPlaylist || "");
+  if(old && !L.some(x => String(x.id) === old)){ L = L.concat([{ id: old, t: tr("Ma playlist", "My playlist"), c: "", n: 0 }]); persist({ dzPlaylists: L, dzPlaylist: "" }); }
+  return L.slice(0, 30);
+}
+const myPlaylist = () => (myPlaylists()[0] ? String(myPlaylists()[0].id) : "");
 const playlistId = s => { const m = String(s || "").match(/playlist\/(\d+)/) || String(s || "").match(/^(\d{4,})$/); return m ? m[1] : ""; };
 // Construit la pioche (morceaux avec extrait) pour les thèmes choisis. Renvoie une promesse.
 async function buildPool(themes, need){
-  const sel = THEMES.filter(t => A(themes).indexOf(t.v) >= 0 && (!t.perso || playlistId(myPlaylist())));
-  const jobs = [];
+  const sel = THEMES.filter(t => A(themes).indexOf(t.v) >= 0);
+  const jobs = [], pls = myPlaylists().filter(p => A(themes).indexOf("pl:" + p.id) >= 0 || A(themes).indexOf("perso") >= 0);
+  pls.forEach(p => jobs.push(jsonp(API + "playlist/" + p.id + "/tracks?limit=200").then(d => A(d && d.data).map(trackOf))));
   sel.forEach(t => {
     if(t.chart) jobs.push(jsonp(API + "chart/0/tracks?limit=100").then(d => A(d && d.data).map(trackOf)));
-    if(t.perso) jobs.push(jsonp(API + "playlist/" + playlistId(myPlaylist()) + "/tracks?limit=300").then(d => A(d && d.data).map(trackOf)));
     // La recherche avancée de Deezer (artist:"…") renvoie n'importe quoi : on passe par la fiche de l'artiste et ses titres les plus écoutés.
     if(t.artists) shuffle(t.artists).slice(0, Math.max(5, Math.ceil(10 / sel.length))).forEach(a => jobs.push(artistTop(a).catch(() => [])));
     // Disney : on cherche le titre et on ne garde que la version du film (album ou artiste qui citent le film ou Disney),
@@ -158,16 +165,78 @@ function artistTop(name){
   });
 }
 SB.music = { THEMES, buildPool, play, pause, resume, audio: AUD, playlistId, myPlaylist, jsonp, norm, noVoice: x => noVoice(trackOf(x)) };
-SB.music.packs = () => THEMES.filter(t => !t.perso || playlistId(myPlaylist()));
-SB.music.editor = function(){
-  SB.page(tr("Ma playlist Deezer", "My Deezer playlist"), root => {
-    root.innerHTML = '<div class="gs"><p class="howto">' + tr("Dans Deezer, ouvre une playlist publique, touche « Partager » puis « Copier le lien », et colle-le ici. Elle apparaîtra dans les thèmes du blind test.", "In Deezer, open a public playlist, tap “Share” then “Copy link”, and paste it here. It will show up in the blind test themes.") + "</p>" +
-      '<input class="txt" id="dz-pl" placeholder="https://www.deezer.com/fr/playlist/…" autocomplete="off"><p class="sm" data-st></p></div>';
-    const i = root.querySelector("#dz-pl"), st = root.querySelector("[data-st]");
-    i.value = myPlaylist();
-    const show = () => { st.textContent = i.value.trim() ? (playlistId(i.value) ? tr("Lien reconnu : playlist n° " + playlistId(i.value), "Link recognized: playlist #" + playlistId(i.value)) : tr("Ce lien ne ressemble pas à une playlist Deezer (les liens courts deezer.page.link ne marchent pas : ouvre-le d'abord dans le navigateur).", "This doesn't look like a Deezer playlist link (short deezer.page.link links don't work: open it in the browser first).")) : ""; };
-    i.addEventListener("input", () => { persist({ dzPlaylist: i.value.trim() }); show(); }); show();
-  });
+SB.music.packs = () => THEMES.concat(myPlaylists().map(p => ({ v: "pl:" + p.id, label: p.t, desc: tr("Ma playlist Deezer", "My Deezer playlist") + (p.n ? " · " + p.n + tr(" titres", " tracks") : ""), pl: 1 })));
+SB.music.myPlaylists = myPlaylists;
+/* Ajouter une playlist : chercher par nom, retrouver un profil Deezer et ses playlists, ou coller un lien. */
+// Une playlist ajoutée est cochée tout de suite (blind test local et salon) ; retirée, elle est décochée.
+function tickPl(v, on){
+  const st = store(), O = Object.assign({}, st.opts || {}), bt = Object.assign({}, O.blindtest || {});
+  const fix = L => { L = A(L).filter(x => x !== v); if(on) L.push(v); return L; };
+  bt.packs = fix(bt.packs !== undefined ? bt.packs : ["top", "fr"]); O.blindtest = bt;
+  persist({ opts: O, btPacks: fix(A(st.btPacks).length ? st.btPacks : ["top", "fr"]) });
+}
+SB.music.editor = function(onDone){
+  SB.page(tr("Mes playlists Deezer", "My Deezer playlists"), root => {
+    let tab = "pl", q = "", res = null, busy = false, user = null, timer = null, err = "";
+    const plRow = (p, added) => '<div class="dz-row">' + (p.c ? '<img alt="" src="' + esc(p.c) + '">' : '<i class="dz-ph">♪</i>') + '<span class="tx"><b>' + esc(p.t) + "</b><span>" + esc([p.by, p.n ? p.n + tr(" titres", " tracks") : ""].filter(Boolean).join(" · ")) + "</span></span>" +
+      (added ? '<button type="button" class="dz-b on" data-del="' + p.id + '" aria-label="' + tr("Retirer", "Remove") + '">' + tr("Retirer", "Remove") + "</button>" : '<button type="button" class="dz-b" data-add="' + p.id + '">' + tr("Ajouter", "Add") + "</button>") + "</div>";
+    const fromApi = x => ({ id: String(x.id), t: clean(x.title, 80), c: x.picture_medium || x.picture || "", n: +x.nb_tracks || 0, by: clean((x.user || x.creator || {}).name || "", 40) });
+    const draw = () => {
+      const oq = root.querySelector("#dz-q"), had = oq && document.activeElement === oq, pos = had ? oq.selectionStart : 0;
+      const mine = myPlaylists(), has = id => mine.some(p => String(p.id) === String(id));
+      root.innerHTML = '<div class="gs"><style>' +
+        '.dz-row{display:flex; align-items:center; gap:10px; padding:8px; border-radius:14px; background:var(--card); border:1.5px solid var(--line)}.dz-row img,.dz-row .dz-ph{width:52px; height:52px; border-radius:10px; object-fit:cover; flex:none; background:var(--soft); display:grid; place-items:center; font-style:normal; color:var(--muted)}' +
+        '.dz-row .tx{flex:1; min-width:0; display:flex; flex-direction:column}.dz-row .tx b{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}.dz-row .tx span{font-size:12px; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}' +
+        '.dz-b{flex:none; min-height:40px; padding:0 14px; border-radius:99px; border:0; background:var(--acc); color:var(--on-acc); font-weight:800}.dz-b.on{background:transparent; border:1.5px solid var(--line); color:var(--ink)}.dz-list{display:flex; flex-direction:column; gap:6px}.dz-user{display:flex; align-items:center; gap:10px; width:100%; padding:8px; border-radius:14px; background:var(--card); border:1.5px solid var(--line); color:var(--ink); text-align:left; font-weight:800}.dz-user img{width:44px; height:44px; border-radius:50%}' +
+        "</style>" +
+        '<div class="field"><span class="eyebrow">' + tr("Mes playlists", "My playlists") + "</span>" + (mine.length ? '<div class="dz-list">' + mine.map(p => plRow(p, true)).join("") + "</div>" : '<p class="sm" style="margin:0">' + tr("Aucune pour l'instant. Ajoute-en une ci-dessous : elle apparaîtra comme un thème du blind test.", "None yet. Add one below: it will show up as a blind test theme.") + "</p>") + "</div>" +
+        '<div class="field"><span class="eyebrow">' + tr("Ajouter une playlist", "Add a playlist") + '</span><div class="seg">' + [["pl", tr("Chercher", "Search")], ["user", tr("Mon profil Deezer", "My Deezer profile")], ["link", tr("Lien", "Link")]].map(x => '<button type="button" data-tab="' + x[0] + '" aria-pressed="' + (tab === x[0]) + '">' + x[1] + "</button>").join("") + "</div>" +
+        (tab === "link" ? '<input class="txt" id="dz-q" placeholder="https://www.deezer.com/fr/playlist/…" autocomplete="off" value="' + esc(q) + '"><p class="sm" style="margin:0">' + tr("Dans Deezer : Partager, puis Copier le lien. Si le lien commence par « link.deezer.com » ou « deezer.page.link », ouvre-le d'abord dans ton navigateur et copie l'adresse qui s'affiche — ou utilise plutôt « Chercher ».", "In Deezer: Share, then Copy link. If it starts with \"link.deezer.com\" or \"deezer.page.link\", open it in your browser first and copy the address shown — or just use \"Search\".") + "</p>"
+          : '<input class="txt" id="dz-q" type="search" enterkeyhint="search" autocomplete="off" value="' + esc(q) + '" placeholder="' + (tab === "user" ? tr("Ton nom d'utilisateur Deezer", "Your Deezer username") : tr("Nom de la playlist : « soirée 2010 », « rap fr »…", "Playlist name: \"party 2010\", \"90s hits\"…")) + '">' +
+            (tab === "user" ? '<p class="sm" style="margin:0">' + tr("Tes playlists doivent être publiques dans Deezer.", "Your playlists must be public on Deezer.") + "</p>" : "")) +
+        (busy ? '<p class="wait">' + tr("Recherche…", "Searching…") + "</p>" : err ? '<p class="err">' + esc(err) + "</p>" : "") +
+        (user ? '<button type="button" class="link" data-back style="align-self:flex-start">← ' + tr("Autres profils", "Other profiles") + "</button>" : "") +
+        (res ? '<div class="dz-list">' + (res.length ? res.map(x => x.kind === "user" ? '<button type="button" class="dz-user" data-user="' + x.id + '">' + (x.c ? '<img alt="" src="' + esc(x.c) + '">' : "") + esc(x.t) + "</button>" : plRow(x, has(x.id))).join("") : '<p class="sm" style="margin:0">' + tr("Rien trouvé.", "Nothing found.") + "</p>") + "</div>" : "") +
+        "</div></div>";
+      const qi = root.querySelector("#dz-q");
+      root.querySelectorAll("[data-tab]").forEach(b => b.addEventListener("click", () => { tab = b.dataset.tab; q = ""; res = null; user = null; err = ""; draw(); }));
+      root.querySelectorAll("[data-add]").forEach(b => b.addEventListener("click", () => { const p = A(res).find(x => String(x.id) === b.dataset.add); if(!p) return; persist({ dzPlaylists: myPlaylists().filter(x => String(x.id) !== String(p.id)).concat([{ id: p.id, t: p.t, c: p.c, n: p.n, by: p.by }]) }); tickPl("pl:" + p.id, true); buzz(10); SB.u.toast(tr("Ajoutée aux thèmes du blind test", "Added to the blind test themes")); draw(); }));
+      root.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => { persist({ dzPlaylists: myPlaylists().filter(x => String(x.id) !== b.dataset.del) }); tickPl("pl:" + b.dataset.del, false); draw(); }));
+      root.querySelectorAll("[data-user]").forEach(b => b.addEventListener("click", () => { user = b.dataset.user; load(); }));
+      const bk = root.querySelector("[data-back]"); if(bk) bk.addEventListener("click", () => { user = null; load(); });
+      if(qi){
+        qi.addEventListener("input", () => { q = qi.value; clearTimeout(timer); timer = setTimeout(load, tab === "link" ? 200 : 450); });
+        qi.addEventListener("keydown", e => { if(e.key === "Enter"){ clearTimeout(timer); load(); } });
+        if(had){ qi.focus(); try{ qi.setSelectionRange(pos, pos); }catch(e){} }
+      }
+    };
+    function load(){
+      err = "";
+      const term = q.trim();
+      if(tab === "link"){
+        const id = playlistId(term);
+        if(!term){ res = null; draw(); return; }
+        if(!id){ res = null; err = tr("Ce lien n'est pas reconnu. Essaie « Chercher » avec le nom de la playlist.", "Link not recognised. Try \"Search\" with the playlist name."); draw(); return; }
+        busy = true; draw();
+        jsonp(API + "playlist/" + id).then(d => { busy = false; res = d && d.id ? [fromApi(d)] : []; if(!res.length) err = tr("Playlist introuvable ou privée.", "Playlist not found or private."); draw(); }).catch(() => { busy = false; err = tr("Deezer ne répond pas.", "Deezer isn't responding."); draw(); });
+        return;
+      }
+      if(user){
+        busy = true; draw();
+        jsonp(API + "user/" + user + "/playlists?limit=50").then(d => { busy = false; res = A(d && d.data).filter(x => x && x.nb_tracks !== 0).map(fromApi); draw(); }).catch(() => { busy = false; err = tr("Deezer ne répond pas.", "Deezer isn't responding."); draw(); });
+        return;
+      }
+      if(term.length < 2){ res = null; draw(); return; }
+      busy = true; draw();
+      const url = tab === "user" ? API + "search/user?q=" + encodeURIComponent(term) + "&limit=12" : API + "search/playlist?q=" + encodeURIComponent(term) + "&limit=20";
+      jsonp(url).then(d => {
+        busy = false;
+        res = tab === "user" ? A(d && d.data).map(x => ({ kind: "user", id: String(x.id), t: clean(x.name, 40), c: x.picture_medium || "" })) : A(d && d.data).filter(x => x && x.nb_tracks !== 0).map(fromApi);
+        draw();
+      }).catch(() => { busy = false; err = tr("Deezer ne répond pas.", "Deezer isn't responding."); draw(); });
+    }
+    draw();
+  }, onDone);
 };
 
 /* ---------- Le jeu ---------- */
@@ -233,7 +302,7 @@ SB.register({
     { id: "guess", label: tr("On devine", "Guess the"), type: "seg", def: "artiste", values: [{ v: "artiste", label: tr("L'artiste", "Artist") }, { v: "titre", label: tr("Le titre", "Title") }] },
     { id: "rounds", label: tr("Chansons", "Songs"), type: "seg", def: 10, values: [{ v: 10, label: "10" }, { v: 15, label: "15" }, { v: 20, label: "20" }] },
     { id: "packs", label: tr("Thèmes", "Themes"), type: "multi", def: ["top", "fr"], values: () => SB.music.packs().map(t => ({ v: t.v, label: t.label, desc: t.desc, kid: t.kid })) },
-    { id: "edit", type: "button", label: tr("Ajouter ma playlist Deezer", "Add my Deezer playlist"), onClick: () => SB.music.editor() },
+    { id: "edit", type: "button", label: tr("Mes playlists Deezer", "My Deezer playlists"), onClick: () => SB.music.editor() },
     { id: "twists", label: tr("Coups de théâtre", "Plot twists"), type: "toggle", text: tr("Coups de théâtre", "Plot twists"), desc: tr("Chanson en or, extrait éclair, à l'envers", "Golden song, lightning clip, flipped"), def: true }
   ],
   start(ctx, o){
@@ -397,7 +466,7 @@ SB.register({
             (tmn ? SB.teams.grid(tm, tmn, names, z => z, true) + '<button class="link" type="button" data-mix style="align-self:flex-start">' + tr("Mélanger les équipes", "Shuffle the teams") + "</button>" : "") + "</div>" : "") +
           '<div class="field"><span class="eyebrow">' + tr("Chansons", "Songs") + '</span><div class="seg">' + [10, 15, 20].map(v => '<button type="button" data-r="' + v + '" aria-pressed="' + (rounds === v) + '">' + v + "</button>").join("") + "</div></div>" +
           '<div class="field"><span class="eyebrow">' + tr("Thèmes", "Themes") + '</span><div class="packs">' + packs.map(p => '<button type="button" class="pack" data-p="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + '</span><span class="ds">' + esc(p.desc) + "</span></span></button>").join("") + "</div>" +
-          '<button class="link" type="button" data-ed style="align-self:flex-start">' + tr("Ajouter ma playlist Deezer", "Add my Deezer playlist") + "</button></div>" +
+          '<button class="link" type="button" data-ed style="align-self:flex-start">' + tr("Mes playlists Deezer", "My Deezer playlists") + "</button></div>" +
           '<div class="field"><div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + twOn + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Plot twists") + "</span></span></button></div></div>" +
           SB.u.dock('<button class="btn acc" type="button" data-go>' + tr("Charger les extraits", "Load the clips") + "</button>"), r => {
           r.querySelectorAll("[data-g]").forEach(b => b.addEventListener("click", () => { guess = b.dataset.g; persist({ btGuess: guess }); setup(); }));
@@ -407,7 +476,7 @@ SB.register({
           const mx = r.querySelector("[data-mix]"); if(mx) mx.addEventListener("click", () => { tm = SB.teams.split(names, tmn); setup(); });
           r.querySelectorAll("[data-p]").forEach(b => b.addEventListener("click", () => { const i = sel.indexOf(b.dataset.p); if(i >= 0) sel.splice(i, 1); else sel.push(b.dataset.p); persist({ btPacks: sel }); setup(); }));
           r.querySelector("[data-tw]").addEventListener("click", () => { twOn = !twOn; persist({ btTw: twOn }); setup(); });
-          r.querySelector("[data-ed]").addEventListener("click", () => SB.music.editor());
+          r.querySelector("[data-ed]").addEventListener("click", () => SB.music.editor(() => { const b = A(store().btPacks); if(b.length) sel = b.slice(); setup(); }));
           r.querySelector("[data-go]").addEventListener("click", () => {
             if(!sel.length){ SB.u.toast(tr("Choisis au moins un thème", "Pick at least one theme")); return; }
             if(tmn && !SB.teams.ok(tm, tmn, names)){ SB.u.toast(tr("Chaque équipe doit avoir au moins un joueur", "Every team needs at least one player")); return; }
