@@ -1,18 +1,16 @@
 {
- "version": "4.37.0",
+ "version": "4.37.1",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Nouveau jeu : La Bombe. Une syllabe ou une catégorie tombe, la mèche est allumée : dis un mot qui va et passe la bombe au suivant. Personne ne sait quand elle explose ! Tic-tac qui accélère, explosion, vibration",
-  "En salon, la bombe saute de téléphone en téléphone. Sur un seul téléphone, c'est lui la bombe : on se le passe",
-  "Cartes : syllabe dans le mot, ça commence par, ça finit par, catégories, catégories 18+, enfants, et vos propres cartes. Mèche courte, normale ou longue",
-  "Coups de théâtre : sens inverse, mèche courte, éclaboussures (les voisins prennent aussi), mots de 6 lettres minimum"
+  "Sur un seul téléphone, cocher un thème ou une option ne fait plus remonter l'écran tout en haut (Blind test, Quiz, Bombe… tous les jeux)",
+  "Taux d'alcool : le poids se tape directement au clavier"
  ],
  "files": {
   "core.js": {
-   "h": "8feea49064a6c7a5d3328946a58d7c80fb1dfbd0a297821224e2142880b387ca",
-   "s": 308694
+   "h": "8d4b8055e36a45c84fc117c788dabcadf040d57884147ec65655cecfedf84a17",
+   "s": 309501
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -239,8 +237,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "6f2df240ca3b32ee462f5a2c34b974dcf4905bfe6897896c0a3a7f7cb30d3a43",
-   "s": 61690
+   "h": "752e439d196d9346ff73def084ff2823a307ecb99ef2c2a9bbb48bcf05c664b9",
+   "s": 61882
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",

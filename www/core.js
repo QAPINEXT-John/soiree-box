@@ -134,8 +134,10 @@ function armTap(btn, action, armedText){
 // Reconstruit le contenu de root seulement quand la clé change (évite de perdre la saisie).
 function screen(root, key, html, bind){
   if(root.dataset.key === key) return false;
-  root.dataset.key = key; root.innerHTML = html; enter(root);
-  const sc = root.closest(".screen"); if(sc) sc.scrollTop = 0;
+  // Écran de réglages redessiné après un choix (clé « su… » → « su… ») : on garde la position, sans animation.
+  const same = /^su/.test(key) && /^su/.test(root.dataset.key || ""), sc = root.closest(".screen"), y = sc ? sc.scrollTop : 0;
+  root.dataset.key = key; root.innerHTML = html;
+  if(same){ if(sc) sc.scrollTop = y; } else { enter(root); if(sc) sc.scrollTop = 0; }
   if(bind) bind(root);
   return true;
 }
@@ -817,7 +819,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.37.0";
+const VERSION = "4.37.1";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -2437,7 +2439,7 @@ function gProfilePage(){
             : '<p class="pf-bac-n">' + alcNum(bac, 2) + " <small>g/L</small></p>") +
           '<div class="pf-gauge"><i style="width:' + pct + '%"></i><span class="mk"></span></div><div class="pf-gl"><span>0</span><span>' + tr("0,5 · limite au volant", "0.5 · French driving limit") + "</span><span>1,5</span></div></div>" +
         '<div class="gs-box">' +
-          '<div class="gs-row"><span class="tx"><b>' + tr("Poids", "Weight") + '</b></span><button type="button" class="gs-b" data-kg="-1" aria-label="' + tr("Moins", "Less") + '">−</button><b class="gs-n" style="min-width:64px">' + (a.kg ? a.kg + " kg" : "—") + '</b><button type="button" class="gs-b" data-kg="1" aria-label="' + tr("Plus", "More") + '">+</button></div>' +
+          '<div class="gs-row"><label class="tx" for="pf-kg"><b>' + tr("Poids", "Weight") + '</b><span class="sm">' + tr("Entre 35 et 250 kg", "Between 35 and 250 kg") + '</span></label><span class="pf-kg"><input class="txt" id="pf-kg" type="number" inputmode="numeric" pattern="[0-9]*" min="35" max="250" step="1" placeholder="70" value="' + (a.kg || "") + '"><b>kg</b></span></div>' +
           '<div class="gs-row"><span class="tx"><b>' + tr("Base de calcul", "Basis") + '</b></span><div class="seg pf-lang">' + [[0.7, tr("Homme", "Male")], [0.6, tr("Femme", "Female")]].map(o => '<button type="button" data-alcr="' + o[0] + '" aria-pressed="' + (a.r === o[0]) + '">' + o[1] + "</button>").join("") + "</div></div>" +
         "</div>" +
         '<p class="sm" style="margin:0">' + tr("Calcul très approximatif (formule de Widmark) : il ne tient compte ni du repas, ni de ta santé, ni de tes médicaments. Ton poids reste sur ce téléphone.", "A very rough estimate (Widmark formula): it ignores food, health and medication. Your weight stays on this phone.") + "</p>" +
@@ -2511,7 +2513,14 @@ function gProfilePage(){
       $$("[data-pf-lang]", root).forEach(b => b.addEventListener("click", () => { if(b.dataset.pfLang !== LANG){ buzz(8); SB.setLang(b.dataset.pfLang); } }));
       const nl = $("[data-gnolim]", root); if(nl) nl.addEventListener("click", () => { buzz(8); save({ nolim: !gProf(store().gp).nolim }); });
       alcMineBind(root, draw);
-      $$("[data-kg]", root).forEach(b => b.addEventListener("click", () => { const a = alcStore(); buzz(6); alcSave({ kg: a.kg ? Math.max(35, Math.min(250, a.kg + +b.dataset.kg)) : 70 }); draw(); }));
+      // Poids tapé au clavier : enregistré dès qu'il est valable, l'estimation se met à jour quand on quitte le champ.
+      const kg = $("#pf-kg", root);
+      if(kg){
+        const val = () => { const v = Math.round(+String(kg.value).replace(",", ".") || 0); return v >= 35 && v <= 250 ? v : 0; };
+        kg.addEventListener("input", () => { const v = val(); if(v) alcSave({ kg: v }); });
+        kg.addEventListener("change", () => { const v = val(); if(!v && kg.value !== ""){ toast(tr("Poids entre 35 et 250 kg", "Weight between 35 and 250 kg")); kg.value = alcStore().kg || ""; return; } alcSave({ kg: v }); setTimeout(draw, 0); });
+        kg.addEventListener("keydown", e => { if(e.key === "Enter") kg.blur(); });
+      }
       $$("[data-gl]", root).forEach(b => b.addEventListener("click", () => { const g2 = gProf(store().gp), l = Object.assign({}, g2.lim); l[g2.drink] = Math.max(1, Math.min(20, gLim(g2) + +b.dataset.gl)); save({ lim: l }); }));
     };
     draw();

@@ -1,4 +1,8 @@
 {
+  "4.37.1": [
+    "Sur un seul téléphone, cocher un thème ou une option ne fait plus remonter l'écran tout en haut (Blind test, Quiz, Bombe… tous les jeux)",
+    "Taux d'alcool : le poids se tape directement au clavier"
+  ],
   "4.37.0": [
     "Nouveau jeu : La Bombe. Une syllabe ou une catégorie tombe, la mèche est allumée : dis un mot qui va et passe la bombe au suivant. Personne ne sait quand elle explose ! Tic-tac qui accélère, explosion, vibration",
     "En salon, la bombe saute de téléphone en téléphone. Sur un seul téléphone, c'est lui la bombe : on se le passe",
