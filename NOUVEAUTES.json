@@ -1,4 +1,7 @@
 {
+  "4.39.5": [
+    "Les gages sont maintenant activés par défaut (niveau Moyen). Si tu les avais coupés toi-même, ton choix est gardé"
+  ],
   "4.39.4": [
     "« Un seul téléphone » et le choix des joueurs prennent aussi le nouvel en-tête : grand titre et bouton rond à la place des liens « Accueil » et « Retour »"
   ],

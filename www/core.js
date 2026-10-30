@@ -830,7 +830,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.39.4";
+const VERSION = "4.39.5";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -1868,7 +1868,7 @@ function startLocal(def, names){
      ctx.gage([{ id, ev }], clé) en réseau (chez l'hôte) ou api.gage([{ id: nom, ev }], clé) sur un seul téléphone.
    - Fin de partie : tous les jeux, le gagnant distribue et les autres boivent (réglable).
    - Un panneau « Gages de la manche » s'affiche alors sur chaque téléphone. */
-const GDEF = { on: false, unit: "gorgee", level: "classique", cap: 15, capOff: false, water: 8, joker: true, trig: {}, glv: {}, custom: [] };
+const GDEF = { on: true, unit: "gorgee", level: "classique", cap: 15, capOff: false, water: 8, joker: true, trig: {}, glv: {}, custom: [] };
 // Noms des niveaux de gages (« perso » : ancien réglage, traité comme Moyen).
 // Plafond conseillé selon l'unité et le niveau : il change tout seul quand on change de niveau ou d'unité (on peut l'ajuster après).
 const GCAP = { gorgee: { chill: 8, classique: 15, chaud: 30 }, shot: { chill: 3, classique: 5, chaud: 10 }, culsec: { chill: 1, classique: 2, chaud: 4 } };

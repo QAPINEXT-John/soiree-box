@@ -1,15 +1,15 @@
 {
- "version": "4.39.4",
+ "version": "4.39.5",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "« Un seul téléphone » et le choix des joueurs prennent aussi le nouvel en-tête : grand titre et bouton rond à la place des liens « Accueil » et « Retour »"
+  "Les gages sont maintenant activés par défaut (niveau Moyen). Si tu les avais coupés toi-même, ton choix est gardé"
  ],
  "files": {
   "core.js": {
-   "h": "7026e9aea6d1f734bf36324c0bc6798763a3cc0d3c53af68cc3cd8632ff43803",
-   "s": 310417
+   "h": "46db89c6985b6d2308968bbe3ec0316d6932d5cfb4d6035b1e74f47ae2b13cec",
+   "s": 310416
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
