@@ -1,14 +1,14 @@
 {
- "version": "4.40.4",
+ "version": "4.40.5",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Féminin entre parenthèses aussi dans Note sur 10, Punchline et les écrans de l'appli (accueil, gages, profil)"
+  "Féminin entre parenthèses terminé : Action ou vérité, Test de pureté, Loup-garou et Killer aussi"
  ],
  "files": {
   "core.js": {
-   "h": "c92f127629e890a2d6412bec9eff6028ea4dc89867c8db54bfd74ccdb3a52029",
+   "h": "ed2f61fcb1892e8d7e172bbc4b495b93c4c990da55b812da35e446af0bc9968d",
    "s": 311876
   },
   "firebase-app-compat.js": {
