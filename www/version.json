@@ -1,14 +1,15 @@
 {
- "version": "4.40.2",
+ "version": "4.40.3",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Féminin entre parenthèses aussi dans 7 secondes, Mots interdits, Je n'ai jamais, Tu préfères, Menteurs, Qui est le plus… et le Quiz"
+  "Agents secrets se joue maintenant à 3 : mode Duo à 3, le (la) troisième devine avec celui (celle) qui cherche. Le mode est choisi tout seul à 2 ou 3 joueurs",
+  "Féminin entre parenthèses aussi dans Red Flag, Défis, Agents secrets, Dernière carte, Blind test, C'est un 10 mais…, Grille, Débat, Undercover, Qui a dit ça et la Course de défis"
  ],
  "files": {
   "core.js": {
-   "h": "5556fd5480e8a692365c30197dedf4015c5e1126150f29954c1751d67bc511c0",
+   "h": "47328cf733424d846bdf0fa62d1eb1f25ec243b7e5e9c5755f976c7a05917a30",
    "s": 311886
   },
   "firebase-app-compat.js": {
@@ -84,12 +85,12 @@
    "s": 6236
   },
   "games/actionverite.js": {
-   "h": "8365105182ddefa7242ec529e84ddc4d6273a2f382a41afe0e1a875f9897a66d",
-   "s": 106749
+   "h": "3b7b53e3525f9499c5cdbfad7df7c87b677afac9585acb4ace8b16a95a4b425f",
+   "s": 106914
   },
   "games/agents.js": {
-   "h": "0809c18815cd676c476f39d6c672a4512c82be7f6fc8760f7f9f71f126f641c0",
-   "s": 64503
+   "h": "16f102a3250f9eced246c0b5fdba886020b789899b3a04af7798b9e29cc1d14a",
+   "s": 65008
   },
   "games/blindtest.js": {
    "h": "3c5224ed413afc55fd9fe1507065ce8898315e077977efba1de939a7dc830d99",
@@ -100,8 +101,8 @@
    "s": 34537
   },
   "games/course.js": {
-   "h": "c2ca4cc9766b67dcc026238114f1dfb67091cf2424ac16afac1a22427d513d69",
-   "s": 50101
+   "h": "6fed9ec258c7919173a993b0d6e7c9bc861c79e4c82614d478daa74b93c80a92",
+   "s": 50182
   },
   "games/debat.js": {
    "h": "8a0a4ef593a4392dcf112a80783fb804b4f56f911ea0ed8d0a908bf66f256594",
@@ -136,8 +137,8 @@
    "s": 28404
   },
   "games/loupgarou.js": {
-   "h": "a1f875147feea9ec90699471d2a0ed7abcf81732b39874fdd8555e6dea0bd1d3",
-   "s": 70889
+   "h": "46e7b353a1efa31310b9a24498fb1c9dc5a2b3c11fa42697134a5e7c82ee0c09",
+   "s": 70884
   },
   "games/menteurs.js": {
    "h": "7c78a7248f52bbd85a5ff287689185e8ee575c1f83af36416c38897ddacb2efa",
@@ -168,12 +169,12 @@
    "s": 31571
   },
   "games/punchline.js": {
-   "h": "e6f1a0be842d4f7e0e93d274822f069b7a65ff37a88ff2ffb745d6a4860a4692",
-   "s": 113450
+   "h": "21bafa0c22d7f88802ce414c9d442c2a92d8b5be0784e43ea32c4f2faa542910",
+   "s": 113578
   },
   "games/purete.js": {
-   "h": "1cc8e06a9d6a8af93ba8a316f5b94c93f1a007d619826d8e3453e95d02bee46f",
-   "s": 71248
+   "h": "a09a1df2fd7b9d14c14824607bac39ba2862db21a4c9f670dc27c023a0d3b1f0",
+   "s": 71233
   },
   "games/quiadit.js": {
    "h": "4c6b53ae36e5475f260df01119d5b5002a94a5a4496b97bdc6fdf99293a36c7a",
@@ -192,8 +193,8 @@
    "s": 41384
   },
   "games/redflag.js": {
-   "h": "d220a8696a2c815037af0ec290675d541b1dd41aa60c6f32e8b468c298fc9365",
-   "s": 66378
+   "h": "114753db6e204f613f862b0fb42be0cd6ab84f0322378b10b8b06f76f1e43b12",
+   "s": 66369
   },
   "games/rougenoir.js": {
    "h": "bf563fe60276463ab48ab6714857c5b9fefe510b48516bd46ded338788e5272f",
@@ -208,8 +209,8 @@
    "s": 45668
   },
   "games/undercover.js": {
-   "h": "77ceba4ba89d4898aac2ed4ca5d860343862eb9cc4f947cf63a9d434dc23334b",
-   "s": 50499
+   "h": "179659326e16f4958d2d9b16c3f8faa1b155a120cc07024973f5ad9f04faab96",
+   "s": 50502
   },
   "icons/apple-touch-icon.png": {
    "h": "c6a8d73afcfb5db146ca68617cea122c1b06465d3a6bde68efe2ecc2d8ece998",

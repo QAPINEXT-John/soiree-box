@@ -159,7 +159,7 @@ function awards(ids, roles, vh, outAt, last, name){
   const h = Object.keys(hit).sort((a, b) => hit[b] - hit[a])[0];
   if(h) out.push([vary(tr(["Flair de limier", "Œil de lynx", "Détecteur de mensonges", "Inspecteur en chef"], ["Bloodhound", "Eagle Eye", "Human Lie Detector", "Chief Inspector"]), seed), name(h), tr(SB.u.plural(hit[h], "vote") + " contre les intrus", SB.u.plural2(hit[h], "", "", "vote") + " against the impostors")]);
   const g = Object.keys(got).sort((a, b) => got[b] - got[a])[0];
-  if(g && got[g] >= 2) out.push([vary(tr(["Tête de suspect", "Coupable idéal", "Paratonnerre", "Bouc émissaire"], ["Usual Suspect", "Perfect Fall Guy", "Lightning Rod", "Scapegoat"]), seed + 1), name(g), tr(SB.u.plural(got[g], "vote") + " reçus sans être coupable", "took " + SB.u.plural2(got[g], "", "", "vote") + " while innocent")]);
+  if(g && got[g] >= 2) out.push([vary(tr(["Tête de suspect", "Coupable idéal(e)", "Paratonnerre", "Bouc émissaire"], ["Usual Suspect", "Perfect Fall Guy", "Lightning Rod", "Scapegoat"]), seed + 1), name(g), tr(SB.u.plural(got[g], "vote") + " reçus sans être coupable", "took " + SB.u.plural2(got[g], "", "", "vote") + " while innocent")]);
   const b = ids.filter(bad).map(id => [id, outAt[id] || last + 1]).sort((x, y) => y[1] - x[1])[0];
   if(b && b[1] >= 2) out.push([vary(tr(["Caméléon", "Agent dormant", "Maître du bluff", "Visage de marbre"], ["Chameleon", "Sleeper Agent", "Master of Bluff", "Poker Face"]), seed + 2), name(b[0]), outAt[b[0]] ? tr("a tenu " + SB.u.plural(b[1] - 1, "tour") + " avant d'être démasqué(e)", "lasted " + SB.u.plural2(b[1] - 1, "", "", "round") + " before getting caught") : tr("jamais démasqué(e)", "never caught")]);
   return out;

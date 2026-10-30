@@ -8,7 +8,7 @@ const PQ = {
  "classique": [
   "Ce soir, j'ai fini aux urgences. Le coupable : ___.",
   "Le secret de ma réussite ? ___.",
-  "Ma mère m'a toujours mis en garde contre ___.",
+  "Ma mère m'a toujours mis(e) en garde contre ___.",
   "Nouveau film au cinéma : « ___, le retour ».",
   "Pourquoi je suis célibataire ? Un seul responsable : ___.",
   "Règle numéro 1 de la colocation : on ne partage jamais ___.",
@@ -35,7 +35,7 @@ const PQ = {
   "Le bruit bizarre dans la cuisine ? C'était ___.",
   "La nouvelle série dont tout le monde parle : « ___ : la vérité éclate ».",
   "Pour mon anniversaire, je veux ___.",
-  "La pire excuse pour annuler un rendez-vous : « Désolé, j'ai ___. »",
+  "La pire excuse pour annuler un rendez-vous : « Désolé(e), j'ai ___. »",
   "Dans mon testament, je lègue à mon voisin ___.",
   "Le jury de l'émission culinaire a recraché ___.",
   "Mon coach de sport a jeté l'éponge en voyant ___.",
@@ -43,7 +43,7 @@ const PQ = {
   "La voyante du quartier voit dans votre avenir ___.",
   "Tout a commencé à déraper quand quelqu'un a sorti ___.",
   "Le nouveau parfum à la mode sent ___.",
-  "Si je deviens président, ma première mesure sera ___.",
+  "Si je deviens président(e), ma première mesure sera ___.",
   "Le dernier livre de développement personnel : « Lâcher prise avec ___ ».",
   "Je me suis fait virer du club de lecture pour ___.",
   "Le guide touristique déconseille fortement ___.",
@@ -95,7 +95,7 @@ const PQ = {
   "Ce que j'ai retrouvé sous le canapé : ___.",
   "Le dernier stage de team building : ___ en pleine forêt.",
   "Le génie de la lampe m'accorde un vœu : ___.",
-  "Mon banquier m'a convoqué : il a vu passer ___ sur mon relevé.",
+  "Mon banquier m'a convoqué(e) : il a vu passer ___ sur mon relevé.",
   "Le titre de mon autobiographie : « ___ et autres catastrophes ».",
   "Le moniteur d'auto-école a fait une crise en voyant ___.",
   "Le meilleur moyen de faire fuir les invités : ___.",
@@ -110,7 +110,7 @@ const PQ = {
   "Film de l'été : « ___ contre ___ ».",
   "Le mélange interdit : ___ avec ___.",
   "Pour réussir un premier rendez-vous : ___ et surtout pas ___.",
-  "Ma mère m'a surpris avec ___ et ___ dans la même pièce.",
+  "Ma mère m'a surpris(e) avec ___ et ___ dans la même pièce.",
   "Le nouveau couple star de la téléréalité : ___ et ___.",
   "À l'apéro, on a commencé par évoquer ___, puis ___ a tout fait dégénérer.",
   "Le duo improbable des vacances : ___ et ___.",
@@ -119,12 +119,12 @@ const PQ = {
   "Recette de la soirée parfaite : ___, ___, et on n'en parle plus jamais.",
   "La dispute de l'année : ___ contre ___.",
   "Le combo gagnant pour un dimanche réussi : ___ et ___.",
-  "Mon chef m'a pris en flagrant délit avec ___.",
+  "Mon chef m'a pris(e) en flagrant délit avec ___.",
   "L'invention qui va changer le monde : ___, mais en version connectée.",
   "Quand j'ai trop bu, je ne parle plus que d'une chose : ___."
  ],
  "hard": [
-  "Mon plan cul m'a largué. Sa raison : ___.",
+  "Mon plan cul m'a largué(e). Sa raison : ___.",
   "Ce que j'ai retrouvé dans mon lit après la soirée : ___.",
   "Le nouveau jouet érotique à la mode : ___.",
   "En plein orgasme, j'ai crié : « ___ ! »",
@@ -174,7 +174,7 @@ const PQ = {
   "La MST du moment s'attrape en touchant ___.",
   "Après dix shots, j'ai fini par galocher ___.",
   "Le pire endroit pour retrouver un préservatif usagé : ___.",
-  "On m'a surpris avec ___ dans les toilettes de la boîte.",
+  "On m'a surpris(e) avec ___ dans les toilettes de la boîte.",
   "Urgences, 4 h du matin. Ce qu'il a fallu m'extraire : ___.",
   "Ma bite a un nom, et c'est ___.",
   "Ce qui m'a fait débander d'un coup : ___.",
@@ -197,11 +197,11 @@ const PQ = {
   "Mon nouveau tatouage, juste au-dessus de la raie : ___.",
   "Le dernier sujet de conversation sur l'oreiller : ___.",
   "Ce qui m'a valu un blocage sur toutes les applis de rencontre : ___.",
-  "Je suis interdit de sauna depuis ___.",
+  "Je suis interdit(e) de sauna depuis ___.",
   "Mes plans cul me mettent cinq étoiles pour ___.",
   "Le pire aphrodisiaque du monde : ___.",
-  "Mon coloc m'a surpris seul dans ma chambre avec ___.",
-  "Mon dernier achat à 3 h du matin, complètement déchiré : ___.",
+  "Mon coloc m'a surpris(e) seul(e) dans ma chambre avec ___.",
+  "Mon dernier achat à 3 h du matin, complètement déchiré(e) : ___.",
   "Le test de grossesse est positif, merci ___.",
   "Ma pire honte en after : ___.",
   "Le chef d'orchestre de l'orgie, c'était ___.",
@@ -219,12 +219,12 @@ const PQ = {
   "J'ai mélangé ___ avec ___ et j'ai vomi pendant deux jours.",
   "Le titre de ma sextape : « ___ et ___ ».",
   "Mon kink secret : ___ pendant ___.",
-  "Mon ex m'a quitté pour ___, puis est revenu pour ___.",
+  "Mon ex m'a quitté(e) pour ___, puis est revenu pour ___.",
   "J'ai échangé ___ contre ___ en soirée échangiste.",
   "Dans le dark room, j'ai senti ___ puis ___.",
   "Le safe word, c'était ___, mais j'ai crié ___.",
   "Le kit de survie du lendemain de cuite : ___ et ___.",
-  "On m'a surpris en train de lécher ___.",
+  "On m'a surpris(e) en train de lécher ___.",
   "L'accessoire qui a ruiné mon dernier plan cul : ___.",
   "Au menu de l'after : ___, servi avec ___."
  ],
@@ -243,9 +243,9 @@ const PQ = {
   "La fin du monde a été repoussée. Raison officielle : ___.",
   "Le médecin légiste a éclaté de rire en découvrant ___.",
   "Ce qui m'attend au paradis : ___.",
-  "L'éloge funèbre le plus gênant : « Il adorait ___. »",
+  "L'éloge funèbre le plus gênant : « Il (elle) adorait ___. »",
   "Dans la cave du voisin, la police a trouvé ___.",
-  "Le zombie m'a épargné : il a préféré ___.",
+  "Le zombie m'a épargné(e) : il a préféré ___.",
   "Le dernier repas du condamné : ___.",
   "La Mort frappe à ma porte et me tend ___.",
   "Le cimetière le plus branché de la ville propose ___.",
@@ -257,7 +257,7 @@ const PQ = {
   "La boîte noire de l'avion a enregistré ___.",
   "L'épitaphe sur ma tombe : « Ci-gît ___ ».",
   "Le diable m'a proposé un contrat contre ___.",
-  "Dans le film d'horreur, le premier à mourir est celui qui ramène ___.",
+  "Dans le film d'horreur, le (la) premier(ère) à mourir est celui (celle) qui ramène ___.",
   "L'autopsie a révélé ___ dans l'estomac.",
   "Ce qui reste de l'humanité après la guerre nucléaire : ___.",
   "La secte du coin vénère ___.",
@@ -276,7 +276,7 @@ const PQ = {
   "La malédiction de la momie ? Levée avec ___.",
   "La voyante m'a prédit une mort causée par ___.",
   "Les vautours ont repéré ___.",
-  "Mon répondeur après ma mort : « Désolé, je suis occupé avec ___. »",
+  "Mon répondeur après ma mort : « Désolé(e), je suis occupé(e) avec ___. »",
   "Le dernier cri en matière d'embaumement : ___.",
   "Ce qui pousse sur la tombe de mon ex : ___.",
   "L'exorciste a dû s'enfuir devant ___.",
@@ -1850,10 +1850,10 @@ function filled(q, ans){
   return h;
 }
 const FL = {
-  win: tr(["Roi de la punchline", "Champion du mauvais goût", "Plus drôle que tout le monde", "Maître de la vanne", "Légende de la soirée"], ["Punchline royalty", "Champion of bad taste", "Funnier than everyone", "Master of the zinger", "Legend of the night"]),
-  fav: tr(["Chouchou du juge", "Fait toujours rire le même juge", "Dans les petits papiers du juge"], ["Judge's pet", "Always cracks up the same judge", "In the judge's good books"]),
-  blank: tr(["Plume libre", "Auteur maison", "Carte blanche en or"], ["Freelance writer", "In-house author", "Golden blank card"]),
-  miss: tr(["Incompris", "Trop en avance sur son temps", "Un humour venu du futur"], ["Misunderstood genius", "Ahead of their time", "Humor from the future"])
+  win: tr(["Roi (reine) de la punchline", "Champion(ne) du mauvais goût", "Plus drôle que tout le monde", "Maître(sse) de la vanne", "Légende de la soirée"], ["Punchline royalty", "Champion of bad taste", "Funnier than everyone", "Master of the zinger", "Legend of the night"]),
+  fav: tr(["Chouchou(te) du juge", "Fait toujours rire le même juge", "Dans les petits papiers du juge"], ["Judge's pet", "Always cracks up the same judge", "In the judge's good books"]),
+  blank: tr(["Plume libre", "Auteur(e) maison", "Carte blanche en or"], ["Freelance writer", "In-house author", "Golden blank card"]),
+  miss: tr(["Incompris(e)", "Trop en avance sur son temps", "Un humour venu du futur"], ["Misunderstood genius", "Ahead of their time", "Humor from the future"])
 };
 const fl = (list, seed, k) => list[((seed || 0) + k) % list.length];
 function awards(E, nameOf){
@@ -1977,7 +1977,7 @@ const DEF = {
   rules: tr([
     "Chacun reçoit 7 cartes-réponses. À chaque manche, une phrase à trous s'affiche et un juge est désigné (chacun son tour).",
     "Les autres complètent la phrase avec une carte de leur main (deux pour les phrases à deux trous), en secret.",
-    "Les réponses arrivent sans les noms. Le juge choisit sa préférée : son auteur marque 1 point. Le premier à atteindre le score visé gagne.",
+    "Les réponses arrivent sans les noms. Le juge choisit sa préférée : son auteur marque 1 point. Le (la) premier(ère) à atteindre le score visé gagne.",
     "Carte blanche : deux fois par partie, tu peux écrire ta propre réponse.",
     "Coups de théâtre : jackpot, vote du public, monde à l'envers, deux chances, roulette, duel, main neuve.",
     "D'une soirée à l'autre, les phrases et cartes déjà vues reviennent après les nouvelles.",
@@ -2042,7 +2042,7 @@ const DEF = {
         const my = sent ? check(E, me, mine.p.o) : null;
         view(root, "pw" + s.k, key, head(E, nameOf, my && E.tw !== "double" ? my.map(x => x.t) : []) +
           (role === "sent" ? '<div class="sent"><span class="t">' + (E.tw === "double" ? esc(my.map(x => x.t).join(" / ")) : tr("Réponse envoyée", "Answer sent")) + '</span><button class="link" type="button" data-edit>' + tr("Changer", "Change") + "</button></div>"
-            : '<p class="howto">' + (me === E.judge ? tr("Tu es le juge de cette manche. Les réponses arrivent en secret : tu choisiras ta préférée.", "You're the judge this round. Answers come in secretly: you'll pick your favorite.") : tr("Tu ne joues pas cette manche : regarde le duel.", "You're sitting this round out: enjoy the duel.")) + "</p>") +
+            : '<p class="howto">' + (me === E.judge ? tr("Tu es le (la) juge de cette manche. Les réponses arrivent en secret : tu choisiras ta préférée.", "You're the judge this round. Answers come in secretly: you'll pick your favorite.") : tr("Tu ne joues pas cette manche : regarde le duel.", "You're sitting this round out: enjoy the duel.")) + "</p>") +
           dock('<p class="wait" data-wait></p>' + (ctx.isHost ? '<button class="link" type="button" data-skip style="align-self:center" hidden>' + tr("Continuer sans les retardataires", "Continue without the stragglers") + "</button>" : "")), r => {
           const e = r.querySelector("[data-edit]"); if(e) e.addEventListener("click", () => { UI.sel = []; UI.blankOpen = false; ctx.send({ p: null }); });
           const sk = r.querySelector("[data-skip]"); if(sk) armTap(sk, () => ctx.act(c => {
@@ -2075,7 +2075,7 @@ const DEF = {
         } else r.querySelectorAll("[data-s]").forEach(b => { b.disabled = true; });
       });
       if(isPub){ const voters = live.filter(id => E.subs.some(x => x.id !== id)); txt(root, "[data-wait]", voters.filter(id => { const x = ctx.input(id); return x && x.v && x.v.r === E.round; }).length + " / " + voters.length + " votes"); }
-      else txt(root, "[data-wait]", !ctx.here(E.judge) && ctx.isHost ? tr(nameOf(E.judge) + " est absent : choisis à sa place.", nameOf(E.judge) + " is away: pick for them.") : "");
+      else txt(root, "[data-wait]", !ctx.here(E.judge) && ctx.isHost ? tr(nameOf(E.judge) + " est absent(e) : choisis à sa place.", nameOf(E.judge) + " is away: pick for them.") : "");
     } else if(E.phase === "rev"){
       const end = over(E);
       screen(root, "pr:" + s.k + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Manche ", "Round ") + E.round + "</span>" + SB.u.twistHTML(twOf(E.tw)) + revHTML(E, nameOf) +
@@ -2153,7 +2153,7 @@ const DEF = {
       function toJudgeScreen(){
         const isPub = E.tw === "public";
         screen(root, "pj" + E.round, CSS + '<span class="eyebrow">' + tr("Manche ", "Round ") + E.round + "</span>" + '<div class="pass"><span class="eyebrow">' + (isPub ? tr("Tout le monde autour du téléphone !", "Everyone gather around the phone!") : tr("Passe le téléphone au juge", "Pass the phone to the judge")) + '</span><div class="who">' + esc(isPub ? tr("Vote du public", "Crowd vote") : nameOf(E.judge)) + "</div><p>" + (isPub ? tr("Lisez les phrases à voix haute, votez à main levée, puis touchez la gagnante.", "Read the sentences out loud, vote by show of hands, then tap the winner.") : tr("Lis les phrases à voix haute, puis choisis ta préférée.", "Read the sentences out loud, then pick your favorite.")) + "</p></div>" +
-          dock('<button class="btn acc" type="button" data-n>' + (isPub ? tr("C'est parti", "Let's go") : tr("C'est moi, le juge", "I'm the judge")) + "</button>"), r => r.querySelector("[data-n]").addEventListener("click", judge));
+          dock('<button class="btn acc" type="button" data-n>' + (isPub ? tr("C'est parti", "Let's go") : tr("C'est moi, le (la) juge", "I'm the judge")) + "</button>"), r => r.querySelector("[data-n]").addEventListener("click", judge));
       }
       function judge(){
         const verb = E.tw === "reverse" ? tr("Choisis la réponse la plus nulle", "Pick the worst answer") : E.tw === "public" ? tr("Touchez la réponse qui a le plus de voix", "Tap the answer with the most votes") : tr("Choisis ta réponse préférée", "Pick your favorite answer");

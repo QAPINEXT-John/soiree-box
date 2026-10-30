@@ -306,7 +306,7 @@ function storyHTML(perk, flags, upto, lg){ return '<ul class="rf-steps"><li clas
 SB.register({
   id: "redflag", name: "Red Flag", glyph: "Flag", pitch: tr("Red, beige ou green flag pour ton date ?", "Red, beige or green flag for your date?"), hot: true,
   accent: { light: "#ff5d6c", dark: "#ff5d6c" },
-  tag: tr("Red, beige ou green flag ? Et jusqu'où tu restes avec un date parfait(e)… plein(e) de défauts ?", "Red, beige or green flag? And how long will you stay with a perfect date… full of flaws?"),
+  tag: tr("Red, beige ou green flag ? Et jusqu'où tu restes avec un date parfait… plein(e) de défauts ?", "Red, beige or green flag? And how long will you stay with a perfect date… full of flaws?"),
   min: 2, max: 20,
   gages: [
     { ev: "rate", label: tr("Red ou green : ton vote ne marque pas", "Red or green: your vote doesn't score"), kind: "boit", n: 1 },
@@ -316,7 +316,7 @@ SB.register({
   rules: tr([
     "Mode « Red ou green ? » : un trait de ton date s'affiche. Chacun vote en secret : red flag, beige flag (bizarre mais ça passe) ou green flag.",
     "Ceux qui votent comme la majorité marquent un point. À la fin, le joueur le plus en phase avec le groupe gagne ; on découvre aussi le (la) plus exigeant(e), le plus cool, le (la) rebelle et le duo le plus compatible.",
-    "Mode « Tu restes ou tu pars ? » : un date parfait(e) sur le papier, puis des red flags révélés un par un. À chaque fois, tu restes ou tu fuis. Chaque red flag encaissé rapporte un point. Ce mode compte 8 dates au maximum.",
+    "Mode « Tu restes ou tu pars ? » : un date parfait sur le papier, puis des red flags révélés un par un. À chaque fois, tu restes ou tu fuis. Chaque red flag encaissé rapporte un point. Ce mode compte 8 dates au maximum.",
     "Coups de théâtre : de temps en temps, une manche change de règle (deal breaker, double flag, minorité gagnante, date express, coup de foudre…).",
     "Les flags déjà vus sur ce téléphone reviennent en dernier. Sur un seul téléphone, chacun répond à côté de son prénom, puis on révèle."
   ], [
@@ -473,7 +473,7 @@ SB.register({
       const go = ph2 => {
         if(ph2 === "setup"){
           screen(root, "su" + mode + sel.join() + rounds + twists, CSS + '<div class="field"><span class="eyebrow">Mode</span><div class="seg"><button type="button" data-m="vote" aria-pressed="' + (mode === "vote") + '">' + tr("Red ou green ?", "Red or green?") + '</button><button type="button" data-m="date" aria-pressed="' + (mode === "date") + '">' + tr("Tu restes ou tu pars ?", "Stay or leave?") + "</button></div></div>" +
-            '<p class="howto">' + (mode === "vote" ? tr("Un flag s'affiche, chacun touche sa couleur à côté de son prénom, puis on révèle. Voter comme la majorité rapporte un point.", "A flag appears, everyone taps their color next to their name, then you reveal. Voting with the majority earns a point.") : tr("Un date parfait(e), puis des red flags. À chaque flag, ceux qui fuient touchent leur bouton pour passer sur « Je pars ». Chaque flag encaissé rapporte un point.", "A perfect date, then red flags. At each flag, anyone running away taps their button to switch to \"I'm out\". Every flag you put up with earns a point.")) + "</p>" +
+            '<p class="howto">' + (mode === "vote" ? tr("Un flag s'affiche, chacun touche sa couleur à côté de son prénom, puis on révèle. Voter comme la majorité rapporte un point.", "A flag appears, everyone taps their color next to their name, then you reveal. Voting with the majority earns a point.") : tr("Un date parfait, puis des red flags. À chaque flag, ceux qui fuient touchent leur bouton pour passer sur « Je pars ». Chaque flag encaissé rapporte un point.", "A perfect date, then red flags. At each flag, anyone running away taps their button to switch to \"I'm out\". Every flag you put up with earns a point.")) + "</p>" +
             '<div class="field"><span class="eyebrow">' + tr("Manches", "Rounds") + '</span><div class="seg">' + [5, 10, 15].map(n => '<button type="button" data-r="' + n + '" aria-pressed="' + (n === rounds) + '">' + n + "</button>").join("") + "</div></div>" +
             '<div class="field"><span class="eyebrow">' + tr("Paquets", "Packs") + '</span><div class="packs">' + PACKS.filter(SB.packOk).map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-k="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + p.count + "</span></button>").join("") + "</div></div>" +
             '<div class="field"><span class="eyebrow">' + tr("Rebondissements", "Twists") + '</span><div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + twists + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Plot twists") + '</span><span class="ds">' + tr("Des manches qui changent de règle sans prévenir", "Rounds that change the rules without warning") + "</span></span></button></div></div>" +

@@ -395,7 +395,7 @@ function puGages(rows, tw){
 }
 function hsh(x){ let h = 7; String(x).split("").forEach(c => { h = (h * 31 + c.charCodeAt(0)) >>> 0; }); return h; }
 const AW = {
-  pure: [tr("Le (la) plus pur(e)", "The purest"), tr("L'ange de la bande", "The group's angel"), tr("Casier vierge", "Spotless record")],
+  pure: [tr("Le plus pur(e)", "The purest"), tr("L'ange de la bande", "The group's angel"), tr("Casier vierge", "Spotless record")],
   demon: [tr("Le démon de la bande", "The group's demon"), tr("Le diable en personne", "The devil in person"), tr("Mauvaise influence officielle", "Official bad influence")],
   solo: [tr("Seul(e) au monde", "All alone"), tr("L'aveu en solitaire", "The lone confession"), tr("Le (la) seul(e) à avoir osé", "The only one who dared")],
   trap: [tr("Tombé(e) dans tous les pièges", "Fell for every trap"), tr("Roi (reine) des questions pièges", "Trick question champion"), tr("Aimant à embrouilles", "Trouble magnet")]
@@ -484,8 +484,8 @@ SB.register({
   min: 1, max: 20,
   gagesEnd: false,
   gages: [
-    { ev: "impur", label: tr("Le (la) moins pur(e) de la partie", "The least pure"), kind: "boit", n: 2 },
-    { ev: "pur", label: tr("Le (la) plus pur(e) de la partie", "The purest"), kind: "distribue", n: 3 }
+    { ev: "impur", label: tr("Le moins pur(e) de la partie", "The least pure"), kind: "boit", n: 2 },
+    { ev: "pur", label: tr("Le plus pur(e) de la partie", "The purest"), kind: "distribue", n: 3 }
   ],
   rules: [
     tr("Chacun répond en secret, sur son téléphone, à une série de « As-tu déjà… ? » 100 % adultes, tirés au hasard dans les thèmes choisis : soirées, sexe, interdits, cœur, boulot, voyages, moments gênants, drogues, hygiène, hardcore.", "Everyone secretly answers, on their own phone, a series of 100% adult “Have you ever…?” questions, drawn at random from the chosen themes: parties, sex, off-limits, love, work, travel, cringe moments, drugs, hygiene, hardcore."),

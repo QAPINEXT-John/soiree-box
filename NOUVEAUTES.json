@@ -1,4 +1,8 @@
 {
+  "4.40.3": [
+    "Agents secrets se joue maintenant à 3 : mode Duo à 3, le (la) troisième devine avec celui (celle) qui cherche. Le mode est choisi tout seul à 2 ou 3 joueurs",
+    "Féminin entre parenthèses aussi dans Red Flag, Défis, Agents secrets, Dernière carte, Blind test, C'est un 10 mais…, Grille, Débat, Undercover, Qui a dit ça et la Course de défis"
+  ],
   "4.40.2": [
     "Féminin entre parenthèses aussi dans 7 secondes, Mots interdits, Je n'ai jamais, Tu préfères, Menteurs, Qui est le plus… et le Quiz"
   ],

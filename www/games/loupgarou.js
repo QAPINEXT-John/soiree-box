@@ -445,7 +445,7 @@ const DEF = {
       screen(root, "end" + s.k + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Fin de la partie", "Game over") + '</span><div class="who">' + esc(winT(s.win, seed % 3)) + "</div>" +
         '<div class="field"><span class="eyebrow">' + tr("Les rôles", "The roles") + "</span>" + allRolesHTML(ctx.ids, roles, alive, nameOf, s.lov) + "</div>" +
         awardsHTML(awards(s, ctx.ids, nameOf, seed)) +
-        (top ? '<p class="sm">' + tr("Le (la) plus soupçonné(e) pendant les nuits : ", "Most suspected during the nights: ") + "<b>" + esc(nameOf(top)) + "</b> (" + esc(rn(roles[top])) + ")</p>" : "") + logHTML +
+        (top ? '<p class="sm">' + tr("Le plus soupçonné(e) pendant les nuits : ", "Most suspected during the nights: ") + "<b>" + esc(nameOf(top)) + "</b> (" + esc(rn(roles[top])) + ")</p>" : "") + logHTML +
         dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {

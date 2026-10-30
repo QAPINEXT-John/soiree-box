@@ -222,7 +222,7 @@ SB.register({
     "Les agents de l'équipe votent sur leur téléphone. Le mot le plus voté est retourné.",
     "Bon mot : on peut continuer (jusqu'au nombre + 1). Passant (neutre) ou mot adverse : fin du tour. L'assassin : l'équipe perd tout de suite.",
     "La première équipe qui retrouve tous ses agents gagne. L'équipe qui commence a 9 mots, l'autre 8.",
-    "Mode Duo (2 joueurs) : en coopération, chacun voit sa propre carte. Trouvez les 15 agents en 9 tours, sans toucher aucun des 3 assassins de la carte de l'autre.",
+    "Mode Duo (2 ou 3 joueurs) : en coopération, chacun voit sa propre carte. À 3, le (la) troisième ne donne pas d'indice : il (elle) devine avec celui (celle) qui cherche. Trouvez les 15 agents en 9 tours, sans toucher aucun des 3 assassins de la carte de l'autre.",
     "Options : mots perso (vos surnoms et private jokes dans la grille), 2 assassins, un mot piégé qui fait sauter un tour, coups de théâtre (indice mimé, chrono, silence radio…)."
   ], [
     "Two teams, red and blue. Each team has a spymaster who sees the secret map: which words belong to their team, to the other team, which are neutral, and where the assassin hides.",
@@ -234,7 +234,7 @@ SB.register({
     "Options: your own words (nicknames and inside jokes on the grid), 2 assassins, a booby-trapped word that skips a turn, twists (mimed clue, clock, radio silence…)."
   ]),
   options: [
-    { id: "mode", label: tr("Mode", "Mode"), type: "seg", def: "eq", values: [{ v: "eq", label: tr("Équipes (4+)", "Teams (4+)") }, { v: "duo", label: tr("Duo (2)", "Duo (2)") }] },
+    { id: "mode", label: tr("Mode", "Mode"), type: "seg", def: "eq", values: [{ v: "eq", label: tr("Équipes (4+)", "Teams (4+)") }, { v: "duo", label: tr("Duo (2-3)", "Duo (2-3)") }] },
     { id: "packs", label: tr("Paquets de mots", "Word packs"), type: "multi", def: ["cl", "pop"], values: PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, kid: p.kid, count: p.list.length })) },
     { id: "perso", label: tr("Mots perso", "Our own words"), type: "toggle", text: tr("Mots perso et prénoms", "Our own words and names"), desc: tr("Vos mots à vous et vos prénoms glissés dans la grille", "Your own words and your names slipped into the grid"), def: true },
     { id: "edit", type: "button", label: tr("Modifier nos mots perso", "Edit our own words"), onClick: () => wordsEditor() },
@@ -244,13 +244,13 @@ SB.register({
   ],
   ticks: true,
   start(ctx, o){
-    const duo = o.mode === "duo", n = ctx.ids.length;
-    if(duo && n !== 2) throw new Error(tr("Le mode Duo se joue à 2 exactement.", "Duo mode is for exactly 2 players."));
-    if(!duo && n < 4) throw new Error(tr("En équipes, il faut au moins 4 joueurs. À 2, choisis le mode Duo.", "Teams need at least 4 players. With 2, pick Duo mode."));
+    const n = ctx.ids.length, duo = o.mode === "duo" || n < 4;
+    if(duo && (n < 2 || n > 3)) throw new Error(tr("Le mode Duo se joue à 2 ou 3.", "Duo mode is for 2 or 3 players."));
+    if(!duo && n < 4) throw new Error(tr("En équipes, il faut au moins 4 joueurs. À 2 ou 3, choisis le mode Duo.", "Teams need at least 4 players. With 2, pick Duo mode."));
     if(!A(o.packs).length) throw new Error(tr("Choisis au moins un paquet de mots.", "Pick at least one word pack."));
     const lg = SB.lang(), extra = o.perso !== false ? myWords().concat(ctx.players.map(p => p.name)) : [];
     const words = pickWords(o.packs, lg, extra);
-    if(duo){ const sh = shuffle(ctx.ids); return Object.assign(newDuoGame(words), { lg, phase: "play", pa: sh[0], pb: sh[1], tw: "", n: 1 }); }
+    if(duo){ const sh = shuffle(ctx.ids); return Object.assign(newDuoGame(words), { lg, phase: "play", pa: sh[0], pb: sh[1], pc: sh[2] || "", tw: "", n: 1 }); }
     const sh = shuffle(ctx.ids), teams = {}; sh.forEach((id, i) => { teams[id] = i % 2 ? "b" : "r"; });
     return Object.assign(newTeamGame(words, o), { lg, phase: "teams", teams, spy: { r: sh[0], b: sh[1] }, tw: "", n: 1, endAt: 0 });
   },
@@ -265,13 +265,14 @@ SB.register({
         if(i && i.c && typeof i.c === "object"){ G.clue = { w: clean(i.c.w || "", 24), n: Math.max(0, Math.min(10, +i.c.n || 0)), m: i.c.m ? 1 : 0 }; G.step = "guess"; G.log = ""; ctx.set(Object.assign(G, { k: ctx.rid() })); }
         return;
       }
-      const g = ctx.input(guessId);
+      // À 3, le (la) troisième devine aussi : on prend la proposition de l'un ou de l'autre.
+      const gA = ctx.input(guessId), gC = G.pc && G.pc !== giverId ? ctx.input(G.pc) : null, g = gA && gA.g != null ? gA : gC, gid = g === gC ? G.pc : guessId;
       if(g && g.g != null){
         const before = G.found.filter(Boolean).length;
         let res = "";
         if(+g.g === -1){ if(G.got > 0){ G.log = tr("Tour terminé.", "Turn over."); duoEnd(G); res = "stop"; } }
         else res = duoReveal(G, +g.g);
-        if(res === "a") ctx.gage([{ id: guessId, ev: "assassin" }], s.k + ":a");
+        if(res === "a") ctx.gage([{ id: gid, ev: "assassin" }], s.k + ":a");
         if((res === "n" || res === "stop" || (G.win && res === "own")) && G.ok >= 3) ctx.gage([{ id: giverId, ev: "indice" }], s.k + ":i");
         if(G.step === "clue") G.ok = 0;
         if(res || G.found.filter(Boolean).length !== before){
@@ -383,17 +384,17 @@ SB.register({
     players: { min: 2, max: 16 },
     start(root, api){
       const names = api.names, st = store();
-      let mode = names.length === 2 ? "duo" : (st.agMode === "duo" ? "duo" : "eq"), sel = A(st.agPacks).length ? A(st.agPacks).slice() : ["cl", "pop"];
+      let mode = names.length <= 3 ? "duo" : (st.agMode === "duo" ? "duo" : "eq"), sel = A(st.agPacks).length ? A(st.agPacks).slice() : ["cl", "pop"];
       let perso = st.agPerso !== false, nass = st.agAss === 2 ? 2 : 1, piege = !!st.agPiege, twOn = st.agTw !== false;
       let teams = {}, spy = { r: "", b: "" }, G = null, tw = null, nTurn = 0, sel1 = null, gno = 0, tok = Math.random().toString(36).slice(2, 7);
       const mixTeams = () => { const sh = shuffle(names); teams = {}; sh.forEach((n, i) => { teams[n] = i % 2 ? "b" : "r"; }); spy = { r: sh[0], b: sh[1] || sh[0] }; };
       mixTeams();
       function setup(){
-        const okEq = names.length >= 4, okDuo = names.length === 2;
+        const okEq = names.length >= 4, okDuo = names.length === 2 || names.length === 3;
         if(mode === "eq" && !okEq && okDuo) mode = "duo"; if(mode === "duo" && !okDuo && okEq) mode = "eq";
         const col = t => '<div class="ag-team ' + t + '"><b style="color:' + TEAMC(t) + '">' + TN(t) + "</b>" + names.filter(n => teams[n] === t).map(n => '<button type="button" data-tm="' + esc(n) + '"><span>' + esc(n) + "</span>" + (spy[t] === n ? '<span class="spy">' + tr("ESPION", "SPYMASTER") + "</span>" : "") + "</button>").join("") + "</div>";
         screen(root, "su" + Math.random(), CSS +
-          '<div class="field"><span class="eyebrow">' + tr("Mode", "Mode") + '</span><div class="seg"><button type="button" data-m="eq" aria-pressed="' + (mode === "eq") + '"' + (okEq ? "" : " disabled") + ">" + tr("Équipes (4+)", "Teams (4+)") + '</button><button type="button" data-m="duo" aria-pressed="' + (mode === "duo") + '"' + (okDuo ? "" : " disabled") + ">" + tr("Duo (2)", "Duo (2)") + "</button></div>" +
+          '<div class="field"><span class="eyebrow">' + tr("Mode", "Mode") + '</span><div class="seg"><button type="button" data-m="eq" aria-pressed="' + (mode === "eq") + '"' + (okEq ? "" : " disabled") + ">" + tr("Équipes (4+)", "Teams (4+)") + '</button><button type="button" data-m="duo" aria-pressed="' + (mode === "duo") + '"' + (okDuo ? "" : " disabled") + ">" + tr("Duo (2-3)", "Duo (2-3)") + "</button></div>" +
           (!okEq && !okDuo ? '<p class="err">' + tr("Il faut 2 joueurs (Duo) ou au moins 4 (équipes).", "You need 2 players (Duo) or at least 4 (teams).") + "</p>" : "") + "</div>" +
           (mode === "eq" && okEq ? '<div class="field"><span class="eyebrow">' + tr("Les équipes", "The teams") + '</span><div class="ag-teams">' + col("r") + col("b") + '</div><p class="sm" style="margin:0">' + tr("Touche un joueur : une fois pour en faire l'espion, deux fois pour le changer d'équipe.", "Tap a player once for spymaster, twice to switch team.") + '</p><button class="link" type="button" data-mix style="align-self:flex-start">' + tr("Mélanger les équipes", "Shuffle teams") + "</button></div>" : "") +
           '<div class="field"><span class="eyebrow">' + tr("Paquets de mots", "Word packs") + '</span><div class="packs">' + PACKS.filter(SB.packOk).map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-p="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + "</span></span></button>").join("") + "</div></div>" +
@@ -421,13 +422,13 @@ SB.register({
           r.querySelector("[data-go]").addEventListener("click", () => {
             if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet.", "Pick at least one pack.")); return; }
             const words = pickWords(SB.okPacks(sel, PACKS), SB.lang(), perso ? myWords().concat(names) : []);
-            G = mode === "duo" ? Object.assign(newDuoGame(words), { pa: names[0], pb: names[1] }) : newTeamGame(words, { assassins: nass, piege });
+            G = mode === "duo" ? Object.assign(newDuoGame(words), { pa: names[0], pb: names[1], pc: names[2] || "" }) : newTeamGame(words, { assassins: nass, piege });
             gno++; nTurn = 0; tw = null; turnStart();
           });
         });
       }
       const giverName = () => (G.mode === "duo" ? (G.giver === "A" ? G.pa : G.pb) : spy[G.turn]);
-      const guesserLabel = () => (G.mode === "duo" ? (G.giver === "A" ? G.pb : G.pa) : TN(G.turn));
+      const guesserLabel = () => (G.mode === "duo" ? (G.giver === "A" ? G.pb : G.pa) + (G.pc ? tr(" et ", " and ") + G.pc : "") : TN(G.turn));
       const head = () => CSS + SB.u.twistHTML(tw) + (G.mode === "duo" ? duoHead(G) : scoreHTML(G));
       // Début d'un tour : on passe le téléphone à l'espion (ou au joueur qui donne l'indice en Duo).
       function turnStart(){
@@ -519,7 +520,7 @@ function afterTurn(ctx, G, s){
 // Duo en réseau : chacun voit sa carte ; celui qui donne l'indice tape le mot, l'autre touche les mots.
 function renderDuo(ctx, root){
   const s = ctx.s, me = ctx.me, side = s.pa === me ? "A" : s.pb === me ? "B" : "", giverId = s.giver === "A" ? s.pa : s.pb, guessId = s.giver === "A" ? s.pb : s.pa;
-  const T = SB.u.byTwist(TW, s.tw || ""), iGive = giverId === me && s.step === "clue" && !s.win, iGuess = guessId === me && s.step === "guess" && !s.win;
+  const T = SB.u.byTwist(TW, s.tw || ""), iGive = giverId === me && s.step === "clue" && !s.win, iGuess = (guessId === me || (s.pc && s.pc === me)) && s.step === "guess" && !s.win;
   const myKey = side ? duoKey(s, side) : null;
   let mid = "", dockH = "";
   if(s.win){
@@ -541,7 +542,7 @@ function renderDuo(ctx, root){
     const sp = r.querySelector("[data-stop]"); if(sp) sp.addEventListener("click", () => { buzz(8); ctx.send({ g: -1 }); });
     const ag = r.querySelector("[data-again]"); if(ag) ag.addEventListener("click", () => ctx.act(c => {
       const words = pickWords(c.opts.packs, c.s.lg, c.opts.perso !== false ? myWords().concat(c.players.map(p => p.name)) : []);
-      c.set(Object.assign(newDuoGame(words), { phase: "play", pa: c.s.pb, pb: c.s.pa, tw: "", n: 1, k: c.rid() }));
+      c.set(Object.assign(newDuoGame(words), { phase: "play", pa: c.s.pb, pb: c.s.pc || c.s.pa, pc: c.s.pc ? c.s.pa : "", tw: "", n: 1, k: c.rid() }));
     }));
     const bk = r.querySelector("[data-back]"); if(bk) bk.addEventListener("click", () => ctx.act(c => {
       c.end({ title: c.s.win === "win" ? tr("Agents secrets (Duo) : mission réussie", "Secret Agents (Duo): mission accomplished") : tr("Agents secrets (Duo) : mission ratée", "Secret Agents (Duo): mission failed"), lines: [c.s.log], win: c.s.win === "win" ? c.ids.slice() : [] });
