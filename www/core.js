@@ -821,7 +821,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.39.1";
+const VERSION = "4.39.2";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -2066,10 +2066,10 @@ function gSettingsPage(get, set, editable, tally, onReset){
     // Vues : « main » (réglages), « jeux » (déclencheurs par jeu), « fin » (fin de partie), « sans » (gages sans alcool).
     let view = "main", openG = "";
     const TITLES = () => ({ main: tr("Gages", "Forfeits"), jeux: tr("Déclencheurs", "Triggers"), fin: tr("Fin de partie", "End of game"), sans: tr("Gages sans alcool", "No-alcohol forfeits") });
-    const go = v => { view = v; buzz(6); draw(); try{ window.scrollTo(0, 0); }catch(e){} };
+    const go = v => { view = v; buzz(6); draw(); try{ $("#s-page").scrollTop = 0; window.scrollTo(0, 0); }catch(e){} };
     SB._pageBack = () => { if(view === "main") return false; go("main"); return true; };
     const CHEV = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
-    const backRow = () => '<button type="button" class="pf-back" data-gback><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>' + tr("Gages", "Forfeits") + "</button>";
+    const backRow = () => ""; // le bouton retour de l'en-tête ramène déjà au menu
     const LV = ["chill", "classique", "chaud"], lvOf = S => (LV.indexOf(S.level) >= 0 ? S.level : "classique");
     const gGames = () => SB.games.filter(d => A(d.gages).some(e => !e.hidden));
     const gameKeys = (S, gid) => Object.keys(S.trig).filter(k => k.indexOf(gid + ":") === 0 && k.slice(gid.length + 1).charAt(0) !== "_");
@@ -2383,11 +2383,11 @@ function gProfilePage(){
     const cur = avNum(store().photo); let avTab = (AV_CATS.find(c => c[2].includes(cur)) || AV_CATS[0])[0];
     // Trois vues dans la même page : le profil, le choix de l'avatar, le taux d'alcool.
     let view = "main";
-    const go = v => { view = v; buzz(6); draw(); root.scrollTop = 0; try{ $("#page-root").scrollTop = 0; window.scrollTo(0, 0); }catch(e){} };
+    const go = v => { view = v; buzz(6); draw(); root.scrollTop = 0; try{ $("#page-root").scrollTop = 0; $("#s-page").scrollTop = 0; window.scrollTo(0, 0); }catch(e){} };
     SB._pageBack = () => { if(view === "main") return false; go("main"); return true; };
     const CHEV = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
     const LOCK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
-    const backRow = t => '<button type="button" class="pf-back" data-pf-back>' + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>' + esc(t) + "</button>";
+    const backRow = () => ""; // le bouton retour de l'en-tête ramène déjà au profil
     const SHORT = { sans: tr("Pas d'alcool", "No alcohol"), biere: tr("Bière", "Beer"), vin: tr("Vin", "Wine"), cocktail: "Cocktail", fort: "Shots" };
     const MODES = [["hard", "Hard", tr("Tout le contenu : jeux et paquets 18+, avatars Hot, gages avec alcool.", "Everything: 18+ games and packs, Hot avatars, drinking forfeits.")],
       ["soft", "Soft", tr("Rien de 18+ et des gages sans alcool. Pratique en famille ou avec des gens que tu connais peu.", "Nothing 18+ and alcohol-free forfeits. Handy with family or people you barely know.")],
@@ -2806,7 +2806,7 @@ SB.boot = function(){
     if(dup){ err.textContent = tr("Deux joueurs s'appellent « " + dup + " ». Donne-leur des prénoms différents.", "Two players are called “" + dup + "”. Give them different names."); err.hidden = false; return; }
     err.hidden = true; startLocal(LP.def, names);
   });
-  // « Terminé » : dans un sous-écran (avatar, taux d'alcool…), on revient d'abord à l'écran principal de la page.
+  // Bouton retour de l'en-tête : dans un sous-écran (avatar, taux d'alcool…), on revient d'abord à l'écran principal de la page.
   $("#pg-done").addEventListener("click", () => { if(SB._pageBack && SB._pageBack()) return; SB.closePage(); });
   $$("#sheet [data-close]").forEach(b => b.addEventListener("click", closeSheet));
   document.addEventListener("keydown", e => { if(e.key === "Escape" && sheetOpen) closeSheet(); });

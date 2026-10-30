@@ -1,15 +1,16 @@
 {
- "version": "4.39.1",
+ "version": "4.39.2",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Retrait des statistiques d'utilisation testées en 4.39.0 : plus rien n'est compté ni envoyé, et ce qui avait été noté sur le téléphone est effacé"
+  "Fini le « Terminé » en haut des pages (profil, gages, playlists…) : une flèche retour à gauche du titre, qui ramène d'abord au menu précédent",
+  "Ouvrir une sous-page des gages ou du profil la montre depuis le haut"
  ],
  "files": {
   "core.js": {
-   "h": "4038009959e62b1064614beef3464fafd82ee892424a0b0026fab32a33891b57",
-   "s": 309916
+   "h": "df88c9133e00245b6fa176c7d6fc23bc675021aeb16084f9a70b998dcac1dc32",
+   "s": 309536
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -236,8 +237,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "752e439d196d9346ff73def084ff2823a307ecb99ef2c2a9bbb48bcf05c664b9",
-   "s": 61882
+   "h": "ca3fe95b247493d672c877fa5bc0d2b4c7f7289e446f9e8008874d1c0b12f6e9",
+   "s": 62284
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",

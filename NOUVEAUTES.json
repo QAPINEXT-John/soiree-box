@@ -1,4 +1,8 @@
 {
+  "4.39.2": [
+    "Fini le « Terminé » en haut des pages (profil, gages, playlists…) : une flèche retour à gauche du titre, qui ramène d'abord au menu précédent",
+    "Ouvrir une sous-page des gages ou du profil la montre depuis le haut"
+  ],
   "4.39.1": [
     "Retrait des statistiques d'utilisation testées en 4.39.0 : plus rien n'est compté ni envoyé, et ce qui avait été noté sur le téléphone est effacé"
   ],
