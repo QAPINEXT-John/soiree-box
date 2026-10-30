@@ -1,4 +1,7 @@
 {
+  "4.39.1": [
+    "Retrait des statistiques d'utilisation testées en 4.39.0 : plus rien n'est compté ni envoyé, et ce qui avait été noté sur le téléphone est effacé"
+  ],
   "4.38.1": [
     "Nouveaux gros titres sur les cartes de l'accueil : Uno (Dernière carte), Skyjo (Grille), Code Names (Agents secrets), Cible (Killer) et Limite limite (Punchline)"
   ],

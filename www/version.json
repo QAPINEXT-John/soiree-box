@@ -1,15 +1,15 @@
 {
- "version": "4.38.1",
+ "version": "4.39.1",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Nouveaux gros titres sur les cartes de l'accueil : Uno (Dernière carte), Skyjo (Grille), Code Names (Agents secrets), Cible (Killer) et Limite limite (Punchline)"
+  "Retrait des statistiques d'utilisation testées en 4.39.0 : plus rien n'est compté ni envoyé, et ce qui avait été noté sur le téléphone est effacé"
  ],
  "files": {
   "core.js": {
-   "h": "49d11d4d9e48289d6cb03050fc4df38c286945a752381e9bf6f009cd43594509",
-   "s": 309501
+   "h": "4038009959e62b1064614beef3464fafd82ee892424a0b0026fab32a33891b57",
+   "s": 309916
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",

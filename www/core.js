@@ -39,6 +39,8 @@ function plain(v){ return JSON.parse(JSON.stringify(v === undefined ? null : v))
 const STORE = "soiree-box";
 function store(){ try{ return JSON.parse(localStorage.getItem(STORE) || "{}") || {}; }catch(e){ return {}; } }
 function persist(patch){ try{ localStorage.setItem(STORE, JSON.stringify(Object.assign(store(), patch))); }catch(e){} }
+// Statistiques d'utilisation (beta 4.39.0) retirées : on efface ce qu'elles avaient laissé sur le téléphone.
+try{ localStorage.removeItem("soiree-stats"); localStorage.removeItem("soiree-stats-col"); const o = JSON.parse(localStorage.getItem(STORE) || "{}"); if(o && ("statsOff" in o || "statsAdmin" in o)){ delete o.statsOff; delete o.statsAdmin; localStorage.setItem(STORE, JSON.stringify(o)); } }catch(e){}
 
 /* =================== Langue (français / anglais) ===================
    La langue est choisie sur l'accueil et gardée sur le téléphone ; changer de langue recharge l'appli.
@@ -819,7 +821,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.38.1";
+const VERSION = "4.39.1";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
