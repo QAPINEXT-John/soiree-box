@@ -1,18 +1,15 @@
 {
- "version": "4.40.0",
+ "version": "4.40.1",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Grande relecture du français dans tous les jeux : fautes, accords (« 1 point » et plus « 1 points »), listes de gagnants « A, B et C », tutoiement partout, formulations plus claires",
-  "Cartes en double remplacées (Test de pureté, Action ou vérité, Qui est le plus…, Je n'ai jamais, Débat, Agents secrets…) et mots interdits trop faciles corrigés dans Mots interdits",
-  "Quiz : questions en double entre thèmes remplacées, question du rugby corrigée",
-  "Plus aucun emoji dans l'appli (badge Hard, bots, Agents secrets)"
+  "Le féminin apparaît maintenant entre parenthèses quand un texte parle d'un joueur : « seul(e) », « viré(e) », « celui (celle) qui »… (en cours sur tous les jeux)"
  ],
  "files": {
   "core.js": {
-   "h": "ab54a2ebc5a2f814e79ce6016139e5f359ab4ce08303f8ca5e2f4d320aec9318",
-   "s": 311852
+   "h": "fb3f0b20e4cf4417a23bbe1088353fe6534df507718113bf31dd41ac7d8d76b2",
+   "s": 311886
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -99,8 +96,8 @@
    "s": 63322
   },
   "games/bombe.js": {
-   "h": "184b9d1ee98ee0453c765cef04dd54f838a914e85d250b993615abaaec04d983",
-   "s": 34492
+   "h": "c6723714a1d878c1d8d6712ace77c9d2a36bc52c4b71798ea83f0d7cb96b3e79",
+   "s": 34537
   },
   "games/course.js": {
    "h": "c2ca4cc9766b67dcc026238114f1dfb67091cf2424ac16afac1a22427d513d69",
@@ -111,32 +108,32 @@
    "s": 51628
   },
   "games/defis.js": {
-   "h": "615159b26805ca94dce20c33e1af99a46e6ce522774507e239646586409b6a6d",
-   "s": 66241
+   "h": "7bd0d8e3dd795a12039a9f8b914c2ef1efaab4eddd1441c47464bef72467657e",
+   "s": 66936
   },
   "games/dernierecarte.js": {
    "h": "c9ed70f5e0d24c7374eb994db44204985ed7fbf1f9ac53ddf48060d68b305a0a",
    "s": 64065
   },
   "games/dixmais.js": {
-   "h": "863261a906b7de0f022d5f24a424fc1f5745b39bcef143ea3327bbf79fc5a26c",
-   "s": 59867
+   "h": "fe6839adeca1a3bcf3ef79b60c1e534de602bf0a4d7da6aa779123c78b0b3853",
+   "s": 59890
   },
   "games/grille.js": {
-   "h": "238bda2b0cda84395f1bfe4a8d370eb40caaea093fdb74529d0c957e21872806",
-   "s": 53398
+   "h": "08544ed3bc1d7c9e0dc89433cbd0b5ef52e730371704a4d722e58b0f097799db",
+   "s": 53428
   },
   "games/jamais.js": {
-   "h": "826e1de22b2dd1da9076e17b4d8b5292c5ac67c1fea7b08d1bc71f9b32610b4e",
-   "s": 45665
+   "h": "adfb9f775989c81b12e5cb099df6152233c97a182d94e9edbacf49e9b978ac04",
+   "s": 45889
   },
   "games/killer.js": {
    "h": "5a848e99ddb9b1d27794e4e3db075a923870642423425786b2ac567c956830fa",
    "s": 66465
   },
   "games/kink.js": {
-   "h": "ee3bc7009a28e14dd706785d8af504fce142ef7ef8365c63eb5bf7f4c1a0ccbb",
-   "s": 28352
+   "h": "b5dad12fd11d49ea7f5d5ca89af4030b48450134419471e228f29f1d31be4ada",
+   "s": 28404
   },
   "games/loupgarou.js": {
    "h": "0809addf40b85dd73ee11b4ad8c0f0f5297aaded888e8c24c9a177471f1b4bd4",
@@ -147,36 +144,36 @@
    "s": 44522
   },
   "games/motsint.js": {
-   "h": "e9cc492214a22dc72eb3bce8a436674b030ed1d95d5a735180248b68c0a6a4b8",
-   "s": 46908
+   "h": "a11c2e3b5c70f5e94769f4ed11c621a0886d3b29f047a28cee8b0e8281537f24",
+   "s": 46953
   },
   "games/note10.js": {
    "h": "2be5549d62ab9136d27dcdd6bf6872ea7d2dcb97f5558cea0b0bc9e559a58664",
    "s": 134701
   },
   "games/photoroulette.js": {
-   "h": "1a9d199f177f55817ed02af7bc0832d5af63c1cbfef803bc7a041e29578df3df",
-   "s": 45567
+   "h": "e30d23bed5605a39e74c98e6f4fc02fbabe0f9214013790d7d843c80175fc4ae",
+   "s": 45579
   },
   "games/pmu.js": {
-   "h": "b6d1fe02d3f2a5851cc6d2b767f8296c620289f8622a77751459afcca23754c8",
-   "s": 29579
+   "h": "bba0f96d0d75dd8b511419b0a1329e4284cc933a791198c931419c37ef80e9a4",
+   "s": 29621
   },
   "games/priorites.js": {
-   "h": "5d42a80e7d1d5f71938a1f0fb2c6929ac53f85e2e1e892c5f09579e0b741491b",
-   "s": 40586
+   "h": "38ebeac504574c5afeb91f5bf02ac9421de0bd6fcac91fd2adb280c808df8bb4",
+   "s": 40713
   },
   "games/puissance4.js": {
-   "h": "48fe6a07bc21ed0dcafd3b69fe2a29e3f0c712cd3b8483fdd8721c1966de7268",
-   "s": 31563
+   "h": "afe8f4ba7763f3247ae348e05f81892cf32e687bac56b3614416e971bdb508af",
+   "s": 31571
   },
   "games/punchline.js": {
    "h": "e6f1a0be842d4f7e0e93d274822f069b7a65ff37a88ff2ffb745d6a4860a4692",
    "s": 113450
   },
   "games/purete.js": {
-   "h": "48c226c3d06ea4ee0c806c06eb8334a627cfb80bdc97795dc28b06c664a0474a",
-   "s": 71072
+   "h": "1cc8e06a9d6a8af93ba8a316f5b94c93f1a007d619826d8e3453e95d02bee46f",
+   "s": 71248
   },
   "games/quiadit.js": {
    "h": "d12b3b00d180e85da98ae9f7b421c1e041af077e9d0f99ca597a0d963c7a2aa7",
@@ -195,20 +192,20 @@
    "s": 41350
   },
   "games/redflag.js": {
-   "h": "3d917d2e81da8b11d26fb18226a96e2efd964e713e4d86db00d727c8705d2338",
-   "s": 66217
+   "h": "d220a8696a2c815037af0ec290675d541b1dd41aa60c6f32e8b468c298fc9365",
+   "s": 66378
   },
   "games/rougenoir.js": {
-   "h": "a2e35f50343a582dd8a5ecb49bb28700bcbd92f4b59ef22f950c1b5e74d8182c",
-   "s": 27064
+   "h": "bf563fe60276463ab48ab6714857c5b9fefe510b48516bd46ded338788e5272f",
+   "s": 27096
   },
   "games/sept.js": {
-   "h": "b2eb12c3c180429cfc3afe4dbf238ed68a27f1b1e7130b8d4b9443ae49bc69ba",
-   "s": 48297
+   "h": "83cf367278279b7452b41dd30aea100441669a7be9e995f394a6b1d7498d82ab",
+   "s": 48311
   },
   "games/tupref.js": {
-   "h": "2a2ab979cf9c83548faaa8ebda45cea448f34d0bd84bc4b362269df787848fd5",
-   "s": 45470
+   "h": "873dfec19838cfc29a6cd6c88c524d6f774bd9bcc9ee79c07a96302ea3db63c0",
+   "s": 45668
   },
   "games/undercover.js": {
    "h": "2ea24e4263befb5f48d7f4d56a073f33e0f3dfc022b221d1d5fac4bd3066aeb8",
@@ -239,8 +236,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "1448f5f1e6d1e8ceb9e550cda414fea8d523767a5de5f49130adb740cad11230",
-   "s": 64049
+   "h": "2ddf9a98e86184b65955a5f6c24236d229a9af641e2d2f422bfe648a7a4fea1d",
+   "s": 64052
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",

@@ -124,7 +124,7 @@ SB.register({
     "Quand les 4 chevaux ont passé une étape, on retourne la carte piège de cette étape : le cheval de sa couleur recule d'une case.",
     "Le premier qui franchit la ligne gagne. Ceux qui l'ont joué distribuent leur mise × 2, les autres boivent leur mise.",
     "Coups de théâtre : cheval dopé, chute générale, cote de l'outsider (le cheval le moins parié rapporte double).",
-    "Plusieurs courses : les gains s'additionnent, le meilleur parieur gagne."
+    "Plusieurs courses : les gains s'additionnent, le (la) meilleur(e) parieur(se) gagne."
   ], [
     "The 4 aces are the horses: Hearts, Diamonds, Spades, Clubs. A row of face-down cards marks the steps of the track.",
     "Before the race, everyone picks a horse and a bet (1 to 5).",
@@ -208,12 +208,12 @@ SB.register({
     }
     if(s.phase === "end"){
       const p = s.pts || {}, order = ctx.ids.slice().sort((a, b) => (p[b] || 0) - (p[a] || 0));
-      screen(root, "end" + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Le roi du turf", "King of the track") + '</span><div class="who">' + esc(ctx.name(order[0])) + "</div>" + standings(ctx.ids, p, ctx.name) +
+      screen(root, "end" + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Le roi (la reine) du turf", "King of the track") + '</span><div class="who">' + esc(ctx.name(order[0])) + "</div>" + standings(ctx.ids, p, ctx.name) +
         SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const pp = c.s.pts || {}, o2 = c.ids.slice().sort((a, b2) => (pp[b2] || 0) - (pp[a] || 0)), mx = pp[o2[0]] || 0;
-          c.end({ title: tr("Le PMU : ", "Horse Race: ") + c.name(o2[0]) + tr(", roi du turf", ", king of the track"), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (pp[id] || 0)), win: mx > 0 ? o2.filter(id => (pp[id] || 0) === mx) : [] });
+          c.end({ title: tr("Le PMU : ", "Horse Race: ") + c.name(o2[0]) + tr(", roi (reine) du turf", ", king of the track"), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (pp[id] || 0)), win: mx > 0 ? o2.filter(id => (pp[id] || 0) === mx) : [] });
         }));
       });
     }
@@ -290,7 +290,7 @@ SB.register({
         stop();
         const order = names.slice().sort((a, b) => (pts[b] || 0) - (pts[a] || 0)), mx = pts[order[0]] || 0;
         if(api.win){ let tries = 0; const go = () => { if(document.getElementById("gage-sheet") && tries++ < 1200) setTimeout(go, 500); else api.win(mx > 0 ? order.filter(x => (pts[x] || 0) === mx) : []); }; go(); }
-        screen(root, "end" + gno, CSS + '<span class="eyebrow">' + tr("Le roi du turf", "King of the track") + '</span><div class="who">' + esc(order[0]) + "</div>" + standings(names, pts, x => x) +
+        screen(root, "end" + gno, CSS + '<span class="eyebrow">' + tr("Le roi (la reine) du turf", "King of the track") + '</span><div class="who">' + esc(order[0]) + "</div>" + standings(names, pts, x => x) +
           SB.u.dock('<button class="btn acc" type="button" data-a>' + tr("Rejouer", "Play again") + '</button><button class="btn ghost" type="button" data-q>' + tr("Choisir un autre jeu", "Pick another game") + "</button>"), r => {
           r.querySelector("[data-a]").addEventListener("click", api.again);
           r.querySelector("[data-q]").addEventListener("click", api.exit);

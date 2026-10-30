@@ -67,7 +67,7 @@ const EN_HTML = {
   "Code à partager": "Code to share", "Partager l'invitation": "Share the invite", "QR code du salon": "Room QR code", "Mon profil": "My profile", "Invitation": "Invite", "Choisis un jeu": "Pick a game",
   "Partie en cours": "Game in progress",
   "Tu as rejoint une partie déjà commencée. Tu pourras jouer à la prochaine, quand l'hôte la lancera depuis le salon.": "You joined mid-game. You can play the next one when the host starts it from the room.",
-  "Salon fermé": "Room closed", "L'hôte est parti": "The host left",
+  "Salon fermé": "Room closed", "L'hôte est parti(e)": "The host left",
   "La personne qui a créé le salon a quitté l'appli ou perdu la connexion. Crée un nouveau salon pour continuer.": "The person who created the room left the app or lost connection. Create a new room to keep playing.",
   "Retour à l'accueil": "Back to home", "Sur ce téléphone": "On this phone", "Accueil": "Home", "Un seul téléphone": "One phone",
   "Entre les prénoms des joueurs une fois, puis choisis un jeu. Le téléphone passe de main en main, ou tu joues contre des bots.": "Enter your names once, then pick a game. Pass the phone around, or play against bots.",
@@ -830,7 +830,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.40.0";
+const VERSION = "4.40.1";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -1192,7 +1192,7 @@ function renderHome(){
   void nm;
   const info = $("#h-netinfo");
   if(netLoading){ info.textContent = tr("Connexion au mode réseau…", "Connecting to online mode…"); info.hidden = false; }
-  else if(!netReady){ info.textContent = window.claude ? tr("Le mode réseau n'est pas disponible ici. Ouvre la page depuis claude.ai en étant connecté, ou joue sur un seul téléphone.", "Online mode isn't available here. Open the page from claude.ai while signed in, or play on one phone.") : tr("Le mode réseau n'a pas pu démarrer. Vérifie ta connexion internet puis relance l'appli, ou joue sur un seul téléphone.", "Online mode couldn't start. Check your internet connection and restart the app, or play on one phone."); info.hidden = false; }
+  else if(!netReady){ info.textContent = window.claude ? tr("Le mode réseau n'est pas disponible ici. Ouvre la page depuis claude.ai en étant connecté(e), ou joue sur un seul téléphone.", "Online mode isn't available here. Open the page from claude.ai while signed in, or play on one phone.") : tr("Le mode réseau n'a pas pu démarrer. Vérifie ta connexion internet puis relance l'appli, ou joue sur un seul téléphone.", "Online mode couldn't start. Check your internet connection and restart the app, or play on one phone."); info.hidden = false; }
   else if(N.joining){ info.hidden = false; }
   else if(!$("#h-err").hidden){ info.hidden = true; }
   else info.hidden = true;
@@ -1798,7 +1798,7 @@ function renderLLTiles(){
   t.innerHTML = SB.games.filter(d => d.local && gameOk(d, myKid(), myHard())).sort((a, b) => isWip(a) - isWip(b)).map(d => {
     const lp = d.local.players;
     const need = lp && n && !llFits(lp, n) ? ' <b class="llp-need">' + (n < lp.min ? tr(lp.min + " joueurs min.", lp.min + " players min.") : tr(lp.max + " joueurs max.", lp.max + " players max.")) + "</b>" : "";
-    const meta = (lp ? (lp.min === 1 ? tr("Seul ou jusqu'à " + lp.max + " · bots", "Solo or up to " + lp.max + " · bots") : rangeTxt(lp)) : tr("Tout le groupe", "Whole group")) + (d.hot && myHard() ? " · 18+" : "") + need;
+    const meta = (lp ? (lp.min === 1 ? tr("Seul(e) ou jusqu'à " + lp.max + " · bots", "Solo or up to " + lp.max + " · bots") : rangeTxt(lp)) : tr("Tout le groupe", "Whole group")) + (d.hot && myHard() ? " · 18+" : "") + need;
     return tileHTML(d, { metaHTML: meta });
   }).join("");
   $$(".tile", t).forEach(b => b.addEventListener("click", () => {
@@ -1879,7 +1879,7 @@ const gWaterFor = (unit, level) => (GWATER[unit] || GWATER.gorgee)[level === "ch
 const GLV_NAME = () => ({ off: tr("Aucun gage", "No forfeits"), chill: tr("Basique", "Basic"), classique: tr("Moyen", "Medium"), chaud: "Hard", perso: tr("Moyen", "Medium") });
 const GMULT = { chill: .5, classique: 1, chaud: 2, perso: 1 };
 const GEND = [
-  { ev: "_win", label: tr("Gagnant de la partie", "Game winner"), kind: "distribue", n: 3 },
+  { ev: "_win", label: tr("Gagnant(e) de la partie", "Game winner"), kind: "distribue", n: 3 },
   { ev: "_lose", label: tr("Tous les autres joueurs", "Everyone else"), kind: "boit", n: 1 }
 ];
 const GTASKS = { fr: ["Fais 10 squats", "Chante le refrain de ton choix", "Fais un compliment sincère à chaque joueur", "Parle avec un accent pendant 2 minutes", "Imite quelqu'un du groupe, les autres devinent", "Danse 20 secondes sans musique", "Raconte ta pire honte en 30 secondes", "Fais 10 pompes (ou 20 sur les genoux)", "Montre la dernière photo de ta galerie", "Laisse le groupe choisir ta photo de profil pour 1 h", "Tiens la planche 30 secondes", "Envoie « tu me manques » au 3e contact de ta liste", "Mange une cuillère de moutarde ou de sauce piquante", "Parle à la 3e personne jusqu'à la prochaine manche"],
@@ -2110,7 +2110,7 @@ function gSettingsPage(get, set, editable, tally, onReset){
             '<div class="gs-row"><span class="tx"><b>' + tr("Joker eau", "Water joker") + '</b><span class="sm">' + tr("Une fois par partie, de l'eau à la place d'un gage", "Once per game, water instead of a forfeit") + "</span></span>" + sw("data-gjk", S.joker, tr("Joker eau", "Water joker")) + "</div></div></div>" : "") +
           '<div class="field"><span class="eyebrow">' + tr("Dans les jeux", "In the games") + '</span><div class="gs-box">' +
             link("jeux", tr("Déclencheurs par jeu", "Triggers by game"), nApart ? tr(nApart + (nApart > 1 ? " jeux à part" : " jeu à part") + ", les autres au niveau " + GN[lv], nApart + " game" + (nApart > 1 ? "s" : "") + " set apart, the rest at " + GN[lv]) : tr("Tous au niveau " + GN[lv], "All at " + GN[lv])) +
-            link("fin", tr("Fin de partie", "End of game"), hard ? tr("Le gagnant distribue " + gBase(S, (SB.games[0] || {}).id, "_win") + " · les autres boivent " + gBase(S, (SB.games[0] || {}).id, "_lose"), "Winner hands out " + gBase(S, (SB.games[0] || {}).id, "_win") + " · the others drink " + gBase(S, (SB.games[0] || {}).id, "_lose")) : tr("Les perdants ont un gage", "Losers get a forfeit")) +
+            link("fin", tr("Fin de partie", "End of game"), hard ? tr("Le (la) gagnant(e) distribue " + gBase(S, (SB.games[0] || {}).id, "_win") + " · les autres boivent " + gBase(S, (SB.games[0] || {}).id, "_lose"), "Winner hands out " + gBase(S, (SB.games[0] || {}).id, "_win") + " · the others drink " + gBase(S, (SB.games[0] || {}).id, "_lose")) : tr("Les perdants ont un gage", "Losers get a forfeit")) +
             link("sans", hard ? tr("Gages sans alcool", "No-alcohol forfeits") : tr("Les gages", "The forfeits"), A(S.custom).length ? tr(A(S.custom).length + " perso", A(S.custom).length + " custom") : tr("Liste du jeu", "Built-in list")) +
           "</div></div>";
         const tk = Object.keys(tally() || {});
@@ -2122,7 +2122,7 @@ function gSettingsPage(get, set, editable, tally, onReset){
         }
       } else if(view === "jeux"){
         h += backRow() + '<p class="sm pf-desc">' + tr("Par défaut, chaque jeu suit le niveau choisi pour tous (" + GN[lv] + "). Touche un jeu seulement si tu veux qu'il soit différent.", "By default, every game follows the level chosen for all (" + GN[lv] + "). Only open a game if you want it to be different.") + "</p>" +
-          (hard ? '<div class="gd-legend"><span><i class="gk-boit"></i>' + tr("boit", "drinks") + '</span><span><i class="gk-distribue"></i>' + tr("distribue (il choisit qui boit)", "hands out (picks who drinks)") + '</span><span><i class="gk-tous"></i>' + tr("tout le monde", "everyone") + "</span></div>" : "");
+          (hard ? '<div class="gd-legend"><span><i class="gk-boit"></i>' + tr("boit", "drinks") + '</span><span><i class="gk-distribue"></i>' + tr("distribue (il (elle) choisit qui boit)", "hands out (picks who drinks)") + '</span><span><i class="gk-tous"></i>' + tr("tout le monde", "everyone") + "</span></div>" : "");
         const fams = FILTERS.filter(f => ["votes", "bluff", "cartes", "quiz", "action"].indexOf(f[0]) >= 0).map(f => [f[1], gGames().filter(d => CATS[d.id] === f[0])]);
         const rest = gGames().filter(d => ["votes", "bluff", "cartes", "quiz", "action"].indexOf(CATS[d.id]) < 0);
         if(rest.length) fams.push([tr("Autres", "Others"), rest]);
@@ -2716,7 +2716,7 @@ function gLocalBar(){
   $("[data-gsob]", el).addEventListener("click", () => SB.page(tr("Qui boit quoi ?", "Who drinks what?"), root => {
     const draw = () => {
       const names = A(store().localNames).map(n => clean(n, 16)).filter(Boolean);
-      root.innerHTML = '<div class="gs"><p class="howto">' + tr("Sur un seul téléphone, choisis ce que boit chaque joueur et sa limite pour la soirée. Au-delà de sa limite, il passe aux gages sans alcool.", "On one phone, pick what each player drinks and their limit for the night. Past their limit, they switch to no-alcohol forfeits.") + "</p>" +
+      root.innerHTML = '<div class="gs"><p class="howto">' + tr("Sur un seul téléphone, choisis ce que boit chaque joueur et sa limite pour la soirée. Au-delà de sa limite, il (elle) passe aux gages sans alcool.", "On one phone, pick what each player drinks and their limit for the night. Past their limit, they switch to no-alcohol forfeits.") + "</p>" +
         // Un seul geste pour tout le groupe : tout le monde avec ou sans limite.
         (names.length > 1 ? (() => { const all = names.every(n => gLocalLimCfg(n).nolim), none = names.every(n => !gLocalLimCfg(n).nolim);
           return '<div class="gs-box"><div class="gs-row"><span class="tx"><b>' + tr("Tout le monde", "Everyone") + '</b><span class="sm">' + tr("Limite pour tous les joueurs et tous les alcools", "Limit for every player and every drink") + '</span></span><div class="seg pf-lang">' +

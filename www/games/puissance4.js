@@ -137,7 +137,7 @@ SB.register({
     "À 2 joueurs, c'est un duel. À plus de 2, deux équipes (Rouges et Jaunes) jouent à tour de rôle : le joueur qui pose change à chaque coup.",
     "Grille géante : 9 colonnes, 7 lignes, et il faut aligner 5 pions.",
     "Chrono par coup (option) : si le temps est écoulé, le pion tombe au hasard.",
-    "Le perdant d'une manche commence la suivante. Coups de théâtre : manche en or, chrono éclair, dernier coup caché.",
+    "Le (la) perdant(e) d'une manche commence la suivante. Coups de théâtre : manche en or, chrono éclair, dernier coup caché.",
     "Sur un seul téléphone, tu peux aussi jouer contre un bot (facile, moyen ou difficile)."
   ], [
     "Take turns tapping a column: your disc drops to the bottom. First to line up 4 (across, down or diagonally) wins the round.",

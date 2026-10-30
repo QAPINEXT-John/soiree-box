@@ -29,7 +29,7 @@ const TWISTS = [
   { id: "glace", name: tr("Manche glacée", "Frozen round"), desc: tr("Les 0 comptent −1 au décompte.", "0s count as −1 when scoring.") },
   { id: "douze", name: tr("Douze maudits", "Cursed twelves"), desc: tr("Les 12 comptent 20 au décompte.", "12s count as 20 when scoring.") },
   { id: "trois", name: tr("Coup d'œil", "Sneak peek"), desc: tr("Chacun retourne 3 cartes au départ au lieu de 2.", "Everyone flips 3 cards at the start instead of 2.") },
-  { id: "filet", name: tr("Sans filet", "No safety net"), desc: tr("Si celui qui finit n'a pas le plus petit score, son score est triplé au lieu d'être doublé.", "If whoever finishes doesn't have the lowest score, it's tripled instead of doubled.") },
+  { id: "filet", name: tr("Sans filet", "No safety net"), desc: tr("Si celui (celle) qui finit n'a pas le plus petit score, son score est triplé au lieu d'être doublé.", "If whoever finishes doesn't have the lowest score, it's tripled instead of doubled.") },
   { id: "cadeau", name: tr("Cadeau de la maison", "On the house"), desc: tr("La défausse démarre avec un −2.", "The discard pile starts with a −2.") }
 ];
 const twistOf = id => SB.u.byTwist ? SB.u.byTwist(TWISTS, id) : TWISTS.find(t => t.id === id) || null;
@@ -393,7 +393,7 @@ function endHTML(V, nameOf){
   const last = V.phase === "end", w = winners(V.score, V.order);
   const rows = V.order.slice().sort((a, b) => (V.score[a] || 0) - (V.score[b] || 0)).map(id =>
     '<li class="' + (last && w.indexOf(id) >= 0 ? "w" : "") + '"><span>' + esc(nameOf(id)) + '<br><span class="r">' + tr("Manche : ", "Round: ") + (V.dbl === id ? (V.raw || {})[id] + ' <span class="x2">' + (V.twi === "filet" ? "×3" : "×2") + "</span> = " : "") + (V.rs[id] || 0) + "</span></span><b>" + ptsTxt(V.score[id] || 0) + "</b></li>").join("");
-  return CSS + '<span class="eyebrow">' + (last ? (w.length > 1 ? tr("Égalité !", "It's a tie!") : tr("Vainqueur", "Winner")) : tr("Fin de la manche " + V.round, "End of round " + V.round)) + "</span>" +
+  return CSS + '<span class="eyebrow">' + (last ? (w.length > 1 ? tr("Égalité !", "It's a tie!") : tr("Vainqueur(e)", "Winner")) : tr("Fin de la manche " + V.round, "End of round " + V.round)) + "</span>" +
     (last ? '<div class="who">' + esc(w.map(nameOf).join(" & ")) + "</div>" : "") +
     '<p class="gr-log">' + esc(V.log) + "</p>" +
     '<div class="field"><span class="eyebrow">' + (V.goal === 1 ? tr("Scores", "Scores") : tr("Scores · objectif " + V.goal, "Scores · target " + V.goal)) + '</span><ul class="gr-sc">' + rows + "</ul></div>" +
@@ -446,13 +446,13 @@ const DEF = {
   ],
   rules: tr([
     "Chacun a 12 cartes face cachée, en 3 lignes de 4. Les cartes vont de −2 à 12. Au début de la manche, retourne 2 cartes de ton choix.",
-    "Le joueur dont les cartes retournées font la plus grosse somme commence la première manche. Ensuite, c'est celui qui a fini la manche d'avant qui commence.",
+    "Le joueur dont les cartes retournées font la plus grosse somme commence la première manche. Ensuite, c'est celui (celle) qui a fini la manche d'avant qui commence.",
     "À ton tour, au choix : prends la carte du dessus de la défausse et échange-la avec une de tes cartes (visible ou cachée), ou pioche.",
     "Si tu pioches : échange la carte avec une des tiennes, ou défausse-la et retourne une de tes cartes cachées.",
     "La carte que tu remplaces part face visible sur la défausse.",
     "Colonne complète : si une colonne a 3 cartes visibles de même valeur, elle disparaît.",
     "Dès qu'un joueur a toutes ses cartes visibles, chacun des autres joue encore un tour. Puis on retourne tout et on compte.",
-    "Attention : si celui qui a fini n'a pas le score strictement le plus bas, et que son score est positif, ses points de la manche sont doublés.",
+    "Attention : si celui (celle) qui a fini n'a pas le score strictement le plus bas, et que son score est positif, ses points de la manche sont doublés.",
     "La partie s'arrête quand quelqu'un atteint l'objectif (50 ou 100 points), ou après une seule manche avec l'option « 1 manche ». Le plus petit total gagne.",
     "Coups de théâtre : certaines manches changent une règle (les 0 comptent −1, 3 cartes retournées au départ…)."
   ], [
@@ -585,7 +585,7 @@ const DEF = {
           '<div class="field"><span class="eyebrow">' + tr("Bots", "Bots") + '</span><div class="seg">' + [0, 1, 2, 3].map(b => '<button type="button" data-b="' + b + '" aria-pressed="' + (b === bots) + '">' + b + "</button>").join("") + "</div></div>" +
           '<div class="field"><span class="eyebrow">' + tr("Objectif", "Target") + '</span><div class="seg">' + [[50, "50"], [100, "100"], [1, tr("1 manche", "1 round")]].map(x => '<button type="button" data-g="' + x[0] + '" aria-pressed="' + (x[0] === goal) + '">' + x[1] + "</button>").join("") + "</div></div>" +
           '<div class="field"><div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + tw + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Plot twists") + '</span><span class="ds">' + tr("Une règle change de temps en temps, au début d'une manche", "A rule changes now and then, at the start of a round") + "</span></span></button></div></div>" +
-          (total < 2 ? '<p class="err">' + tr("Ajoute au moins un bot pour jouer seul.", "Add at least one bot to play solo.") + "</p>" : total > 8 ? '<p class="err">' + tr("8 joueurs maximum, bots compris.", "8 players max, bots included.") + "</p>" : "") +
+          (total < 2 ? '<p class="err">' + tr("Ajoute au moins un bot pour jouer seul(e).", "Add at least one bot to play solo.") + "</p>" : total > 8 ? '<p class="err">' + tr("8 joueurs maximum, bots compris.", "8 players max, bots included.") + "</p>" : "") +
           dock('<button class="btn acc" type="button" data-go' + (total < 2 || total > 8 ? " disabled" : "") + ">" + tr("Distribuer", "Deal") + "</button>"), r => {
           r.querySelectorAll("[data-b]").forEach(b => b.addEventListener("click", () => { bots = +b.dataset.b; persist({ grBots: bots }); setup(); }));
           r.querySelectorAll("[data-g]").forEach(b => b.addEventListener("click", () => { goal = +b.dataset.g; persist({ grGoal: goal }); setup(); }));

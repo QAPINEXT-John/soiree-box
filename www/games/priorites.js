@@ -15,7 +15,7 @@ const CLASSIQUE = [
   "Les mots de passe oubliés","Les gens qui mettent le haut-parleur dans le métro","Le pastis","Les escargots","Les zombies","Les dinosaures","Les sacs Ikea","Les capybaras",
   "Les chips au vinaigre","Les dimanches soir","Les doudounes sans manches","Les apéros qui finissent à 6 h","Les blagues de papa","Les moustiques",
   "Les comédies romantiques","Les arnaques par SMS","Les siestes","Le camping sous la pluie",
-  "Se lever à 5 h tous les matins","Un mois sans téléphone","Un massage d'une heure","Les huîtres","Chanter seul au karaoké","Un câlin de grand-mère",
+  "Se lever à 5 h tous les matins","Un mois sans téléphone","Un massage d'une heure","Les huîtres","Chanter seul(e) au karaoké","Un câlin de grand-mère",
   "Gagner 1 000 €","Dormir 12 heures d'affilée","Un saut en parachute","Les araignées","Le métro à l'heure de pointe","Une soirée Netflix sous la couette",
   "Le prénom de ton ex tatoué sur le bras","Le brocoli","Ne plus jamais manger de fromage","Un road trip entre potes","Une heure dans une file d'attente",
   "Un dîner avec ta belle-famille","Un chiot","Le sport à 7 h du matin","Une pizza à 2 h du matin","Un concert au premier rang","Les cours de maths",
@@ -33,15 +33,15 @@ const CLASSIQUE = [
   "Les visites de musées","Les déménagements","Les plats trop salés","Les chats qui font tomber des objets","Les bonnets à pompon","Les après-midi au bord d'un lac",
   "Faire la vaisselle à la main","Gagner un concours de pétanque","Un pique-nique au soleil","Rater son train de deux minutes","Trouver une place de parking du premier coup",
   "Recevoir une lettre écrite à la main","Monter un meuble sans notice","Une soirée jeux vidéo jusqu'à l'aube","Une nuit dans un hôtel de glace","Une journée sans électricité",
-  "Danser seul dans sa cuisine","Un petit-déjeuner au lit","Se perdre dans une ville inconnue","Un tour en montgolfière"
+  "Danser seul(e) dans sa cuisine","Un petit-déjeuner au lit","Se perdre dans une ville inconnue","Un tour en montgolfière"
 ];
 const ADULTE = [
   "Un plan à trois","Les préliminaires","Le sexe au réveil","Les menottes","Un strip-tease","Un nude envoyé dans le mauvais groupe","Le porno","Un plan cul régulier",
   "Coucher le premier soir","Le sexe dans la douche","Les applis de rencontre","Un club libertin","Une nuit avec ton crush","Le dirty talk","Les sextoys",
   "Le sexe en public","Se faire surprendre au lit par ses parents","Les suçons","Une fessée","Le walk of shame","Un ex qui écrit à 3 h du matin","Une gueule de bois",
-  "Un black-out total","Ton propre enterrement","Ton testament","Être réincarné en moustique","Mourir de rire","Une partouze","Les porte-jarretelles","Le sexting",
+  "Un black-out total","Ton propre enterrement","Ton testament","Être réincarné(e) en moustique","Mourir de rire","Une partouze","Les porte-jarretelles","Le sexting",
   "Un coup d'un soir raté","Simuler","Un rencard Tinder catastrophique","Faire l'amour dans une voiture","La levrette","Un massage qui dérape",
-  "Embrasser un inconnu en soirée","Un jeu de rôle coquin","Le missionnaire","Se réveiller à côté d'un inconnu",
+  "Embrasser un(e) inconnu(e) en soirée","Un jeu de rôle coquin","Le missionnaire","Se réveiller à côté d'un(e) inconnu(e)",
   "Les rendez-vous à l'aveugle","Un bisou sous le gui","Un slow à un mariage","Le premier message après un rencard","Les photos de profil trompeuses","Un massage aux huiles",
   "Les draps en satin","Le jacuzzi à deux","Un week-end en amoureux","Une déclaration d'amour en public","Un ex qui like une vieille photo","La lingerie en dentelle",
   "Les jeux à boire qui dérapent","Le strip-poker","Les bisous dans le cou","Le petit-déj après une nuit torride","Les mots doux au téléphone","Se faire draguer au supermarché",
@@ -114,7 +114,7 @@ const TW = [
   { id: "x2", name: tr("Points doublés", "Double points"), desc: tr("Tous les points de la manche comptent double.", "Every point this round counts double.") },
   { id: "edges", name: tr("Les extrêmes", "The extremes"), desc: tr("Seules la 1re et la dernière place comptent : 2 points chacune, +1 si les deux sont justes.", "Only first and last place count: 2 points each, +1 if you nail both.") },
   { id: "mate", name: tr("Invité surprise", "Surprise guest"), desc: tr("Un des trucs à classer est un joueur du groupe.", "One of the things to rank is a player from the group."), ok: o => o.n >= 3 },
-  { id: "ally", name: tr("Complicité", "Partners in crime"), desc: tr("Celui qui classe marque autant que le meilleur devin, au lieu de la moyenne.", "The ranker scores as much as the best guesser instead of the average."), ok: o => o.n >= 3 }
+  { id: "ally", name: tr("Complicité", "Partners in crime"), desc: tr("Celui (celle) qui classe marque autant que le (la) meilleur(e) devin(eresse), au lieu de la moyenne.", "The ranker scores as much as the best guesser instead of the average."), ok: o => o.n >= 3 }
 ];
 const TWL = TW.filter(t => t.id !== "ally").concat([{ id: "turns", name: tr("Chacun son tour", "Take turns"), desc: tr("Pas de débat : chaque joueur, à tour de rôle, place un seul truc.", "No debating: each player, in turn, places just one thing.") }]);
 function scoreGuess(g, o, tw){
@@ -131,10 +131,10 @@ function itemsFor(packs, deck, tw, mates, lg){
   return d;
 }
 const FL = {
-  win: [tr("Classement final", "Final standings"), tr("Le plus fin psychologue", "Master psychologist"), tr("Lit dans les pensées", "Mind reader"), tr("Champion des priorités", "Priorities champion")],
-  open: [tr("Le livre ouvert", "Open book"), tr("Transparent comme du verre", "Clear as glass"), tr("Zéro mystère", "Zero mystery")],
+  win: [tr("Classement final", "Final standings"), tr("Le (la) plus fin(e) psychologue", "Master psychologist"), tr("Lit dans les pensées", "Mind reader"), tr("Champion(ne) des priorités", "Priorities champion")],
+  open: [tr("Le livre ouvert", "Open book"), tr("Transparent(e) comme du verre", "Clear as glass"), tr("Zéro mystère", "Zero mystery")],
   myst: [tr("Le mystère", "The mystery"), tr("L'énigme du groupe", "The group's enigma"), tr("Impossible à cerner", "Impossible to read")],
-  med: [tr("Le médium", "The psychic"), tr("Boule de cristal", "Crystal ball"), tr("Sixième sens", "Sixth sense")]
+  med: [tr("Le (la) médium", "The psychic"), tr("Boule de cristal", "Crystal ball"), tr("Sixième sens", "Sixth sense")]
 };
 function fl(list, seed, k){ return list[((seed || 0) + k) % list.length]; }
 const CSS = '<style>.pr-list{display:flex; flex-direction:column; gap:8px}' +
@@ -197,9 +197,9 @@ SB.register({
   ],
   rules: [
     tr("À chaque manche, un joueur reçoit 5 trucs au hasard : la raclette, les pigeons, un saut en parachute…", "Each round, one player gets 5 random things: cheese fondue, pigeons, a skydive…"),
-    tr("Il les classe en secret, de ce qu'il préfère (1) à ce qu'il déteste le plus (5).", "They secretly rank them, from what they love most (1) to what they hate most (5)."),
+    tr("Il (elle) les classe en secret, de ce qu'il (elle) préfère (1) à ce qu'il (elle) déteste le plus (5).", "They secretly rank them, from what they love most (1) to what they hate most (5)."),
     tr("Pendant ce temps, les autres devinent son classement sur leur téléphone.", "Meanwhile, everyone else guesses their ranking on their own phone."),
-    tr("1 point par place bien devinée, +3 pour un sans-faute. Celui qui classe marque la moyenne des bonnes réponses : il a intérêt à être prévisible !", "1 point per spot guessed right, +3 for a perfect guess. The ranker scores the guessers' average, so it pays to be predictable!"),
+    tr("1 point par place bien devinée, +3 pour un sans-faute. Celui (celle) qui classe marque la moyenne des bonnes réponses : il (elle) a intérêt à être prévisible !", "1 point per spot guessed right, +3 for a perfect guess. The ranker scores the guessers' average, so it pays to be predictable!"),
     tr("Coups de théâtre : le pire d'abord, manche à six, les extrêmes, invité surprise, complicité, points doublés. Les trucs déjà vus ne reviennent qu'en dernier.", "Twists: worst first, round of six, the extremes, surprise guest, partners in crime, double points. Things you've already seen only come back last.")
   ],
   options: [
@@ -271,7 +271,7 @@ SB.register({
       screen(root, "r" + s.k + ctx.isHost, CSS + lab + '<span class="eyebrow">' + tr("Le vrai classement de " + esc(rn), esc(rn) + "'s actual ranking") + "</span>" + scaleHTML(tw, n) + orderList(items, ord) +
         '<div class="field"><span class="eyebrow">' + tr("Les prédictions", "Predictions") + "</span>" + rows.map(id => { const gs = String(g[id]); return '<div class="pr-row"><div class="h"><span>' + esc(ctx.name(id)) + "</span><span>+" + (pts[id] || 0) + '</span></div><div class="pr-mini">' +
           gs.split("").map((x, k) => '<span class="' + (x === ord[k] ? "ok" : "") + '">' + (k + 1) + ". " + esc(items[+x]) + "</span>").join("") + "</div></div>"; }).join("") +
-        '<p class="sm">' + esc(rn) + tr(" marque " + (pts[s.ranker] || 0) + " point" + ((pts[s.ranker] || 0) > 1 ? "s" : "") + (tw === "ally" ? " (autant que le meilleur devin)." : " (moyenne des bonnes réponses)."), " scores " + SB.u.plural2(pts[s.ranker] || 0, "point", "points", "point") + (tw === "ally" ? " (same as the best guesser)." : " (the guessers' average).")) + "</p></div>" +
+        '<p class="sm">' + esc(rn) + tr(" marque " + (pts[s.ranker] || 0) + " point" + ((pts[s.ranker] || 0) > 1 ? "s" : "") + (tw === "ally" ? " (autant que le (la) meilleur(e) devin(eresse))." : " (moyenne des bonnes réponses)."), " scores " + SB.u.plural2(pts[s.ranker] || 0, "point", "points", "point") + (tw === "ally" ? " (same as the best guesser)." : " (the guessers' average).")) + "</p></div>" +
         (ctx.isHost ? dock('<button class="btn acc" type="button" data-next>' + (s.round >= s.rounds ? tr("Voir le classement final", "See final standings") : tr("Manche suivante", "Next round")) + "</button>") : dock('<p class="wait">' + tr("L'hôte lance la suite…", "Waiting for the host…") + "</p>")), r => {
         const b = r.querySelector("[data-next]"); if(b) b.addEventListener("click", () => ctx.act(c => { if(c.s.phase === "reveal") nextRound(c); }));
       });
@@ -281,8 +281,8 @@ SB.register({
       const med = ctx.ids.slice().sort((a, b) => (sf[b] || 0) - (sf[a] || 0))[0];
       screen(root, "end" + ctx.isHost, CSS + '<span class="eyebrow">' + esc(fl(FL.win, s.fl, 0)) + '</span><div class="who">' + esc(ctx.name(ids[0])) + "</div>" +
         '<div class="bars">' + ids.map(id => '<div class="bar"><div class="lb"><span>' + esc(ctx.name(id)) + "</span><span>" + (sc[id] || 0) + ((sc[id] || 0) === 1 ? " pt" : " pts") + '</span></div><div class="tr"><div class="fl" style="width:' + Math.round(100 * (sc[id] || 0) / Math.max(1, sc[ids[0]] || 1)) + '%"></div></div></div>').join("") + "</div>" +
-        (read.length ? '<div class="card"><span class="eyebrow">' + esc(fl(FL.open, s.fl, 1)) + '</span><div class="big">' + esc(ctx.name(read[0])) + '</div><span class="sm">' + tr("Le plus facile à deviner", "The easiest to read") + "</span></div>" : "") +
-        (read.length > 1 ? '<div class="card"><span class="eyebrow">' + esc(fl(FL.myst, s.fl, 2)) + '</span><div class="big">' + esc(ctx.name(read[read.length - 1])) + '</div><span class="sm">' + tr("Le plus imprévisible", "The most unpredictable") + "</span></div>" : "") +
+        (read.length ? '<div class="card"><span class="eyebrow">' + esc(fl(FL.open, s.fl, 1)) + '</span><div class="big">' + esc(ctx.name(read[0])) + '</div><span class="sm">' + tr("Le (la) plus facile à deviner", "The easiest to read") + "</span></div>" : "") +
+        (read.length > 1 ? '<div class="card"><span class="eyebrow">' + esc(fl(FL.myst, s.fl, 2)) + '</span><div class="big">' + esc(ctx.name(read[read.length - 1])) + '</div><span class="sm">' + tr("Le (la) plus imprévisible", "The most unpredictable") + "</span></div>" : "") +
         (sf[med] ? '<div class="card"><span class="eyebrow">' + esc(fl(FL.med, s.fl, 3)) + '</span><div class="big">' + esc(ctx.name(med)) + '</div><span class="sm">' + SB.u.plural2(sf[med], "sans-faute", "sans-faute", "perfect guess", "perfect guesses") + "</span></div>" : "") +
         (ctx.isHost ? dock('<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>") : dock('<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>")), r => {
         const b = r.querySelector("[data-back]");

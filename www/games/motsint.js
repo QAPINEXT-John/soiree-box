@@ -227,12 +227,12 @@ function awards(tl, name, who){
   who = who || name;
   const t = A(tl).map(A), out = [], seed = t.reduce((a, x) => a + (+x[2] || 0) * 3 + (+x[3] || 0), 0);
   const best = t.slice().sort((a, b) => b[2] - a[2])[0];
-  if(best && best[2] > 0) out.push([vary(tr(["Langue bien pendue", "Moulin à paroles", "Pro de l'indice", "Orateur de génie"], ["Silver tongue", "Chatterbox", "Clue master", "Born orator"]), seed), name(best), SB.u.plural2(best[2], "mot", null, "word") + tr(" en un tour", " in one turn")]);
+  if(best && best[2] > 0) out.push([vary(tr(["Langue bien pendue", "Moulin à paroles", "Pro de l'indice", "Orateur(trice) de génie"], ["Silver tongue", "Chatterbox", "Clue master", "Born orator"]), seed), name(best), SB.u.plural2(best[2], "mot", null, "word") + tr(" en un tour", " in one turn")]);
   const agg = {}; t.forEach(x => { const k = who(x); agg[k] = agg[k] || [0, 0]; agg[k][0] += +x[3] || 0; agg[k][1] += +x[4] || 0; });
   const bz = Object.keys(agg).sort((a, b) => agg[b][0] - agg[a][0])[0];
-  if(bz && agg[bz][0] > 0) out.push([vary(tr(["Langue qui fourche", "Gaffeur en chef", "Abonné au buzz", "Lapsus ambulant"], ["Slip of the tongue", "Chief blunderer", "Buzz magnet", "Walking blooper"]), seed + 1), bz, SB.u.plural2(agg[bz][0], "mot interdit", "mots interdits", "forbidden word")]);
+  if(bz && agg[bz][0] > 0) out.push([vary(tr(["Langue qui fourche", "Gaffeur(se) en chef", "Abonné(e) au buzz", "Lapsus ambulant"], ["Slip of the tongue", "Chief blunderer", "Buzz magnet", "Walking blooper"]), seed + 1), bz, SB.u.plural2(agg[bz][0], "mot interdit", "mots interdits", "forbidden word")]);
   const ps = Object.keys(agg).sort((a, b) => agg[b][1] - agg[a][1])[0];
-  if(ps && agg[ps][1] >= 2) out.push([vary(tr(["Passeur compulsif", "Zappeur fou", "Joker permanent", "Esquive olympique"], ["Compulsive passer", "Channel surfer", "Permanent joker", "Olympic dodger"]), seed + 2), ps, SB.u.plural2(agg[ps][1], "carte passée", "cartes passées", "card passed", "cards passed")]);
+  if(ps && agg[ps][1] >= 2) out.push([vary(tr(["Passeur(se) compulsif(ve)", "Zappeur(se) fou (folle)", "Joker permanent", "Esquive olympique"], ["Compulsive passer", "Channel surfer", "Permanent joker", "Olympic dodger"]), seed + 2), ps, SB.u.plural2(agg[ps][1], "carte passée", "cartes passées", "card passed", "cards passed")]);
   return out;
 }
 function awardsHTML(a){ return a.length ? '<div class="field"><span class="eyebrow">' + tr("Trophées", "Awards") + '</span><ul class="list">' + a.map(x => '<li><span class="t" style="font-size:19px">' + esc(x[0]) + '</span><span class="by">' + esc(x[1]) + " · " + esc(x[2]) + "</span></li>").join("") + "</ul></div>" : ""; }
@@ -243,7 +243,7 @@ SB.register({
   tag: tr("Fais deviner un mot à ton équipe sans dire les mots interdits. Chrono en main.", "Get your team to guess a word without saying the forbidden words. Against the clock."),
   min: 4, max: 20,
   gages: [
-    { ev: "buzz", label: tr("Buzzé (à chaque mot interdit)", "Buzzed (per forbidden word)"), kind: "boit", n: 1 },
+    { ev: "buzz", label: tr("Buzzé(e) (à chaque mot interdit)", "Buzzed (per forbidden word)"), kind: "boit", n: 1 },
     { ev: "zero", label: tr("Tour sans aucun mot trouvé", "Turn with no word guessed"), kind: "boit", n: 2 },
     { ev: "top", label: tr("Gros tour : 5 mots trouvés ou plus", "Big turn: 5+ words guessed"), kind: "distribue", n: 2 }
   ],
@@ -370,7 +370,7 @@ SB.register({
       const lab = () => '<span class="eyebrow">' + tr("Tour ", "Turn ") + (L.turnNo + 1) + " / " + L.turns * 2 + "</span>";
       const go = () => {
         if(L.phase === "setup"){
-          screen(root, "su" + L.dur + "|" + L.turns + "|" + L.hard + "|" + L.twOn, '<p class="howto">' + tr("Deux équipes. Celui qui fait deviner tient le téléphone, un adversaire regarde par-dessus son épaule pour surveiller les mots interdits.", "Two teams. The clue-giver holds the phone while someone from the other team watches over their shoulder for forbidden words.") + "</p>" +
+          screen(root, "su" + L.dur + "|" + L.turns + "|" + L.hard + "|" + L.twOn, '<p class="howto">' + tr("Deux équipes. Celui (celle) qui fait deviner tient le téléphone, un adversaire regarde par-dessus son épaule pour surveiller les mots interdits.", "Two teams. The clue-giver holds the phone while someone from the other team watches over their shoulder for forbidden words.") + "</p>" +
             '<div class="field"><span class="eyebrow">' + tr("Durée d'un tour", "Turn length") + '</span><div class="seg">' + [45, 60, 90].map(n => '<button type="button" data-d="' + n + '" aria-pressed="' + (n === L.dur) + '">' + n + " s</button>").join("") + "</div></div>" +
             '<div class="field"><span class="eyebrow">' + tr("Tours par équipe", "Turns per team") + '</span><div class="seg">' + [2, 3, 4].map(n => '<button type="button" data-u="' + n + '" aria-pressed="' + (n === L.turns) + '">' + n + "</button>").join("") + "</div></div>" +
             '<div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + L.twOn + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Plot twists") + '</span><span class="ds">' + tr("Un tour sur trois environ, la règle change", "About one turn in three, a rule changes") + "</span></span></button>" +

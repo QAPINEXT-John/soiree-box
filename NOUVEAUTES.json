@@ -1,4 +1,7 @@
 {
+  "4.40.1": [
+    "Le féminin apparaît maintenant entre parenthèses quand un texte parle d'un joueur : « seul(e) », « viré(e) », « celui (celle) qui »… (en cours sur tous les jeux)"
+  ],
   "4.40.0": [
     "Grande relecture du français dans tous les jeux : fautes, accords (« 1 point » et plus « 1 points »), listes de gagnants « A, B et C », tutoiement partout, formulations plus claires",
     "Cartes en double remplacées (Test de pureté, Action ou vérité, Qui est le plus…, Je n'ai jamais, Débat, Agents secrets…) et mots interdits trop faciles corrigés dans Mots interdits",

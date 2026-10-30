@@ -114,15 +114,15 @@ SB.register({
   min: 2, max: 20,
   gages: [
     { ev: "boom", label: tr("La bombe t'explose dans les mains", "The bomb blows up in your hands"), kind: "boit", n: 2 },
-    { ev: "voisin", label: tr("Éclaboussé (voisin de l'explosion)", "Splashed (next to the blast)"), kind: "boit", n: 1 }
+    { ev: "voisin", label: tr("Éclaboussé(e) (voisin(e) de l'explosion)", "Splashed (next to the blast)"), kind: "boit", n: 1 }
   ],
   rules: tr([
     "Une carte tombe : une syllabe (« un mot qui contient TRA »), un début, une fin, ou une catégorie (« cite un animal »).",
-    "L'hôte allume la mèche. Celui qui a la bombe dit un mot qui va, à voix haute, puis touche « Je passe » : la bombe saute chez le joueur suivant.",
+    "L'hôte allume la mèche. Celui (celle) qui a la bombe dit un mot qui va, à voix haute, puis touche « Je passe » : la bombe saute chez le joueur suivant.",
     "Pas de mot déjà dit, pas d'hésitation interminable : si les autres refusent ton mot, tu gardes la bombe et tu en trouves un autre.",
-    "Personne ne sait quand la mèche arrive au bout. Celui qui a la bombe quand elle explose a un gage, et il commence la manche suivante.",
+    "Personne ne sait quand la mèche arrive au bout. Celui (celle) qui a la bombe quand elle explose a un gage, et il (elle) commence la manche suivante.",
     "Coups de théâtre : sens inverse, mèche courte, éclaboussures (les voisins prennent aussi), mots de 6 lettres minimum.",
-    "Celui qui a le moins d'explosions à la fin gagne."
+    "Celui (celle) qui a le moins d'explosions à la fin gagne."
   ], [
     "A card drops: a syllable (\"a word containing ING\"), a start, an ending, or a category (\"name an animal\").",
     "The host lights the fuse. Whoever has the bomb says a matching word out loud, then taps \"Pass\": the bomb jumps to the next player.",
@@ -233,7 +233,7 @@ SB.register({
         stopTick(); clearInterval(chk);
         const packs = packList().filter(SB.packOk);
         sel = SB.okPacks(sel, packList());
-        screen(root, "su" + Math.random(), CSS + '<p class="howto">' + tr("Le téléphone, c'est la bombe : dis ton mot, touche « Je passe » et donne le téléphone à ton voisin. Gare à l'explosion !", "The phone is the bomb: say your word, tap \"Pass\" and hand the phone to your neighbour. Watch out for the blast!") + "</p>" +
+        screen(root, "su" + Math.random(), CSS + '<p class="howto">' + tr("Le téléphone, c'est la bombe : dis ton mot, touche « Je passe » et donne le téléphone à ton (ta) voisin(e). Gare à l'explosion !", "The phone is the bomb: say your word, tap \"Pass\" and hand the phone to your neighbour. Watch out for the blast!") + "</p>" +
           '<div class="field"><span class="eyebrow">' + tr("Manches", "Rounds") + '</span><div class="seg">' + [5, 8, 12].map(v => '<button type="button" data-r="' + v + '" aria-pressed="' + (rounds === v) + '">' + v + "</button>").join("") + "</div></div>" +
           '<div class="field"><span class="eyebrow">' + tr("Mèche", "Fuse") + '</span><div class="seg">' + [["courte", tr("Courte", "Short")], ["normale", tr("Normale", "Normal")], ["longue", tr("Longue", "Long")]].map(f => '<button type="button" data-f="' + f[0] + '" aria-pressed="' + (fuse === f[0]) + '">' + f[1] + "</button>").join("") + "</div></div>" +
           '<div class="field"><span class="eyebrow">' + tr("Cartes", "Cards") + '</span><div class="packs">' + packs.map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-p="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0 && p.count > 0) + '"' + (p.count ? "" : " disabled") + '><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + p.count + "</span></button>").join("") + "</div>" +

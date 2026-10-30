@@ -17,7 +17,7 @@ const ARCH = {
   voyeur: [tr("Voyeur·se", "Voyeur"), tr("Regarder t'excite autant que participer.", "Watching turns you on as much as joining in.")],
   brat: ["Brat", tr("Tu provoques exprès pour te faire recadrer.", "You misbehave on purpose to get put in your place.")],
   dompteur: [tr("Dompteur·se de brat", "Brat tamer"), tr("Tu adores recadrer les insolent·es.", "You love putting cheeky partners in their place.")],
-  primal: ["Primal", tr("Sauvage et instinctif : lutte, morsures, zéro retenue.", "Wild and instinctive: wrestling, biting, zero restraint.")],
+  primal: ["Primal", tr("Sauvage et instinctif(ve) : lutte, morsures, zéro retenue.", "Wild and instinctive: wrestling, biting, zero restraint.")],
   fetiche: [tr("Fétichiste", "Fetishist"), tr("Matières, tenues, détails précis : ça compte énormément.", "Materials, outfits, specific details: they matter a lot.")],
   libertin: [tr("Libertin·e", "Non-monogamist"), tr("Plusieurs partenaires, ça ne te fait pas peur.", "More than one partner doesn't scare you.")],
   explorateur: [tr("Explorateur·rice", "Experimentalist"), tr("Curieux·se de tout, tu veux tout essayer.", "Curious about everything, you want to try it all.")],
@@ -53,7 +53,7 @@ const Q = [
   ["ropebunny", "Le contact des cordes ou des menottes sur ma peau me plaît.", "I like the feel of rope or cuffs on my skin."],
   ["exhib", "L'idée qu'on puisse me voir pendant l'amour m'excite.", "The idea that someone might see me during sex turns me on."],
   ["exhib", "J'aime m'exhiber, me montrer ou envoyer des photos sexy.", "I like showing off, putting myself on display or sending sexy pics."],
-  ["exhib", "Faire l'amour dans un endroit où l'on risque d'être surpris me tente.", "Having sex somewhere we might get caught tempts me."],
+  ["exhib", "Faire l'amour dans un endroit où l'on risque d'être surpris(e) me tente.", "Having sex somewhere we might get caught tempts me."],
   ["exhib", "Être regardé·e par d'autres pendant un rapport me plairait.", "Being watched by others during sex would appeal to me."],
   ["voyeur", "Regarder d'autres personnes faire l'amour m'excite.", "Watching other people have sex turns me on."],
   ["voyeur", "J'aime regarder mon ou ma partenaire se caresser.", "I love watching my partner touch themselves."],
@@ -163,13 +163,13 @@ const top3 = p => { const o = {}; ranked(cleanP(p)).slice(0, 3).forEach(x => { o
 const cleanP = p => { const o = {}; Object.keys(ARCH).forEach(k => { const v = Math.round(+(p && p[k]) || 0); o[k] = Math.max(0, Math.min(100, v)); }); return o; };
 
 SB.register({
-  id: "kink", adult: true, name: tr("Test kink", "Kink Test"), glyph: "Kink", pitch: tr("Dominant, soumis, switch… Découvre ton profil, en secret.", "Dominant, submissive, switch… Find out your profile, in secret."), hot: true,
+  id: "kink", adult: true, name: tr("Test kink", "Kink Test"), glyph: "Kink", pitch: tr("Dominant(e), soumis(e), switch… Découvre ton profil, en secret.", "Dominant, submissive, switch… Find out your profile, in secret."), hot: true,
   accent: { light: "#e0245e", dark: "#ff5c8a" },
   tag: tr("Un questionnaire secret sur tes envies, entre adultes consentants. Ton profil reste privé, sauf si tu choisis de le partager.", "A secret questionnaire about what you're into, between consenting adults. Your profile stays private unless you choose to share it."),
   min: 1, max: 20,
   rules: [
-    tr("Réservé aux adultes. Chacun répond seul, sur son téléphone, à des affirmations sur ses envies : de « Pas du tout » à « Carrément ».", "Adults only. Everyone answers alone, on their own phone, to statements about what they're into: from “Not at all” to “Absolutely”."),
-    tr("À la fin, tu découvres ton profil : un pourcentage pour chaque archétype (dominant, soumis, switch, sadique, maso, rigger, rope bunny, exhibitionniste, voyeur, brat, dompteur de brat, primal, fétichiste, libertin, explorateur, vanille).", "At the end, you get your profile: a percentage for each archetype (dominant, submissive, switch, sadist, masochist, rigger, rope bunny, exhibitionist, voyeur, brat, brat tamer, primal, fetishist, non-monogamist, experimentalist, vanilla)."),
+    tr("Réservé aux adultes. Chacun répond seul(e), sur son téléphone, à des affirmations sur ses envies : de « Pas du tout » à « Carrément ».", "Adults only. Everyone answers alone, on their own phone, to statements about what they're into: from “Not at all” to “Absolutely”."),
+    tr("À la fin, tu découvres ton profil : un pourcentage pour chaque archétype (dominant(e), soumis(e), switch, sadique, maso, rigger, rope bunny, exhibitionniste, voyeur(se), brat, dompteur(se) de brat, primal, fétichiste, libertin(e), explorateur(rice), vanille).", "At the end, you get your profile: a percentage for each archetype (dominant, submissive, switch, sadist, masochist, rigger, rope bunny, exhibitionist, voyeur, brat, brat tamer, primal, fetishist, non-monogamist, experimentalist, vanilla)."),
     tr("Tes réponses ne quittent jamais ton téléphone. Si tu veux, tu partages ton top 3 avec le groupe ; sinon, les autres voient seulement que tu as fini.", "Your answers never leave your phone. If you want, you share your top 3 with the group; otherwise the others only see that you're done."),
     tr("C'est un jeu, pas un diagnostic. Personne ne juge personne.", "It's a game, not a diagnosis. Nobody judges anybody.")
   ],
@@ -221,7 +221,7 @@ SB.register({
       const go = () => {
         if(L.phase === "setup"){
           screen(root, "ks" + L.len, CSS + '<p class="howto">' + esc(NOTE) + "</p>" +
-            (names.length > 1 ? '<p class="sm">' + tr("Le téléphone passe de main en main. Chacun répond seul, découvre son profil en privé, puis choisit s'il le montre au groupe à la fin.", "The phone goes around. Everyone answers alone, sees their profile privately, then chooses whether to show it to the group at the end.") + "</p>" : "") +
+            (names.length > 1 ? '<p class="sm">' + tr("Le téléphone passe de main en main. Chacun répond seul(e), découvre son profil en privé, puis choisit s'il (si elle) le montre au groupe à la fin.", "The phone goes around. Everyone answers alone, sees their profile privately, then chooses whether to show it to the group at the end.") + "</p>" : "") +
             '<div class="field"><span class="eyebrow">' + tr("Longueur", "Length") + '</span><div class="seg">' + [["rapide", tr("Rapide (30)", "Quick (30)")], ["complet", tr("Complet (60)", "Full (60)")]].map(x => '<button type="button" data-l="' + x[0] + '" aria-pressed="' + (x[0] === L.len) + '">' + x[1] + "</button>").join("") + "</div></div>" +
             dock('<button class="btn acc" type="button" data-go>' + tr("Commencer", "Start") + '</button><button class="link" type="button" data-q style="align-self:center">' + tr("Choisir un autre jeu", "Choose another game") + "</button>"), r => {
             r.querySelectorAll("[data-l]").forEach(b => b.addEventListener("click", () => { L.len = b.dataset.l; persist({ kiLen: L.len }); go(); }));

@@ -220,7 +220,7 @@ SB.register({
     "Au hasard (par défaut) : le jeu tire quelques photos dans ta galerie, directement sur ton téléphone et seulement quand tu appuies sur « Tirer ». Garde la surprise, ou regarde-les et remplace celles que tu ne veux pas montrer.",
     "Je choisis : tu sélectionnes toi-même tes photos.",
     "Une photo s'affiche sur tous les téléphones. Devine à qui elle appartient.",
-    "Bonne réponse : 2 points, plus 1 point bonus pour le plus rapide. Si personne ne trouve, le propriétaire gagne 2 points.",
+    "Bonne réponse : 2 points, plus 1 point bonus pour le plus rapide. Si personne ne trouve, le (la) propriétaire gagne 2 points.",
     "Si c'est ta photo, vote quand même pour brouiller les pistes.",
     "En réseau, une photo ne quitte ton téléphone qu'au moment où elle s'affiche. Elle est chiffrée avec le code du salon, passe par des serveurs publics sans y être conservée, et tout est effacé à la fin de la partie.",
     "Coups de théâtre : photo floue, gros plan, points doublés, éclair."
@@ -291,7 +291,7 @@ SB.register({
       const old = oldApk(), playing = ctx.playing;
       screen(root, "pick" + s.k + "|" + M.imgs.length + "|" + M.v + (my.ok ? 1 : 0) + ctx.isHost + old, CSS +
         '<span class="eyebrow">' + tr("Photo roulette · choix des photos", "Photo Roulette · picking photos") + "</span>" +
-        (!playing ? '<p class="howto">' + tr("Tu es spectateur. Les joueurs choisissent leurs photos.", "You're watching. The players are picking their photos.") + "</p>" :
+        (!playing ? '<p class="howto">' + tr("Tu es spectateur(trice). Les joueurs choisissent leurs photos.", "You're watching. The players are picking their photos.") + "</p>" :
           my.ok ? '<div class="card"><b>' + (M.imgs.length ? tr(M.imgs.length + " photo" + (M.imgs.length > 1 ? "s" : "") + " prête" + (M.imgs.length > 1 ? "s" : "") + (M.mode === "hasard" && !M.look ? " · surprise !" : ""), SB.u.plural2(M.imgs.length, "", "", "photo") + " ready" + (M.mode === "hasard" && !M.look ? " · surprise!" : "")) : tr("Tu joues sans photo", "You're playing without photos")) + '</b><span class="sm">' + tr("Tes photos restent sur ton téléphone jusqu'à ce qu'elles s'affichent.", "Your photos stay on your phone until they're shown.") + '</span></div><button class="link" type="button" data-edit>' + tr("Modifier mes photos", "Change my photos") + "</button>" :
           old ? '<p class="note-box">' + esc(APK_MSG) + tr(" En attendant, tu peux jouer sans photo et deviner quand même.", " Meanwhile, you can play without photos and still guess.") + "</p>" + apkBtn :
           drawHTML(M, s.per)) +

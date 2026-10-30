@@ -146,7 +146,7 @@ SB.register({
     "Bon pari : tu distribues. Mauvais pari : tu prends le gage.",
     "Option Ride the bus : après la couleur, plus haut ou plus bas que la carte, puis entre ou à l'extérieur des deux premières cartes, puis l'enseigne exacte. Chaque étape vaut un peu plus que la précédente (1, 2, 3, puis 4).",
     "Égalité de valeur (plus ou moins, entre ou à l'extérieur) : c'est perdu. L'as est la carte la plus forte.",
-    "Les bons paris rapportent des points. À la fin des tours, celui qui a le plus de points gagne.",
+    "Les bons paris rapportent des points. À la fin des tours, celui (celle) qui a le plus de points gagne.",
     "Coups de théâtre : tour en or, le monde à l'envers, tout le monde parie."
   ], [
     "Taking turns, you bet on the next card: red (hearts, diamonds) or black (spades, clubs).",
@@ -199,7 +199,7 @@ SB.register({
     const s = ctx.s, me = ctx.me, T = SB.u.byTwist(TW, s.tw || ""), cur = s.order[s.ti], mine = cur === me, inp = ctx.mine() || {};
     if(s.phase === "end"){
       const aw = awards(ctx.ids, s, ctx.name), order = ctx.ids.slice().sort((a, b) => ((s.pts || {})[b] || 0) - ((s.pts || {})[a] || 0));
-      screen(root, "end" + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Le meilleur parieur", "Best bettor") + '</span><div class="who">' + esc(ctx.name(order[0])) + "</div>" + standings(ctx.ids, s.pts || {}, ctx.name) +
+      screen(root, "end" + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Le (la) meilleur(e) parieur(se)", "Best bettor") + '</span><div class="who">' + esc(ctx.name(order[0])) + "</div>" + standings(ctx.ids, s.pts || {}, ctx.name) +
         (aw.length ? '<ul class="list">' + aw.map(a => '<li><span class="t">' + esc(a[1]) + '</span><span class="by">' + esc(a[0]) + " · " + esc(a[2]) + "</span></li>").join("") + "</ul>" : "") +
         SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
@@ -287,7 +287,7 @@ SB.register({
       function end(){
         const order = names.slice().sort((a, b) => (E.pts[b] || 0) - (E.pts[a] || 0)), mx = E.pts[order[0]] || 0, aw = awards(names, E, nameOf);
         if(api.win){ let tries = 0; const go = () => { if(document.getElementById("gage-sheet") && tries++ < 1200) setTimeout(go, 500); else api.win(mx ? order.filter(n => (E.pts[n] || 0) === mx) : []); }; go(); }
-        screen(root, "end" + gno, CSS + '<span class="eyebrow">' + tr("Le meilleur parieur", "Best bettor") + '</span><div class="who">' + esc(order[0]) + "</div>" + standings(names, E.pts, nameOf) +
+        screen(root, "end" + gno, CSS + '<span class="eyebrow">' + tr("Le (la) meilleur(e) parieur(se)", "Best bettor") + '</span><div class="who">' + esc(order[0]) + "</div>" + standings(names, E.pts, nameOf) +
           (aw.length ? '<ul class="list">' + aw.map(a => '<li><span class="t">' + esc(a[1]) + '</span><span class="by">' + esc(a[0]) + " · " + esc(a[2]) + "</span></li>").join("") + "</ul>" : "") +
           SB.u.dock('<button class="btn acc" type="button" data-a>' + tr("Rejouer", "Play again") + '</button><button class="btn ghost" type="button" data-q>' + tr("Choisir un autre jeu", "Pick another game") + "</button>"), r => {
           r.querySelector("[data-a]").addEventListener("click", api.again);

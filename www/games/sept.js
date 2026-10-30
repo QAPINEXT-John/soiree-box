@@ -106,7 +106,7 @@ SB.register({
   gages: [
     { ev: "rate", label: tr("Thème raté", "Missed theme"), kind: "boit", n: 1 },
     { ev: "eclair", label: tr("Éclair : réussi en moins de 3 secondes", "Lightning: nailed in under 3 seconds"), kind: "distribue", n: 1 },
-    { ev: "duel", label: tr("Perdant d'un duel", "Duel loser"), kind: "boit", n: 1 }
+    { ev: "duel", label: tr("Perdant(e) d'un duel", "Duel loser"), kind: "boit", n: 1 }
   ],
   rules: tr([
     "À ton tour, appuie sur « Go » : le thème s'affiche et le chrono démarre.",
@@ -186,7 +186,7 @@ SB.register({
     const s = ctx.s, me = ctx.me, cur = s.order[s.ti], mine = cur === me, T2 = SB.u.byTwist(TW, s.tw || ""), inp = ctx.mine() || {};
     if(s.phase === "end"){
       const aw = awards(ctx.ids, s, ctx.name), order = ctx.ids.slice().sort((a, b) => (s.pts[b] || 0) - (s.pts[a] || 0));
-      screen(root, "end" + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Champion du chrono", "Clock champion") + '</span><div class="who">' + esc(ctx.name(order[0])) + "</div>" + standings(ctx.ids, s.pts, ctx.name) +
+      screen(root, "end" + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Champion(ne) du chrono", "Clock champion") + '</span><div class="who">' + esc(ctx.name(order[0])) + "</div>" + standings(ctx.ids, s.pts, ctx.name) +
         (aw.length ? '<ul class="list">' + aw.map(a => '<li><span class="t">' + esc(a[1]) + '</span><span class="by">' + esc(a[0]) + " · " + esc(a[2]) + "</span></li>").join("") + "</ul>" : "") +
         SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
@@ -210,7 +210,7 @@ SB.register({
       return;
     }
     if(s.phase === "ready"){
-      screen(root, "rd" + s.k + mine, head + '<div class="sp-who">' + who + "</div>" + '<p class="howto" style="text-align:center">' + (mine ? tr("Prêt ? Le thème s'affiche quand tu appuies sur Go.", "Ready? The theme shows up when you tap Go.") : tr("Le thème s'affiche quand " + esc(ctx.name(cur)) + " appuie sur Go.", "The theme appears when " + esc(ctx.name(cur)) + " taps Go.")) + "</p>" +
+      screen(root, "rd" + s.k + mine, head + '<div class="sp-who">' + who + "</div>" + '<p class="howto" style="text-align:center">' + (mine ? tr("Prêt(e) ? Le thème s'affiche quand tu appuies sur Go.", "Ready? The theme shows up when you tap Go.") : tr("Le thème s'affiche quand " + esc(ctx.name(cur)) + " appuie sur Go.", "The theme appears when " + esc(ctx.name(cur)) + " taps Go.")) + "</p>" +
         SB.u.dock(mine ? '<button class="btn acc" type="button" data-go>Go !</button>' : '<p class="wait">' + tr("On attend " + esc(ctx.name(cur)) + "…", "Waiting for " + esc(ctx.name(cur)) + "…") + "</p>"), r => {
         const g = r.querySelector("[data-go]"); if(g) g.addEventListener("click", () => { buzz(15); beep(120, 660); ctx.send({ go: 1 }); g.disabled = true; });
       });
@@ -348,7 +348,7 @@ SB.register({
         stop();
         const order = names.slice().sort((a, b) => (E.pts[b] || 0) - (E.pts[a] || 0)), mx = E.pts[order[0]] || 0, aw = awards(names, E, x => x);
         if(api.win){ let tries = 0; const go = () => { if(document.getElementById("gage-sheet") && tries++ < 1200) setTimeout(go, 500); else api.win(mx ? order.filter(x => (E.pts[x] || 0) === mx) : []); }; go(); }
-        screen(root, "end" + gno, CSS + '<span class="eyebrow">' + tr("Champion du chrono", "Clock champion") + '</span><div class="who">' + esc(order[0]) + "</div>" + standings(names, E.pts, x => x) +
+        screen(root, "end" + gno, CSS + '<span class="eyebrow">' + tr("Champion(ne) du chrono", "Clock champion") + '</span><div class="who">' + esc(order[0]) + "</div>" + standings(names, E.pts, x => x) +
           (aw.length ? '<ul class="list">' + aw.map(a => '<li><span class="t">' + esc(a[1]) + '</span><span class="by">' + esc(a[0]) + " · " + esc(a[2]) + "</span></li>").join("") + "</ul>" : "") +
           SB.u.dock('<button class="btn acc" type="button" data-a>' + tr("Rejouer", "Play again") + '</button><button class="btn ghost" type="button" data-q>' + tr("Choisir un autre jeu", "Pick another game") + "</button>"), r => {
           r.querySelector("[data-a]").addEventListener("click", api.again);
