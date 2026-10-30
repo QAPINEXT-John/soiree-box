@@ -1,14 +1,14 @@
 {
- "version": "4.39.3",
+ "version": "4.39.4",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Nouvel en-tête pour les pages (profil, gages, playlists…) : grand titre, et un bouton rond en haut à droite. Une croix pour fermer ; dans une sous-page, une flèche, avec au-dessus du titre la page où elle ramène"
+  "« Un seul téléphone » et le choix des joueurs prennent aussi le nouvel en-tête : grand titre et bouton rond à la place des liens « Accueil » et « Retour »"
  ],
  "files": {
   "core.js": {
-   "h": "bc5f4126d739083ceb50e57dcc47270f077adfc0e2528829142319c2e918ca2d",
+   "h": "7026e9aea6d1f734bf36324c0bc6798763a3cc0d3c53af68cc3cd8632ff43803",
    "s": 310417
   },
   "firebase-app-compat.js": {
@@ -236,8 +236,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "49b88f54f9c05684d310457981b7ab2758dab36b1afe47d7d3d2e2707aff2bc6",
-   "s": 63081
+   "h": "4eeddc653b6a6258f31761137f52a12d2ab6cd08c0ccabc1ec93825f93455cb2",
+   "s": 64007
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
