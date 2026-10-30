@@ -1,14 +1,14 @@
 {
- "version": "4.41.0",
+ "version": "4.41.1",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Dans tous les jeux, le contenu 18+ est réuni dans une seule catégorie « Hot & Hard » (Action ou vérité, Punchline, Test de pureté, C'est un 10 mais…, Je n'ai jamais, Agents secrets fusionnés ; les autres jeux renommés). Tes réglages déjà enregistrés sont repris"
+  "Course de défis : l'ancien thème « Soirée » rejoint « Hot & Hard ». Chaque jeu n'a plus qu'une seule catégorie 18+"
  ],
  "files": {
   "core.js": {
-   "h": "8209f5869d2773bd04d7cef1a93778f1d04b40ef8e6bd62c0cfafa5fd2c3377e",
+   "h": "724faa725db2e42e00584aeb200fd18a18e52f290ba99b65c279f5c32441c81b",
    "s": 311876
   },
   "firebase-app-compat.js": {
@@ -100,8 +100,8 @@
    "s": 34550
   },
   "games/course.js": {
-   "h": "5f41081e5caa79c6a68082ff93b0267b37df39fd6eaee95debfdcce8b7edb729",
-   "s": 50176
+   "h": "a47b2314f48dcbe9cd50f0ec6661bc27e988fbec678eab3ac76c16f18b456c55",
+   "s": 50954
   },
   "games/debat.js": {
    "h": "344552a82c30a60feb3579d695eeefa1aebe6315b55be8c6978f8777b7300b27",

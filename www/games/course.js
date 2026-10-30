@@ -134,7 +134,7 @@ const PACKS = [
     ["Organisez un slow de 10 secondes entre deux joueurs volontaires de votre équipe.", "Set up a 10-second slow dance between two willing teammates."],
     ["Trouvez la personne de la soirée qui est née le plus loin d'ici.", "Find the person here who was born farthest away."]
   ]) },
-  { v: "hot", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Coquin, toujours entre volontaires", "Cheeky, always with willing players"), hot: true, list: L([
+  { v: "hot", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Défis de soirée (verres, apéro) et coquins, toujours entre volontaires", "Party challenges (drinks, snacks) and cheeky ones, always with willing players"), hot: true, list: L([
     ["Échangez un vêtement avec un(e) coéquipier(ère) volontaire (au-dessus de la ceinture).", "Swap a piece of clothing with a willing teammate (above the waist)."],
     ["Faites un câlin collectif de 10 secondes, toute l'équipe.", "Do a 10-second group hug, whole team."],
     ["Ramenez un rouge à lèvres, un baume ou un gloss.", "Bring back a lipstick, lip balm or gloss."],
@@ -178,10 +178,14 @@ const PACKS = [
   ]) }
 ];
 const myDefis = () => A(store().courseCustom).map(x => clean(x, 140)).filter(Boolean).slice(0, 100);
+// Un seul paquet 18+ : l'ancien thème « Soirée » (verres, apéro) rejoint « Hot & Hard ». L'ancien id reste accepté.
+(() => { const i = PACKS.findIndex(p => p.v === "soiree"), h = PACKS.find(p => p.v === "hot"); if(i >= 0 && h){ h.list = PACKS[i].list.concat(h.list); PACKS.splice(i, 1); } })();
+const normPacks = packs => { const a = A(packs).map(v => (v === "soiree" ? "hot" : v)); return a.filter((v, i) => a.indexOf(v) === i); };
+try{ const O = store().opts || {}; if(O.course && A(O.course.packs).indexOf("soiree") >= 0){ persist({ opts: Object.assign({}, O, { course: Object.assign({}, O.course, { packs: normPacks(O.course.packs) }) }) }); } }catch(e){}
 const packList = () => PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, kid: p.kid, count: p.list.length }));
 function deckFor(packs, perso){
   const all = [];
-  PACKS.forEach(p => { if(A(packs).indexOf(p.v) >= 0) p.list.forEach(t => all.push(t)); });
+  const want = normPacks(packs); PACKS.forEach(p => { if(want.indexOf(p.v) >= 0) p.list.forEach(t => all.push(t)); });
   if(perso) myDefis().forEach(t => all.push(t));
   return SB.u.fresh("course", SB.kid() ? all.filter(t => SB.kidOk(t)) : all);
 }
@@ -358,7 +362,7 @@ SB.register({
     players: { min: 2, max: 30 },
     start(root, api){
       const names = api.names, st = store();
-      let sel = A(st.cdPacks).length ? A(st.cdPacks).slice() : ["objets", "physique", "malin", "equipe"], rounds = [8, 10, 15].indexOf(st.cdRounds) >= 0 ? st.cdRounds : 10, sec = [30, 60, 90].indexOf(st.cdTime) >= 0 ? st.cdTime : 60, twOn = st.cdTw !== false, perso = st.cdPerso !== false;
+      let sel = A(st.cdPacks).length ? normPacks(st.cdPacks) : ["objets", "physique", "malin", "equipe"], rounds = [8, 10, 15].indexOf(st.cdRounds) >= 0 ? st.cdRounds : 10, sec = [30, 60, 90].indexOf(st.cdTime) >= 0 ? st.cdTime : 60, twOn = st.cdTw !== false, perso = st.cdPerso !== false;
       let tmn = [0, 2, 3, 4].indexOf(st.cdTeams) >= 0 ? st.cdTeams : 2; if(tmn > names.length) tmn = 0;
       let tm = tmn ? SB.teams.split(names, tmn) : {}, deck = [], n = 0, def = "", tw = null, tp = {}, gno = 0, tok = Math.random().toString(36).slice(2, 7), timer = null;
       const units = () => (tmn ? SB.teams.ids(tmn) : names), uname = u => (tmn ? SB.teams.name(u) : u), memb = u => (tmn ? SB.teams.members(tm, u, names) : [u]);
