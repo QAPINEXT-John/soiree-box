@@ -807,21 +807,30 @@ function accent(id){
 }
 SB.page = function(title, build, onClose){
   const prev = current === "page" ? (SB._pagePrev || "home") : current;
-  SB._pagePrev = prev; SB._pageBack = null;
+  SB._pagePrev = prev; SB._pageBack = null; SB._pageParent = null; SB._pageT0 = title;
   closeSheet();
-  $("#pg-title").textContent = title;
+  $("#pg-title").textContent = title; pgHead();
   const root = $("#page-root"); root.innerHTML = ""; root.dataset.key = "";
   show("page");
   SB._pageClose = () => { SB._pageClose = null; SB._pageBack = null; show(prev); if(onClose) onClose(); $("#sa-panel").dataset.key = ""; $("#sa-dock").dataset.key = ""; scheduleRender(); };
   build(root);
 };
+// En-tête des pages : petit sur-titre + grand titre + bouton rond. Sur la page principale, une croix (fermer) ;
+// dans une sous-vue (Avatar, Déclencheurs…) ou une page ouverte depuis une autre, une flèche, et le sur-titre dit où elle ramène.
+function pgHead(){
+  const t = $("#pg-title"), b = $("#pg-done"), eb = $("#pg-eb"); if(!t || !b || !eb) return;
+  const inner = t.textContent !== SB._pageT0, sub = inner || !!SB._pageParent;
+  eb.textContent = inner ? SB._pageT0 : SB._pageParent || "Soirée Box";
+  b.classList.toggle("sub", sub); b.setAttribute("aria-label", sub ? tr("Retour", "Back") : tr("Fermer", "Close"));
+}
+try{ new MutationObserver(pgHead).observe($("#pg-title"), { childList: true, characterData: true, subtree: true }); }catch(e){}
 SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
 
 /* =================== Signaler un bug ===================
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.39.2";
+const VERSION = "4.39.3";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -2510,6 +2519,7 @@ function gProfilePage(){
       const ni = $("#pf-name", root); if(ni) ni.addEventListener("input", () => { const v = clean(ni.value, 16); persist({ name: v }); const hn = $("#h-name"); if(hn) hn.value = v; renderMe(); });
       const gg = $("[data-pf-gages]", root); if(gg) gg.addEventListener("click", () => {
         gSettingsPage(gLocalSettings, gSaveSettings, true, () => ({}), null);
+        SB._pageParent = tr("Mon profil", "My profile"); pgHead();
         SB._pageClose = () => { SB._pageClose = null; gProfilePage(); };
       });
       $$("[data-pf-lang]", root).forEach(b => b.addEventListener("click", () => { if(b.dataset.pfLang !== LANG){ buzz(8); SB.setLang(b.dataset.pfLang); } }));

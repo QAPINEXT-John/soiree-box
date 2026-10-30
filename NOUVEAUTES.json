@@ -1,4 +1,7 @@
 {
+  "4.39.3": [
+    "Nouvel en-tête pour les pages (profil, gages, playlists…) : grand titre, et un bouton rond en haut à droite. Une croix pour fermer ; dans une sous-page, une flèche, avec au-dessus du titre la page où elle ramène"
+  ],
   "4.39.2": [
     "Fini le « Terminé » en haut des pages (profil, gages, playlists…) : une flèche retour à gauche du titre, qui ramène d'abord au menu précédent",
     "Ouvrir une sous-page des gages ou du profil la montre depuis le haut"
