@@ -26,7 +26,7 @@ const PACKS = [
   { v: "debut", label: tr("Ça commence par…", "Starts with…"), desc: tr("Un mot qui commence par « CHA »", "A word starting with \"CHA\""), kind: "debut" },
   { v: "fin", label: tr("Ça finit par…", "Ends with…"), desc: tr("Un mot qui finit par « TION »", "A word ending in \"TION\""), kind: "fin" },
   { v: "cat", label: tr("Catégories", "Categories"), desc: tr("Cite un animal, une marque, un film…", "Name an animal, a brand, a film…"), kind: "cat" },
-  { v: "hot", label: tr("Catégories 18+", "18+ categories"), desc: tr("Coquin et sans filtre", "Naughty and unfiltered"), kind: "cat", hot: true },
+  { v: "hot", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Catégories coquines et sans filtre", "Naughty, unfiltered categories"), kind: "cat", hot: true },
   { v: "kid", label: tr("Enfants", "Kids"), desc: tr("Catégories faciles pour les petits", "Easy categories for kids"), kind: "cat", kid: true },
   { v: "perso", label: tr("Nos cartes", "Our cards"), desc: tr("Vos propres catégories", "Your own categories"), kind: "cat" }
 ];

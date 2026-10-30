@@ -198,7 +198,7 @@ SB.register({
     { id: "imp", label: tr("Nombre d'intrus", "Undercovers"), type: "seg", def: 0, values: [{ v: 0, label: "Auto" }, { v: 1, label: "1" }, { v: 2, label: "2" }, { v: 3, label: "3" }] },
     { id: "white", label: tr("Variante", "Variant"), type: "toggle", text: "Mister White", desc: tr("Un joueur sans mot qui peut gagner en devinant celui des civils", "A player with no word who can win by guessing the Civilians' word"), def: false },
     { id: "twists", label: tr("Coups de théâtre", "Plot twists"), type: "toggle", text: tr("Coups de théâtre", "Plot twists"), desc: tr("Environ un tour sur trois, une contrainte s'ajoute", "About one round in three adds a constraint"), def: true },
-    { id: "hard", label: tr("Mots", "Words"), type: "toggle", text: tr("Ajouter le contenu 18+", "Add 18+ content"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content"), hot: true, def: false }
+    { id: "hard", label: tr("Mots", "Words"), type: "toggle", text: tr("Ajouter le contenu Hot & Hard", "Add Hot & Hard content"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content"), hot: true, def: false }
   ],
   start(ctx, o){
     const ids = ctx.ids, n = ids.length, cs = cast(n, o.imp, !!o.white), lg = SB.lang();
@@ -371,7 +371,7 @@ SB.register({
           const st = SB.u.store(), hard = !!st.ucHard, white = !!st.ucWhite, tw = st.ucTw !== false;
           screen(root, "setup" + hard + white + tw, '<p class="howto">' + tr("Le téléphone passe de main en main : chacun découvre son mot en secret. Les intrus ne savent pas qu'ils le sont.", "Pass the phone around: everyone sees their word in secret. The Undercovers don't know they're Undercover.") + "</p>" +
             '<div class="packs">' + packBtn("data-w", white, "Mister White", tr("Un joueur sans mot qui peut gagner en devinant celui des civils", "A player with no word who can win by guessing the Civilians' word")) + packBtn("data-t", tw, tr("Coups de théâtre", "Plot twists"), tr("Environ un tour sur trois, une contrainte s'ajoute", "About one round in three adds a constraint")) +
-            (SB.hard() ? packBtn("data-h", hard, tr("Ajouter le contenu 18+", "Add 18+ content"), tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content"), true) : "") + "</div>" +
+            (SB.hard() ? packBtn("data-h", hard, tr("Ajouter le contenu Hot & Hard", "Add Hot & Hard content"), tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content"), true) : "") + "</div>" +
             '<div class="dock"><button class="btn acc" type="button" data-go>' + tr("Distribuer les mots", "Deal the words") + "</button></div>", r => {
             const h = r.querySelector("[data-h]"); if(h) h.addEventListener("click", () => { SB.u.persist({ ucHard: !hard }); go(); });
             r.querySelector("[data-w]").addEventListener("click", () => { SB.u.persist({ ucWhite: !white }); go(); });

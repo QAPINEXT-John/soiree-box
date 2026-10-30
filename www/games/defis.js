@@ -305,7 +305,7 @@ const DECK = { fr: { classique: { list: CARDS, rules: RULES }, adulte: { list: H
 const deck = lg => DECK[lg === "en" ? "en" : "fr"];
 const PACKS = [
   { v: "classique", label: tr("Classique", "Classic"), desc: tr("Défis, votes, mini-jeux et règles", "Dares, votes, mini-games and rules"), list: deck(SB.lang()).classique.list, rules: deck(SB.lang()).classique.rules },
-  { v: "adulte", label: tr("Adultes", "Adults"), desc: tr("Sexe, confessions, humour noir", "Sex, confessions, dark humor"), list: deck(SB.lang()).adulte.list, rules: deck(SB.lang()).adulte.rules, hot: true }
+  { v: "adulte", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Sexe, confessions, humour noir", "Sex, confessions, dark humor"), list: deck(SB.lang()).adulte.list, rules: deck(SB.lang()).adulte.rules, hot: true }
 ];
 
 const DECKS = [

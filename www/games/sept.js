@@ -38,7 +38,7 @@ const gl = (v, lg) => [].concat(...GROUPS[v].map(k => LL(lg)[k]));
 const PACKS = [
   { v: "cl", label: tr("Classique", "Classic"), desc: tr("Culture G, bouffe, sport, galères du quotidien", "General knowledge, food, sports, daily hassles"), list: gl("cl", SB.lang()) },
   { v: "pop", label: tr("Pop & soirée", "Pop & party"), desc: tr("Séries, films, jeux vidéo, musique, soirées", "Shows, movies, video games, music, parties"), list: gl("pop", SB.lang()) },
-  { v: "x18", label: "Hot & trash", desc: tr("Sexe, du coquin au très cru", "Sex, from naughty to very raw"), list: gl("x18", SB.lang()), hot: true },
+  { v: "x18", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Sexe, du coquin au très cru", "Sex, from naughty to very raw"), list: gl("x18", SB.lang()), hot: true },
   { v: "kid", label: tr("Enfants", "Kids"), desc: tr("Thèmes faciles, 10 secondes au lieu de 7", "Easy themes, 10 seconds instead of 7"), list: gl("kid", SB.lang()), kid: true }
 ];
 const SEEN = "sept:t";

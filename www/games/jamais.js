@@ -22,6 +22,15 @@ const EN = {
   trash: P("had anal sex|deep-throated|swallowed|done a 69|come in under a minute|been to an orgy|set foot in a swingers' club|slept with someone without knowing their name|made a sex tape|paid for a porn subscription|sold photos of myself in my underwear|slept with two people the same night|slept with someone in this group|had period sex|used a butt plug|done BDSM|been dominated in bed|dominated someone in bed|had sex in someone else's bed|slept with a friend's ex|slept with my ex's friend|had group sex with strangers|licked someone's feet|watched a couple have sex in real life|been watched during sex|slept with someone to get something|sent a nude to the wrong person|fooled around in a movie theater|used food in bed|had sex more than five times in one night|slept with an ex just for revenge|hooked up with someone less than an hour after matching|had a fetish nobody knows about|said dirty talk that made me cringe|had phone sex|had sex in an elevator"),
   kid: P("eaten a crayon|hidden vegetables under my plate|gotten a perfect score|broken something and blamed my brother or sister|watched a scary movie|baked a cake all by myself|climbed to the top of a tree|ridden a horse|had a sleepover|lost a tooth at school|seen the ocean|been on a plane|faked being sick to skip school|eaten snails|built a pillow fort|sung in front of the whole class|talked to an animal like a person|had a snowball fight|seen a shooting star|won a medal|had a cast|been scared of a clown|eaten ice cream in winter|done a magic trick|built a giant sandcastle|slept in a tent|ridden a scooter inside the house|forgotten my backpack|put my shoes on the wrong feet|had hiccups for an hour|made the whole class laugh|played hide-and-seek in a store|dreamed I could fly|eaten a whole bag of candy at once|called my teacher “mom”")
 };
+// 18+ : Hot, Trash (et Sans filtre) ne font plus qu'un paquet « Hot & Hard » (id « hot »). Les anciens ids valent « hot ».
+const PK = p => Array.from(new Set(A(p).map(v => (v === "trash" || v === "hard" ? "hot" : v))));
+const uniq = l => Array.from(new Set(l));
+try{
+  const st = store(), O = st.opts && st.opts.jamais, old = v => v === "trash" || v === "hard";
+  if(O && A(O.packs).some(old)) persist({ opts: Object.assign({}, st.opts, { jamais: Object.assign({}, O, { packs: PK(O.packs) }) }) });
+  if(A(st.jmPacks).some(old)) persist({ jmPacks: PK(st.jmPacks) });
+}catch(e){}
+[FR, EN].forEach(X => { X.hot = uniq(A(X.hot).concat(A(X.trash))); });
 const LISTS = { fr: FR, en: EN };
 const LL = lg => LISTS[lg === "en" ? "en" : "fr"];
 const ALC = /ivre|bourré|bu |bu$|bouteille|gueule de bois|shot|drunk|drinking|bottle|hangover/i;
@@ -29,14 +38,13 @@ const PACKS = [
   { v: "cl", label: tr("Classique", "Classic"), desc: tr("Galères, mensonges et petites hontes", "Mishaps, lies and small embarrassments"), list: LL(SB.lang()).cl },
   { v: "soir", label: tr("Soirée", "Party"), desc: tr("Boîtes, afters et lendemains difficiles", "Clubs, afterparties and rough mornings"), list: LL(SB.lang()).soir },
   { v: "love", label: "Love", desc: tr("Crushs, ex, ruptures et rencards", "Crushes, exes, breakups and dates"), list: LL(SB.lang()).love },
-  { v: "hot", label: "Hot", desc: tr("Au lit et ailleurs", "In bed and elsewhere"), list: LL(SB.lang()).hot, hot: true },
-  { v: "trash", label: "Trash", desc: tr("Sexe cru, sans filtre", "Raw, unfiltered sex"), list: LL(SB.lang()).trash, hot: true },
+  { v: "hot", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Tout le 18+ : au lit et ailleurs, jusqu'au sexe cru sans filtre", "All the 18+: in bed and elsewhere, up to raw, unfiltered sex"), list: LL(SB.lang()).hot, hot: true },
   { v: "kid", label: tr("Enfants", "Kids"), desc: tr("Tout public, parfait avec des enfants", "For everyone, great with kids"), list: LL(SB.lang()).kid, kid: true }
 ];
 const SEEN = "jamais:q";
 const kidF = l => { if(!(SB.kid && SB.kid())) return l; const k = l.filter(x => SB.kidOk(x)); return k.length ? k : l; };
 function deckFor(packs, lg){
-  const sel = A(packs), L = LL(lg);
+  const sel = PK(packs), L = LL(lg);
   let pool = PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(p => L[p.v]);
   if(!SB.hard()) pool = pool.filter(x => !ALC.test(x));
   return SB.u.fresh(SEEN, kidF(pool.length ? pool : L.cl));
@@ -206,7 +214,7 @@ SB.register({
     players: { min: 2, max: 20 },
     start(root, api){
       const names = api.names, st = store();
-      let sel = A(st.jmPacks).length ? A(st.jmPacks).slice() : ["cl", "soir", "love"], lives = [3, 5, 10].indexOf(st.jmLives) >= 0 ? st.jmLives : 5, twOn = st.jmTw !== false;
+      let sel = A(st.jmPacks).length ? PK(st.jmPacks) : ["cl", "soir", "love"], lives = [3, 5, 10].indexOf(st.jmLives) >= 0 ? st.jmLives : 5, twOn = st.jmTw !== false;
       let mode = st.jmMode === "score" ? "score" : "doigts", rounds = [10, 15, 20].indexOf(st.jmRounds) >= 0 ? st.jmRounds : 15;
       let deck = [], q = "", round = 0, tw = null, au = "", fing = {}, picked = [], gno = 0, tok = Math.random().toString(36).slice(2, 7), tot = {};
       function setup(){

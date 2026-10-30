@@ -16,7 +16,7 @@ const PACKS0 = [
   ["bouffe", tr("Bouffe", "Food"), tr("Fromages, plats, origines des aliments", "Cheeses, dishes, where food comes from")],
   ["insolite", tr("Insolite", "Weird but true"), tr("Des faits bizarres mais vrais", "Strange but true facts")],
   ["soiree", tr("Soirée", "Party"), tr("Cocktails, vins, bières, tubes de soirée", "Cocktails, wine, beer, party anthems")],
-  ["hot", tr("Culture coquine", "Naughty trivia"), tr("Amour, séduction et sexe, version culture G", "Love, seduction and sex, trivia style"), "hot"],
+  ["hot", tr("Hot & Hard", "Hot & Hard"), tr("Amour, séduction et sexe, version culture G", "Love, seduction and sex, trivia style"), "hot"],
   ["kid", tr("Enfants", "Kids"), tr("Animaux, dessins animés, sciences, espace", "Animals, cartoons, science, space"), "kid"]
 ];
 const myQs = () => A(store().quizCustom).filter(x => x && x.q && A(x.a).length >= 2).slice(0, 200);

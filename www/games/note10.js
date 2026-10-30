@@ -403,7 +403,7 @@ const PACKS = [
   { v: "classique", label: tr("Classique", "Classic"), desc: tr("Pour tout le monde", "For everyone"), kid: true },
   { v: "geek", label: tr("Culture pop & geek", "Pop culture & geek"), desc: tr("Jeux vidéo, séries, internet", "Video games, TV shows, the internet"), kid: true },
   { v: "absurde", label: tr("Situations absurdes", "Absurd situations"), desc: tr("Des situations folles, des réponses à inventer", "Wild scenarios, answers you make up"), kid: true },
-  { v: "adulte", label: tr("Adultes", "Adults"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content"), hot: true },
+  { v: "adulte", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content"), hot: true },
   { v: "perso", label: tr("Catégories perso", "Custom categories"), desc: tr("Les tiennes, et en réseau celles des joueurs du salon", "Yours, plus everyone's in the room when playing online") }
 ];
 function norm(c){ c = A(c); if(c.length !== 3) return null; const x = [clean(c[0], 90), clean(c[1], 24) || tr("Le pire", "The worst"), clean(c[2], 24) || tr("Le meilleur", "The best")]; return x[0] ? x : null; }

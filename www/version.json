@@ -1,14 +1,14 @@
 {
- "version": "4.40.5",
+ "version": "4.41.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Féminin entre parenthèses terminé : Action ou vérité, Test de pureté, Loup-garou et Killer aussi"
+  "Dans tous les jeux, le contenu 18+ est réuni dans une seule catégorie « Hot & Hard » (Action ou vérité, Punchline, Test de pureté, C'est un 10 mais…, Je n'ai jamais, Agents secrets fusionnés ; les autres jeux renommés). Tes réglages déjà enregistrés sont repris"
  ],
  "files": {
   "core.js": {
-   "h": "ed2f61fcb1892e8d7e172bbc4b495b93c4c990da55b812da35e446af0bc9968d",
+   "h": "8209f5869d2773bd04d7cef1a93778f1d04b40ef8e6bd62c0cfafa5fd2c3377e",
    "s": 311876
   },
   "firebase-app-compat.js": {
@@ -84,52 +84,52 @@
    "s": 6236
   },
   "games/actionverite.js": {
-   "h": "3b7b53e3525f9499c5cdbfad7df7c87b677afac9585acb4ace8b16a95a4b425f",
-   "s": 106914
+   "h": "43da1a107f74d53e35526a33a091a34fa0fa4be4a7437a9b7a28559999012690",
+   "s": 107865
   },
   "games/agents.js": {
-   "h": "16f102a3250f9eced246c0b5fdba886020b789899b3a04af7798b9e29cc1d14a",
-   "s": 65008
+   "h": "1f0a97b36492a874fe5ca95b3ecb2ffa6eb0c67241f4c047a9bdb43f781879ba",
+   "s": 65590
   },
   "games/blindtest.js": {
    "h": "3c5224ed413afc55fd9fe1507065ce8898315e077977efba1de939a7dc830d99",
    "s": 63400
   },
   "games/bombe.js": {
-   "h": "c6723714a1d878c1d8d6712ace77c9d2a36bc52c4b71798ea83f0d7cb96b3e79",
-   "s": 34537
+   "h": "5ccb177ad96736a458c3e846b4d86004f3ecf96f36fc5bed8eea2052d2c5e0c6",
+   "s": 34550
   },
   "games/course.js": {
-   "h": "6fed9ec258c7919173a993b0d6e7c9bc861c79e4c82614d478daa74b93c80a92",
-   "s": 50182
+   "h": "5f41081e5caa79c6a68082ff93b0267b37df39fd6eaee95debfdcce8b7edb729",
+   "s": 50176
   },
   "games/debat.js": {
-   "h": "8a0a4ef593a4392dcf112a80783fb804b4f56f911ea0ed8d0a908bf66f256594",
-   "s": 51792
+   "h": "344552a82c30a60feb3579d695eeefa1aebe6315b55be8c6978f8777b7300b27",
+   "s": 51817
   },
   "games/defis.js": {
-   "h": "7bd0d8e3dd795a12039a9f8b914c2ef1efaab4eddd1441c47464bef72467657e",
-   "s": 66936
+   "h": "f7e7be6d2689b67674befc52e73a53a54125315fef2280e37db4406f0cedbd83",
+   "s": 66943
   },
   "games/dernierecarte.js": {
    "h": "b1a8998694d3a8b6f506b287d7c95a19b1f63bbf3c137b98ce5af564f4a58c69",
    "s": 64167
   },
   "games/dixmais.js": {
-   "h": "fe6839adeca1a3bcf3ef79b60c1e534de602bf0a4d7da6aa779123c78b0b3853",
-   "s": 59890
+   "h": "39546e17c4a85bda0ce6ef29cde5563bf1e8a1826acb170da00d153357fc3c38",
+   "s": 60140
   },
   "games/grille.js": {
    "h": "08544ed3bc1d7c9e0dc89433cbd0b5ef52e730371704a4d722e58b0f097799db",
    "s": 53428
   },
   "games/jamais.js": {
-   "h": "adfb9f775989c81b12e5cb099df6152233c97a182d94e9edbacf49e9b978ac04",
-   "s": 45889
+   "h": "1310894e94c98c76cf7fbeed4b03c39be4db2be35c14eff8c9c976a1a87af3d0",
+   "s": 46520
   },
   "games/killer.js": {
-   "h": "0405a3311cdb12c54370a632459f1300848123863df1c92ec85163bd4dfcc3b9",
-   "s": 66628
+   "h": "0b33c0208fed32eab9d9c7a3823b7e8055d14ee357786d455038de9b7724d2da",
+   "s": 66635
   },
   "games/kink.js": {
    "h": "b5dad12fd11d49ea7f5d5ca89af4030b48450134419471e228f29f1d31be4ada",
@@ -144,12 +144,12 @@
    "s": 44662
   },
   "games/motsint.js": {
-   "h": "a11c2e3b5c70f5e94769f4ed11c621a0886d3b29f047a28cee8b0e8281537f24",
-   "s": 46953
+   "h": "0da506c442106d3e82867950d6ff587019659d6a64e9b7cbd27e99fb1690b268",
+   "s": 46981
   },
   "games/note10.js": {
-   "h": "10a34be98382e3eddac1610cfc01e3939f311c187f71b22e5ed20b392712dbf7",
-   "s": 135064
+   "h": "c8dbb60913bbdbf4f46b4b8a2dc90e7f2d1dd6d5cbe76cf482139ca0af5452bf",
+   "s": 135071
   },
   "games/photoroulette.js": {
    "h": "e30d23bed5605a39e74c98e6f4fc02fbabe0f9214013790d7d843c80175fc4ae",
@@ -160,56 +160,56 @@
    "s": 29621
   },
   "games/priorites.js": {
-   "h": "38ebeac504574c5afeb91f5bf02ac9421de0bd6fcac91fd2adb280c808df8bb4",
-   "s": 40713
+   "h": "5f21869466d69a3b33d780d62c98b7aec61390564feccd450021cdf6fa3afd3a",
+   "s": 40720
   },
   "games/puissance4.js": {
    "h": "afe8f4ba7763f3247ae348e05f81892cf32e687bac56b3614416e971bdb508af",
    "s": 31571
   },
   "games/punchline.js": {
-   "h": "21bafa0c22d7f88802ce414c9d442c2a92d8b5be0784e43ea32c4f2faa542910",
-   "s": 113578
+   "h": "61e7ceaf45b8c2f0e806e0b5bbe85729fc6d37aa2fbe3c017ea022215bc2bcb1",
+   "s": 114001
   },
   "games/purete.js": {
-   "h": "a09a1df2fd7b9d14c14824607bac39ba2862db21a4c9f670dc27c023a0d3b1f0",
-   "s": 71233
+   "h": "2a7f1325fbc1dddf5fb9e8b21a98ab7601ad90af826377480299b582e24ab75e",
+   "s": 72219
   },
   "games/quiadit.js": {
-   "h": "4c6b53ae36e5475f260df01119d5b5002a94a5a4496b97bdc6fdf99293a36c7a",
-   "s": 50203
+   "h": "a5c465ebf6ccd15e7464ea72b05cc12bc19b2792c55779a4692c2e6a55012ef0",
+   "s": 50210
   },
   "games/quiplus.js": {
-   "h": "98165e9ae0a2c71a053f0f0a6d9f96fef3c923120b575d158dd03479b551a8c5",
-   "s": 42722
+   "h": "362b4abab3c6d3b72a7f0158f1caddcc0e670364fb34b3bd99ee1c738c68f587",
+   "s": 42729
   },
   "games/quiz-data.js": {
    "h": "a1f193364395541fe126dc79a6248992cb1bd6461ddd318f3182bc0ce29e2354",
    "s": 123463
   },
   "games/quiz.js": {
-   "h": "4bdf0469b0a55e616681bb4ddcbd45e1b4fe8369814c60fa1de591c3fd3254cc",
-   "s": 41384
+   "h": "c5da48a439e80be5fdcaf8b70c90ec647a72a16b03fb611eb40bef66690e8ef8",
+   "s": 41375
   },
   "games/redflag.js": {
-   "h": "114753db6e204f613f862b0fb42be0cd6ab84f0322378b10b8b06f76f1e43b12",
-   "s": 66369
+   "h": "a4e87589b2cca3027d9d32448f44eaac6991dae6a23f230dfff076ae4131b98a",
+   "s": 66376
   },
   "games/rougenoir.js": {
    "h": "bf563fe60276463ab48ab6714857c5b9fefe510b48516bd46ded338788e5272f",
    "s": 27096
   },
   "games/sept.js": {
-   "h": "83cf367278279b7452b41dd30aea100441669a7be9e995f394a6b1d7498d82ab",
-   "s": 48311
+   "h": "cc4b719ae1d37f5d1de059d4105da493cb964564bd2088c0e2817f218f377fdd",
+   "s": 48328
   },
   "games/tupref.js": {
-   "h": "873dfec19838cfc29a6cd6c88c524d6f774bd9bcc9ee79c07a96302ea3db63c0",
-   "s": 45668
+   "h": "427e6fcdd30b0b9de77b20ecb927f2acd0ae206f83742edb37592e52d95cdf97",
+   "s": 45675
   },
   "games/undercover.js": {
-   "h": "179659326e16f4958d2d9b16c3f8faa1b155a120cc07024973f5ad9f04faab96",
-   "s": 50502
+   "h": "4a9a62141945ddb9d68975e719a9d3fc1b2ce85539aa2c08f76045084b482c5d",
+   "s": 50530
   },
   "icons/apple-touch-icon.png": {
    "h": "c6a8d73afcfb5db146ca68617cea122c1b06465d3a6bde68efe2ecc2d8ece998",

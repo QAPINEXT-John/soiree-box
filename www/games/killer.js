@@ -107,7 +107,7 @@ const HOT_EN = [
 // list : missions en français, en : en anglais (mêmes paquets, mêmes identifiants).
 const PACKS = [
   { v: "classique", label: tr("Classique", "Classic"), desc: tr("Des missions faisables en pleine soirée", "Missions you can pull off mid-party"), list: MISSIONS, en: MISSIONS_EN },
-  { v: "adulte", label: tr("Adultes", "Adults"), desc: tr("Confessions coquines, sexe, tabous", "Naughty confessions, sex, taboos"), list: HOT, en: HOT_EN, hot: true }
+  { v: "adulte", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Confessions coquines, sexe, tabous", "Naughty confessions, sex, taboos"), list: HOT, en: HOT_EN, hot: true }
 ];
 const SEEN = "killer:m";
 const listOf = (p, lg) => lg === "en" ? p.en : p.list;

@@ -259,7 +259,7 @@ SB.register({
     { id: "dur", label: tr("Durée d'un tour", "Turn length"), type: "seg", def: 60, values: [{ v: 45, label: "45 s" }, { v: 60, label: "60 s" }, { v: 90, label: "90 s" }] },
     { id: "turns", label: tr("Tours par équipe", "Turns per team"), type: "seg", def: 3, values: [{ v: 2, label: "2" }, { v: 3, label: "3" }, { v: 4, label: "4" }] },
     { id: "twists", label: tr("Coups de théâtre", "Plot twists"), type: "toggle", text: tr("Coups de théâtre", "Plot twists"), desc: tr("Un tour sur trois environ, la règle change", "About one turn in three, a rule changes"), def: true },
-    { id: "hard", label: tr("Cartes", "Cards"), type: "toggle", text: tr("Ajouter le contenu 18+", "Add 18+ content"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content"), hot: true, def: false }
+    { id: "hard", label: tr("Cartes", "Cards"), type: "toggle", text: tr("Ajouter le contenu Hot & Hard", "Add Hot & Hard content"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content"), hot: true, def: false }
   ],
   start(ctx, o){
     const ids = shuffle(ctx.ids), teams = [[], []];
@@ -374,7 +374,7 @@ SB.register({
             '<div class="field"><span class="eyebrow">' + tr("Durée d'un tour", "Turn length") + '</span><div class="seg">' + [45, 60, 90].map(n => '<button type="button" data-d="' + n + '" aria-pressed="' + (n === L.dur) + '">' + n + " s</button>").join("") + "</div></div>" +
             '<div class="field"><span class="eyebrow">' + tr("Tours par équipe", "Turns per team") + '</span><div class="seg">' + [2, 3, 4].map(n => '<button type="button" data-u="' + n + '" aria-pressed="' + (n === L.turns) + '">' + n + "</button>").join("") + "</div></div>" +
             '<div class="packs"><button type="button" class="pack" data-tw aria-pressed="' + L.twOn + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Plot twists") + '</span><span class="ds">' + tr("Un tour sur trois environ, la règle change", "About one turn in three, a rule changes") + "</span></span></button>" +
-            (SB.hard() ? '<button type="button" class="pack hot" data-h aria-pressed="' + L.hard + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Ajouter le contenu 18+", "Add 18+ content") + '<span class="pill hot">18+</span></span><span class="ds">' + tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content") + "</span></span></button>" : "") + "</div>" +
+            (SB.hard() ? '<button type="button" class="pack hot" data-h aria-pressed="' + L.hard + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Ajouter le contenu Hot & Hard", "Add Hot & Hard content") + '<span class="pill hot">18+</span></span><span class="ds">' + tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content") + "</span></span></button>" : "") + "</div>" +
             '<div class="dock"><button class="btn acc" type="button" data-go>' + tr("Commencer", "Start") + "</button></div>", r => {
             const h = r.querySelector("[data-h]"); if(h) h.addEventListener("click", () => { L.hard = !L.hard; persist({ miHard: L.hard }); go(); });
             r.querySelector("[data-tw]").addEventListener("click", () => { L.twOn = !L.twOn; persist({ miTw: L.twOn }); go(); });

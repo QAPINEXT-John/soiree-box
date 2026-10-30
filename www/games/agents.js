@@ -25,6 +25,15 @@ const EN = {
   hot: W("Handcuffs|Thong|Lingerie|Condom|Tongue|Hickey|Foreplay|Striptease|Massage|Oil|Feather|Blindfold|Whip|Leather|Latex|Garter belt|Nightie|Sheets|Hot tub|Shower|Bathtub|Threesome|One-night stand|Nudes|Sexting|Fantasy|Orgasm|Moan|Butt|Boobs|Nipples|Neck|Ear|Lips|Hips|Thighs|Missionary|Doggy style|Spooning|Sex shop|Vibrator|Lube|Kama Sutra|Hotel room|Back seat|Nude beach|Sauna|Lap dance|Bodysuit|Tattoo|Piercing|Mouth|Whipped cream|Strawberry|Ice cube|Mirror|Camera"),
   trash: W("Blowjob|Cunnilingus|Anal|Handjob|Cumshot|Cum|Orgy|Swinging|Swingers club|Gangbang|Sex tape|Porn|OnlyFans|Fuck buddy|Deepthroat|Sixty-nine|Rimming|Squirt|Dildo|Butt plug|Dick|Pussy|Balls|Clit|G-spot|Tits|Ass|Fingering|Masturbation|Premature|Boner|Viagra|Quickie|Domination|Submission|Spanking|Bondage|Collar|Leash|Dark room|Glory hole|Strip club|Camgirl|Strap-on|Sex toy|Penetration|Exhibitionist|Voyeur|Dirty talk|Facial|Creampie|Edging|Booty call|Hand cuffs|Pegging|Kinky|Safe word")
 };
+// 18+ : Hot, Trash (et Sans filtre) ne font plus qu'un paquet « Hot & Hard » (id « hot »). Les anciens ids valent « hot ».
+const PK = p => Array.from(new Set(A(p).map(v => (v === "trash" || v === "hard" ? "hot" : v))));
+const uniq = l => Array.from(new Set(l));
+try{
+  const st = store(), O = st.opts && st.opts.agents, old = v => v === "trash" || v === "hard";
+  if(O && A(O.packs).some(old)) persist({ opts: Object.assign({}, st.opts, { agents: Object.assign({}, O, { packs: PK(O.packs) }) }) });
+  if(A(st.agPacks).some(old)) persist({ agPacks: PK(st.agPacks) });
+}catch(e){}
+[FR, EN].forEach(X => { X.hot = uniq(A(X.hot).concat(A(X.trash))); });
 const LISTS = { fr: FR, en: EN };
 const L = lg => LISTS[lg === "en" ? "en" : "fr"];
 const PACKS = [
@@ -32,14 +41,13 @@ const PACKS = [
   { v: "kid", label: tr("Copains", "Buddies"), desc: tr("Tout public, parfait avec des enfants", "For everyone, great with kids"), list: L(SB.lang()).kid, kid: true },
   { v: "pop", label: tr("Pop culture", "Pop culture"), desc: tr("Films, séries, jeux vidéo, réseaux", "Movies, shows, video games, socials"), list: L(SB.lang()).pop },
   { v: "soir", label: tr("Soirée", "Party"), desc: tr("Apéro, after, dancefloor…", "Drinks, afterparties, dance floor…"), list: L(SB.lang()).soir },
-  { v: "hot", label: "Hot", desc: tr("Ça chauffe : indices gênants garantis", "Getting steamy: awkward clues guaranteed"), list: L(SB.lang()).hot, hot: true },
-  { v: "trash", label: "Trash", desc: tr("Sexe cru, sans filtre", "Raw, unfiltered sex"), list: L(SB.lang()).trash, hot: true }
+  { v: "hot", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Tout le 18+ : indices gênants, jusqu'au sexe cru sans filtre", "All the 18+: awkward clues, up to raw, unfiltered sex"), list: L(SB.lang()).hot, hot: true }
 ];
 const kidF = l => { if(!(SB.kid && SB.kid())) return l; const k = l.filter(x => SB.kidOk(x)); return k.length ? k : l; };
 const myWords = () => A(store().agWords).map(w => clean(w, 24)).filter(Boolean).slice(0, 80);
 // 25 mots : d'abord les mots perso (8 maximum, prénoms compris), puis les paquets, sans doublon.
 function pickWords(packs, lg, extra){
-  const LL = L(lg), sel = A(packs);
+  const LL = L(lg), sel = PK(packs);
   let pool = PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(p => LL[p.v].concat(p.v === "soir" && SB.hard() ? LL.alc : []));
   if(!pool.length) pool = LL.cl.slice();
   pool = kidF(pool);
@@ -384,7 +392,7 @@ SB.register({
     players: { min: 2, max: 16 },
     start(root, api){
       const names = api.names, st = store();
-      let mode = names.length <= 3 ? "duo" : (st.agMode === "duo" ? "duo" : "eq"), sel = A(st.agPacks).length ? A(st.agPacks).slice() : ["cl", "pop"];
+      let mode = names.length <= 3 ? "duo" : (st.agMode === "duo" ? "duo" : "eq"), sel = A(st.agPacks).length ? PK(st.agPacks) : ["cl", "pop"];
       let perso = st.agPerso !== false, nass = st.agAss === 2 ? 2 : 1, piege = !!st.agPiege, twOn = st.agTw !== false;
       let teams = {}, spy = { r: "", b: "" }, G = null, tw = null, nTurn = 0, sel1 = null, gno = 0, tok = Math.random().toString(36).slice(2, 7);
       const mixTeams = () => { const sh = shuffle(names); teams = {}; sh.forEach((n, i) => { teams[n] = i % 2 ? "b" : "r"; }); spy = { r: sh[0], b: sh[1] || sh[0] }; };

@@ -79,7 +79,7 @@ const PREFIX = "Qui est le plus susceptible de…";
 const PACKS = [
   { v: "soft", label: tr("Classique", "Classic"), desc: tr("Pour tout le monde", "For everyone"), list: lists(SB.lang()).soft },
   { v: "mechant", label: tr("Amis de merde", "Terrible friends"), desc: tr("Des questions méchantes sur vos potes : radins, traîtres, boulets…", "Mean questions about your friends: cheapskates, traitors, deadweights…"), list: lists(SB.lang()).mechant },
-  { v: "adulte", label: tr("Adultes", "Adults"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult stuff"), list: lists(SB.lang()).adulte, hot: true }
+  { v: "adulte", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult stuff"), list: lists(SB.lang()).adulte, hot: true }
 ];
 const SEEN = "quiplus:q";
 function deckFor(packs, lg){

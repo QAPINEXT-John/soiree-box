@@ -134,7 +134,7 @@ const PACKS = [
     ["Organisez un slow de 10 secondes entre deux joueurs volontaires de votre équipe.", "Set up a 10-second slow dance between two willing teammates."],
     ["Trouvez la personne de la soirée qui est née le plus loin d'ici.", "Find the person here who was born farthest away."]
   ]) },
-  { v: "hot", label: tr("Pimenté 18+", "Spicy 18+"), desc: tr("Coquin, toujours entre volontaires", "Cheeky, always with willing players"), hot: true, list: L([
+  { v: "hot", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Coquin, toujours entre volontaires", "Cheeky, always with willing players"), hot: true, list: L([
     ["Échangez un vêtement avec un(e) coéquipier(ère) volontaire (au-dessus de la ceinture).", "Swap a piece of clothing with a willing teammate (above the waist)."],
     ["Faites un câlin collectif de 10 secondes, toute l'équipe.", "Do a 10-second group hug, whole team."],
     ["Ramenez un rouge à lèvres, un baume ou un gloss.", "Bring back a lipstick, lip balm or gloss."],
@@ -236,14 +236,14 @@ SB.register({
     "Dès que votre équipe a réussi, l'un de vous touche « On l'a ! ». L'hôte vérifie et valide (1 point) ou refuse (l'équipe ne peut plus gagner ce défi).",
     "Si personne n'a réussi à la fin du chrono, tout le monde a un gage.",
     "Coups de théâtre : défi en or (double), en silence, une seule main, express (moitié du temps).",
-    "Paquets : chasse aux objets, défis physiques, créatif et malin, toute l'équipe, soirée, pimenté (18+), enfants, et vos propres défis.",
+    "Paquets : chasse aux objets, défis physiques, créatif et malin, toute l'équipe, soirée, Hot & Hard, enfants, et vos propres défis.",
     "Sécurité d'abord : pas de course dans les escaliers, on ne grimpe sur rien, on ne casse rien, et personne n'est obligé de participer à un défi qui le gêne."
   ], [
     "The challenge appears on every phone after a countdown. Go go go!",
     "As soon as your team succeeds, one of you taps “Got it!”. The host checks and approves (1 point) or rejects (your team can't win this one anymore).",
     "If nobody makes it before time runs out, everyone gets a forfeit.",
     "Twists: golden challenge (double), in silence, one hand only, express (half the time).",
-    "Packs: scavenger hunt, physical, creative & clever, whole team, party, spicy (18+), kids, and your own challenges.",
+    "Packs: scavenger hunt, physical, creative & clever, whole team, party, Hot & Hard, kids, and your own challenges.",
     "Safety first: no running on stairs, no climbing, no breaking things, and nobody has to take part in a challenge they're not comfortable with."
   ]),
   options: [

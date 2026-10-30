@@ -236,6 +236,12 @@ const PACKS = [
   { v: "hardcore", label: "Hardcore", desc: tr("Pratiques, plans à plusieurs, records : zéro filtre", "Kinks, group sex, body counts: zero filter"), hot: true }
 ];
 PACKS.forEach(p => { p.list = QS[LG(SB.lang())][p.v]; }); // listes de ce téléphone (réglages, compteurs)
+// Une seule case 18+ (« Hot & Hard », id « sexe ») : elle ouvre les thèmes sexe, interdit, drogues et hardcore,
+// qui restent séparés en interne (calcul des scores par dimension). Un ancien réglage avec l'un d'eux se comporte pareil.
+const HOTV = ["sexe", "interdit", "drogues", "hardcore"];
+const PICKS = PACKS.filter(p => !p.hot).concat([{ v: "sexe", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Sexe, interdits, drogues et hardcore : zéro filtre", "Sex, off-limits, drugs and hardcore: zero filter"), hot: true, list: HOTV.flatMap(v => QS[LG(SB.lang())][v]) }]);
+const expandU = a => { a = A(a); const hot = a.some(v => HOTV.indexOf(v) >= 0); return a.filter(v => HOTV.indexOf(v) < 0).concat(hot ? HOTV : []); };
+const pickU = a => { a = A(a).map(v => (HOTV.indexOf(v) >= 0 ? "sexe" : v)); return a.filter((v, i) => a.indexOf(v) === i && PICKS.some(p => p.v === v)); };
 // Index des questions par langue : en réseau, les index (s.qi) se résolvent avec la langue de l'hôte (s.lg).
 const ALLS = {}, QIXS = {};
 ["fr", "en"].forEach(l => { ALLS[l] = PACKS.flatMap(p => QS[l][p.v].map(q => ({ pack: p.v, q }))); QIXS[l] = {}; ALLS[l].forEach((x, i) => { QIXS[l][x.q] = i; }); });
@@ -255,7 +261,7 @@ const TITLES = [
 function title(pct, seed){ const b = TITLES.find(t => pct >= t[0]) || TITLES[TITLES.length - 1]; return b[1][(+seed || 0) % b[1].length]; }
 // Questions choisies parmi les thèmes, en commençant par celles jamais vues sur ce téléphone.
 function pickQuestions(packs, n, lg){
-  const sel = A(packs).length ? A(packs) : PACKS.map(p => p.v);
+  const sel = A(packs).length ? expandU(packs) : PACKS.map(p => p.v);
   let d = SB.u.fresh("purete:q", ALL(lg).filter(x => sel.indexOf(x.pack) >= 0).map(x => x.q));
   if(n) d = d.slice(-n);
   SB.u.saw("purete:q", d);
@@ -497,7 +503,7 @@ SB.register({
   ],
   options: [
     { id: "n", label: tr("Longueur", "Length"), type: "seg", def: 40, values: [{ v: 25, label: "25" }, { v: 40, label: "40" }, { v: 60, label: "60" }, { v: 0, label: tr("Tout", "All") }] },
-    { id: "packs", label: tr("Thèmes", "Themes"), type: "multi", def: PACKS.map(p => p.v), values: PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, count: p.list.length })) },
+    { id: "packs", label: tr("Thèmes", "Themes"), type: "multi", def: PICKS.map(p => p.v), values: PICKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, count: p.list.length })) },
     { id: "anon", label: tr("Aveux", "Confessions"), type: "toggle", text: tr("Aveux anonymes", "Anonymous confessions"), desc: tr("Sinon, on voit qui a dit oui à quoi", "Otherwise, everyone sees who said yes to what"), def: true },
     { id: "twists", label: tr("Coups de théâtre", "Twists"), type: "toggle", text: tr("Coups de théâtre", "Plot twists"), desc: tr("Des questions piégées glissées dans le test", "Rigged questions slipped into the test"), def: true }
   ],
@@ -560,13 +566,14 @@ SB.register({
       if(!L.packs.length) L.packs = PACKS.map(p => p.v);
       if(!st.puHc){ if(L.packs.indexOf("hardcore") < 0) L.packs.push("hardcore"); persist({ puHc: true, puPacks: L.packs }); } // nouveau thème : coché une fois pour tout le monde
       if(!st.puV2){ ["drogues", "crado"].forEach(v => { if(L.packs.indexOf(v) < 0) L.packs.push(v); }); persist({ puV2: true, puPacks: L.packs }); }
-      const lg = SB.lang(), cnt = () => { const k = SB.okPacks(L.packs, PACKS); return ALL(lg).filter(x => k.indexOf(x.pack) >= 0).length; };
+      L.packs = pickU(L.packs); if(!L.packs.length) L.packs = PICKS.map(p => p.v);
+      const lg = SB.lang(), cnt = () => { const k = expandU(SB.okPacks(L.packs, PICKS)); return ALL(lg).filter(x => k.indexOf(x.pack) >= 0).length; };
       const go = () => {
         if(L.phase === "setup"){
           screen(root, "setup" + JSON.stringify([L.n, L.anon, L.tw, L.packs]), CSS + '<p class="howto">' + tr("Le téléphone passe de main en main. Chacun répond seul, sans regarder les réponses des autres.", "The phone goes from hand to hand. Everyone answers alone, without looking at anyone else's answers.") + "</p>" +
             '<p class="sm">' + tr(cnt() + (SB.hard() ? " questions 18+" : " questions") + " dans les thèmes choisis. Celles déjà posées sur ce téléphone reviennent en dernier.", cnt() + (SB.hard() ? " 18+" : "") + " questions in the chosen themes. The ones already asked on this phone come up last.") + "</p>" +
             '<div class="field"><span class="eyebrow">' + tr("Longueur", "Length") + '</span><div class="seg">' + [25, 40, 60, 0].map(n => '<button type="button" data-n="' + n + '" aria-pressed="' + (n === L.n) + '">' + (n || tr("Tout", "All")) + "</button>").join("") + "</div></div>" +
-            '<div class="field"><span class="eyebrow">' + tr("Thèmes", "Themes") + '</span><div class="packs">' + PACKS.filter(SB.packOk).map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-k="' + p.v + '" aria-pressed="' + (L.packs.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + p.list.length + "</span></button>").join("") + "</div></div>" +
+            '<div class="field"><span class="eyebrow">' + tr("Thèmes", "Themes") + '</span><div class="packs">' + PICKS.filter(SB.packOk).map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-k="' + p.v + '" aria-pressed="' + (L.packs.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + p.list.length + "</span></button>").join("") + "</div></div>" +
             '<div class="field"><span class="eyebrow">' + tr("Réglages", "Settings") + '</span><div class="packs">' +
             (names.length > 1 ? '<button type="button" class="pack" data-an aria-pressed="' + L.anon + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Aveux anonymes", "Anonymous confessions") + '</span><span class="ds">' + tr("Sinon, on voit qui a dit oui à quoi", "Otherwise, everyone sees who said yes to what") + "</span></span></button>" : "") +
             '<button type="button" class="pack" data-tw aria-pressed="' + L.tw + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Coups de théâtre", "Plot twists") + '</span><span class="ds">' + tr("Des questions piégées glissées dans le test", "Rigged questions slipped into the test") + "</span></span></button></div></div>" +
@@ -577,7 +584,7 @@ SB.register({
             r.querySelector("[data-tw]").addEventListener("click", () => { L.tw = !L.tw; persist({ puTw: L.tw }); go(); });
             r.querySelector("[data-go]").addEventListener("click", () => {
               if(!L.packs.length){ SB.u.toast(tr("Choisis au moins un thème", "Pick at least one theme")); return; }
-              L.qi = pickQuestions(SB.okPacks(L.packs, PACKS), L.n, lg); L.twl = placeTwists(L.qi.length, L.tw, names.length); L.seed = Math.floor(Math.random() * 999);
+              L.qi = pickQuestions(SB.okPacks(L.packs, PICKS), L.n, lg); L.twl = placeTwists(L.qi.length, L.tw, names.length); L.seed = Math.floor(Math.random() * 999);
               L.key = "loc" + Math.random().toString(36).slice(2); L.p = 0; L.ans = []; L.phase = names.length > 1 ? "pass" : "quiz"; go();
             });
           });

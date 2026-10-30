@@ -104,7 +104,7 @@ const LISTS = { fr: { soft: SOFT, adulte: HOT.concat(TRASH, NOIR) }, en: { soft:
 const lists = lg => LISTS[lg === "en" ? "en" : "fr"];
 const PACKS = [
   { v: "soft", label: tr("Classique", "Classic"), desc: tr("Pour tout le monde", "For everyone"), list: lists(SB.lang()).soft },
-  { v: "adulte", label: tr("Adultes", "Adults"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult stuff"), list: lists(SB.lang()).adulte, hot: true }
+  { v: "adulte", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult stuff"), list: lists(SB.lang()).adulte, hot: true }
 ];
 const SEEN = "tupref:q";
 function deckFor(packs, lg){

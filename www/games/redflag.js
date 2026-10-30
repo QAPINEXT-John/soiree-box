@@ -135,7 +135,7 @@ const unDate = f => String(f).replace(/^(Ton date|Your date) /, "");
 function flagsFor(packs, lg){ const sel = A(packs), d = deck(lg); return (sel.indexOf("classique") >= 0 || !sel.length ? d.classique : []).concat(sel.indexOf("adulte") >= 0 ? d.adulte : []); }
 const PACKS = [
   { v: "classique", label: SB.tr("Classique", "Classic"), desc: SB.tr("Petites manies, vrais défauts et belles qualités", "Little quirks, real flaws and lovely qualities"), count: deck(SB.lang()).classique.length },
-  { v: "adulte", label: SB.tr("Adultes", "Adults"), desc: SB.tr("Sexe, porno, tabous : tout le contenu adulte", "Sex, porn, taboos: all the adult stuff"), count: deck(SB.lang()).adulte.length, hot: true }
+  { v: "adulte", label: SB.tr("Hot & Hard", "Hot & Hard"), desc: SB.tr("Sexe, porno, tabous : tout le contenu adulte", "Sex, porn, taboos: all the adult stuff"), count: deck(SB.lang()).adulte.length, hot: true }
 ];
 const KIND = { r: ["Red flag", "#d93025"], b: ["Beige flag", "#c8a36a"], g: ["Green flag", "#1e8e3e"] };
 const tr = SB.tr, TWL = tr("Coup de théâtre", "Plot twist");

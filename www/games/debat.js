@@ -29,7 +29,7 @@ const PACKS = [
   { v: "societe", label: tr("Société", "Society"), desc: tr("École, travail, écrans, écologie…", "School, work, screens, environment…"), list: LL(SB.lang()).societe },
   { v: "philo", label: tr("Philo & sciences", "Philosophy & science"), desc: tr("Bonheur, liberté, vérité, univers", "Happiness, freedom, truth, the universe"), list: LL(SB.lang()).philo },
   { v: "love", label: tr("Love", "Love"), desc: tr("Couple, ex, jalousie, applis de rencontre", "Couples, exes, jealousy, dating apps"), list: LL(SB.lang()).love },
-  { v: "hot", label: "Hot", desc: tr("Sexe, fidélité, fantasmes : ça va chauffer", "Sex, fidelity, fantasies: it's going to get heated"), list: LL(SB.lang()).hot, hot: true },
+  { v: "hot", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Sexe, fidélité, fantasmes : ça va chauffer", "Sex, fidelity, fantasies: it's going to get heated"), list: LL(SB.lang()).hot, hot: true },
   { v: "kid", label: tr("Enfants", "Kids"), desc: tr("Devoirs, dinosaures et licornes. Tout public", "Homework, dinosaurs and unicorns. For everyone"), list: LL(SB.lang()).kid, kid: true }
 ];
 const SEEN = "debat:q";

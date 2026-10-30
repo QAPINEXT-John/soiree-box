@@ -1725,14 +1725,16 @@ const QX = { fr: PQ, en: PQ_EN }, AX = { fr: PA, en: PA_EN };
 const lgOf = lg => (lg === "en" ? "en" : "fr");
 const PACKS = [
   { v: "classique", label: tr("Classique", "Classic"), desc: tr("Absurde, gênant, sous-entendus : pour tout le monde", "Absurd, awkward, innuendo: for everyone") },
-  { v: "hard", label: "Hard", desc: tr("Sexe, trash, excès : aucune limite de bon goût", "Sex, trash, excess: zero limits on good taste"), hot: true },
-  { v: "noir", label: tr("Humour noir", "Dark humor"), desc: tr("Mort, enterrements, fin du monde", "Death, funerals, the end of the world"), hot: true }
+  { v: "hard", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Sexe, trash, excès et humour noir : aucune limite de bon goût", "Sex, trash, excess and dark humor: zero limits on good taste"), hot: true }
 ];
-const packCount = k => QX[lgOf(SB.lang())][k].length + AX[lgOf(SB.lang())][k].length;
+// Une seule case 18+ : « hard » ouvre les cartes Hard et Humour noir. Un ancien réglage avec « noir » seul se comporte pareil.
+const expandP = a => { a = A(a); const hot = a.indexOf("hard") >= 0 || a.indexOf("noir") >= 0; return a.filter(k => k !== "hard" && k !== "noir").concat(hot ? ["hard", "noir"] : []); };
+const pickP = a => { a = A(a).map(k => (k === "noir" ? "hard" : k)); return a.filter((k, i) => a.indexOf(k) === i && PACKS.some(p => p.v === k)); };
+const packCount = k => expandP([k]).reduce((n, x) => n + QX[lgOf(SB.lang())][x].length + AX[lgOf(SB.lang())][x].length, 0);
 const HAND = 7, BL = "b:";
 const SEEN_Q = "punchline:q", SEEN_A = "punchline:a";
-const qPool = (packs, lg) => { const Q = QX[lgOf(lg)], p = A(packs).filter(k => Q[k]); return (p.length ? p : ["classique"]).flatMap(k => Q[k]); };
-const aPool = (packs, lg) => { const P = AX[lgOf(lg)], p = A(packs).filter(k => P[k]); return (p.length ? p : ["classique"]).flatMap(k => P[k]); };
+const qPool = (packs, lg) => { const Q = QX[lgOf(lg)], p = expandP(packs).filter(k => Q[k]); return (p.length ? p : ["classique"]).flatMap(k => Q[k]); };
+const aPool = (packs, lg) => { const P = AX[lgOf(lg)], p = expandP(packs).filter(k => P[k]); return (p.length ? p : ["classique"]).flatMap(k => P[k]); };
 const holes = q => Math.max(1, Math.min(2, (String(q).match(/___/g) || []).length));
 
 /* Coups de théâtre : une règle change pour une manche (jamais la première, jamais deux fois de suite). */
@@ -1981,14 +1983,14 @@ const DEF = {
     "Carte blanche : deux fois par partie, tu peux écrire ta propre réponse.",
     "Coups de théâtre : jackpot, vote du public, monde à l'envers, deux chances, roulette, duel, main neuve.",
     "D'une soirée à l'autre, les phrases et cartes déjà vues reviennent après les nouvelles.",
-    "Paquets Hard et Humour noir : réservés aux adultes, vraiment sans filtre."
+    "Paquet Hot & Hard (sexe, trash et humour noir) : réservé aux adultes, vraiment sans filtre."
   ], [
     "Everyone gets 7 answer cards. Each round, a fill-in-the-blank sentence appears and a judge is chosen (everyone takes a turn).",
     "Everyone else secretly completes the sentence with a card from their hand (two for sentences with two blanks).",
     "Answers show up without names. The judge picks their favorite: its author scores 1 point. First to reach the target score wins.",
     "Blank card: twice per game, you can write your own answer.",
     "Twists: jackpot, crowd vote, upside down, two shots, roulette, duel, fresh hand. Sentences and cards you've already seen come after new ones from one night to the next.",
-    "Hard and Dark humor packs: adults only, seriously unfiltered."
+    "Hot & Hard pack (sex, trash and dark humor): adults only, seriously unfiltered."
   ]),
   options: [
     { id: "target", label: tr("Points pour gagner", "Points to win"), type: "seg", def: 5, values: [{ v: 3, label: "3" }, { v: 5, label: "5" }, { v: 8, label: "8" }] },
@@ -2109,7 +2111,7 @@ const DEF = {
     start(root, api){
       const names = api.names, ids = names.map((_, i) => String(i)), nameOf = id => names[+id] || "?";
       const S0 = store();
-      let sel = A(S0.plPacks).filter(k => PQ[k]).length ? A(S0.plPacks).filter(k => PQ[k]) : ["classique"];
+      let sel = pickP(S0.plPacks).length ? pickP(S0.plPacks) : ["classique"];
       let target = [3, 5, 8].indexOf(S0.plTarget) >= 0 ? S0.plTarget : 5, twOn = S0.plTw !== false, blOn = S0.plBlank !== false;
       let E = null, queue = [], picks = {}, st = { sel: [], blankOpen: false, blank: "" }, js = null;
       function setup(){

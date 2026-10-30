@@ -95,7 +95,7 @@ const LISTS = { fr: { classique: CLASSIQUE, adulte: ADULTE }, en: { classique: C
 const lists = lg => LISTS[lg === "en" ? "en" : "fr"];
 const PACKS = [
   { v: "classique", label: tr("Tout et n'importe quoi", "Anything goes"), desc: tr("Objets, gens, galères, petits plaisirs", "Things, people, hassles, little pleasures"), list: lists(SB.lang()).classique, kid: true },
-  { v: "adulte", label: tr("Adultes", "Adults"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult stuff"), list: lists(SB.lang()).adulte, hot: true }
+  { v: "adulte", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult stuff"), list: lists(SB.lang()).adulte, hot: true }
 ];
 const SEEN = "priorites:t";
 const kidF = l => { if(!(SB.kid && SB.kid())) return l; const k = l.filter(x => SB.kidOk(x)); return k.length ? k : l; }; // mode Enfant : jamais de pool vide

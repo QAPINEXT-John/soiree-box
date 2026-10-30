@@ -214,20 +214,26 @@ const HARD_EN = [
   "keeps a file on all their exes: addresses, schedules, new partners", "reuses condoms… after washing them", "changes their sheets once a year",
   "picks their nose then digs into the shared bag of chips", "stole your credit card to buy video games"
 ];
-const LISTS = { fr: { cl: CL, kid: KID, love: LOVE, hot: HOT, trash: TRASH, hard: HARD }, en: { cl: CL_EN, kid: KID_EN, love: LOVE_EN, hot: HOT_EN, trash: TRASH_EN, hard: HARD_EN } };
+// 18+ : Hot, Trash (et Sans filtre) ne font plus qu'un paquet « Hot & Hard » (id « hot »). Les anciens ids valent « hot ».
+const PK = p => Array.from(new Set(A(p).map(v => (v === "trash" || v === "hard" ? "hot" : v))));
+const uniq = l => Array.from(new Set(l));
+try{
+  const st = store(), O = st.opts && st.opts.dixmais, old = v => v === "trash" || v === "hard";
+  if(O && A(O.packs).some(old)) persist({ opts: Object.assign({}, st.opts, { dixmais: Object.assign({}, O, { packs: PK(O.packs) }) }) });
+  if(A(st.dmPacks).some(old)) persist({ dmPacks: PK(st.dmPacks) });
+}catch(e){}
+const LISTS = { fr: { cl: CL, kid: KID, love: LOVE, hot: uniq(HOT.concat(TRASH, HARD)) }, en: { cl: CL_EN, kid: KID_EN, love: LOVE_EN, hot: uniq(HOT_EN.concat(TRASH_EN, HARD_EN)) } };
 const lists = lg => LISTS[lg === "en" ? "en" : "fr"];
 const PACKS = [
   { v: "cl", label: tr("Classique", "Classic"), desc: tr("Manies, habitudes, petits défauts", "Quirks, habits, little flaws"), list: lists(SB.lang()).cl },
   { v: "kid", label: tr("Copains", "Buddies"), desc: tr("Le pote parfait… ou presque. Tout public", "The perfect buddy… almost. For everyone"), list: lists(SB.lang()).kid, kid: true },
   { v: "love", label: tr("Love & dates", "Love & dates"), desc: tr("Couple, ex, rencards ratés", "Couples, exes, bad dates"), list: lists(SB.lang()).love },
-  { v: "hot", label: tr("Hot", "Hot"), desc: tr("Au lit, ça se complique", "In bed, things get complicated"), list: lists(SB.lang()).hot, hot: true },
-  { v: "trash", label: tr("Trash", "Trash"), desc: tr("Sexe cru et explicite : porno, kinks, plans cul foireux", "Raw, explicit sex: porn, kinks, messy hookups"), list: lists(SB.lang()).trash, hot: true },
-  { v: "hard", label: tr("Sans filtre", "No filter"), desc: tr("Dégueu, toxique, illégal : le pire du pire, hors du lit", "Gross, toxic, illegal: the worst of the worst, outside the bedroom"), list: lists(SB.lang()).hard, hot: true }
+  { v: "hot", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Tout le 18+ : au lit, sexe cru et explicite, et le pire du pire sans filtre", "All the 18+: in bed, raw explicit sex, and the unfiltered worst of the worst"), list: lists(SB.lang()).hot, hot: true }
 ];
 const SEEN = "dixmais:q";
 const kidF = l => { if(!(SB.kid && SB.kid())) return l; const k = l.filter(x => SB.kidOk(x)); return k.length ? k : l; };
 function deckFor(packs, lg){
-  const sel = A(packs), L = lists(lg); const pool = PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(p => L[p.v]);
+  const sel = PK(packs), L = lists(lg); const pool = PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(p => L[p.v]);
   return SB.u.fresh(SEEN, kidF(pool.length ? pool : L.cl));
 }
 const PREFIX = lg => (lg === "en" ? "They're a 10 but…" : "C'est un(e) 10 mais…");
@@ -455,7 +461,7 @@ SB.register({
     players: { min: 2, max: 12 },
     start(root, api){
       const names = api.names, ids = names.map((_, i) => String(i)), nameOf = id => names[+id] || "?";
-      let sel = A(store().dmPacks).length ? A(store().dmPacks).slice() : ["cl", "love"], twOn = store().dmTw !== false, mode = store().dmMode === "doigts" ? "doigts" : "tour", rounds = [6, 10, 15].indexOf(store().dmRounds) >= 0 ? store().dmRounds : 10;
+      let sel = A(store().dmPacks).length ? PK(store().dmPacks) : ["cl", "love"], twOn = store().dmTw !== false, mode = store().dmMode === "doigts" ? "doigts" : "tour", rounds = [6, 10, 15].indexOf(store().dmRounds) >= 0 ? store().dmRounds : 10;
       const E = { deck: [], q: "", round: 0, tw: null, ju: "", au: "", notes: {}, pts: {}, sum: {}, cnt: {}, zero: {}, gno: 0, tok: Math.random().toString(36).slice(2, 7) };
       function setup(){
         screen(root, "su" + sel.join() + twOn + mode + rounds, CSS +

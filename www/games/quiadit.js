@@ -121,7 +121,7 @@ const DECK = { fr: { soft: SOFT, adulte: HOT, fake: FAKE, fakeHot: FAKE_HOT }, e
 const deck = lg => DECK[lg === "en" ? "en" : "fr"];
 const PACKS = [
   { v: "soft", label: tr("Classique", "Classic"), desc: tr("Hontes, souvenirs, petits secrets, prédictions", "Embarrassing moments, memories, little secrets, predictions"), list: deck(SB.lang()).soft },
-  { v: "adulte", label: tr("Adultes", "Adults"), desc: tr("Sexe, fantasmes, tabous, humour noir", "Sex, fantasies, taboos, dark humor"), list: deck(SB.lang()).adulte, hot: true }
+  { v: "adulte", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Sexe, fantasmes, tabous, humour noir", "Sex, fantasies, taboos, dark humor"), list: deck(SB.lang()).adulte, hot: true }
 ];
 const SEEN = "quiadit:q", SEENF = "quiadit:fake", BOT = "bot";
 function deckFor(packs, lg){
