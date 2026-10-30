@@ -5,7 +5,7 @@ const { esc, A, shuffle, screen, txt, store, persist, dock, clean, armTap, pick 
 const tr = SB.tr, PL = SB.u.plural2;
 
 const SOFT = [
-  "Ton pire date en 5 mots","Le métier dont tu as toujours rêvé","Ce que tu ne dirais jamais à ta mère","Ta pire honte au collège",
+  "Ton pire rencard en 5 mots","Le métier dont tu as toujours rêvé","Ce que tu ne dirais jamais à ta mère","Ta pire honte au collège",
   "Le truc le plus cher que tu as acheté sur un coup de tête","Ce que tu ferais si tu gagnais un million demain matin","Ton plaisir coupable","Le pire cadeau que tu as reçu",
   "Ta phobie la plus bizarre","Le mensonge que tu racontes le plus souvent","Ta pire coupe de cheveux","Ta première impression de {p}",
   "Un secret sur {p} que tu pourrais révéler","Le surnom parfait pour {p}","Ce que {p} fera dans 10 ans","La chanson que tu chantes sous la douche",
@@ -14,7 +14,7 @@ const SOFT = [
   "Les 3 trucs que tu emporterais sur une île déserte","Le plat que tu ne peux pas avaler","Le pire conseil qu'on t'a donné","Le titre de ton autobiographie",
   "Ton rêve le plus bizarre","Ta plus grosse bêtise d'enfant","Ce que tu fais quand tu es seul chez toi","La règle que tu enfreindrais si personne ne regardait",
   "Ce qui te rend jaloux","Le pire prénom que tu pourrais donner à un enfant","La phrase que tu dis tout le temps","Ton plus gros fail en public",
-  "Ce que tu as déjà fait pour éviter quelqu'un","Le message que tu regrettes d'avoir envoyé","Ce que tu dirais à toi-même il y a 10 ans","Ta théorie du complot préférée",
+  "Ce que tu as déjà fait pour éviter quelqu'un","Le message que tu regrettes d'avoir envoyé","Ce que tu dirais au toi d'il y a 10 ans","Ta théorie du complot préférée",
   "Le pire endroit où tu t'es endormi","Ce que tu caches dans ta chambre","Ta dernière dispute pour un truc débile","Le personnage de fiction dont tu étais amoureux",
   "La pire chose que tu as mangée","L'appli que tu ouvres le plus, et pourquoi","Un truc que tu n'as jamais avoué à {p}","Ce qui t'agace le plus chez les gens",
   "Ta pire tenue de soirée","Ce que tu ferais si tu étais invisible pendant une journée","Le pire surnom qu'on t'a donné","Ce que tu changerais chez {p}",
@@ -25,7 +25,7 @@ const SOFT = [
   "Avoue : le truc que tu as cassé sans jamais le dire","Avoue : une série que tu regardes en cachette",
   "Prédis : ce que {p} fera demain matin","Prédis : le prochain gros achat de {p}","Prédis : la phrase que {p} dira avant la fin de la soirée",
   "Prédis : qui ici se mariera en premier, et pourquoi","Prédis : la prochaine lubie de {p}",
-  "Écris comme {p} : son message pour annuler une soirée","Écris comme {p} : sa bio sur une appli de rencontre","Écris comme {p} : son discours de remerciement après un prix",
+  "Écris comme {p} : son message pour annuler une soirée","Écris comme {p} : sa bio sur une appli de rencontre","Écris comme {p} : son discours de remerciement en recevant un prix",
   "Écris comme {p} : son avis sur la pizza à l'ananas","Écris comme {p} : sa réaction en gagnant au loto",
   "Le pire conseil que tu pourrais donner à {p}","Ton excuse la plus extrême pour justifier un retard","La pire idée de start-up possible",
   "Ce que tu ferais si tu dirigeais le pays pendant une journée","Le slogan de ta vie","Le super-pouvoir inutile que tu voudrais avoir","Ce que tu crierais en gagnant une médaille d'or",
@@ -46,7 +46,7 @@ const HOT = [
   "Avoue : le dernier message coquin que tu as reçu, en 5 mots","Avoue : le contact que tu ne devrais plus avoir dans ton téléphone","Avoue : ton fantasme le plus banal",
   "Avoue : le truc le plus fou que tu as fait pour un crush","Prédis : le rencard idéal de {p}","Prédis : la phrase de drague préférée de {p}",
   "Écris comme {p} : son message de rupture","Écris comme {p} : son premier message sur une appli de rencontre","Écris comme {p} : son avis sur sa dernière nuit",
-  "La pire musique pour une nuit romantique","Ton pire bisou en 5 mots","La chose la plus gênante que tu as dite à un rencard","Ce que tu ferais avec la personne à ta gauche sur une île déserte",
+  "La pire musique pour une nuit romantique","Ton pire bisou en 5 mots","La chose la plus gênante que tu as dite pendant un rencard","Ce que tu ferais avec la personne à ta gauche sur une île déserte",
   "Le surnom le plus ridicule que tu as donné à quelqu'un au lit","Ce que tu caches dans ton téléphone","La pire excuse pour filer le matin","Ton plus gros râteau en une phrase",
   "Le pire endroit où tu as reçu un message coquin","Ce que tu as fait en soirée et nié le lendemain","La pire chose à crier pendant l'acte","Ce que tu demanderais au génie de la lampe, version 18+"
 ];
@@ -182,7 +182,7 @@ function awards(ids, s, nameOf){
   // Le meilleur pour une stat, en évitant si possible quelqu'un qui a déjà un trophée.
   const best = m => { const by = list => { let b = "", v = 0; list.forEach(id => { if((m[id] || 0) > v){ v = m[id]; b = id; } }); return b; }; const r = by(ids.filter(id => used.indexOf(id) < 0)) || by(ids); if(r) used.push(r); return r; };
   const d = best(s.det || {}); if(d) out.push([fl(FL.det, seed, 1), nameOf(d), tr(s.det[d] + " bonne" + (s.det[d] > 1 ? "s" : "") + " réponse" + (s.det[d] > 1 ? "s" : ""), PL(s.det[d], "", "", "correct guess", "correct guesses"))]);
-  const f = best(s.fool || {}); if(f) out.push([fl(FL.fool, seed, 2), nameOf(f), tr("A berné " + s.fool[f] + " fois", "Fooled people " + PL(s.fool[f], "", "", "time"))]);
+  const f = best(s.fool || {}); if(f) out.push([fl(FL.fool, seed, 2), nameOf(f), tr("A berné les autres " + s.fool[f] + " fois", "Fooled people " + PL(s.fool[f], "", "", "time"))]);
   const n = best(s.fnd || {}); if(n) out.push([fl(FL.fnd, seed, 3), nameOf(n), tr("Démasqué " + s.fnd[n] + " fois", "Unmasked " + PL(s.fnd[n], "", "", "time"))]);
   const b = best(s.bot || {}); if(b) out.push([fl(FL.bot, seed, 4), nameOf(b), tr("A repéré " + s.bot[b] + " fausse" + (s.bot[b] > 1 ? "s" : "") + " réponse" + (s.bot[b] > 1 ? "s" : ""), "Spotted " + PL(s.bot[b], "", "", "fake answer"))]);
   return out;
@@ -231,7 +231,7 @@ const DEF = {
   min: 3, max: 12,
   gages: [
     { ev: "demasque", label: tr("Démasqué par la majorité", "Unmasked by most players"), kind: "boit", n: 1 },
-    { ev: "berne", label: tr("Personne ne t'a trouvé", "Nobody guessed you"), kind: "distribue", n: 2 },
+    { ev: "berne", label: tr("Auteur jamais démasqué", "Nobody guessed you"), kind: "distribue", n: 2 },
     { ev: "piege", label: tr("Piégé par l'imposteur", "Fooled by the Impostor"), kind: "boit", n: 1 }
   ],
   rules: tr([
@@ -291,7 +291,7 @@ const DEF = {
           b.addEventListener("click", () => { const v = clip(ta.value, tw); if(v) ctx.send({ a: v }); });
         }
         const e = r.querySelector("[data-edit]"); if(e) e.addEventListener("click", () => { const old = clip(mine.a, tw); ctx.send({ a: "" }); setTimeout(() => { const t2 = root.querySelector("textarea"); if(t2){ t2.value = old; t2.dispatchEvent(new Event("input")); t2.focus(); } }, 60); });
-        const sk = r.querySelector("[data-skip]"); if(sk) armTap(sk, () => ctx.act(c => { if(c.s.phase === "write") toGuess(c); }), tr("Toucher encore pour continuer", "Tap again to continue"));
+        const sk = r.querySelector("[data-skip]"); if(sk) armTap(sk, () => ctx.act(c => { if(c.s.phase === "write") toGuess(c); }), tr("Touche encore pour continuer", "Tap again to continue"));
       });
       const done = live.filter(id => { const x = ctx.input(id); return x && clip(x.a, tw); }).length;
       txt(root, "[data-wait]", done + " / " + live.length + tr(" réponses", " answers"));
@@ -305,7 +305,7 @@ const DEF = {
           '<div class="choices">' + authors.filter(id => id !== me).map(id => '<button type="button" class="opt" data-v="' + esc(id) + '" aria-pressed="' + (voted === id) + '">' + esc(id === BOT ? tr("L'imposteur (le jeu)", "The Impostor (the game)") : nameOf(id)) + "</button>").join("") + "</div>" +
           dock('<p class="wait" data-wait></p>' + (ctx.isHost ? '<button class="link" type="button" data-skip style="align-self:center" hidden>' + tr("Révéler sans attendre", "Reveal without waiting") + "</button>" : "")), r => {
           r.querySelectorAll("[data-v]").forEach(b => b.addEventListener("click", () => ctx.send({ g: b.dataset.v })));
-          const sk = r.querySelector("[data-skip]"); if(sk) armTap(sk, () => ctx.act(c => { if(c.s.phase === "guess") toReveal(c); }), tr("Toucher encore pour révéler", "Tap again to reveal"));
+          const sk = r.querySelector("[data-skip]"); if(sk) armTap(sk, () => ctx.act(c => { if(c.s.phase === "guess") toReveal(c); }), tr("Touche encore pour révéler", "Tap again to reveal"));
         });
         const done = live.filter(id => { const x = ctx.input(id); return x && x.g; }).length;
         txt(root, "[data-wait]", (voted ? tr("Vote enregistré · ", "Vote saved · ") : "") + done + " / " + live.length + " votes");
@@ -318,7 +318,7 @@ const DEF = {
         if(isBot) note = '<p class="sm">' + tr("Fausse réponse glissée par le jeu. ", "Fake answer slipped in by the game. ") + (right.length ? tr("Bien vu !", "Nice catch!") : tr("Tout le monde s'est fait avoir.", "Everyone fell for it.")) + "</p>";
         else if(wrong.length) note = '<p class="sm">' + tr(esc(nameOf(a.id)) + " a berné " + wrong.length + " joueur" + (wrong.length > 1 ? "s" : "") + " : ", esc(nameOf(a.id)) + " fooled " + PL(wrong.length, "", "", "player") + ": ") + esc(wrong.map(v => nameOf(v) + " (" + nameOf(votes[v]) + ")").join(", ")) + "</p>";
         if(tw === "perfect" && !isBot && !right.length && voters.length >= 2) note += '<p class="note-box">' + tr("Crime parfait ! " + esc(nameOf(a.id)) + " prend 3 points bonus.", "Perfect crime! " + esc(nameOf(a.id)) + " gets 3 bonus points.") + "</p>";
-        if(tw === "lone" && right.length === 1 && !isBot) note += '<p class="note-box">' + tr("Flair solitaire : " + esc(nameOf(right[0])) + " est le seul à avoir trouvé : +3 !", "Lone wolf: " + esc(nameOf(right[0])) + " was the only one to get it: +3!") + "</p>";
+        if(tw === "lone" && right.length === 1 && !isBot) note += '<p class="note-box">' + tr("Flair solitaire : " + esc(nameOf(right[0])) + " est le seul à avoir trouvé, +3 !", "Lone wolf: " + esc(nameOf(right[0])) + " was the only one to get it: +3!") + "</p>";
         const gk = Object.keys(gain).filter(id => gain[id]);
         screen(root, "r" + s.k + ctx.isHost, CSS + head + '<span class="eyebrow">' + tr("C'était", "It was") + '</span><div class="who">' + esc(nameOf(a.id)) + "</div>" +
           '<div class="field"><span class="eyebrow">' + tr("Ont trouvé", "Got it right") + '</span><div class="qd-ok">' + (right.length ? right.map(v => '<span class="chip ok">' + esc(nameOf(v)) + "</span>").join("") : '<span class="sm">' + tr("Personne !", "Nobody!") + "</span>") + "</div></div>" + note +

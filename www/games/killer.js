@@ -41,7 +41,7 @@ const HOT = [
   "Fais dire « préliminaires » à ta cible","Fais raconter son pire plan d'un soir à ta cible","Fais avouer son nombre de partenaires à ta cible",
   "Fais dire à ta cible qui elle trouve le plus sexy ici","Fais dire « capote » à ta cible","Fais en sorte que ta cible te montre son dernier match sur une appli de rencontre",
   "Fais en sorte que ta cible te fasse un compliment sur ton physique","Fais avouer un fantasme à ta cible","Fais dire « j'ai envie de toi » à ta cible, à n'importe qui",
-  "Fais raconter à ta cible l'endroit le plus insolite où elle a fait l'amour","Fais en sorte que ta cible te raconte son premier baiser","Fais mimer une position du Kamasutra à ta cible",
+  "Fais avouer à ta cible l'endroit le plus insolite où elle a fait l'amour","Fais en sorte que ta cible te raconte son premier baiser","Fais mimer une position du Kamasutra à ta cible",
   "Fais dire « menottes » à ta cible","Fais avouer à ta cible son plus gros coup de foudre","Fais en sorte que ta cible te masse les épaules pendant 10 secondes","Fais en sorte que ta cible t'appelle « mon cœur »",
   "Fais en sorte que ta cible t'explique sa technique de drague","Fais raconter son pire râteau à ta cible","Fais pousser un soupir langoureux à ta cible","Fais avouer à ta cible si elle a déjà simulé",
   "Fais enlever un vêtement à ta cible (veste, chaussette, ce qu'elle veut)","Fais en sorte que ta cible te fasse un bisou sur la joue","Fais avouer à ta cible la couleur de ses sous-vêtements",
@@ -132,7 +132,7 @@ const MIN = 60000;
 const EVENTS = [
   { id: "prime", name: tr("Prime sur une tête", "Bounty"), desc: tr("Celui qui élimine {p} gagne 2 points de bonus. Prime valable 10 minutes.", "Whoever takes out {p} gets 2 bonus points. Bounty lasts 10 minutes."), ms: 10 * MIN, ok: o => o.n >= 3 },
   { id: "treve", name: tr("Trêve", "Truce"), desc: tr("Pendant 3 minutes, aucune mission ne peut être annoncée. Préparez vos coups en douce.", "For 3 minutes, nobody can claim a mission. Set up your moves on the sly."), ms: 3 * MIN },
-  { id: "express", name: tr("Contrat express", "Express contract"), desc: tr("Pendant 10 minutes, tu peux aussi éliminer ta cible avec la mission bonus : « {m} ». Elle rapporte 1 point de plus.", "For 10 minutes, you can also take out your target with the bonus mission: “{m}”. It's worth 1 extra point."), ms: 10 * MIN },
+  { id: "express", name: tr("Contrat express", "Express contract"), desc: tr("Pendant 10 minutes, tu peux aussi éliminer ta cible avec la mission bonus : “{m}”. Elle rapporte 1 point de plus.", "For 10 minutes, you can also take out your target with the bonus mission: “{m}”. It's worth 1 extra point."), ms: 10 * MIN },
   { id: "double", name: tr("Chasse ouverte", "Open season"), desc: tr("Pendant 10 minutes, chaque élimination rapporte 2 points.", "For 10 minutes, every kill is worth 2 points."), ms: 10 * MIN },
   { id: "melange", name: tr("Grand chambardement", "Big shake-up"), desc: tr("Les cibles sont redistribuées et chacun reçoit une nouvelle mission. Allez vite voir la vôtre !", "Targets are reshuffled and everyone gets a new mission. Go check yours!"), ok: o => o.n >= 3 },
   { id: "inverse", name: tr("Demi-tour", "U-turn"), desc: tr("La chaîne s'inverse : tu chasses maintenant la personne qui te chassait. Nouvelles missions pour tous.", "The chain flips: you're now hunting the person who was hunting you. New missions for everyone."), ok: o => o.n >= 3 },
@@ -222,7 +222,7 @@ function ptsTxt(n, lg){ return T(lg, n + " pt" + (n > 1 ? "s" : ""), n + (n === 
 function graveHTML(log, nameOf){
   const l = A(log).slice().reverse();
   if(!l.length) return '<p class="sm">' + tr("Personne n'est encore tombé.", "Nobody has fallen yet.") + "</p>";
-  return '<ul class="list">' + l.map(x => '<li><span class="t">' + esc(nameOf(x.on)) + '</span><span class="by">' + (x.how === "u" ? tr("Démasqué par ", "Unmasked by ") + esc(nameOf(x.by)) : tr("Éliminé par ", "Taken out by ") + esc(nameOf(x.by)) + (x.m ? tr(" · « " + esc(x.m) + " »", " · “" + esc(x.m) + "”") : "")) + (x.b === "p" ? tr(" · prime encaissée", " · bounty claimed") : x.x ? tr(" · contrat express", " · express contract") : "") + "</span></li>").join("") + "</ul>";
+  return '<ul class="list">' + l.map(x => '<li><span class="t">' + esc(nameOf(x.on)) + '</span><span class="by">' + (x.how === "u" ? tr("Démasqué par ", "Unmasked by ") + esc(nameOf(x.by)) : tr("Éliminé par ", "Taken out by ") + esc(nameOf(x.by)) + (x.m ? tr(" · “" + esc(x.m) + "”", " · “" + esc(x.m) + "”") : "")) + (x.b === "p" ? tr(" · prime encaissée", " · bounty claimed") : x.x ? tr(" · contrat express", " · express contract") : "") + "</span></li>").join("") + "</ul>";
 }
 /* ----- Trophées de fin : tirés des stats de la partie, formulés différemment à chaque fois ----- */
 function seedOf(str){ let h = 7; String(str).split("").forEach(ch => { h = (h * 31 + ch.charCodeAt(0)) >>> 0; }); return h; }
@@ -385,12 +385,12 @@ const DEF = {
     let html = CSS, dk = "";
     if(!isAlive){
       const dead = W.log.find(x => x.on === me);
-      html += banner + '<div class="card acc"><span class="eyebrow">' + tr("Tu es mort", "You're dead") + '</span><div class="big">' + (dead ? (dead.how === "u" ? tr("Démasqué par ", "Unmasked by ") + esc(nameOf(dead.by)) : tr("Éliminé par ", "Taken out by ") + esc(nameOf(dead.by))) : tr("Éliminé", "Taken out")) + "</div>" + (dead && dead.m ? '<p class="sm">' + tr("Mission : « " + esc(dead.m) + " »", "Mission: “" + esc(dead.m) + "”") + "</p>" : "") +
+      html += banner + '<div class="card acc"><span class="eyebrow">' + tr("Tu es mort", "You're dead") + '</span><div class="big">' + (dead ? (dead.how === "u" ? tr("Démasqué par ", "Unmasked by ") + esc(nameOf(dead.by)) : tr("Éliminé par ", "Taken out by ") + esc(nameOf(dead.by))) : tr("Éliminé", "Taken out")) + "</div>" + (dead && dead.m ? '<p class="sm">' + tr("Mission : “" + esc(dead.m) + "”", "Mission: “" + esc(dead.m) + "”") + "</p>" : "") +
         '<p class="sm">' + tr("Tu peux maintenant suivre toutes les chasses. Chut, ne dis rien !", "You can now follow every hunt. Shh, don't say a word!") + "</p></div>" +
         '<div class="field"><span class="eyebrow">' + tr("Qui chasse qui", "Who's hunting whom") + '</span><ul class="kl-chain">' + alive.map(h => "<li><span>" + esc(nameOf(h)) + "</span><span>→ " + esc(nameOf(tgt[h])) + "</span></li>").join("") + "</ul></div>";
     } else if(onMe){
       const om = esc(onMe.x && W.ev && W.ev.m ? W.ev.m : mis[onMe.by]);
-      html += '<div class="pass" style="min-height:0"><span class="eyebrow">' + tr("Alerte", "Alert") + '</span><div class="who">' + esc(nameOf(onMe.by)) + "</div><p>" + tr("dit avoir réussi " + (onMe.x ? "le contrat express" : "sa mission") + " sur toi :", "says they pulled off " + (onMe.x ? "the express contract" : "their mission") + " on you:") + '</p></div><div class="card acc"><div class="kl-m">' + tr("« " + om + " »", "“" + om + "”") + "</div></div>";
+      html += '<div class="pass" style="min-height:0"><span class="eyebrow">' + tr("Alerte", "Alert") + '</span><div class="who">' + esc(nameOf(onMe.by)) + "</div><p>" + tr("dit avoir réussi " + (onMe.x ? "le contrat express" : "sa mission") + " sur toi :", "says they pulled off " + (onMe.x ? "the express contract" : "their mission") + " on you:") + '</p></div><div class="card acc"><div class="kl-m">' + tr("“" + om + "”", "“" + om + "”") + "</div></div>";
       dk = dock('<div class="row"><button class="btn bad" type="button" data-yes>' + tr("Oui, je suis mort", "Yes, I'm dead") + '</button><button class="btn ghost" type="button" data-no>' + tr("Non, c'est faux", "No, that's not true") + "</button></div>");
     } else {
       html += '<span class="eyebrow">' + tr(alive.length + " joueurs encore en vie", alive.length + (alive.length === 1 ? " player still alive" : " players still alive")) + " · " + ptsTxt(score(W, me)) + "</span>" + banner + (note ? '<p class="note-box">' + esc(noteTxt(note)) + "</p>" : "") +
@@ -461,7 +461,7 @@ const DEF = {
       const go = (ph, arg) => {
         at = ph; arg0 = arg || "";
         if(ph === "setup"){
-          screen(root, "su" + sel.join() + jk + evs, CSS + '<p class="howto">' + tr("Le téléphone passe de main en main : chacun découvre en secret sa cible et sa mission. Ensuite on le pose au milieu, et on revient dessus quand on a réussi sa mission, ou pour la relire.", "The phone goes around: everyone secretly sees their target and mission. Then leave it in the middle, and come back to it when you've pulled off your mission, or to reread it.") + "</p>" +
+          screen(root, "su" + sel.join() + jk + evs, CSS + '<p class="howto">' + tr("Le téléphone passe de main en main : chacun découvre en secret sa cible et sa mission. Ensuite, on le pose au milieu : chacun y revient pour annoncer une mission réussie ou relire la sienne.", "The phone goes around: everyone secretly sees their target and mission. Then leave it in the middle, and come back to it when you've pulled off your mission, or to reread it.") + "</p>" +
             '<div class="field"><span class="eyebrow">' + tr("Missions", "Missions") + "</span>" + packButtons(sel) + "</div>" +
             '<div class="field"><span class="eyebrow">' + tr("Variantes", "Variants") + '</span><div class="packs">' + toggle("jk", jk, tr("Un joker par joueur", "One joker per player"), tr("Pour changer une fois de mission", "To swap your mission once")) + toggle("ev", evs, tr("Coups de théâtre", "Plot twists"), tr("Primes, trêves, contrats express, cibles mélangées", "Bounties, truces, express contracts, shuffled targets")) + "</div></div>" +
             dock('<button class="btn acc" type="button" data-go>' + tr("Distribuer les missions", "Deal the missions") + "</button>"), r => {
@@ -482,13 +482,13 @@ const DEF = {
         } else if(ph === "deal"){
           const id = String(i);
           screen(root, "de" + i, CSS + '<span class="eyebrow">' + esc(names[i]) + '</span><div class="card acc"><span class="eyebrow">' + tr("Ta cible", "Your target") + '</span><div class="who">' + esc(nameOf(W.tgt[id])) + '</div><span class="eyebrow">' + tr("Ta mission", "Your mission") + '</span><div class="kl-m">' + esc(W.mis[id]) + '</div></div><p class="howto">' + tr("Retiens-la bien. Tu pourras la relire en touchant ton prénom.", "Remember it well. You can reread it by tapping your name.") + "</p>" +
-            dock('<button class="btn acc" type="button" data-n>' + tr("J'ai retenu, cacher", "Got it, hide") + "</button>"), r => {
+            dock('<button class="btn acc" type="button" data-n>' + tr("C'est noté, cacher ma mission", "Got it, hide my mission") + "</button>"), r => {
             r.querySelector("[data-n]").addEventListener("click", () => { i++; if(i < names.length) go("pass"); else go("main"); });
           });
         } else if(ph === "main"){
           if(news){ const e = news; news = null; go("event", e); return; }
           const e = evNow();
-          screen(root, "ma" + W.log.length + W.alive.length + e.on + (W.ev ? W.ev.at : 0), CSS + '<span class="eyebrow">' + tr(W.alive.length + " joueurs encore en vie", W.alive.length + (W.alive.length === 1 ? " player still alive" : " players still alive")) + "</span>" + bannerL() + '<p class="howto">' + tr("Posez le téléphone au milieu. Touche ton prénom pour relire ta mission, annoncer que tu l'as réussie, ou accuser ton chasseur.", "Leave the phone in the middle. Tap your name to reread your mission, claim you pulled it off, or accuse your hunter.") + "</p>" +
+          screen(root, "ma" + W.log.length + W.alive.length + e.on + (W.ev ? W.ev.at : 0), CSS + '<span class="eyebrow">' + tr(W.alive.length + " joueurs encore en vie", W.alive.length + (W.alive.length === 1 ? " player still alive" : " players still alive")) + "</span>" + bannerL() + '<p class="howto">' + tr("Posez le téléphone au milieu. Chacun touche son prénom pour relire sa mission, annoncer qu'il l'a réussie ou accuser son chasseur.", "Leave the phone in the middle. Tap your name to reread your mission, claim you pulled it off, or accuse your hunter.") + "</p>" +
             '<div class="choices">' + W.alive.map(id => '<button type="button" class="opt" data-p="' + id + '">' + esc(nameOf(id)) + (score(W, id) ? ' <span class="pill">' + ptsTxt(score(W, id)) + "</span>" : "") + "</button>").join("") + "</div>" +
             '<div class="field"><span class="eyebrow">' + tr("Cimetière", "Graveyard") + "</span>" + graveHTML(W.log, nameOf) + "</div>" +
             dock('<button class="link warn" type="button" data-stop style="align-self:center">' + tr("Arrêter et voir le classement", "Stop and see the rankings") + "</button>"), r => {
@@ -548,7 +548,7 @@ const DEF = {
           const heir = L2.how === "k" && !(news && RETARGET[news.id]) ? L2.by : "";
           const lg = W.log[W.log.length - 1] || {};
           screen(root, "nw" + W.log.length, '<div class="pass"><span class="eyebrow">' + (L2.how === "u" ? tr("Démasqué !", "Unmasked!") : tr("Éliminé !", "Taken out!")) + '</span><div class="who">' + esc(nameOf(L2.on)) + "</div><p>" +
-            (L2.how === "u" ? tr(esc(nameOf(L2.by)) + " a démasqué son chasseur.", esc(nameOf(L2.by)) + " unmasked their hunter.") : tr("par " + esc(nameOf(L2.by)) + ", avec la mission « " + esc(L2.m) + " ».", "by " + esc(nameOf(L2.by)) + ", with the mission “" + esc(L2.m) + "”.")) + "</p>" +
+            (L2.how === "u" ? tr(esc(nameOf(L2.by)) + " a démasqué son chasseur.", esc(nameOf(L2.by)) + " unmasked their hunter.") : tr("par " + esc(nameOf(L2.by)) + ", avec la mission “" + esc(L2.m) + "”.", "by " + esc(nameOf(L2.by)) + ", with the mission “" + esc(L2.m) + "”.")) + "</p>" +
             (lg.p > 1 ? '<p class="sm">' + tr(esc(nameOf(L2.by)) + " marque " + ptsTxt(lg.p) + (lg.b === "p" ? ", prime comprise" : "") + ".", esc(nameOf(L2.by)) + " scores " + ptsTxt(lg.p) + (lg.b === "p" ? ", bounty included" : "") + ".") + "</p>" : "") + "</div>" +
             dock(over ? '<button class="btn acc" type="button" data-end>' + tr("Voir le vainqueur", "See the winner") + "</button>"
               : heir ? '<button class="btn acc" type="button" data-heir>' + esc(nameOf(heir)) + tr(" : voir ma nouvelle cible", ": see my new target") + "</button>" : '<button class="btn acc" type="button" data-n>' + tr("Continuer", "Continue") + "</button>"), r => {

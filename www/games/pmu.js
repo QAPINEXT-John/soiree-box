@@ -38,7 +38,7 @@ function simulate(L, tw){
       if(rev[k] || !SU.every(x => pos[x] >= k)) continue;
       rev[k] = true; const t = traps[k - 1], ts = cs(t);
       pos[ts] = Math.max(0, pos[ts] - 1);
-      ev.push({ c: t, su: ts, pos: Object.assign({}, pos), trap: k, msg: tr("Étape " + k + " : la carte piège est " + SUN[ts] + ", qui recule !", "Step " + k + ": the trap card is " + SUN[ts] + ", who moves back!") });
+      ev.push({ c: t, su: ts, pos: Object.assign({}, pos), trap: k, msg: tr("Étape " + k + " : la carte piège est un " + SUN[ts].toLowerCase() + " : " + SUN[ts] + " recule !", "Step " + k + ": the trap card is " + SUN[ts] + ", who moves back!") });
     }
   }
   return { ev, win, traps };
@@ -122,7 +122,7 @@ SB.register({
     "Avant la course, chacun choisit un cheval et sa mise (de 1 à 5).",
     "Les cartes du paquet se retournent une par une : chaque carte fait avancer d'une case l'as de sa couleur.",
     "Quand les 4 chevaux ont passé une étape, on retourne la carte piège de cette étape : le cheval de sa couleur recule d'une case.",
-    "Le premier qui franchit la ligne gagne. Ceux qui l'ont joué distribuent leur mise × 2, les autres prennent leur mise.",
+    "Le premier qui franchit la ligne gagne. Ceux qui l'ont joué distribuent leur mise × 2, les autres boivent leur mise.",
     "Coups de théâtre : cheval dopé, chute générale, cote de l'outsider (le cheval le moins parié rapporte double).",
     "Plusieurs courses : les gains s'additionnent, le meilleur parieur gagne."
   ], [
@@ -168,7 +168,7 @@ SB.register({
       const done = live.filter(id => { const x = ctx.input(id); return x && x.go; });
       screen(root, "bt" + s.k + sel + m + (inp.go ? 1 : 0) + JSON.stringify(cnt), head + trackHTML(s.L, []) +
         (ctx.playing ? '<span class="eyebrow">' + tr("Ton cheval", "Your horse") + "</span>" + horseBtns(sel, cnt) +
-          '<div class="pm-m"><button type="button" class="gs-b" data-m="-1" aria-label="' + tr("Moins", "Less") + '">−</button><b>' + m + '</b><button type="button" class="gs-b" data-m="1" aria-label="' + tr("Plus", "More") + '">+</button></div><p class="sm" style="text-align:center; margin:0">' + tr("Ta mise : si ton cheval gagne, tu distribues " + (m * 2) + " ; sinon tu prends " + m + ".", "Your bet: if your horse wins you hand out " + (m * 2) + "; otherwise you take " + m + ".") + "</p>" : "") +
+          '<div class="pm-m"><button type="button" class="gs-b" data-m="-1" aria-label="' + tr("Moins", "Less") + '">−</button><b>' + m + '</b><button type="button" class="gs-b" data-m="1" aria-label="' + tr("Plus", "More") + '">+</button></div><p class="sm" style="text-align:center; margin:0">' + tr("Ta mise : si ton cheval gagne, tu distribues " + (m * 2) + " ; sinon, tu en bois " + m + ".", "Your bet: if your horse wins you hand out " + (m * 2) + "; otherwise you take " + m + ".") + "</p>" : "") +
         SB.u.dock(ctx.playing ? '<button class="btn acc" type="button" data-go' + (sel ? "" : " disabled") + ">" + (inp.go ? tr("Pari validé · changer", "Bet placed · change") : tr("Valider mon pari", "Place my bet")) + '</button><p class="wait" data-wait></p>' : '<p class="wait" data-wait></p>'), r => {
         r.querySelectorAll("[data-hs]").forEach(b => b.addEventListener("click", () => { buzz(8); ctx.send({ h: b.dataset.hs, m, go: 0 }); }));
         r.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => { buzz(6); ctx.send({ h: sel, m: Math.max(1, Math.min(5, m + +b.dataset.m)), go: 0 }); }));

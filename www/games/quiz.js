@@ -126,7 +126,7 @@ const BET_MS = 12000;
 SB.register({
   id: "quiz", name: tr("Quiz", "Quiz"), glyph: "?!", pitch: tr("Mise sur ta culture G", "Bet on what you know"), hot: false, ticks: true,
   accent: { light: "#2f7de1", dark: "#6fb0ff" },
-  tag: tr("QCM, estimations et vrai ou faux. Avant chaque question, mise 1, 2 ou 3 points sur ta confiance : gagné, tu les prends, raté, tu les perds.", "Multiple choice, estimates and true or false. Before each question, bet 1, 2 or 3 points: right, you win them; wrong, you lose them."),
+  tag: tr("QCM, estimations et vrai ou faux. Avant chaque question, mise 1, 2 ou 3 points sur ta confiance : gagné : tu les prends ; raté : tu les perds.", "Multiple choice, estimates and true or false. Before each question, bet 1, 2 or 3 points: right, you win them; wrong, you lose them."),
   min: 2, max: 20,
   gages: [
     { ev: "faux", label: tr("Mauvaise réponse (× la mise)", "Wrong answer (× the bet)"), kind: "boit", n: 1 },
@@ -135,8 +135,8 @@ SB.register({
   ],
   rules: tr([
     "Avant chaque question, on voit le thème et le type. Chacun mise 1, 2 ou 3 points selon sa confiance.",
-    "QCM et vrai ou faux : bonne réponse = + la mise, mauvaise = − la mise. Le plus rapide des bonnes réponses gagne 1 point de plus.",
-    "Estimation : tape un nombre. Le plus proche gagne la mise + 1 (+ 2 s'il tombe pile). Le plus loin perd sa mise.",
+    "QCM et vrai ou faux : bonne réponse = + la mise, mauvaise = − la mise. S'il y a plusieurs bonnes réponses, la plus rapide gagne 1 point de plus.",
+    "Estimation : tape un nombre. Le plus proche gagne sa mise + 1 (sa mise + 2 s'il tombe pile). Le plus loin perd sa mise.",
     "Coups de théâtre : question en or (tout compte double), chrono éclair (10 secondes), tapis (tout le monde mise 3).",
     "Thèmes : culture G, pop culture, histoire, géo, sport, bouffe, insolite, soirée, culture coquine (18+), enfants, et vos propres questions.",
     "En équipes (2 à 4) : à chaque question, un capitaine différent mise et répond pour son équipe. Mettez-vous d'accord ! Les points vont à l'équipe, et une mauvaise réponse donne un gage à toute l'équipe."

@@ -30,7 +30,7 @@ const VT = {
   "Quel est le pire cadeau que tu as reçu, et l'as-tu revendu ?",
   "Quelle habitude bizarre as-tu quand personne ne te regarde ?",
   "Quel est ton pire fail en public ?",
-  "Adulte, as-tu déjà fait pipi ailleurs qu'aux toilettes ? Où ?",
+  "Depuis que tu es adulte, as-tu déjà fait pipi ailleurs qu'aux toilettes ? Où ?",
   "Quand as-tu pleuré pour la dernière fois, et pourquoi ?",
   "De qui es-tu le plus jaloux ici, et pourquoi ?",
   "Quel est le pire job que tu as fait ?",
@@ -210,7 +210,7 @@ const VT = {
   "Quand t'es-tu senti le plus désirable ?",
   "As-tu déjà échangé des photos coquines ?",
   "As-tu déjà fait un plan à trois, ou failli en faire un ?",
-  "Avec qui ici aurais-tu le plus d'alchimie ?",
+  "Qui ici serait le pire choix pour toi en couple, et pourquoi ?",
   "Quelle est ta plus grosse peur au lit ?",
   "Quelle est la chose que tu n'as jamais osé demander à un partenaire ?",
   "As-tu déjà pleuré après une rupture que tu avais provoquée ?",
@@ -264,7 +264,7 @@ const VT = {
   "As-tu déjà payé pour un service coquin en ligne ?",
   "As-tu déjà fait du sexting avec un inconnu ?",
   "Combien de temps ont duré tes plus longs préliminaires ?",
-  "As-tu déjà eu une MST ? Comment l'as-tu annoncé ?",
+  "As-tu déjà eu une MST ? Comment l'as-tu annoncée ?",
   "Quel fétiche as-tu qui te surprend toi-même ?",
   "As-tu déjà fait l'amour sur une plage ? Le sable, alors ?",
   "Quelle est la chose la plus dégoûtante qui t'est arrivée pendant un rapport ?",
@@ -295,7 +295,7 @@ const VT = {
   "Quel est le pire endroit où tu as eu un rapport ?",
   "As-tu déjà eu des menottes ou des liens ? Qui tenait la clé ?",
   "As-tu déjà eu une expérience avec quelqu'un du même sexe ? Raconte.",
-  "As-tu déjà fait l'amour pendant tes règles ou celles de ta ou ton partenaire ?",
+  "As-tu déjà fait l'amour pendant tes règles ou celles de ton ou ta partenaire ?",
   "Quel est le jeu de rôle que tu as déjà fait, ou que tu voudrais faire ?",
   "As-tu déjà filmé un moment intime à deux, d'un commun accord ? Vous l'avez gardé ?",
   "As-tu déjà fait un pari coquin ? Qui a gagné ?",
@@ -454,7 +454,7 @@ const AC = {
   "Fais un câlin de 10 secondes à la personne de ton choix qui accepte.",
   "Imite un gémissement de film romantique pendant 3 secondes.",
   "Dis à {A} ce que tu trouves le plus attirant chez lui ou elle.",
-  "Fais un défilé en sous-vêtements imaginaire, en restant habillé, et commente-le.",
+  "Fais un défilé imaginaire en sous-vêtements (tout habillé) et commente-le.",
   "Fais un bisou esquimau à {A}, s'il ou elle est d'accord.",
   "Écris un SMS coquin à ton ou ta partenaire, ou à ton crush, et montre-le avant d'envoyer.",
   "Fais un massage des mains à {A} avec de la crème, si {A} accepte.",
@@ -492,7 +492,7 @@ const AC = {
   "Masse les pieds de {A} pendant 30 secondes, si {A} est d'accord.",
   "Raconte ton fantasme le plus soft en chuchotant.",
   "Choisis la personne qui a le plus beau sourire et dis-lui pourquoi.",
-  "Fais un câlin par derrière à {A}, si {A} accepte.",
+  "Fais un câlin par-derrière à {A}, si {A} accepte.",
   "Mets du baume à lèvres de la façon la plus sensuelle possible.",
   "Dépose un bisou sur le poignet de {A}, si {A} est d'accord ; sinon, fais-en un à ta propre main.",
   "Montre au groupe comment tu embrasses, sur ta main.",
@@ -507,7 +507,7 @@ const AC = {
   "Laisse la personne choisie par le groupe te faire un bisou sur le visage, où elle veut sauf sur la bouche, si vous êtes d'accord.",
   "Pose ta main sur le cœur de {A} pendant 10 secondes, si {A} est d'accord.",
   "Raconte ton pire rencard en mimant la personne en face.",
-  "Ferme les yeux et laisse la personne de ton choix qui accepte te faire un bisou sur la joue, puis devine qui.",
+  "Ferme les yeux : le groupe désigne en silence quelqu'un qui accepte de te faire un bisou sur la joue. Devine qui.",
   "Souffle doucement dans le cou de {A}, si {A} est d'accord.",
   "Imite ta tête quand tu reçois un message de ton crush.",
   "Fais un strip-tease de ta veste ou de ton pull en musique.",
@@ -1202,7 +1202,7 @@ const GAGES = [
   "imite le joueur de ton choix pendant 30 secondes", "reste debout sur un pied pendant 1 minute", "danse 20 secondes sans musique",
   "laisse le joueur à ta gauche te coiffer comme il veut", "parle à la troisième personne jusqu'à ton prochain tour", "raconte des blagues jusqu'à faire rire quelqu'un",
   "fais une déclaration d'amour dramatique à un objet de la pièce", "mange une cuillère du condiment choisi par le groupe", "envoie un emoji au hasard au 5e contact de ton téléphone",
-  "porte un vêtement à l'envers jusqu'à la fin de la partie", "fais 20 squats en comptant à voix haute", "laisse le groupe choisir ta photo de profil pour 1 heure",
+  "porte un vêtement à l'envers jusqu'à la fin de la partie", "fais 20 squats en comptant à voix haute", "laisse le groupe choisir ta photo de profil pendant 1 heure",
   "fais une pub de 20 secondes pour le verre de ton voisin", "réponds uniquement par des questions jusqu'à ton prochain tour", "fais le cri d'un animal choisi par le groupe chaque fois qu'on te parle, jusqu'à ton prochain tour",
   "garde une cuillère dans la bouche jusqu'à ton prochain tour", "masse les épaules du joueur à ta droite pendant 30 secondes, s'il est d'accord", "fais ta meilleure imitation d'une star du rap"
 ];
@@ -1399,16 +1399,16 @@ const liveIds = ctx => ctx.ids.filter(id => ctx.here(id));
 const DEF = {
   id: "actionverite", name: tr("Action ou vérité", "Truth or Dare"), glyph: tr("A/V", "T/D"), pitch: tr("Une vérité à avouer ou une action à faire. Refuser coûte cher.", "A truth to confess or a dare to do. Refusing costs you."), hot: true,
   accent: { light: "#ff3d6e", dark: "#ff3d6e" },
-  tag: tr("Chacun son tour choisit : une vérité à avouer devant tout le monde, ou une action à faire tout de suite. Refuser, c'est boire (ou prendre un gage).", "Take turns choosing: a truth to confess in front of everyone, or a dare to do right now. Refuse and you drink (or do a forfeit)."),
+  tag: tr("À tour de rôle, chacun choisit : une vérité à avouer devant tout le monde, ou une action à faire tout de suite. Refuser, c'est boire (ou prendre un gage).", "Take turns choosing: a truth to confess in front of everyone, or a dare to do right now. Refuse and you drink (or do a forfeit)."),
   min: 2, max: 16,
   gages: [{ ev: "action", label: tr("Action relevée", "Dare done"), kind: "distribue", n: 1 }],
   rules: [
-    tr("Chacun son tour choisit Vérité (+1 point) ou Action (+2 points). Au hasard : 1 point bonus.", "On your turn, pick Truth (+1 point) or Dare (+2 points). Random: 1 bonus point."),
+    tr("À tour de rôle, chacun choisit Action (+2 points) ou Vérité (+1 point). Au hasard : 1 point bonus.", "On your turn, pick Truth (+1 point) or Dare (+2 points). Random: 1 bonus point."),
     tr("Le groupe juge : si tu as répondu franchement ou relevé le défi, tu marques. Tu peux refuser, mais ça coûte des gorgées (ou un gage en mode sans alcool).", "The group judges: if you answered honestly or completed the dare, you score. You can refuse, but it costs you sips (or a forfeit in alcohol-free mode)."),
     tr("Deux jokers par partie pour passer une carte sans sanction.", "Two jokers per game to skip a card with no penalty."),
     tr("Trois niveaux : Classique, Hot (18+) et Hard (18+, très cru). En mode progressif, ça monte au fil des tours.", "Three levels: Classic, Hot (18+) and Hard (18+, very explicit). In progressive mode, things heat up as the rounds go by."),
     tr("Coups de théâtre : quitte ou double, le groupe décide, tout le monde y passe, effet miroir, sans filet, montée en température.", "Twists: double or nothing, the group decides, everyone's in, mirror effect, no safety net, turning up the heat."),
-    tr("Les actions qui touchent quelqu'un d'autre se font seulement si cette personne est d'accord. Les cartes ne reviennent pas d'une soirée à l'autre.", "Dares that involve touching someone only happen if that person agrees. Cards don't come back from one party to the next.")
+    tr("Les actions qui touchent quelqu'un d'autre se font seulement si cette personne est d'accord. Les cartes déjà tirées sur ce téléphone reviennent en dernier.", "Dares that involve touching someone only happen if that person agrees. Cards already drawn on this phone come back last.")
   ],
   options: [
     { id: "laps", label: tr("Tours de table", "Rounds"), type: "seg", def: 3, values: [{ v: 2, label: "2" }, { v: 3, label: "3" }, { v: 5, label: "5" }, { v: 8, label: "8" }] },
@@ -1476,7 +1476,7 @@ const DEF = {
       let E = null;
       function setup(){
         const tog = (k, on, nm, ds) => '<button type="button" class="pack" data-' + k + ' aria-pressed="' + on + '"><span class="box">✓</span><span class="tx"><span class="nm">' + nm + '</span><span class="ds">' + ds + "</span></span></button>";
-        screen(root, "su" + sel.join() + laps + mode + prog + twOn, CSS + '<p class="howto">' + tr("Posez le téléphone au milieu. Chacun son tour choisit vérité ou action, le groupe juge, et on passe au suivant.", "Put the phone in the middle. On your turn, pick truth or dare, the group judges, then it's the next player's go.") + "</p>" +
+        screen(root, "su" + sel.join() + laps + mode + prog + twOn, CSS + '<p class="howto">' + tr("Posez le téléphone au milieu. À tour de rôle, chacun choisit action ou vérité, le groupe juge, et on passe au suivant.", "Put the phone in the middle. On your turn, pick truth or dare, the group judges, then it's the next player's go.") + "</p>" +
           '<div class="field"><span class="eyebrow">' + tr("Tours de table", "Rounds") + '</span><div class="seg">' + [2, 3, 5, 8].map(n => '<button type="button" data-l="' + n + '" aria-pressed="' + (n === laps) + '">' + n + "</button>").join("") + "</div></div>" +
           '<div class="field"><span class="eyebrow">' + tr("Niveaux", "Levels") + '</span><div class="packs">' + LEVELS.filter(SB.packOk).map(l => '<button type="button" class="pack' + (l.hot ? " hot" : "") + '" data-k="' + l.v + '" aria-pressed="' + (sel.indexOf(l.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(l.label) + (l.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(l.desc) + '</span></span><span class="ct">' + (UI.VT[l.v].length + UI.AC[l.v].length) + "</span></button>").join("") + "</div></div>" +
           (SB.hard() ? '<div class="field"><span class="eyebrow">' + tr("Sanctions", "Penalties") + '</span><div class="seg"><button type="button" data-m="drink" aria-pressed="' + (mode === "drink") + '">' + tr("Gorgées", "Sips") + '</button><button type="button" data-m="soft" aria-pressed="' + (mode === "soft") + '">' + tr("Sans alcool", "Alcohol-free") + "</button></div></div>" : "") +

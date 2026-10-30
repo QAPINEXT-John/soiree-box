@@ -178,7 +178,7 @@ function roundEnd(E, w, nameOf){
   E.winner = w; E.gain = pts; E.extra = ""; E.ban = ""; E.dbl = false;
   E.phase = E.round >= E.rounds ? "end" : "roundend";
   if(E.phase === "roundend") GX.push({ id: w, ev: "manche" }); // la fin de partie, elle, est gérée par le cœur
-  E.log = L(E, nameOf(w) + " pose sa dernière carte et gagne " + pts + " points !", nameOf(w) + " plays their last card and scores " + pts + (pts === 1 ? " point!" : " points!"));
+  E.log = L(E, nameOf(w) + " pose sa dernière carte et gagne " + pts + (pts > 1 ? " points !" : " point !"), nameOf(w) + " plays their last card and scores " + pts + (pts === 1 ? " point!" : " points!"));
   if(E.phase === "end") E.aw = awards(E);
 }
 /* Sept-zéro : 7 = on échange sa main avec un adversaire ; 0 = toutes les mains tournent. */
@@ -201,7 +201,7 @@ function apply(E, id, i, chosen, nameOf, to, jump){
   E.drew = false;
   const v = val(c), n = E.order.length;
   let steps = 1;
-  E.log = L(E, nameOf(id) + (jump ? " intercepte avec " : " joue ") + (val(c) === "R" ? "une " : "un ") + label(c, "fr") + (wild(c) ? " et choisit le " + cname(E, E.color) : ""),
+  E.log = L(E, nameOf(id) + (jump ? " intercepte avec " : " joue ") + (val(c) === "R" ? "une " : "un ") + label(c, "fr").replace(/^(Passe-tour|Inversion|Joker)/, m => m.toLowerCase()) + (wild(c) ? " et choisit le " + cname(E, E.color) : ""),
     nameOf(id) + (jump ? " jumps in with a " : " plays a ") + label(c, "en") + (wild(c) ? " and picks " + cname(E, E.color) : ""));
   if(v === "S"){ steps = 2; E.log += L(E, " · " + nameOf(nextOf(E, 1)) + " passe son tour", " · " + nameOf(nextOf(E, 1)) + " is skipped"); }
   if(v === "R"){ E.dir *= -1; steps = n === 2 ? 2 : 1; E.log += n === 2 ? L(E, " · et rejoue", " · and goes again") : L(E, " · le sens change", " · direction reverses"); }
@@ -239,7 +239,7 @@ function doDraw(E, id, nameOf){
     E.stuck = (E.stuck || 0) + 1;
     if(E.stuck >= E.order.length){
       const w = E.order.slice().sort((a, b) => E.hands[a].reduce((t, x) => t + points(x), 0) - E.hands[b].reduce((t, x) => t + points(x), 0))[0];
-      roundEnd(E, w, nameOf); E.log = L(E, "Table bloquée : " + nameOf(w) + " a la main la plus légère et gagne " + E.gain + " points.", "Deadlock: " + nameOf(w) + " has the lightest hand and scores " + E.gain + (E.gain === 1 ? " point." : " points."));
+      roundEnd(E, w, nameOf); E.log = L(E, "Table bloquée : " + nameOf(w) + " a la main la plus légère et gagne " + E.gain + (E.gain > 1 ? " points." : " point."), "Deadlock: " + nameOf(w) + " has the lightest hand and scores " + E.gain + (E.gain === 1 ? " point." : " points."));
       return true;
     }
     E.log = L(E, nameOf(id) + " passe (pioche vide)", nameOf(id) + " passes (draw pile empty)"); advance(E, 1, nameOf); return true;
@@ -334,7 +334,7 @@ function tableHTML(E, me, nameOf, ui){
   if(mods.length && !evOn) h += '<div class="dc-mods">' + mods.join("") + "</div>";
   h += '<div class="dc-turn">' + (E.phase !== "play" ? "" : myTurn ? tr("À toi !", "Your turn!") : tr("Au tour de " + esc(nameOf(E.turn)), esc(nameOf(E.turn)) + "'s turn")) + " " + (E.dir === 1 ? "↻" : "↺") + "</div>";
   h += '<div class="dc-table"><span class="dc-top" style="--tc:' + CHEX[E.color] + '">' + cardHTML(E.top, "big", " disabled") + "</span>" +
-    '<button type="button" class="dc-back" data-draw' + (myTurn && !E.drew ? "" : " disabled") + "><b>" + (E.pend > 0 ? "+" + E.pend : tr("Pioche", "Draw")) + "</b>" + (E.left != null ? E.left : E.draw.length) + tr(" cartes", " cards") + "</button></div>";
+    '<button type="button" class="dc-back" data-draw' + (myTurn && !E.drew ? "" : " disabled") + "><b>" + (E.pend > 0 ? "+" + E.pend : tr("Pioche", "Draw")) + "</b>" + (E.left != null ? E.left : E.draw.length) + (((E.left != null ? E.left : E.draw.length) > 1) ? tr(" cartes", " cards") : tr(" carte", " card")) + "</button></div>";
   h += '<p class="dc-log">' + esc(E.log || "") + (E.pend > 0 ? ' <span class="dc-pend">+' + E.pend + tr(" en attente", " pending") + "</span>" : "") + "</p>";
   if(me){
     const mine = E.hands[me] || [], ok = myTurn ? playable(E, me) : jumpable(E, me);
@@ -501,7 +501,7 @@ function animate(root, E, me, key){
 let LTOK = 0;
 
 const DEF = {
-  id: "dernierecarte", name: tr("Dernière carte", "Last Card"), glyph: "Uno", pitch: tr("Même couleur ou même chiffre, et crie « Dernière ! ».", "Match the color or the number, and shout “Last card!”."), hot: false,
+  id: "dernierecarte", name: tr("Dernière carte", "Last Card"), glyph: "Uno", pitch: tr("Même couleur ou même valeur, et crie « Dernière ! ».", "Match the color or the number, and shout “Last card!”."), hot: false,
   accent: { light: "#ff8a4c", dark: "#ff8a4c" },
   tag: tr("Même couleur ou même valeur, des +2, des +4, des inversions… Et n'oublie pas de crier « Dernière ! » quand il ne te reste plus qu'une carte.", "Match the color or the value, with +2s, +4s, Reverses… And don't forget to shout “Last card!” when you're down to one card."),
   min: 2, max: 10,
@@ -512,16 +512,16 @@ const DEF = {
   ],
   rules: tr([
     "Chacun reçoit 7 cartes. À ton tour, pose une carte de la même couleur ou de la même valeur que celle du dessus.",
-    "Passe-tour : le suivant saute son tour. Inversion : le sens change. +2 et +4 : le suivant pioche. Joker et +4 : tu choisis la couleur.",
+    "Passe-tour : le suivant saute son tour. Inversion : le sens change. +2 et +4 : le suivant pioche 2 ou 4 cartes et passe son tour. Joker et +4 : tu choisis la couleur.",
     "Pas de carte jouable ? Pioche. Si la carte piochée va, tu peux la poser tout de suite.",
     "Avec le cumul, on peut renvoyer un +2 avec un +2 ou un +4, et un +4 avec un +4. Celui qui ne peut pas (ou ne veut pas) renchérir encaisse le total.",
     "Quand il te reste 2 cartes, touche « Dernière ! » avant de poser l'avant-dernière. Si tu te retrouves avec une seule carte sans l'avoir annoncé, n'importe qui peut toucher « Contre ! » : tu pioches 2 cartes.",
-    "Le premier qui n'a plus de cartes gagne la manche et marque la valeur des cartes restées dans la main des autres.",
+    "Le premier qui n'a plus de cartes gagne la manche et marque la valeur des cartes restant dans la main des autres.",
     "Règles maison au choix : Sept-zéro (7 = tu échanges ta main avec qui tu veux, 0 = toutes les mains tournent), Interception (pose hors de ton tour une carte identique à celle du dessus), Pioche jusqu'à pouvoir jouer (on continue de piocher tant que la carte ne va pas).",
     "Coups de théâtre : de temps en temps, un événement chamboule la partie (couleur interdite, pluie de cartes, mains échangées, double tour…)."
   ], [
     "Everyone gets 7 cards. On your turn, play a card that matches the color or the value of the top card.",
-    "Skip: the next player misses their turn. Reverse: the direction changes. +2 and +4: the next player draws. Wild and +4: you pick the color.",
+    "Skip: the next player misses their turn. Reverse: the direction changes. +2 and +4: the next player draws 2 or 4 cards and misses their turn. Wild and +4: you pick the color.",
     "No playable card? Draw. If the card you drew fits, you can play it right away.",
     "With stacking, you can bounce a +2 back with a +2 or a +4, and a +4 with a +4. Whoever can't (or won't) stack takes the whole total.",
     "When you have 2 cards left, tap “Last card!” before playing your second-to-last. If you end up with one card without calling it, anyone can tap “Catch!”: you draw 2 cards.",
@@ -668,7 +668,7 @@ const DEF = {
           r.querySelectorAll("[data-s]").forEach(b => b.addEventListener("click", () => { const x = RULES.find(y => y[0] === b.dataset.s); R[x[0]] = !R[x[0]]; persist({ [x[1]]: R[x[0]] }); setup(); }));
           r.querySelector("[data-go]").addEventListener("click", () => {
             nameMap = {}; const ids = names.map((nm, i) => { nameMap["h" + i] = nm; return "h" + i; });
-            for(let i = 0; i < bots; i++){ nameMap["b" + i] = BOTN[i] + " 🤖"; ids.push("b" + i); }
+            for(let i = 0; i < bots; i++){ nameMap["b" + i] = BOTN[i] + " (bot)"; ids.push("b" + i); }
             E = { lg: SB.lang(), order: shuffle(ids), stack: R.stack, sz: R.sz, jump: R.jump, dp: R.dp, tw: R.tw, round: 1, rounds, score: {}, st: {} };
             GX.length = 0; newRound(E); viewer = humans().length === 1 ? humans()[0] : ""; sel = null; prevSel = null; gno++; jumpPc = E.pc || 0;
             step();

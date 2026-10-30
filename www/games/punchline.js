@@ -116,7 +116,7 @@ const PQ = {
   "Le duo improbable des vacances : ___ et ___.",
   "La spécialité régionale qui fait polémique : ___ en sauce, avec ___ en accompagnement.",
   "Mon week-end en résumé : ___, puis ___.",
-  "Recette de la soirée parfaite : ___, ___, et on ne parle plus de rien.",
+  "Recette de la soirée parfaite : ___, ___, et on n'en parle plus jamais.",
   "La dispute de l'année : ___ contre ___.",
   "Le combo gagnant pour un dimanche réussi : ___ et ___.",
   "Mon chef m'a pris en flagrant délit avec ___.",
@@ -286,7 +286,7 @@ const PQ = {
   "___ : la raison pour laquelle les morts reviennent.",
   "___ : la dernière chose que tu verras avant de mourir.",
   "Au programme des funérailles : ___, puis ___.",
-  "La fin du monde selon les prophètes : ___ puis ___.",
+  "La fin du monde selon les prophètes : ___, puis ___.",
   "Le kit de survie post-apocalyptique : ___ et ___.",
   "Mon fantôme hante ___ en hurlant ___.",
   "L'apocalypse en deux étapes : ___ et ensuite ___.",
@@ -337,7 +337,7 @@ const PA = {
   "une tartiflette au petit-déjeuner",
   "un concert de flûte à bec",
   "mon horoscope chinois",
-  "un diaporama de 80 slides",
+  "un diaporama de 80 diapos",
   "la voisine qui chante faux",
   "un retraité en trottinette électrique",
   "les miettes dans le clavier",
@@ -1741,7 +1741,7 @@ const TW = [
   { id: "public", name: tr("Vote du public", "Crowd vote"), desc: tr("Pas de juge : tout le monde vote, et on ne vote pas pour soi.", "No judge: everyone votes, and you can't vote for yourself."), ok: o => o.n >= 4 },
   { id: "reverse", name: tr("Le monde à l'envers", "Upside down"), desc: tr("Le juge choisit la réponse la plus nulle : c'est elle qui gagne.", "The judge picks the worst answer: that one wins.") },
   { id: "double", name: tr("Deux chances", "Two shots"), desc: tr("Chacun joue deux réponses séparées. Le juge n'en garde qu'une.", "Everyone plays two separate answers. The judge keeps only one."), ok: o => o.need === 1 },
-  { id: "roulette", name: "Roulette", desc: tr("Pas de choix : vos cartes sont tirées au hasard dans votre main. Pourvu que le sort soit drôle !", "No choosing: your cards are drawn at random from your hand. Here's hoping fate is funny!") },
+  { id: "roulette", name: "Roulette", desc: tr("Pas de choix : tes cartes sont tirées au hasard dans ta main. Pourvu que le sort soit drôle !", "No choosing: your cards are drawn at random from your hand. Here's hoping fate is funny!") },
   { id: "duel", name: "Duel", desc: tr("Seuls deux joueurs s'affrontent. La victoire vaut 2 points.", "Only two players face off. The win is worth 2 points."), ok: o => o.n >= 4 },
   { id: "fresh", name: tr("Main neuve", "Fresh hand"), desc: tr("Tout le monde défausse sa main et reçoit 7 nouvelles cartes.", "Everyone discards their hand and draws 7 new cards.") }
 ];
@@ -1975,11 +1975,12 @@ const DEF = {
     { ev: "gagne", label: tr("Gagner la manche", "Win the round"), kind: "distribue", n: 2 }
   ],
   rules: tr([
-    "Chacun reçoit 7 cartes réponses. À chaque manche, une phrase à trous s'affiche et un juge est désigné (chacun son tour).",
+    "Chacun reçoit 7 cartes-réponses. À chaque manche, une phrase à trous s'affiche et un juge est désigné (chacun son tour).",
     "Les autres complètent la phrase avec une carte de leur main (deux pour les phrases à deux trous), en secret.",
     "Les réponses arrivent sans les noms. Le juge choisit sa préférée : son auteur marque 1 point. Le premier à atteindre le score visé gagne.",
     "Carte blanche : deux fois par partie, tu peux écrire ta propre réponse.",
-    "Coups de théâtre : jackpot, vote du public, monde à l'envers, deux chances, roulette, duel, main neuve. Les phrases et les cartes déjà vues passent après les nouvelles d'une soirée à l'autre.",
+    "Coups de théâtre : jackpot, vote du public, monde à l'envers, deux chances, roulette, duel, main neuve.",
+    "D'une soirée à l'autre, les phrases et cartes déjà vues reviennent après les nouvelles.",
     "Paquets Hard et Humour noir : réservés aux adultes, vraiment sans filtre."
   ], [
     "Everyone gets 7 answer cards. Each round, a fill-in-the-blank sentence appears and a judge is chosen (everyone takes a turn).",
@@ -2095,7 +2096,7 @@ const DEF = {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const F = fromState(c.s, {}), o2 = ranking(F), mx = F.pts[o2[0]] || 0;
-          c.end({ title: "Punchline · " + c.name(o2[0]) + tr(" gagne", " wins"), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (F.pts[id] || 0) + " pts").concat(awards(F, c.name).slice(0, 2).map(a => a[0] + tr(" : ", ": ") + a[1])),
+          c.end({ title: "Punchline · " + c.name(o2[0]) + tr(" gagne", " wins"), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + SB.u.plural2(F.pts[id] || 0, "pt", null, "pt")).concat(awards(F, c.name).slice(0, 2).map(a => a[0] + tr(" : ", ": ") + a[1])),
             win: mx ? o2.filter(id => (F.pts[id] || 0) === mx) : [] });
         }));
       });
@@ -2124,7 +2125,7 @@ const DEF = {
           r.querySelector("[data-bl]").addEventListener("click", () => { blOn = !blOn; persist({ plBlank: blOn }); setup(); });
           r.querySelector("[data-tw]").addEventListener("click", () => { twOn = !twOn; persist({ plTw: twOn }); setup(); });
           r.querySelector("[data-go]").addEventListener("click", () => {
-            if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet", "Pick at least one pack")); return; }
+            if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet de cartes.", "Pick at least one pack.")); return; }
             E = newGame(ids, { packs: SB.okPacks(sel, PACKS), target, twists: twOn, blank: blOn, lg: SB.lang() });
             E.judge = ids[ids.length - 1];
             round();

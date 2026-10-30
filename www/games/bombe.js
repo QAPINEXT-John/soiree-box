@@ -22,7 +22,7 @@ const EN = {
   kid: W("an animal|a fruit|a color|a cartoon|a Disney character|a toy|a vegetable|a farm animal|a sea animal|a superhero|a sport|a dessert|a candy|a piece of clothing|a way to travel|a job|something that flies|something round|something at school|something in your bedroom|something cold|something hot|a musical instrument|a first name|something noisy|a shape|something in the sky|an insect|a flower|a playground game")
 };
 const PACKS = [
-  { v: "syll", label: tr("Syllabe dans le mot", "Syllable inside"), desc: tr("Un mot qui contient « TRA » : tracteur, patrouille…", "A word containing \"ING\": king, singer…"), kind: "syll" },
+  { v: "syll", label: tr("Syllabe dans le mot", "Syllable inside"), desc: tr("Un mot qui contient « TRA » : tracteur, contrat…", "A word containing \"ING\": king, singer…"), kind: "syll" },
   { v: "debut", label: tr("Ça commence par…", "Starts with…"), desc: tr("Un mot qui commence par « CHA »", "A word starting with \"CHA\""), kind: "debut" },
   { v: "fin", label: tr("Ça finit par…", "Ends with…"), desc: tr("Un mot qui finit par « TION »", "A word ending in \"TION\""), kind: "fin" },
   { v: "cat", label: tr("Catégories", "Categories"), desc: tr("Cite un animal, une marque, un film…", "Name an animal, a brand, a film…"), kind: "cat" },
@@ -108,7 +108,7 @@ function put(root, sel, html, bind){ const el = root.querySelector(sel); if(!el 
 const nextOf = (order, cur, dir) => { const i = order.indexOf(cur); return order[((i < 0 ? 0 : i) + dir + order.length * 4) % order.length]; };
 
 SB.register({
-  id: "bombe", name: tr("La Bombe", "The Bomb"), glyph: tr("Boum", "Boom"), pitch: tr("Dis un mot et passe la bombe avant qu'elle explose", "Say a word and pass the bomb before it blows"), hot: false, ticks: true,
+  id: "bombe", name: tr("La Bombe", "The Bomb"), glyph: tr("Boum", "Boom"), pitch: tr("Dis un mot et passe la bombe avant qu'elle explose.", "Say a word and pass the bomb before it blows"), hot: false, ticks: true,
   accent: { light: "#e8414e", dark: "#ff6b6b" },
   tag: tr("Une syllabe tombe, la mèche est allumée : dis un mot qui la contient et passe la bombe au suivant. Personne ne sait quand elle explose…", "A syllable drops, the fuse is lit: say a word containing it and pass the bomb on. Nobody knows when it'll blow…"),
   min: 2, max: 20,
@@ -119,10 +119,10 @@ SB.register({
   rules: tr([
     "Une carte tombe : une syllabe (« un mot qui contient TRA »), un début, une fin, ou une catégorie (« cite un animal »).",
     "L'hôte allume la mèche. Celui qui a la bombe dit un mot qui va, à voix haute, puis touche « Je passe » : la bombe saute chez le joueur suivant.",
-    "Pas de mot déjà dit, pas de mot hésitant : si les autres refusent ton mot, tu gardes la bombe et tu en trouves un autre.",
-    "Personne ne sait quand la mèche se termine. Celui qui a la bombe quand elle explose a un gage, et il commence la manche suivante.",
+    "Pas de mot déjà dit, pas d'hésitation interminable : si les autres refusent ton mot, tu gardes la bombe et tu en trouves un autre.",
+    "Personne ne sait quand la mèche arrive au bout. Celui qui a la bombe quand elle explose a un gage, et il commence la manche suivante.",
     "Coups de théâtre : sens inverse, mèche courte, éclaboussures (les voisins prennent aussi), mots de 6 lettres minimum.",
-    "Le moins d'explosions à la fin gagne."
+    "Celui qui a le moins d'explosions à la fin gagne."
   ], [
     "A card drops: a syllable (\"a word containing ING\"), a start, an ending, or a category (\"name an animal\").",
     "The host lights the fuse. Whoever has the bomb says a matching word out loud, then taps \"Pass\": the bomb jumps to the next player.",
@@ -211,7 +211,7 @@ SB.register({
     if(s.phase === "end"){
       stopTick();
       const bm = s.booms || {}, mn = Math.min(...s.order.map(id => bm[id] || 0)), best = s.order.filter(id => (bm[id] || 0) === mn);
-      screen(root, "end" + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Le plus sang-froid", "Coolest under pressure") + '</span><div class="who">' + esc(best.map(ctx.name).join(" & ")) + "</div>" + board(s.order, bm, ctx.name) +
+      screen(root, "end" + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Sang-froid d'acier", "Coolest under pressure") + '</span><div class="who">' + esc(best.map(ctx.name).join(" & ")) + "</div>" + board(s.order, bm, ctx.name) +
         SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
@@ -259,7 +259,7 @@ SB.register({
         n++; card = deck.length ? deck.pop() : card; SB.u.saw("bombe", card);
         tw = twOn && n > 1 ? SB.u.twist(TW, { last: tw ? tw.id : "", rate: .3 }) : null; dir = tw && tw.id === "inverse" ? -1 : 1;
         screen(root, "rd" + gno + ":" + n, head() + SB.u.twistHTML(tw) + cardHTML(card) + '<div class="bm-bomb small">' + BOMB + "</div>" +
-          '<p class="howto" style="text-align:center">' + esc(tr("Donne le téléphone à ", "Hand the phone to ") + holder + tr(" : c'est lui qui commence.", ": they start.")) + "</p>" +
+          '<p class="howto" style="text-align:center">' + esc(tr("Donne le téléphone à ", "Hand the phone to ") + holder + tr(", qui commence.", ": they start.")) + "</p>" +
           SB.u.dock('<button class="btn acc" type="button" data-light>' + tr("Allumer la mèche", "Light the fuse") + '</button><button class="link" type="button" data-q style="align-self:center">' + tr("Choisir un autre jeu", "Choose another game") + "</button>"), r => {
           r.querySelector("[data-light]").addEventListener("click", light);
           r.querySelector("[data-q]").addEventListener("click", () => { stopTick(); api.exit(); });
@@ -297,7 +297,7 @@ SB.register({
         stopTick(); clearInterval(chk);
         const mn = Math.min(...order.map(x => booms[x] || 0)), best = order.filter(x => (booms[x] || 0) === mn);
         if(api.win) api.win(best.length < order.length ? best : []);
-        screen(root, "end" + gno, CSS + '<span class="eyebrow">' + tr("Le plus sang-froid", "Coolest under pressure") + '</span><div class="who">' + esc(best.join(" & ")) + "</div>" + board(order, booms, z => z) +
+        screen(root, "end" + gno, CSS + '<span class="eyebrow">' + tr("Sang-froid d'acier", "Coolest under pressure") + '</span><div class="who">' + esc(best.join(" & ")) + "</div>" + board(order, booms, z => z) +
           SB.u.dock('<button class="btn acc" type="button" data-a>' + tr("Rejouer", "Play again") + '</button><button class="btn ghost" type="button" data-q>' + tr("Choisir un autre jeu", "Pick another game") + "</button>"), r => {
           r.querySelector("[data-a]").addEventListener("click", api.again);
           r.querySelector("[data-q]").addEventListener("click", api.exit);

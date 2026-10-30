@@ -5,7 +5,7 @@ const { esc, clean, A, store, persist, screen, txt, pick, tr } = SB.u;
 
 const CATS = [
   ["Un film","Navet","Chef-d'œuvre"],["Un plat","Immangeable","Le repas de ma vie"],
-  ["Une destination de vacances","Jamais de la vie","Rêve absolu"],["Un super-pouvoir","Inutile","Imbattable"],
+  ["Une destination de vacances","Jamais de la vie","Rêve absolu"],["Un superpouvoir","Inutile","Imbattable"],
   ["Un animal","Inoffensif","Terrifiant"],["Un métier","Ennui total","Passionnant"],
   ["Une chanson pour un mariage","Piste vide","Tout le monde danse"],["Une série","Abandonnée à l'épisode 1","Vue trois fois"],
   ["Un jeu vidéo","Désinstallé","Des centaines d'heures"],["Un prénom pour un enfant","Cruel","Magnifique"],
@@ -48,10 +48,11 @@ const GEEK = [
   ["Un réseau social","Toxique","Indispensable"],["Une tendance TikTok","Ringarde","Virale"],
   ["Un jeu de société","Ennuyeux","Soirée parfaite"],["Une BD ou un comics","Illisible","Culte"],
   ["Un easter egg","Introuvable","Tout le monde le connaît"],["Un bug de jeu vidéo","Discret","Légendaire"],
-  ["Un pseudo en ligne", "Gênant", "Légendaire"],["Un mot de passe", "Piraté en 2 s", "Coffre-fort"],["Un gadget high-tech", "Inutile", "Révolution"],["Une fin de jeu vidéo", "Décevante", "Larmes aux yeux"],["Un personnage secondaire", "Oubliable", "Mérite sa propre série"],["Un robot de film", "Tas de ferraille", "Iconique"],["Une planète de science-fiction", "Hostile", "J'y emménage"],["Une vidéo à regarder à 2 h du matin", "Je m'endors devant", "Impossible de décrocher"],["Un sortilège dans Harry Potter", "Inutile", "Redoutable"],["Un tutoriel en ligne", "Incompréhensible", "Il m'a sauvé la vie"],["Une notification", "Agaçante", "Excellente nouvelle"],["Un jeu sur téléphone", "Désinstallé", "Addiction totale"],["Un costume de cosplay", "Raté", "Bluffant"]
+  ["Un pseudo en ligne", "Gênant", "Légendaire"],["Un mot de passe", "Piraté en 2 s", "Coffre-fort"],["Un gadget high-tech", "Inutile", "Révolution"],["Une fin de jeu vidéo", "Décevante", "Larmes aux yeux"],["Un personnage secondaire", "Oubliable", "Mérite sa propre série"],["Un robot de film", "Tas de ferraille", "Iconique"],["Une planète de science-fiction", "Hostile", "J'y emménage"],["Une vidéo à regarder à 2 h du matin", "Je m'endors devant", "Impossible de décrocher"],["Un sortilège dans Harry Potter", "Inutile", "Redoutable"],["Un tutoriel en ligne", "Incompréhensible", "Il m'a sauvé la vie"],["Une notification", "Agaçante", "Excellente nouvelle"],["Un jeu sur téléphone", "Désinstallé", "Addiction totale"],["Un costume de cosplay", "Raté", "Bluffant"],
+  ["Un Pokémon","Inutile","Premier choix, toujours"],["Un personnage de Star Wars","Agaçant","Légende"]
 ];
 const ABSURDE = [
-  ["Tu te réveilles avec un super-pouvoir, mais il est nul. Lequel ?","Totalement inutile","Finalement pratique"],
+  ["Tu te réveilles avec un superpouvoir, mais il est nul. Lequel ?","Totalement inutile","Finalement pratique"],
   ["Le Père Noël s'est trompé de hotte. Qu'y a-t-il sous ton sapin ?","Catastrophe","Meilleur Noël de ma vie"],
   ["Un génie exauce ton vœu mais comprend tout de travers. Que se passe-t-il ?","Désastre","Coup de chance"],
   ["Tu dois survivre une semaine sur une île avec un seul objet de tes poches. Lequel ?","Mort au jour 1","Roi de l'île"],
@@ -87,11 +88,11 @@ const ABSURDE = [
   ["L'objet du quotidien qui te sert d'arme contre un cambrioleur","Inefficace","Redoutable"],
   ["Tu deviens chef de ta résidence. Ta première décision ?","Émeute","Statue en ton honneur"],
   ["Ce que tu dis à un dinosaure ressuscité pour qu'il ne te mange pas","Il te mange","Il devient ton ami"],
-  ["Le pire super-pouvoir pour un premier rendez-vous","Ça passe","Rendez-vous gâché"],
+  ["Le pire superpouvoir pour un premier rendez-vous","Ça passe","Rendez-vous gâché"],
   ["Ton menu de restaurant pour extraterrestres","Incident diplomatique","Ils veulent la recette"],
   ["Ce que garde un agent secret au fond de son sac","Banal","Arsenal complet"],
   ["Tu inventes une fête nationale. On y fait quoi ?","Personne ne vient","Meilleur jour de l'année"],
-  ["Tu te réveilles dans le corps de ton chat. Ta première action ?", "Sieste", "Domination du foyer"],["Une loi bizarre votée demain matin", "Inoffensive", "Chaos national"],["Ta voix devient celle d'un commentateur sportif. Ça donne quoi au quotidien ?", "Agaçant", "Génial"],["Un musée consacré à ta vie. La pièce maîtresse ?", "Embarrassante", "Chef-d'œuvre"],["Tu peux parler à un seul type d'objet. Lequel ?", "Inutile", "Indispensable"],["Le sport de combat inventé par ta famille", "Inoffensif", "Interdit"],["La notice de montage de ta personnalité", "Limpide", "Incompréhensible"],["Ta chambre devient un escape game. L'énigme finale ?", "Évidente", "Personne n'en sort"],["Ce que les pigeons pensent vraiment des humains", "Ils nous aiment", "Ils préparent un coup"],["Le parc d'attractions de tes rêves. L'attraction phare ?", "Ennuyeuse", "Mythique"],["Tu remplaces la mascotte d'un club de sport. Ton costume ?", "Ridicule", "Culte"],["Une nouvelle couleur vient d'être découverte. Son nom ?", "Moche", "Sublime"],["Les nuages forment un message pour toi. Il dit quoi ?", "Banal", "Bouleversant"],["Le bruit de ton frigo la nuit, ça veut dire quoi ?", "Rien", "Il complote"],["Tu ouvres un restaurant avec un seul plat. Lequel ?", "Faillite", "Queue jusqu'au coin de la rue"],["Une télé-réalité dont tu serais le héros", "Annulée", "Record d'audience"],["Ton super-héros a un point faible ridicule. Lequel ?", "Gênant", "Fatal"],["Le cri de guerre de ton équipe de pétanque", "Timide", "Terrifiant"],["Tu gagnes un objet magique dans un vide-grenier. Lequel ?", "Inutile", "Tout-puissant"],["La première phrase du manuel pour devenir adulte", "Rassurante", "Effrayante"],["Ta journée idéale si la gravité disparaissait", "Banale", "Grandiose"]
+  ["Tu te réveilles dans le corps de ton chat. Ta première action ?", "Sieste", "Domination du foyer"],["Une loi bizarre votée demain matin", "Inoffensive", "Chaos national"],["Ta voix devient celle d'un commentateur sportif. Ça donne quoi au quotidien ?", "Agaçant", "Génial"],["Un musée consacré à ta vie. La pièce maîtresse ?", "Embarrassante", "Chef-d'œuvre"],["Tu peux parler à un seul type d'objet. Lequel ?", "Inutile", "Indispensable"],["Le sport de combat inventé par ta famille", "Inoffensif", "Interdit"],["La notice de montage de ta personnalité", "Limpide", "Incompréhensible"],["Ta chambre devient un escape game. L'énigme finale ?", "Évidente", "Personne n'en sort"],["Ce que les pigeons pensent vraiment des humains", "Ils nous aiment", "Ils préparent un coup"],["Le parc d'attractions de tes rêves. L'attraction phare ?", "Ennuyeuse", "Mythique"],["Tu remplaces la mascotte d'un club de sport. Ton costume ?", "Ridicule", "Culte"],["Une nouvelle couleur vient d'être découverte. Son nom ?", "Moche", "Sublime"],["Les nuages forment un message pour toi. Il dit quoi ?", "Banal", "Bouleversant"],["Le bruit de ton frigo la nuit, ça veut dire quoi ?", "Rien", "Il complote"],["Tu ouvres un restaurant avec un seul plat. Lequel ?", "Faillite", "Queue jusqu'au coin de la rue"],["Une téléréalité dont tu serais le héros", "Annulée", "Record d'audience"],["Ton super-héros a un point faible ridicule. Lequel ?", "Gênant", "Fatal"],["Le cri de guerre de ton équipe de pétanque", "Timide", "Terrifiant"],["Tu gagnes un objet magique dans un vide-grenier. Lequel ?", "Inutile", "Tout-puissant"],["La première phrase du manuel pour devenir adulte", "Rassurante", "Effrayante"],["Ta journée idéale si la gravité disparaissait", "Banale", "Grandiose"]
 ];
 const HARD = [
   ["Ta mère lit ton dernier message envoyé. Qu'est-ce qu'il dit ?","Elle sourit","Elle appelle un prêtre"],
@@ -104,7 +105,7 @@ const HARD = [
   ["Ce qu'on trouve dans ton sac le lendemain d'une soirée","Normal","Il faut appeler quelqu'un"],
   ["Ce que tu ferais pendant 24 h sans aucune conséquence","Sage","Interdit dans tous les pays"],
   ["Ce que la voyante t'annonce pour tes 40 ans","Rassurant","Cauchemar"],
-  ["La pire chose à dire à un enterrement","Maladroit","On t'escorte dehors"],
+  ["La pire tenue pour un enterrement","Maladroite","On t'escorte dehors"],
   ["Ce que tu fais quand tes potes sont partis et que t'es seul chez toi","Normal","Personne ne doit savoir"],
   ["Ce qu'on trouve au fond du frigo d'un étudiant","Encore mangeable","Ça bouge"],
   ["Ce que ton ex raconte sur toi à ses potes","Gentil","Diffamation"],
@@ -123,7 +124,7 @@ const HARD = [
   ["Ton talent caché en soirée","Utile","Inquiétant"],
   ["Ce que tu ferais si t'étais invisible pendant une journée","Sage","Prison à vie"],
   ["Ce que tu dis quand on te surprend à pleurer devant une pub","Assumé","Mensonge énorme"],
-  ["Ta réaction quand le Wi-Fi coupe en pleine partie classée","Zen","Violence"],
+  ["Ta réaction quand le wifi coupe en pleine partie classée","Zen","Violence"],
   ["La pire chose à crier dans une bibliothèque","Gênant","Évacuation du bâtiment"],
   ["Le souvenir de vacances le plus douteux pour tes potes","Pourri","Légendaire"],
   ["Le pire endroit pour se faire larguer","Ça passe","Traumatisme public"],
@@ -146,7 +147,7 @@ const TABOU = [
   ["Le titre du film de ta vie sexuelle","Gênant","Chef-d'œuvre"],
   ["Ce que tu murmures à l'oreille pour séduire","Tue-l'amour","Irrésistible"],
   ["Un fantasme que tu n'avoueras qu'à cette table","Sage","Inavouable"],
-  ["Ce que ton ex dirait de toi au lit","Bâillements garantis","En parle encore"],
+  ["Ce que ton ex dirait de toi au lit","Bâillements garantis","Il ou elle en parle encore"],
   ["Ta réaction quand ton ou ta partenaire a une panne au lit","Rassurante","Vexante"],
   ["Le message que tu envoies à ton ex à 2 h du matin","Innocent","Clairement pas innocent"],
   ["Un jeu de rôle à proposer à ton ou ta partenaire","Sage","Beaucoup trop loin"],
@@ -156,7 +157,7 @@ const TABOU = [
   ["Ce que tu avoues à ton partenaire après trois verres","Mignon","Rupture"],
   ["La tenue la moins sexy pour un rendez-vous coquin","Ça passe","Tue-l'amour absolu"],
   ["Le prénom à ne jamais crier au lit","Pardonnable","C'est fini"],
-  ["Ce que dit ton partenaire en tombant sur ton historique","Il rigole","Il fait ses valises"],
+  ["Ce que dit ton partenaire en tombant sur ton historique","Fou rire","Valises bouclées"],
   ["Un sex toy qu'il faudrait inventer","Inutile","Révolutionnaire"],
   ["Ce que tu proposes pour pimenter un couple qui s'ennuie","Sage","Très osé"],
   ["Ce que tu n'as jamais osé demander au lit","Anodin","Tabou absolu"],
@@ -166,7 +167,7 @@ const TABOU = [
   ["Ce que tu dis quand un collègue tombe sur ton profil de rencontre","Assumé","Mensonge énorme"],
   ["La question que tu poses au médecin en chuchotant","Banale","Il appelle un collègue"],
   ["Ce que contient le dossier caché de ton téléphone","Rien de grave","Mise en quarantaine"],
-  ["La pire chose à dire en pleine action","Maladroit","On arrête tout"],
+  ["La pire chose à dire en pleine action","Maladroite","On arrête tout"],
   ["Ce que tu ferais pour un million d'euros","Facile","Plus aucune dignité"],
   ["Un secret de famille que personne ne doit connaître","Anodin","Héritage annulé"],
   ["Ce que tu penses vraiment pendant le repas de famille","Poli","Guerre ouverte"],
@@ -175,7 +176,7 @@ const TABOU = [
   ["Le plus gros mensonge que tu as dit à un ex","Pieux","Monumental"],
   ["Ta vengeance contre un ex infidèle","Classe","Fait divers"],
   ["Ta technique pour t'éclipser après un plan d'un soir","Élégante","Fuite par la fenêtre"],
-  ["Ce que tu cherches sur internet en navigation privée","Normal","Je suis fiché"],
+  ["Ce que tu tapes en premier dans un moteur de recherche à 3 h du matin","Normal","Je suis fiché"],
   ["L'endroit le plus risqué pour un câlin coquin","Tranquille","Interpellé"],
   ["Cupidon s'est trompé de flèche. De qui tombes-tu amoureux ?","Catastrophe","Jackpot"],
   ["Un colis anonyme de sex-shop arrive chez toi. Qu'y a-t-il dedans ?","Banal","Je n'ouvre plus aucun colis"],
@@ -190,7 +191,7 @@ const TABOU = [
 ];
 
 
-const TRASH = [["Le titre du porno parodique de ton film préféré", "Nul", "Chef-d'œuvre du genre"], ["Ce que ton historique de navigation privée dit de toi", "Rien de grave", "Il faut te faire suivre"], ["Une catégorie de site porno", "Classique", "Je ne savais pas que ça existait"], ["Le pire endroit pour un plan cul", "Ça passe", "Casier judiciaire"], ["Ton bruit au moment de l'orgasme", "Discret", "Les voisins appellent la police"], ["Ce que tu cries au moment fatidique", "Normal", "Inavouable"], ["Une position que tu n'oseras jamais tenter", "Facile", "Il faut un kiné"], ["Le pire sex toy à offrir au Père Noël secret du bureau", "Gênant", "Licenciement"], ["Ce que tu dis à ton plan cul en partant au petit matin", "Classe", "Goujat absolu"], ["Ton fantasme le plus inavouable", "Sage", "Interdit dans 40 pays"], ["Le nom de ton futur sex toy connecté", "Ridicule", "Best-seller"], ["Un endroit où tu l'as fait, ou rêvé de le faire", "Banal", "Attentat à la pudeur"], ["Ce qui t'a coupé l'envie en plein acte", "Rien", "Traumatisme"], ["La pire chose à trouver sous le lit d'un date", "Une chaussette", "J'appelle un exorciste"], ["Ta technique de préliminaires", "Expédiée", "Légendaire"], ["Un dirty talk raté", "Gênant", "Fou rire général"], ["Le scénario de porno le plus nul", "Ennuyeux", "Oscar du X"], ["Ce que tu fais avec de la chantilly", "Un dessert", "Plus jamais propre"], ["Ton record de durée au lit", "Trente secondes", "Marathon"], ["Un accessoire inattendu pendant l'acte", "Une bougie", "Appel aux pompiers"], ["La pire rencontre sur une appli de cul", "Bof", "Fait divers"], ["Ce que tu n'avoueras jamais à ton médecin", "Banal", "Il en tombe de sa chaise"], ["Un fétiche surprenant", "Les pieds", "Je ne comprends même pas"], ["Ta pire histoire de capote", "Elle a craqué", "Souvenir de 9 mois"], ["Ce que ton ex raconte sur tes performances", "Élogieux", "Humiliant"], ["Le plan à plusieurs le plus improbable", "Trois potes", "Tout l'immeuble"], ["Un nude raté", "Flou", "Envoyé à la famille"], ["Ce que tu mets sur ta liste de cadeaux coquine", "Des menottes", "Un donjon complet"], ["La pire excuse après une panne", "La fatigue", "Je t'aime trop"], ["Le surnom de ton entrejambe", "Mignon", "Légendaire"], ["Une soirée qui risque de finir en partouze", "Aucune chance", "Couru d'avance"], ["Ce que tu as découvert en regardant du porno", "Rien", "Ma vocation"], ["La partie de jambes en l'air la plus gênante de ta vie", "Juste ratée", "Ambulance"], ["Ta performance au lit, notée par ton dernier partenaire", "Remboursez", "Standing ovation"], ["Le lubrifiant le plus improbable", "Huile d'olive", "Je ne veux pas savoir"], ["Un endroit au travail pour un quickie", "Le placard", "Le bureau du patron"], ["Ce que tu as fait pour un plan cul", "Un trajet en bus", "Un vol long-courrier"], ["La pire phrase après l'amour", "Merci", "Tu peux partir"], ["La pratique que tu refuses catégoriquement", "Peut-être un jour", "Jamais de la vie"], ["Le slogan publicitaire de ta marque de capotes", "Raté", "Culte"],
+const TRASH = [["Le titre du porno parodique de ton film préféré", "Nul", "Chef-d'œuvre du genre"], ["Ce que ton historique de navigation privée dit de toi", "Rien de grave", "Il faut te faire suivre"], ["Une catégorie de site porno", "Classique", "Je ne savais pas que ça existait"], ["Le pire endroit pour un plan cul", "Ça passe", "Casier judiciaire"], ["Ton bruit au moment de l'orgasme", "Discret", "Les voisins appellent la police"], ["Ce que tu cries au moment fatidique", "Normal", "Inavouable"], ["Une position que tu n'oseras jamais tenter", "Facile", "Il faut un kiné"], ["Le pire sex toy à offrir au Père Noël secret du bureau", "Gênant", "Licenciement"], ["Ce que tu dis à ton plan cul en partant au petit matin", "Classe", "Goujat absolu"], ["Ton fantasme le plus inavouable", "Sage", "Interdit dans 40 pays"], ["Le nom de ton futur sex toy connecté", "Ridicule", "Best-seller"], ["Un endroit où tu l'as fait (ou où tu rêves de le faire)", "Banal", "Attentat à la pudeur"], ["Ce qui t'a coupé l'envie en plein acte", "Rien", "Traumatisme"], ["La pire chose à trouver sous le lit d'un date", "Une chaussette", "J'appelle un exorciste"], ["Ta technique de préliminaires", "Expédiée", "Légendaire"], ["Un dirty talk raté", "Gênant", "Fou rire général"], ["Le scénario de porno le plus nul", "Ennuyeux", "Oscar du X"], ["Ce que tu fais avec de la chantilly", "Un dessert", "Plus jamais propre"], ["Ton record de durée au lit", "Trente secondes", "Marathon"], ["Un accessoire inattendu pendant l'acte", "Une bougie", "Appel aux pompiers"], ["La pire rencontre sur une appli de cul", "Bof", "Fait divers"], ["Ce que tu n'avoueras jamais à ton médecin", "Banal", "Il en tombe de sa chaise"], ["Un fétiche surprenant", "Les pieds", "Je ne comprends même pas"], ["Ta pire histoire de capote", "Elle a craqué", "Souvenir de 9 mois"], ["Ce que ton ex raconte sur tes performances", "Élogieux", "Humiliant"], ["Le plan à plusieurs le plus improbable", "Trois potes", "Tout l'immeuble"], ["Un nude raté", "Flou", "Envoyé à la famille"], ["Ce que tu mets sur ta liste de cadeaux coquine", "Des menottes", "Un donjon complet"], ["La pire excuse après une panne", "La fatigue", "Je t'aime trop"], ["Le surnom de ton entrejambe", "Mignon", "Légendaire"], ["Une soirée qui risque de finir en partouze", "Aucune chance", "Couru d'avance"], ["Ce que tu as découvert en regardant du porno", "Rien", "Ma vocation"], ["La partie de jambes en l'air la plus gênante de ta vie", "Juste ratée", "Ambulance"], ["Ta performance au lit, notée par ton dernier partenaire", "Remboursez", "Standing ovation"], ["Le lubrifiant le plus improbable", "Huile d'olive", "Je ne veux pas savoir"], ["Un endroit au travail pour un quickie", "Le placard", "Le bureau du patron"], ["Ce que tu as fait pour un plan cul", "Un trajet en bus", "Un vol long-courrier"], ["La pire phrase après l'amour", "Merci", "Tu peux partir"], ["La pratique que tu refuses catégoriquement", "Peut-être un jour", "Jamais de la vie"], ["Le slogan publicitaire de ta marque de capotes", "Raté", "Culte"],
   ["Le pire bruit pendant l'acte", "Discret", "Fou rire"],["Le nom de code pour dire « on rentre faire l'amour »", "Discret", "Tout le monde a compris"],["Ce que tu fais quand le lit grince trop", "On ralentit", "On finit par terre"],["La pire interruption pendant un câlin", "Le chat", "Les beaux-parents"],["La position la plus ridicule", "Classique", "Il faut un mode d'emploi"],["Ce que tu as acheté au sex-shop par erreur", "Un truc banal", "Je ne sais pas ce que c'est"],["Le pire endroit pour prendre un nude", "Dans la salle de bain", "Au bureau"],["Ta playlist pour faire l'amour", "Romantique", "Un générique de dessin animé"],["Le pire costume pour un jeu de rôle", "Infirmier", "Mascotte de stade"],["Ce que tu fais juste après l'amour", "Un câlin", "Je joue à la console"],["Ce que tu tapes dans la recherche d'un site X", "Classique", "Ça m'inquiète"],["Le pire objet pour remplacer un sex toy", "Créatif", "Urgences"],["Ton excuse pour la marque dans ton cou", "Crédible", "Personne n'y croit"],["Le pire moment pour que ton téléphone sonne", "Pendant un câlin", "En pleine action"],["La pire chose à dire pendant un strip-tease", "Maladroite", "Le show s'arrête"],["Ta technique de drague la plus directe", "Subtile", "Interdite"],["Ce qu'on trouve dans la valise d'un couple en week-end coquin", "Un pyjama", "Toute une boutique"],["Le mot de sécurité le moins pratique", "Facile", "Imprononçable"],["La pire chose à dire en enlevant ses vêtements", "Gênante", "On se rhabille"],["Le fantasme le plus cliché", "Original", "Vu mille fois"]
 ];
 const NOIR = [["Ta dernière phrase avant de mourir", "Banale", "Légendaire"], ["Ce que tu écris dans ton testament", "Classique", "Vengeance posthume"], ["La musique à jouer à ton enterrement", "Triste", "Tout le monde danse"], ["Une façon ridicule de mourir", "Bête", "Prix Darwin"], ["Ce que tu fais quand le médecin t'annonce qu'il te reste une semaine", "Digne", "Je vide mon compte en banque"], ["Ton épitaphe", "Sobre", "Culte"], ["Le pire cadeau à offrir à un mourant", "Gênant", "Cynique"], ["Ce que tu ferais si tu étais un fantôme", "Hanter gentiment", "Terreur absolue"], ["La pire blague à faire à un enterrement", "Maladroite", "Expulsé du cimetière"], ["Ta place en enfer", "Sous-sol", "Carré VIP avec le diable"], ["Ce que tu fais de ton héritage", "Raisonnable", "Tout claqué en une nuit"], ["L'animal de compagnie qui te mangerait après ta mort", "Fidèle jusqu'au bout", "Sans hésiter"], ["Une raison de ne pas aller à un enterrement", "Valable", "Monstrueuse"], ["Ce que la Mort te dit en venant te chercher", "Polie", "Elle se moque de toi"], ["Le pire endroit pour mourir", "Paisible", "Ridicule"], ["Ce qu'on trouvera dans ton ordi après ta mort", "Rien", "Scandale posthume"], ["La pire façon d'annoncer un décès", "Maladroite", "Par un mème"], ["Ton plan pour survivre à la fin du monde", "Mort dans la semaine", "Seigneur des ruines"], ["Ce que tu glisses dans le cercueil de ton pire ennemi", "Une fleur", "Un mot doux bien senti"], ["Une mauvaise nouvelle à annoncer au repas de Noël", "Gênante", "La bûche est gâchée"], ["Le pire nom pour une entreprise de pompes funèbres", "Sobre", "Scandale"], ["Ce que tu dis au diable pour négocier ton âme", "Faible", "Il te doit de l'argent"], ["Le hobby du tueur en série dans un film", "Banal", "Glaçant"], ["Ce que tu fais si tu te réveilles dans ton cercueil", "Panique", "Je fais la sieste"], ["La réaction de ta famille à ta mort", "Effondrée", "Soulagée"], ["Le pire souvenir à ramener d'un cimetière", "Une fleur", "Un tibia"], ["Ta réincarnation", "Moustique", "Chat de riche"], ["Ce que tu publies en apprenant ta fin imminente", "Digne", "Règlement de comptes"], ["Le pire dernier repas", "Fade", "Plat de cantine"], ["Ce que dirait le prêtre à ton enterrement s'il te connaissait vraiment", "Élogieux", "Il se signe trois fois"], ["La pire manière d'apprendre qu'on est adopté", "Avec douceur", "À la lecture du testament"], ["Le pire moment pour un fou rire", "Pas grave", "Pendant la minute de silence"], ["Ce que tu ferais si tu étais le dernier humain sur Terre", "Je pleure", "Enfin la paix"], ["Le pire job dans un film d'horreur", "Figurant", "Babysitter de la maison hantée"],
@@ -400,7 +401,7 @@ const deckOf = lg => DECK[lg === "en" ? "en" : "fr"];
 const catsOf = (p, lg) => deckOf(lg)[p.v] || [];
 const PACKS = [
   { v: "classique", label: tr("Classique", "Classic"), desc: tr("Pour tout le monde", "For everyone"), kid: true },
-  { v: "geek", label: "Pop culture & geek", desc: tr("Jeux vidéo, séries, internet", "Video games, TV shows, the internet"), kid: true },
+  { v: "geek", label: tr("Culture pop & geek", "Pop culture & geek"), desc: tr("Jeux vidéo, séries, internet", "Video games, TV shows, the internet"), kid: true },
   { v: "absurde", label: tr("Situations absurdes", "Absurd situations"), desc: tr("Des situations folles, des réponses à inventer", "Wild scenarios, answers you make up"), kid: true },
   { v: "adulte", label: tr("Adultes", "Adults"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult content"), hot: true },
   { v: "perso", label: tr("Catégories perso", "Custom categories"), desc: tr("Les tiennes, et en réseau celles des joueurs du salon", "Yours, plus everyone's in the room when playing online") }
@@ -442,7 +443,7 @@ function points(n, g, tw){
 }
 // Note inversée : on échange les deux bouts de l'échelle.
 function view(c, tw){ c = A(c); return tw === "inv" ? [c[0], c[2], c[1]] : c; }
-const VERDICTS = { 6: [tr("Jackpot !", "Jackpot!"), tr("Double ou rien… et c'est double.", "Double or nothing… and it's double.")], 3: [tr("Pile !", "Spot on!"), tr("Vous êtes sur la même longueur d'onde.", "You're on the same wavelength.")], 2: [tr("Presque !", "So close!"), tr("À un point près. Très belle lecture.", "Off by one. Great read.")], 1: [tr("Pas loin", "Not far"), tr("Pas pile, mais ça compte quand même.", "Not spot on, but it still counts.")], 0: [tr("Raté", "Missed"), tr("Les indices n'ont pas parlé à tout le monde.", "The clues didn't click for everyone.")] };
+const VERDICTS = { 6: [tr("Jackpot !", "Jackpot!"), tr("Double ou rien… et c'est double.", "Double or nothing… and it's double.")], 3: [tr("Pile !", "Spot on!"), tr("Vous êtes sur la même longueur d'onde.", "You're on the same wavelength.")], 2: [tr("Presque !", "So close!"), tr("À une note près. Très belle lecture.", "Off by one. Great read.")], 1: [tr("Pas loin", "Not far"), tr("Pas pile, mais ça compte quand même.", "Not spot on, but it still counts.")], 0: [tr("Raté", "Missed"), tr("Les indices n'ont pas parlé à tout le monde.", "The clues didn't click for everyone.")] };
 function mention(pct){
   if(pct >= .9) return [tr("Félicitations du jury", "Top of the class"), tr("Vous partagez visiblement un seul cerveau.", "You clearly share a single brain.")];
   if(pct >= .7) return [tr("Très bien", "Very good"), tr("Vous vous comprenez à demi-mot. Belle équipe.", "You barely need words. Great team.")];
@@ -463,7 +464,7 @@ function awards(hist, tous){
   const cp = {}, cn = {};
   h.forEach(x => A(x[7]).forEach(n => { cp[n] = (cp[n] || 0) + (+x[4] || 0); cn[n] = (cn[n] || 0) + 1; }));
   const ck = Object.keys(cp).filter(n => cn[n] >= 2).map(n => [n, cp[n] / cn[n]]).sort((a, b) => b[1] - a[1]);
-  if(ck.length > 1 && ck[0][1] > ck[ck.length - 1][1]){ const av = Math.round(ck[0][1] * 10) / 10; out.push([vary(tr(["Indice en or", "Boussole du groupe", "Traducteur officiel", "Phare dans la nuit"], ["Golden clue", "The group's compass", "Official translator", "Lighthouse in the dark"]), seed + 2), ck[0][0], tr(String(av).replace(".", ",") + (tous ? " pt en moyenne par devineur" : " pt par indice en moyenne"), av + (av === 1 ? " pt" : " pts") + (tous ? " per guesser on average" : " per clue on average"))]); }
+  if(ck.length > 1 && ck[0][1] > ck[ck.length - 1][1]){ const av = Math.round(ck[0][1] * 10) / 10; out.push([vary(tr(["Indice en or", "Boussole du groupe", "Traducteur officiel", "Phare dans la nuit"], ["Golden clue", "The group's compass", "Official translator", "Lighthouse in the dark"]), seed + 2), ck[0][0], tr(String(av).replace(".", ",") + (av >= 2 ? " pts" : " pt") + (tous ? " en moyenne par devineur" : " en moyenne par indice"), av + (av === 1 ? " pt" : " pts") + (tous ? " per guesser on average" : " per clue on average"))]); }
   return out;
 }
 function awardsHTML(a){ return a.length ? '<div class="field"><span class="eyebrow">' + tr("Trophées", "Awards") + '</span><ul class="list">' + a.map(x => '<li><span class="t" style="font-size:19px">' + esc(x[0]) + '</span><span class="by">' + esc(x[1]) + " · " + esc(x[2]) + "</span></li>").join("") + "</ul></div>" : ""; }
@@ -625,8 +626,9 @@ function roundTable(rh){
 }
 // "Alice, Bob and Chloe"
 const andList = a => a.length > 1 ? a.slice(0, -1).join(", ") + " and " + a[a.length - 1] : a.join("");
+const etList = a => a.length > 1 ? a.slice(0, -1).join(", ") + " et " + a[a.length - 1] : a.join("");
 // Titre de fin du mode « tout le monde devine » : « Alice et Bob gagnent » / "Alice and Bob win".
-function winHTML(top){ return top.length ? tr(esc(top.join(" et ")) + (top.length > 1 ? " gagnent" : " gagne"), esc(andList(top)) + (top.length > 1 ? " win" : " wins")) : tr("Personne ne marque", "Nobody scored"); }
+function winHTML(top){ return top.length ? tr(esc(etList(top)) + (top.length > 1 ? " gagnent" : " gagne"), esc(andList(top)) + (top.length > 1 ? " win" : " wins")) : tr("Personne ne marque", "Nobody scored"); }
 function topOf(rows){ const m = Math.max(0, ...rows.map(r => r[1])); return m > 0 ? rows.filter(r => r[1] === m).map(r => r[0]) : []; }
 function scoreRows(ctx){
   const sc = ctx.s.sc || {}, ids = ctx.ids.slice();
@@ -666,7 +668,7 @@ function renderTous(ctx, root){
     if(isI){
       if(clK !== s.k){ clK = s.k; clV = A(ctx.mine() && ctx.mine().cl).slice(0, MAXCL); }
       screen(root, "ic" + s.k, CSS + label + (s.dl ? '<div class="timer" data-t></div>' : "") + catCard(c, tr("Catégorie", "Category"), gradeHTML(s.note)) +
-        '<p class="howto">' + tr("Tu es l'indicateur. Donne <b>1 à " + MAXCL + " " + (one ? "mots seuls" : "exemples") + "</b> qui valent cette note pour toi. Sans chiffre. Tous les autres devinent.", "You're the clue-giver. Give <b>1 to " + MAXCL + " " + (one ? "single words" : "examples") + "</b> that are worth this number to you. No digits. Everyone else guesses.") + "</p>" +
+        '<p class="howto">' + tr("Tu es l'indicateur. Donne <b>1 à " + MAXCL + " " + (one ? "indices d'un seul mot" : "exemples") + "</b> qui valent cette note pour toi. Sans chiffre. Tous les autres devinent.", "You're the clue-giver. Give <b>1 to " + MAXCL + " " + (one ? "single words" : "examples") + "</b> that are worth this number to you. No digits. Everyone else guesses.") + "</p>" +
         '<div class="field" data-form><label class="eyebrow" for="n10-in">' + tr("Indice", "Clue") + '</label><div class="row"><input class="txt" id="n10-in" maxlength="60" autocomplete="off" placeholder="' + (one ? tr("Un seul mot", "One word only") : tr("Un exemple, sans chiffre", "An example, no digits")) + '"><button class="btn ghost" type="button" data-add style="flex:none">' + tr("Ajouter", "Add") + '</button></div><p class="err" data-err hidden></p></div>' +
         '<ul class="mine" data-mine></ul>' + SB.u.dock('<button class="btn acc" type="button" data-go disabled>' + tr("Faire deviner", "Send clues") + '</button><button class="link" type="button" data-rr style="align-self:center"' + (s.rr > 0 ? "" : " disabled") + ">" + rrLabel(s.rr) + "</button>") + hostBox, r => {
         const inp = r.querySelector("#n10-in"), err = r.querySelector("[data-err]");
@@ -701,14 +703,14 @@ function renderTous(ctx, root){
     }
     if(s.dl){ const left = Math.max(0, Math.ceil((s.dl - ctx.now()) / 1000)), t = txt(root, "[data-t]", left); if(t) t.classList.toggle("low", left <= 10); }
     const gone = !ctx.here(s.ind);
-    hostButtons(s.k + "|" + gone, gone ? '<button class="link warn" type="button" data-skip style="align-self:center">' + tr("L'indicateur est parti, passer la manche", "The clue-giver left, skip the round") + "</button>" : "", hb => {
+    hostButtons(s.k + "|" + gone, gone ? '<button class="link warn" type="button" data-skip style="align-self:center">' + tr("L'indicateur est parti : passer la manche", "The clue-giver left, skip the round") + "</button>" : "", hb => {
       const b = hb.querySelector("[data-skip]"); if(b) b.addEventListener("click", () => ctx.act(skip));
     });
   } else if(s.phase === "guess"){
     const isG = !isI && playing;
     screen(root, "tg" + s.k + isG, CSS + label + (isI ? catCard(c, tr("Catégorie", "Category"), gradeHTML(s.note)) : s.tw === "aveugle" ? hiddenCard : catCard(c)) +
       '<div class="field"><span class="eyebrow">' + tr("Les indices de " + esc(iName), esc(iName) + "'s clues") + '</span><ul class="list" data-clues></ul></div>' +
-      (isG ? '<div class="field"><span class="eyebrow">' + tr("Quelle note a-t-il en tête ?", "What number do they have in mind?") + "</span>" + padHTML() + "</div>" + SB.u.dock('<button class="btn acc" type="button" data-val disabled>' + tr("Valider ma note", "Lock in my guess") + "</button>") : "") +
+      (isG ? '<div class="field"><span class="eyebrow">' + tr("Quelle est sa note secrète ?", "What number do they have in mind?") + "</span>" + padHTML() + "</div>" + SB.u.dock('<button class="btn acc" type="button" data-val disabled>' + tr("Valider ma note", "Lock in my guess") + "</button>") : "") +
       '<div class="field"><span class="eyebrow">' + tr("Notes reçues", "Guesses in") + '</span><div class="chips" data-chips></div></div>' + (isG ? "" : SB.u.dock('<p class="wait">' + tr("Tout le monde réfléchit…", "Everyone's thinking…") + "</p>")) + hostBox, r => {
       if(pickK !== s.k){ pickK = s.k; pickN = gOf(ctx, ctx.me); }
       const v = r.querySelector("[data-val]");
@@ -721,7 +723,7 @@ function renderTous(ctx, root){
     sync("[data-chips]", chips());
     const n = tgs(ctx).filter(id => gOf(ctx, id)).length, gone = !ctx.here(s.ind);
     hostButtons(s.k + "|" + (n > 0) + "|" + gone, '<button class="btn ghost" type="button" data-rev' + (n ? "" : " disabled") + ">" + tr("Révéler sans attendre les autres", "Reveal without waiting for the rest") + "</button>" +
-      (gone && !n ? '<button class="link warn" type="button" data-skip style="align-self:center">' + tr("L'indicateur est parti, passer la manche", "The clue-giver left, skip the round") + "</button>" : ""), hb => {
+      (gone && !n ? '<button class="link warn" type="button" data-skip style="align-self:center">' + tr("L'indicateur est parti : passer la manche", "The clue-giver left, skip the round") + "</button>" : ""), hb => {
       hb.querySelector("[data-rev]").addEventListener("click", () => ctx.act(c2 => { if(c2.s.phase === "guess") revealTous(c2); }));
       const b = hb.querySelector("[data-skip]"); if(b) b.addEventListener("click", () => ctx.act(skip));
     });
@@ -742,7 +744,7 @@ function renderTous(ctx, root){
       const b = r.querySelector("[data-back]");
       if(b) b.addEventListener("click", () => ctx.act(c2 => {
         const R = scoreRows(c2).sort((a, b2) => b2[1] - a[1]), m = R.length ? R[0][1] : 0, W = R.filter(x => x[1] === m).map(x => x[0]);
-        c2.end({ title: m > 0 ? tr(W.join(" et ") + " en tête avec " + SB.u.plural(m, "point"), andList(W) + (W.length > 1 ? " lead" : " leads") + " with " + SB.u.plural2(m, "point", null, "point")) : tr("Personne n'a marqué", "Nobody scored"),
+        c2.end({ title: m > 0 ? tr(etList(W) + " en tête avec " + SB.u.plural(m, "point"), andList(W) + (W.length > 1 ? " lead" : " leads") + " with " + SB.u.plural2(m, "point", null, "point")) : tr("Personne n'a marqué", "Nobody scored"),
           lines: R.slice(0, 5).map(x => x[0] + tr(" : ", ": ") + SB.u.plural2(x[1], "pt", null, "pt")).concat(awards(c2.s.hist, true).map(a => a[0] + tr(" : ", ": ") + a[1])),
           win: m > 0 ? R.filter(x => x[1] === m).map(x => x[2]) : [] });
       }));
@@ -759,7 +761,7 @@ SB.register({
   tag: tr("Une catégorie, une note secrète. Faites-la deviner avec des exemples.", "One category, one secret number. Get it guessed with examples."),
   min: 2, max: 12,
   gages: [
-    { ev: "rate", label: tr("Note ratée (à 3 ou plus)", "Missed the score (by 3 or more)"), kind: "boit", n: 2 },
+    { ev: "rate", label: tr("Note ratée (écart de 3 ou plus)", "Missed the score (by 3 or more)"), kind: "boit", n: 2 },
     { ev: "pile", label: tr("Note pile", "Spot on"), kind: "distribue", n: 2 },
     { ev: "flop", label: tr("Indicateur : personne n'a marqué", "Clue giver: nobody scored"), kind: "boit", n: 2 }
   ],
@@ -861,7 +863,7 @@ SB.register({
       const blind = isG && s.tw === "aveugle";
       screen(root, "gu" + s.k, CSS + label + (blind ? hiddenCard : catCard(c)) + '<div class="field"><span class="eyebrow">' + tr("Les indices", "The clues") + '</span><ul class="list" data-clues></ul></div>' +
         (isG ? '<div class="field"><span class="eyebrow">' + tr("Quelle note ont-ils en tête ?", "What number do they have in mind?") + "</span>" + padHTML() + '</div>' + SB.u.dock('<button class="btn acc" type="button" data-val disabled>' + tr("Valider ma note", "Lock in my guess") + "</button>") : SB.u.dock('<p class="wait">' + esc(gName) + tr(" réfléchit…", " is thinking…") + "</p>")) +
-        '<button class="link warn" type="button" data-skip hidden style="align-self:center">' + tr("Le devineur est parti, passer la manche", "The guesser left, skip the round") + "</button>", r => {
+        '<button class="link warn" type="button" data-skip hidden style="align-self:center">' + tr("Le devineur est parti : passer la manche", "The guesser left, skip the round") + "</button>", r => {
         if(pickK !== s.k){ pickK = s.k; pickN = 0; }
         r.querySelectorAll("[data-n]").forEach(b => b.addEventListener("click", () => {
           pickN = +b.dataset.n; r.querySelectorAll("[data-n]").forEach(x => x.setAttribute("aria-pressed", +x.dataset.n === pickN)); r.querySelector("[data-val]").disabled = false;
@@ -928,12 +930,12 @@ SB.register({
             });
           });
         } else if(L.phase === "ipass"){
-          screen(root, "ipass" + L.round, lab + '<div class="pass"><span class="eyebrow">' + tr("Indicateur de la manche", "This round's clue-giver") + '</span><div class="who">' + esc(g) + "</div><p>" + tr("Donnez le téléphone à <b>" + esc(g) + "</b>. Lui seul regarde l'écran : il va voir la catégorie et la note secrète.", "Hand the phone to <b>" + esc(g) + "</b>. Only they look at the screen: they'll see the category and the secret number.") + "</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>" + tr("C'est moi, montrer la note", "It's me, show the number") + "</button></div>", r => {
+          screen(root, "ipass" + L.round, lab + '<div class="pass"><span class="eyebrow">' + tr("Indicateur de la manche", "This round's clue-giver") + '</span><div class="who">' + esc(g) + "</div><p>" + tr("Donnez le téléphone à <b>" + esc(g) + "</b>. Personne d'autre ne regarde l'écran : la catégorie et la note secrète vont s'afficher.", "Hand the phone to <b>" + esc(g) + "</b>. Only they look at the screen: they'll see the category and the secret number.") + "</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>" + tr("C'est moi, montrer la note", "It's me, show the number") + "</button></div>", r => {
             r.querySelector("[data-n]").addEventListener("click", () => { L.dl = L.tw === "chrono" ? Date.now() + CHRONO * 1000 : 0; L.phase = "iclue"; go(); });
           });
         } else if(L.phase === "iclue"){
           screen(root, "iclue" + L.round + c[0] + L.rr, CSS + lab + (L.dl ? '<div class="timer" data-t>' + CHRONO + "</div>" : "") + catCard(c, tr("Catégorie", "Category"), gradeHTML(L.note)) +
-            '<p class="howto">' + tr("Dis à voix haute <b>1 à " + MAXCL + " " + (L.tw === "mot" ? "mots seuls" : "exemples") + "</b> qui valent cette note pour toi. Sans chiffre" + (L.tw === "aveugle" ? ", et sans dire la catégorie" : ""), "Say <b>1 to " + MAXCL + " " + (L.tw === "mot" ? "single words" : "examples") + "</b> out loud that are worth this number to you. No numbers" + (L.tw === "aveugle" ? ", and don't say the category" : "")) + ".</p>" +
+            '<p class="howto">' + tr("Dis à voix haute <b>1 à " + MAXCL + " " + (L.tw === "mot" ? "indices d'un seul mot" : "exemples") + "</b> qui valent cette note pour toi. Sans chiffre" + (L.tw === "aveugle" ? ", et sans dire la catégorie" : ""), "Say <b>1 to " + MAXCL + " " + (L.tw === "mot" ? "single words" : "examples") + "</b> out loud that are worth this number to you. No numbers" + (L.tw === "aveugle" ? ", and don't say the category" : "")) + ".</p>" +
             '<div class="dock"><button class="btn acc" type="button" data-n>' + tr("Cacher la note, place aux devineurs", "Hide the number, over to the guessers") + '</button><button class="link" type="button" data-rr style="align-self:center"' + (L.rr > 0 ? "" : " disabled") + ">" + rrLabel(L.rr) + "</button></div>", r => {
             r.querySelector("[data-n]").addEventListener("click", () => { L.dl = 0; L.phase = "gpass"; go(); });
             r.querySelector("[data-rr]").addEventListener("click", () => { if(L.rr > 0){ L.rr--; draw(); if(L.dl) L.dl = Date.now() + CHRONO * 1000; go(); } });
@@ -945,7 +947,7 @@ SB.register({
           });
         } else if(L.phase === "gguess"){
           const who = L.order[L.qi];
-          screen(root, "gguess" + L.round + "-" + L.qi, CSS + lab + (L.tw === "aveugle" ? hiddenCard : catCard(c)) + '<span class="eyebrow">' + tr(esc(who) + ", quelle note " + esc(g) + " a-t-il en tête ?", esc(who) + ", what number does " + esc(g) + " have in mind?") + "</span>" + padHTML() + '<div class="dock"><button class="btn acc" type="button" data-v disabled>' + tr("Valider ma note", "Lock in my guess") + "</button></div>", r => {
+          screen(root, "gguess" + L.round + "-" + L.qi, CSS + lab + (L.tw === "aveugle" ? hiddenCard : catCard(c)) + '<span class="eyebrow">' + tr(esc(who) + ", quelle est la note secrète de " + esc(g) + " ?", esc(who) + ", what number does " + esc(g) + " have in mind?") + "</span>" + padHTML() + '<div class="dock"><button class="btn acc" type="button" data-v disabled>' + tr("Valider ma note", "Lock in my guess") + "</button></div>", r => {
             r.querySelectorAll("[data-n]").forEach(b => b.addEventListener("click", () => { L.guess = +b.dataset.n; r.querySelectorAll("[data-n]").forEach(x => x.setAttribute("aria-pressed", +x.dataset.n === L.guess)); r.querySelector("[data-v]").disabled = false; }));
             r.querySelector("[data-v]").addEventListener("click", () => {
               if(!L.guess) return;

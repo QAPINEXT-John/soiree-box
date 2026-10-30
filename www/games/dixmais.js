@@ -56,7 +56,7 @@ const LOVE = [
   "note tous tes défauts dans une appli", "dit « on en reparle » et n'en reparle jamais", "oublie ton anniversaire, chaque année",
   "t'a demandé ton signe astrologique avant ton prénom", "refuse de te présenter à ses potes", "garde tous les cadeaux de ses ex",
   "choisit toujours le resto, et toujours le même", "lit tes messages par-dessus ton épaule", "parle en bébé quand vous êtes seuls",
-  "laisse ses ex commenter toutes ses photos", "veut qu'on porte des tenues assorties"
+  "laisse ses ex commenter toutes ses photos", "veut que vous portiez des tenues assorties"
 ];
 const HOT = [
   "simule l'orgasme à chaque fois", "appelle sa mère juste après le sexe", "veut te lécher les pieds à chaque câlin",
@@ -137,20 +137,20 @@ const TRASH = [
   "jouit en trente secondes et s'endort direct", "crie « BUT ! » au moment de jouir", "n'a jamais trouvé ton clitoris, même avec un GPS",
   "a une bite minuscule et l'appelle « le monstre »", "t'envoie des photos de sa bite à 8 h du matin, avant le bonjour",
   "a un OnlyFans, et ses parents sont abonnés", "met un porno à la télé pendant que vous baisez",
-  "veut que tu l'appelles « papa » pendant qu'il te prend", "pète en pleine levrette et continue comme si de rien n'était",
+  "veut que tu l'appelles « papa » ou « maman » pendant l'acte", "pète en pleine levrette et continue comme si de rien n'était",
   "ne baise qu'en levrette pour pouvoir regarder le match", "a un plan cul dans chaque ville de France", "compte ses coups de reins à voix haute",
   "a couché avec toute ta bande de potes", "a un historique porno qui ferait rougir un sexologue",
   "laisse son gode sur la table de chevet, même quand ses parents passent", "veut un plan à quatre avec ses ex", "baise en chaussettes et en bonnet",
   "te lèche partout, vraiment partout, même les aisselles", "veut tester toutes les catégories de Pornhub, dans l'ordre alphabétique",
-  "a perdu la clé des menottes… pendant que tu étais attaché au lit", "gémit comme une chèvre quand il jouit",
+  "a perdu la clé des menottes… pendant que tu étais attaché au lit", "gémit comme une chèvre en jouissant",
   "se branle trois fois par jour, y compris aux toilettes du bureau", "s'est tapé son coach de salle, sur le banc de muscu",
   "t'envoie des sextos bourrés de fautes d'orthographe", "veut baiser déguisé en mascotte", "a une bite qui part à gauche à 45 degrés",
   "exige des pipes mais refuse de te lécher", "a des couilles qui pendent jusqu'aux genoux", "utilise du beurre comme lubrifiant",
   "a tourné une sextape et l'a postée par erreur sur son LinkedIn", "te parle de sucer dès l'entrée du resto",
   "veut que tu portes la lingerie de son ex", "a « open bar » tatoué au-dessus des fesses", "veut baiser sur le capot de la voiture de ses parents",
-  "imite une sirène de police quand il jouit", "se branle devant des vidéos de cuisine", "porte un string léopard pour les grandes occasions",
+  "imite une sirène de police en jouissant", "se branle devant des vidéos de cuisine", "porte un string léopard pour les grandes occasions",
   "connaît toutes les actrices porno par leur prénom", "prend du Viagra… à 25 ans",
-  "a son vibro qui s'est mis en marche dans son sac en pleine réunion", "se prend en selfie pendant qu'il te baise",
+  "a son vibro qui s'est mis en marche dans son sac en pleine réunion", "se prend en selfie pendant que vous baisez",
   "recouche avec son ex à chaque anniversaire de rupture", "veut un plan à trois avec ton boss", "embrasse avec la langue jusqu'au fond de ta gorge",
   "a une liste de fantasmes de 40 pages, illustrée", "va dans un club échangiste tous les vendredis, sans exception",
   "a un piercing au téton qui sonne aux portiques de l'aéroport", "se branle dans ses chaussettes et les garde sous le lit",
@@ -187,11 +187,11 @@ const HARD = [
   "a une deuxième famille dans une autre ville", "ne tire jamais la chasse", "sent la transpiration en permanence et refuse le déo",
   "garde ses ongles de pieds coupés dans un bocal", "a craché dans le plat de ta mère", "drague ta mère juste devant toi", "a couché avec ton frère",
   "a couché avec ton père", "parle à sa mère comme à un chien", "poste tes messages privés sur les réseaux", "a vomi dans ta voiture et nie encore",
-  "a une haleine de poubelle matin, midi et soir", "fait caca la porte ouverte en te parlant", "te trompe avec ton ou ta meilleure amie",
+  "a une haleine de poubelle matin, midi et soir", "fait caca la porte ouverte en te parlant", "te trompe avec ton meilleur ami ou ta meilleure amie",
   "te fait payer la moitié de ses courses, au centime", "a des poux depuis trois mois", "offre à son plan cul les cadeaux que tu lui as faits",
   "boit sa première bière à 9 h du matin", "conduit bourré tous les week-ends", "s'est fait virer pour avoir fait caca dans l'imprimante du bureau",
   "ne porte jamais de sous-vêtements, et ça se voit", "passe 45 minutes aux toilettes avec son téléphone, à chaque fois",
-  "t'a menti sur son âge : il a quinze ans de plus", "est marié, mais « c'est compliqué »", "a fait faillite trois fois, avec ton argent",
+  "t'a caché quinze ans sur son âge", "est marié, mais « c'est compliqué »", "a fait faillite trois fois, avec ton argent",
   "a perdu son appart à cause des paris sportifs", "se gratte les fesses et te serre la main",
   "a des pieds qui puent tellement que le chat fuit la pièce", "garde un dossier sur tous ses ex : adresses, horaires, nouveaux partenaires",
   "recycle ses capotes… en les lavant", "ne change de draps qu'une fois par an", "met ses doigts dans le nez puis dans le paquet de chips commun",
@@ -328,7 +328,7 @@ const qCard = (q, lg, own) => '<div class="card acc"><span class="eyebrow">' + e
 SB.register({
   id: "dixmais", name: tr("C'est un 10 mais…", "They're a 10 but…"), glyph: tr("10 mais", "10 but"), pitch: tr("Un 10/10 avec un gros défaut : quelle note tu lui redonnes ?", "A perfect 10 with one big flaw: what's the new rating?"), hot: true,
   accent: { light: "#e0457b", dark: "#ff7aa8" },
-  tag: tr("Un défaut tombe, chacun redonne une note sur 10 en secret. Sois dans la tête du groupe pour marquer des points.", "A flaw drops, everyone secretly gives a new rating out of 10. Read the group's mind to score points."),
+  tag: tr("Un défaut tombe, chacun redonne une note sur 10 en secret. Mets-toi dans la tête du groupe pour marquer des points.", "A flaw drops, everyone secretly gives a new rating out of 10. Read the group's mind to score points."),
   min: 2, max: 20,
   gages: [
     { ev: "loin", label: tr("Le plus loin de la moyenne", "Furthest from the average"), kind: "boit", n: 2 },
@@ -337,10 +337,10 @@ SB.register({
   ],
   rules: tr([
     "Une phrase s'affiche : « C'est un(e) 10 mais… » suivie d'un défaut.",
-    "Chacun redonne une note sur 10 en secret : ce défaut, ça te fait descendre à combien ?",
+    "Chacun redonne une note sur 10 en secret : avec ce défaut, sa note descend à combien ?",
     "On découvre la moyenne du groupe et la note de chacun.",
-    "Points : le plus proche de la moyenne gagne 2 points, ceux à 1 point ou moins de la moyenne gagnent 1 point.",
-    "Coups de théâtre : manche en or, juge (il faut deviner sa note), notes cachées, la plume (un joueur invente le défaut)…",
+    "Points : le plus proche de la moyenne gagne 2 points, ceux qui sont à 1 point d'écart au plus gagnent 1 point.",
+    "Coups de théâtre : manche en or, juge (il faut deviner sa note), notes cachées, la plume (un joueur invente le défaut), le plus sévère choisit…",
     "À la fin : le classement, le cœur d'artichaut et le jury impitoyable de la soirée."
   ], [
     "A line pops up: “They're a 10 but…” followed by a flaw.",

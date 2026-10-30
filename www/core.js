@@ -66,11 +66,11 @@ const EN_HTML = {
   "Salon": "Room", "Hors ligne…": "Offline…", "Signaler un bug": "Report a bug", "Règles du jeu": "Game rules", "Quitter": "Leave",
   "Code à partager": "Code to share", "Partager l'invitation": "Share the invite", "QR code du salon": "Room QR code", "Mon profil": "My profile", "Invitation": "Invite", "Choisis un jeu": "Pick a game",
   "Partie en cours": "Game in progress",
-  "Tu es arrivé en cours de partie. Tu pourras jouer à la prochaine, quand l'hôte la lancera depuis le salon.": "You joined mid-game. You can play the next one when the host starts it from the room.",
+  "Tu as rejoint une partie déjà commencée. Tu pourras jouer à la prochaine, quand l'hôte la lancera depuis le salon.": "You joined mid-game. You can play the next one when the host starts it from the room.",
   "Salon fermé": "Room closed", "L'hôte est parti": "The host left",
-  "La personne qui a créé le salon a fermé l'appli. Crée un nouveau salon pour continuer.": "The person who created the room closed the app. Create a new room to keep playing.",
+  "La personne qui a créé le salon a quitté l'appli ou perdu la connexion. Crée un nouveau salon pour continuer.": "The person who created the room left the app or lost connection. Create a new room to keep playing.",
   "Retour à l'accueil": "Back to home", "Sur ce téléphone": "On this phone", "Accueil": "Home", "Un seul téléphone": "One phone",
-  "Entre vos prénoms une fois, puis choisis un jeu. Le téléphone passe de main en main, ou tu joues contre des bots.": "Enter your names once, then pick a game. Pass the phone around, or play against bots.",
+  "Entre les prénoms des joueurs une fois, puis choisis un jeu. Le téléphone passe de main en main, ou tu joues contre des bots.": "Enter your names once, then pick a game. Pass the phone around, or play against bots.",
   "Retour": "Back", "+ Ajouter un joueur": "+ Add a player", "C'est parti": "Let's go", "Terminé": "Done",
   "Lancer un jeu": "Start a game", "Fermer": "Close"
 };
@@ -830,7 +830,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.39.7";
+const VERSION = "4.40.0";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -862,7 +862,7 @@ function bugNudge(){
   BL.nudged = Date.now();
   let b = document.getElementById("bug-nudge");
   if(!b){ b = document.createElement("button"); b.id = "bug-nudge"; b.type = "button"; b.className = "bug-nudge"; document.body.append(b); b.addEventListener("click", () => { b.classList.remove("on"); openBug("plante"); }); }
-  b.innerHTML = BUGICON + tr("<span>Un souci ? <u>Signaler le bug</u></span>", "<span>Something wrong? <u>Report the bug</u></span>");
+  b.innerHTML = BUGICON + tr("<span>Un souci ? <u>Signale le bug</u></span>", "<span>Something wrong? <u>Report the bug</u></span>");
   requestAnimationFrame(() => b.classList.add("on"));
   clearTimeout(b._t); b._t = setTimeout(() => b.classList.remove("on"), 7000);
 }
@@ -909,8 +909,8 @@ function openBug(type){
       '<p class="lead">' + tr("Dis-nous ce qui cloche. Le rapport contient aussi les infos techniques utiles (version, écran, jeu, erreurs) pour corriger plus vite.", "Tell us what went wrong. The report also includes useful technical info (version, screen, game, errors) so it can be fixed faster.") + '</p>' +
       '<div class="field"><span class="eyebrow">' + tr("Type de problème", "Type of problem") + '</span><div class="filters" id="bg-type">' +
         BUGTYPES.map(t => '<button type="button" data-t="' + t[0] + '" aria-pressed="' + (st.type === t[0]) + '">' + esc(t[1]) + "</button>").join("") + "</div></div>" +
-      '<label class="lbl" for="bg-what">' + tr("Ce qui s'est passé", "What happened") + '<textarea class="txt area" id="bg-what" rows="4" maxlength="1500" placeholder="' + esc(tr("Ex : dans Dernière carte, j'ai posé un +2 et plus personne ne pouvait jouer.", "E.g. in Last Card, I played a +2 and then nobody could play.")) + '"></textarea></label>' +
-      '<label class="lbl" for="bg-how">' + tr("Comment reproduire le problème (si tu sais)", "How to reproduce it (if you know)") + '<textarea class="txt area" id="bg-how" rows="3" maxlength="800" placeholder="' + esc(tr("Ex : 3 joueurs, cumul activé, j'étais l'hôte en 4G.", "E.g. 3 players, stacking on, I was the host on mobile data.")) + '"></textarea></label>' +
+      '<label class="lbl" for="bg-what">' + tr("Ce qui s'est passé", "What happened") + '<textarea class="txt area" id="bg-what" rows="4" maxlength="1500" placeholder="' + esc(tr("Ex. : dans Dernière carte, j'ai posé un +2 et plus personne ne pouvait jouer.", "E.g. in Last Card, I played a +2 and then nobody could play.")) + '"></textarea></label>' +
+      '<label class="lbl" for="bg-how">' + tr("Comment reproduire le problème (si tu sais)", "How to reproduce it (if you know)") + '<textarea class="txt area" id="bg-how" rows="3" maxlength="800" placeholder="' + esc(tr("Ex. : 3 joueurs, cumul activé, j'étais l'hôte en 4G.", "E.g. 3 players, stacking on, I was the host on mobile data.")) + '"></textarea></label>' +
       '<label class="chk"><input type="checkbox" id="bg-tech" checked><span>' + tr("Joindre les infos techniques", "Attach technical info") + '</span></label>' +
       '<details class="bg-det"><summary>' + tr("Voir les infos techniques", "Show technical info") + '</summary><pre class="bg-pre">' + esc(diag) + "</pre></details>" +
       '<p class="sm">' + tr("Le rapport s'ouvre dans ton appli mail, prêt à envoyer à " + esc(BUG_MAIL) + ". Tu peux aussi le partager ou le copier.", "The report opens in your mail app, ready to send to " + esc(BUG_MAIL) + ". You can also share or copy it.") + "</p>" +
@@ -1171,7 +1171,7 @@ function hostKidPrompt(onOk){
   const inp = (id, ph) => '<input class="txt pin" id="' + id + '" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="' + ph + '">';
   el.innerHTML = '<div class="hdgate-in" role="dialog" aria-modal="true" aria-labelledby="kp-t"><span class="modepill kid">' + tr("Mode Enfant", "Kids mode") + '</span><h2 id="kp-t">' + tr("Choisis le code du mode Enfant", "Pick the Kids mode code") + "</h2>" +
     "<p>" + tr("Les téléphones qui rejoignent ce salon, ou qui scannent son QR code, passent en mode Enfant, verrouillés avec ce code. Il faudra ce code pour leur faire quitter le mode Enfant. Ne le donne pas aux enfants.", "Phones that join this room, or scan its QR code, switch to Kids mode, locked with this code. You'll need it to take them out of Kids mode. Don't give it to the kids.") + "</p>" +
-    inp("kp-1", tr("Code à 4 chiffres", "4-digit code")) + inp("kp-2", tr("Encore une fois", "Once more")) + '<p class="err" data-kperr hidden></p>' +
+    inp("kp-1", tr("Code à 4 chiffres", "4-digit code")) + inp("kp-2", tr("Confirme le code", "Once more")) + '<p class="err" data-kperr hidden></p>' +
     '<button class="btn acc" type="button" data-kpok>' + tr("Passer le salon en mode Enfant", "Switch the room to Kids mode") + '</button><button class="btn ghost" type="button" data-kpno>' + tr("Annuler", "Cancel") + "</button></div>";
   document.body.appendChild(el);
   const a = $("#kp-1", el), b = $("#kp-2", el), er = $("[data-kperr]", el);
@@ -1180,7 +1180,7 @@ function hostKidPrompt(onOk){
   $("[data-kpok]", el).addEventListener("click", () => {
     const bad = t => { er.textContent = t; er.hidden = false; buzz([20, 40, 20]); };
     if(!/^\d{4}$/.test(a.value)) return bad(tr("Le code doit faire 4 chiffres.", "The code must be 4 digits."));
-    if(a.value !== b.value) return bad(tr("Les deux codes ne sont pas pareils.", "The two codes don't match."));
+    if(a.value !== b.value) return bad(tr("Les deux codes ne correspondent pas.", "The two codes don't match."));
     el.remove(); buzz(15); onOk(pinHash(a.value));
   });
 }
@@ -1238,7 +1238,7 @@ function updateGate(){
   if(!g){ g = document.createElement("div"); g.id = "sb-gate"; g.className = "gate"; g.setAttribute("role", "dialog"); g.setAttribute("aria-modal", "true"); document.body.append(g); }
   g.hidden = false;
   const box = forced ? updateHTML(u || { t: "checking" }, true) :
-    '<div class="h"><span class="eyebrow">' + tr("Mise à jour obligatoire", "Update required") + '</span><b>' + tr("Ce salon joue avec Soirée Box " + esc(salonV), "This room is playing on Soirée Box " + esc(salonV)) + '</b><span class="sm">' + tr("Tu as la version " + esc(VERSION) + ". Mets à jour pour jouer avec les autres.", "You have version " + esc(VERSION) + ". Update to play with the others.") + "</span></div>" +
+    '<div class="h"><span class="eyebrow">' + tr("Mise à jour obligatoire", "Update required") + '</span><b>' + tr("Ce salon utilise Soirée Box " + esc(salonV), "This room is playing on Soirée Box " + esc(salonV)) + '</b><span class="sm">' + tr("Tu as la version " + esc(VERSION) + ". Mets à jour pour jouer avec les autres.", "You have version " + esc(VERSION) + ". Update to play with the others.") + "</span></div>" +
     (window.AndroidUpdate ? '<button class="btn acc" type="button" data-retry>' + tr("Chercher la mise à jour", "Check for the update") + '</button>' : '<button class="btn acc" type="button" data-reload>' + tr("Recharger la page", "Reload the page") + '</button>') +
     (N.nr ? '<button class="link" type="button" data-leave style="align-self:center">' + tr("Quitter le salon", "Leave the room") + '</button>' : "");
   const html = '<div class="gate-in"><div class="brand-s">Soirée Box</div><div class="upd">' + box + "</div></div>";
@@ -1340,7 +1340,7 @@ async function netEnter(code, asHost){
     } else nr = FB_ON ? await fbJoin(code) : ROOM ? await roomJoin(code) : await relayRoom(code, false);
   }catch(e){
     N.joining = false; renderHome();
-    homeErr(e && e.code === "not_found" ? tr("Aucun salon ouvert avec le code " + code + ". Vérifie le code, et vérifie que l'hôte a toujours l'appli ouverte.", "No open room with code " + code + ". Check the code, and make sure the host still has the app open.") :
+    homeErr(e && e.code === "not_found" ? tr("Aucun salon ouvert avec le code " + code + ". Vérifie le code et que l'hôte a toujours l'appli ouverte.", "No open room with code " + code + ". Check the code, and make sure the host still has the app open.") :
       e && e.code === "full" ? tr("Ce salon est complet.", "This room is full.") :
       e && e.code === "auth_off" ? tr("Firebase refuse la connexion : active la connexion anonyme dans la console Firebase (voir le guide).", "Firebase refused the connection: enable anonymous sign-in in the Firebase console (see the guide).") :
       e && e.code === "room_denied" ? tr("Le mode réseau n'est pas autorisé pour ton compte sur cette page.", "Online mode isn't allowed for your account on this page.") :
@@ -1384,10 +1384,10 @@ function hdGate(g){
   const el = document.createElement("div"); el.id = "hd-gate"; el.className = "hdgate"; el.dataset.t = type;
   el.innerHTML = type === "kid"
     ? '<div class="hdgate-in" role="dialog" aria-modal="true" aria-labelledby="hdg-t"><span class="modepill kid">' + tr("Mode Enfant", "Kids mode") + '</span><h2 id="hdg-t">' + tr("Ce salon n'est pas pour les enfants", "This room isn't for kids") + "</h2>" +
-      '<p>' + tr("Ce téléphone est en mode Enfant. Demande à l'hôte de toucher le badge en haut du salon pour le passer en mode Enfant : tu pourras entrer tout de suite.", "This phone is in Kids mode. Ask the host to tap the badge at the top of the room to switch it to Kids mode: you'll get in right away.") + "</p>" +
+      '<p>' + tr("Ce téléphone est en mode Enfant. Demande à l'hôte de toucher le badge en haut du salon pour passer le salon en mode Enfant : tu pourras entrer tout de suite.", "This phone is in Kids mode. Ask the host to tap the badge at the top of the room to switch it to Kids mode: you'll get in right away.") + "</p>" +
       '<button class="btn ghost" type="button" data-hdno>' + tr("Quitter le salon", "Leave the room") + "</button></div>"
-    : '<div class="hdgate-in" role="dialog" aria-modal="true" aria-labelledby="hdg-t"><span class="modepill hard">Hard 🔥</span><h2 id="hdg-t">' + tr("Ce salon est en mode Hard", "This room is in Hard mode") + "</h2>" +
-      '<p>' + tr("L'hôte joue avec le contenu 18+ : questions et défis trash, sexe, gages avec alcool. Toi, tu es réglé en Soft.", "The host plays with 18+ content: trashy questions and dares, sex, drinking forfeits. You're set to Soft.") + "</p>" +
+    : '<div class="hdgate-in" role="dialog" aria-modal="true" aria-labelledby="hdg-t"><span class="modepill hard">Hard</span><h2 id="hdg-t">' + tr("Ce salon est en mode Hard", "This room is in Hard mode") + "</h2>" +
+      '<p>' + tr("L'hôte joue avec le contenu 18+ : questions et défis trash, sexe, gages avec alcool. Toi, ton appli est réglée en Soft.", "The host plays with 18+ content: trashy questions and dares, sex, drinking forfeits. You're set to Soft.") + "</p>" +
       '<p class="sm">' + tr("Si tu rejoins, tu joues en Hard pour ce salon seulement. Ton appli reste en Soft après.", "If you join, you play in Hard for this room only. Your app stays in Soft afterwards.") + "</p>" +
       '<button class="btn acc" type="button" data-hdok>' + tr("Rejoindre en Hard", "Join in Hard") + '</button><button class="btn ghost" type="button" data-hdno>' + tr("Quitter le salon", "Leave the room") + "</button></div>";
   document.body.appendChild(el);
@@ -1628,14 +1628,14 @@ function salonDock(g, np){
   if(!g){ d.innerHTML = '<p class="wait">' + tr("Connexion à l'hôte…", "Connecting to the host…") + '</p>'; return; }
   if(N.host){
     d.innerHTML = def ? '<button class="btn acc acc-' + esc(def.id) + '" type="button" data-open>' + tr("Lancer " + esc(def.name), "Play " + esc(def.name)) + '</button>'
-      : tv ? '<button class="btn acc acc-' + esc(tv) + '" type="button" data-top>' + tr("Choisir le plus voté : " + esc(SB.byId[tv].name) + " (" + vc[tv] + ")", "Pick the top vote: " + esc(SB.byId[tv].name) + " (" + vc[tv] + ")") + '</button><p class="wait">' + tr("Ou touche un autre jeu.", "Or tap another game.") + "</p>"
+      : tv ? '<button class="btn acc acc-' + esc(tv) + '" type="button" data-top>' + tr("Choisir le jeu le plus voté : " + esc(SB.byId[tv].name) + " (" + vc[tv] + ")", "Pick the top vote: " + esc(SB.byId[tv].name) + " (" + vc[tv] + ")") + '</button><p class="wait">' + tr("Ou touche un autre jeu.", "Or tap another game.") + "</p>"
       : '<p class="wait">' + (Object.keys(vc).length ? tr("Égalité dans les votes : à toi de trancher !", "Tied votes: your call!") : tr("Touche un jeu pour le choisir. Les autres peuvent voter.", "Tap a game to pick it. The others can vote.")) + '</p>';
     const tp = $("[data-top]", d); if(tp) tp.addEventListener("click", () => { buzz(10); if(N.g && N.g.phase === "salon"){ $("#sa-panel").dataset.key = ""; hostSetG({ sel: tv }); renderSalon(G()); openSheet(); } });
     const b = $("[data-open]", d); if(b) b.addEventListener("click", () => { $("#sa-panel").dataset.key = ""; openSheet(); renderSalon(G()); });
   } else {
     d.innerHTML = def ? '<div class="pick acc-' + esc(def.id) + '"><span class="gl">' + esc(def.glyph || "") + '</span><span class="tx"><span class="eyebrow">' + tr("L'hôte a choisi", "The host picked") + '</span><b>' + esc(def.name) + '</b></span><button class="link" type="button" data-rules>' + tr("Règles", "Rules") + '</button></div><p class="wait">' + tr("L'hôte règle les options et lance la partie…", "The host is setting the options and starting the game…") + '</p>'
       : (mv ? '<div class="pick acc-' + esc(mv) + '"><span class="gl">' + esc(SB.byId[mv].glyph || "") + '</span><span class="tx"><span class="eyebrow">' + tr("Ton vote", "Your vote") + " · " + (vc[mv] || 1) + " vote" + ((vc[mv] || 1) > 1 ? "s" : "") + '</span><b>' + esc(SB.byId[mv].name) + '</b></span><button class="link" type="button" data-vrules>' + tr("Règles", "Rules") + "</button></div>" : "") +
-        '<p class="wait">' + (mv ? tr("L'hôte choisit le jeu, il voit les votes.", "The host picks the game and sees the votes.") : tr("Touche un jeu pour voter. L'hôte voit les votes et choisit.", "Tap a game to vote. The host sees the votes and picks.")) + '</p>';
+        '<p class="wait">' + (mv ? tr("L'hôte voit les votes et choisit le jeu.", "The host picks the game and sees the votes.") : tr("Touche un jeu pour voter. L'hôte voit les votes et choisit.", "Tap a game to vote. The host sees the votes and picks.")) + '</p>';
     const r = $("[data-rules]", d); if(r) r.addEventListener("click", () => openRules(def));
     const vr = $("[data-vrules]", d); if(vr) vr.addEventListener("click", () => openRules(SB.byId[mv]));
   }
@@ -1644,17 +1644,17 @@ function renderSalon(g){
   accent("");
   show("salon");
   $("#sa-code").textContent = N.code; renderQR(); gSalonBar(g);
-  { const mp = $("#sa-mode"), hd = roomHard(), kd = roomKid(); if(mp){ mp.className = "modepill " + (kd ? "kid" : hd ? "hard" : "soft") + (N.host ? " can" : ""); mp.textContent = (kd ? tr("Enfant", "Kids") : hd ? "Hard 🔥" : "Soft") + (N.host && !myKid() ? " ⇄" : ""); mp.setAttribute("aria-label", N.host ? tr("Mode du salon : " + (hd ? "Hard" : "Soft") + ". Toucher pour passer en " + (hd ? "Soft" : "Hard"), "Room mode: " + (hd ? "Hard" : "Soft") + ". Tap to switch to " + (hd ? "Soft" : "Hard")) : tr("Mode du salon : ", "Room mode: ") + (hd ? "Hard" : "Soft"));
+  { const mp = $("#sa-mode"), hd = roomHard(), kd = roomKid(); if(mp){ mp.className = "modepill " + (kd ? "kid" : hd ? "hard" : "soft") + (N.host ? " can" : ""); mp.textContent = (kd ? tr("Enfant", "Kids") : hd ? "Hard" : "Soft") + (N.host && !myKid() ? " ⇄" : ""); mp.setAttribute("aria-label", N.host ? tr("Mode du salon : " + (hd ? "Hard" : "Soft") + ". Touche pour passer en " + (hd ? "Soft" : "Hard"), "Room mode: " + (hd ? "Hard" : "Soft") + ". Tap to switch to " + (hd ? "Soft" : "Hard")) : tr("Mode du salon : ", "Room mode: ") + (hd ? "Hard" : "Soft"));
     if(!mp.dataset.ok){ mp.dataset.ok = "1"; mp.addEventListener("click", () => {
       if(!N.nr) return;
       if(!N.host){ toast(tr("C'est l'hôte qui choisit le mode du salon.", "The host picks the room mode.")); return; }
       if(!N.g) return;
-      if(myKid()){ toast(tr("Mode Enfant : le salon reste en Enfant. Pour changer, va dans ton profil avec le code.", "Kids mode: the room stays in Kids. To change it, go to your profile with the code.")); return; }
+      if(myKid()){ toast(tr("Mode Enfant : le salon reste en mode Enfant. Pour en sortir, entre le code dans ton profil.", "Kids mode: the room stays in Kids. To change it, go to your profile with the code.")); return; }
       const cur = N.g.kid === true ? "kid" : N.g.hd === false ? "soft" : "hard", nx = { hard: "soft", soft: "kid", kid: "hard" }[cur]; buzz(12);
       const after = () => { const pn = $("#sa-panel"); if(pn) pn.dataset.key = ""; const tl = $("#sa-tiles"); if(tl) tl.dataset.key = ""; renderQR(); };
       if(nx === "kid"){ hostKidPrompt(pin => { hostSetG({ hd: false, kid: true, kpin: pin }); toast(tr("Salon en mode Enfant : seulement les jeux tout public.", "Room in Kids mode: family-friendly games only.")); after(); }); return; }
       hostSetG({ hd: nx === "hard", kid: false, kpin: null });
-      toast({ hard: tr("Salon en mode Hard 🔥 : contenu 18+ et gages avec alcool.", "Room in Hard mode 🔥: 18+ content and drinking forfeits."), soft: tr("Salon en mode Soft : plus de contenu 18+ ni d'alcool.", "Room in Soft mode: no 18+ content, no alcohol."), kid: tr("Salon en mode Enfant : seulement les jeux tout public.", "Room in Kids mode: family-friendly games only.") }[nx]);
+      toast({ hard: tr("Salon en mode Hard : contenu 18+ et gages avec alcool.", "Room in Hard mode: 18+ content and drinking forfeits."), soft: tr("Salon en mode Soft : pas de contenu 18+ ni d'alcool.", "Room in Soft mode: no 18+ content, no alcohol."), kid: tr("Salon en mode Enfant : seulement les jeux tout public.", "Room in Kids mode: family-friendly games only.") }[nx]);
       const pn = $("#sa-panel"); if(pn) pn.dataset.key = ""; const tl = $("#sa-tiles"); if(tl) tl.dataset.key = "";
     }); } mp.title = hd ? tr("Salon en mode Hard : contenu 18+ et gages avec alcool", "Hard room: 18+ content and drinking forfeits") : tr("Salon en mode Soft : pas de contenu 18+ ni d'alcool", "Soft room: no 18+ content, no alcohol"); } }
   const np = namedPeers();
@@ -1832,7 +1832,7 @@ function renderLocalPlayers(){
   LP.names.forEach((nm, i) => {
     const row = document.createElement("div"); row.className = "prow";
     const inp = document.createElement("input"); inp.className = "txt"; inp.id = "lp-" + i; inp.value = nm; inp.maxLength = 16; inp.placeholder = tr("Joueur ", "Player ") + (i + 1); inp.autocomplete = "off";
-    inp.setAttribute("aria-label", tr("Nom du joueur ", "Player name ") + (i + 1));
+    inp.setAttribute("aria-label", tr("Prénom du joueur ", "Player name ") + (i + 1));
     inp.addEventListener("input", () => { LP.names[i] = inp.value; persist({ localNames: LP.names }); });
     const x = document.createElement("button"); x.type = "button"; x.className = "x"; x.textContent = "×"; x.setAttribute("aria-label", tr("Retirer ce joueur", "Remove this player"));
     x.disabled = LP.names.length <= lp.min; if(x.disabled) x.style.opacity = .35;
@@ -1882,7 +1882,7 @@ const GEND = [
   { ev: "_win", label: tr("Gagnant de la partie", "Game winner"), kind: "distribue", n: 3 },
   { ev: "_lose", label: tr("Tous les autres joueurs", "Everyone else"), kind: "boit", n: 1 }
 ];
-const GTASKS = { fr: ["Fais 10 squats", "Chante le refrain de ton choix", "Fais un compliment sincère à chaque joueur", "Parle avec un accent pendant 2 minutes", "Imite quelqu'un du groupe, les autres devinent", "Danse 20 secondes sans musique", "Raconte ta pire honte en 30 secondes", "Fais 10 pompes (ou 20 sur les genoux)", "Montre la dernière photo de ta galerie", "Laisse le groupe choisir ta photo de profil pour 1 h", "Fais la planche 30 secondes", "Envoie « tu me manques » au 3e contact de ta liste", "Mange une cuillère de moutarde ou de sauce piquante", "Parle à la 3e personne jusqu'à la prochaine manche"],
+const GTASKS = { fr: ["Fais 10 squats", "Chante le refrain de ton choix", "Fais un compliment sincère à chaque joueur", "Parle avec un accent pendant 2 minutes", "Imite quelqu'un du groupe, les autres devinent", "Danse 20 secondes sans musique", "Raconte ta pire honte en 30 secondes", "Fais 10 pompes (ou 20 sur les genoux)", "Montre la dernière photo de ta galerie", "Laisse le groupe choisir ta photo de profil pour 1 h", "Tiens la planche 30 secondes", "Envoie « tu me manques » au 3e contact de ta liste", "Mange une cuillère de moutarde ou de sauce piquante", "Parle à la 3e personne jusqu'à la prochaine manche"],
   en: ["Do 10 squats", "Sing the chorus of your choice", "Give every player a sincere compliment", "Talk with an accent for 2 minutes", "Impersonate someone in the group, the others guess", "Dance for 20 seconds with no music", "Tell your most embarrassing moment in 30 seconds", "Do 10 push-ups (or 20 on your knees)", "Show the last photo in your camera roll", "Let the group pick your profile picture for 1 hour", "Hold a plank for 30 seconds", "Text “I miss you” to the 3rd contact in your list", "Eat a spoonful of mustard or hot sauce", "Talk about yourself in the third person until next round"] };
 /* Profils de boisson : un « verre » de chaque boisson, combien de gorgées il fait, et la limite proposée par défaut (en verres).
    Chaque verre listé correspond à peu près à un verre standard (10 g d'alcool), le cocktail à environ deux. */
@@ -1980,12 +1980,12 @@ function gageSheet(q, opts){
     return '<li class="g-' + x.t + (mine ? " gme" : "") + '"><span class="av">' + esc(String(x.name || "?").slice(0, 1).toUpperCase()) + '</span><span class="tx"><b>' + t + "</b>" + (sub ? '<span class="sm">' + sub + "</span>" : "") + "</span>" +
       (x.t === "drink" ? '<span class="n">' + x.n + "</span>" : "") + "</li>";
   };
-  let h = '<div class="gsheet-card" role="dialog" aria-label="' + tr("Gages de la manche", "Round forfeits") + '"><div class="gsheet-h"><b>' + tr("Gages de la manche", "Round forfeits") + "</b><span class=\"sm\">" + esc(roomHard() ? ({ chill: "Chill", classique: tr("Classique", "Classic"), chaud: tr("Apéro chaud", "Wild night"), perso: tr("Perso", "Custom") }[S.level] || "") : "Soft") + "</span></div>" +
+  let h = '<div class="gsheet-card" role="dialog" aria-label="' + tr("Gages de la manche", "Round forfeits") + '"><div class="gsheet-h"><b>' + tr("Gages de la manche", "Round forfeits") + "</b><span class=\"sm\">" + esc(roomHard() ? (GLV_NAME()[S.level] || "") : "Soft") + "</span></div>" +
     '<ul class="gsheet-l">' + items.map(line).join("") + "</ul>";
   if(myGive){
     const others = A(opts.players).filter(p => p.id !== myGive.who);
     h += '<div class="gsheet-give"><b>' + (me == null ? tr(esc(myGive.name) + " distribue " + gUnit(S, myGive.n), esc(myGive.name) + " hands out " + gUnit(S, myGive.n)) : tr("Tu distribues " + gUnit(S, myGive.n), "You hand out " + gUnit(S, myGive.n))) + '</b><span class="sm">' +
-      (used < myGive.n ? tr("Touche les prénoms, une par appui. Il en reste " + (myGive.n - used) + ".", "Tap names, one per tap. " + (myGive.n - used) + " left.") : tr("Tout est distribué.", "All handed out.")) + '</span><div class="gsheet-pp">' +
+      (used < myGive.n ? tr("Touche un prénom à chaque appui. Il en reste " + (myGive.n - used) + ".", "Tap names, one per tap. " + (myGive.n - used) + " left.") : tr("Tout est distribué.", "All handed out.")) + '</span><div class="gsheet-pp">' +
       others.map(p => '<button type="button" data-gp="' + esc(p.id) + '"' + (dist[p.id] ? ' class="on"' : "") + "><span>" + esc(p.name) + "</span><b>" + (dist[p.id] ? "+" + dist[p.id] : "") + "</b></button>").join("") + "</div>" +
       '<button class="link" type="button" data-greset>' + tr("Recommencer", "Start over") + "</button></div>";
   }
@@ -2104,7 +2104,7 @@ function gSettingsPage(get, set, editable, tally, onReset){
             '<p class="sm pf-desc">' + ({ chill: tr("Gages légers : environ moitié moins à boire. Idéal pour commencer la soirée.", "Light forfeits: about half as much. Great to start the night."), classique: tr("Les gages prévus par chaque jeu, tels quels.", "Each game's forfeits as they are."), chaud: tr("Tous les gages sont doublés. Pour les soirées qui dérapent.", "All forfeits doubled. For wild nights.") }[lv]) +
             tr(" Un jeu peut avoir son propre niveau dans « Déclencheurs par jeu ».", " A game can have its own level in “Triggers by game”.") + "</p></div>" +
           (hard ? '<div class="field"><span class="eyebrow">' + tr("Garde-fous", "Safety") + '</span><div class="gs-box">' +
-            (S.capOff ? "" : step("cap", tr("Plafond par joueur", "Cap per player"), tr(unitWord.charAt(0).toUpperCase() + unitWord.slice(1) + " max par joueur pour la soirée", "Max " + unitWord + " per player tonight") + (S.cap === gCapFor(S.unit, lv) ? tr(" · conseillé pour le niveau " + GN[lv], " · suggested for " + GN[lv]) : tr(" · conseillé : " + gCapFor(S.unit, lv) + " en " + GN[lv], " · suggested: " + gCapFor(S.unit, lv) + " at " + GN[lv])) + tr(". La limite de chacun, dans son profil, compte aussi.", ". Each player's own limit also applies."))) +
+            (S.capOff ? "" : step("cap", tr("Plafond par joueur", "Cap per player"), tr(unitWord.charAt(0).toUpperCase() + unitWord.slice(1) + " max par joueur pour la soirée", "Max " + unitWord + " per player tonight") + (S.cap === gCapFor(S.unit, lv) ? tr(" · conseillé pour le niveau " + GN[lv], " · suggested for " + GN[lv]) : tr(" · conseillé : " + gCapFor(S.unit, lv) + " au niveau " + GN[lv], " · suggested: " + gCapFor(S.unit, lv) + " at " + GN[lv])) + tr(". La limite de chacun, dans son profil, compte aussi.", ". Each player's own limit also applies."))) +
             '<div class="gs-row"><span class="tx"><b>' + tr("Sans plafond", "No cap") + "</b>" + (S.capOff ? '<span class="sm">' + tr("Seule la limite de chacun, dans son profil, compte.", "Only each player's own limit applies.") + "</span>" : "") + "</span>" + sw("data-gcapoff", S.capOff, tr("Sans plafond", "No cap")) + "</div>" +
             step("water", tr("Verre d'eau", "Water"), (S.water ? tr("Proposé " + (S.unit === "gorgee" ? "toutes" : "tous") + " les " + S.water + " " + unitWord, "Suggested every " + S.water + " " + unitWord) : tr("Jamais", "Never")) + (S.water === gWaterFor(S.unit, lv) ? tr(" · conseillé pour le niveau " + GN[lv], " · suggested for " + GN[lv]) : tr(" · conseillé : " + (S.unit === "gorgee" ? "toutes" : "tous") + " les " + gWaterFor(S.unit, lv) + " en " + GN[lv], " · suggested: every " + gWaterFor(S.unit, lv) + " at " + GN[lv]))) +
             '<div class="gs-row"><span class="tx"><b>' + tr("Joker eau", "Water joker") + '</b><span class="sm">' + tr("Une fois par partie, de l'eau à la place d'un gage", "Once per game, water instead of a forfeit") + "</span></span>" + sw("data-gjk", S.joker, tr("Joker eau", "Water joker")) + "</div></div></div>" : "") +
@@ -2117,7 +2117,7 @@ function gSettingsPage(get, set, editable, tally, onReset){
         if(tk.length){
           const T = tally();
           h += '<div class="field"><span class="eyebrow">' + tr("Compteur de la soirée", "Tonight's counter") + '</span><div class="gs-box">' +
-            tk.sort((a, b) => T[b].s - T[a].s).map(n => '<div class="gs-row"><span class="tx"><b>' + esc(n) + '</b><span class="sm">' + (!hard ? tr(T[n].t + " gage" + (T[n].t > 1 ? "s" : "") + " fait" + (T[n].t > 1 ? "s" : ""), T[n].t + " forfeit" + (T[n].t > 1 ? "s" : "") + " done") + "</span></span></div>" : tr(gUnit(S, T[n].s) + " bues (≈ " + String(Math.round((+T[n].v || 0) * 10) / 10).replace(".", ",") + " verre" + ((+T[n].v || 0) > 1 ? "s" : "") + ") · " + T[n].g + " distribuées · " + T[n].t + " gages sans alcool · " + T[n].w + " verres d'eau", gUnit(S, T[n].s) + " drunk (≈ " + (Math.round((+T[n].v || 0) * 10) / 10) + " drinks) · " + T[n].g + " handed out · " + T[n].t + " no-alcohol forfeits · " + T[n].w + " water") + '</span></span><b class="gs-n">' + T[n].s + "</b></div>")).join("") + "</div>" +
+            tk.sort((a, b) => T[b].s - T[a].s).map(n => '<div class="gs-row"><span class="tx"><b>' + esc(n) + '</b><span class="sm">' + (!hard ? tr(T[n].t + " gage" + (T[n].t > 1 ? "s" : "") + " fait" + (T[n].t > 1 ? "s" : ""), T[n].t + " forfeit" + (T[n].t > 1 ? "s" : "") + " done") + "</span></span></div>" : tr("Bu : " + gUnit(S, T[n].s) + " (≈ " + String(Math.round((+T[n].v || 0) * 10) / 10).replace(".", ",") + " verre" + ((+T[n].v || 0) > 1 ? "s" : "") + ") · distribué : " + gUnit(S, T[n].g) + " · " + plural(T[n].t, "gage sans alcool", "gages sans alcool") + " · " + plural(T[n].w, "verre d'eau", "verres d'eau"), gUnit(S, T[n].s) + " drunk (≈ " + (Math.round((+T[n].v || 0) * 10) / 10) + " drinks) · " + T[n].g + " handed out · " + T[n].t + " no-alcohol forfeits · " + T[n].w + " water") + '</span></span><b class="gs-n">' + T[n].s + "</b></div>")).join("") + "</div>" +
             (editable && onReset ? '<button class="link" type="button" data-greset2>' + tr("Remettre le compteur à zéro", "Reset the counter") + "</button>" : "") + "</div>";
         }
       } else if(view === "jeux"){
@@ -2323,7 +2323,7 @@ const AVATARS = [
   null
 ];
 // Catégories de la grille d'avatars (les numéros ne changent jamais : ils circulent entre téléphones).
-const AV_CATS = [["soiree", tr("Soirée", "Party"), [0, 1, 2, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]], ["jeux", tr("Jeux", "Games"), [3, 4, 30, 31, 32, 33, 34, 35, 36]], ["ambiance", tr("Ambiance", "Vibes"), [9, 10, 37, 38, 39, 40, 41, 42, 43, 44]], ["animaux", tr("Animaux", "Animals"), [5, 6, 16, 17, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55]], ["persos", tr("Persos", "Characters"), [7, 8, 15, 18, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66]], ["objets", tr("Miam & co", "Snacks & stuff"), [11, 19, 12, 13, 14, 67, 68, 69, 70, 71, 72, 73, 74, 75]], ["hot", "Hot 🔥", [76, 77, 78, 79, 80, 82, 84, 88, 89, 90, 91, 94, 95, 96, 97, 98, 100, 103, 104, 105, 106, 108, 110, 113, 114, 115, 116, 117, 118, 122]]];
+const AV_CATS = [["soiree", tr("Soirée", "Party"), [0, 1, 2, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]], ["jeux", tr("Jeux", "Games"), [3, 4, 30, 31, 32, 33, 34, 35, 36]], ["ambiance", tr("Ambiance", "Vibes"), [9, 10, 37, 38, 39, 40, 41, 42, 43, 44]], ["animaux", tr("Animaux", "Animals"), [5, 6, 16, 17, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55]], ["persos", tr("Persos", "Characters"), [7, 8, 15, 18, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66]], ["objets", tr("Miam & co", "Snacks & stuff"), [11, 19, 12, 13, 14, 67, 68, 69, 70, 71, 72, 73, 74, 75]], ["hot", "Hot", [76, 77, 78, 79, 80, 82, 84, 88, 89, 90, 91, 94, 95, 96, 97, 98, 100, 103, 104, 105, 106, 108, 110, 113, 114, 115, 116, 117, 118, 122]]];
 // Vignette de chaque onglet (position dans la liste de l'onglet).
 const AV_TABICON = { soiree: 0, jeux: 0, ambiance: 0, animaux: 1, persos: 1, objets: 0, hot: 0 };
 const AV_RX = /^av:(\d{1,3})$/;
@@ -2382,10 +2382,10 @@ function gProfilePage(){
     const pinBox = () => {
       if(!pinUI) return "";
       const k = pinUI.k;
-      const body = k === "set" ? '<b>' + tr("Choisis un code à 4 chiffres", "Pick a 4-digit code") + '</b><span class="sm">' + tr("Il servira à sortir du mode Enfant. Ne le donne pas aux enfants.", "You'll need it to leave Kids mode. Don't give it to the kids.") + "</span>" + inp("pf-pin", tr("Code", "Code")) + inp("pf-pin2", tr("Encore une fois", "Once more"))
-        : k === "change" ? '<b>' + tr("Changer le code", "Change the code") + "</b>" + inp("pf-pin", tr("Code actuel", "Current code")) + inp("pf-pin2", tr("Nouveau code", "New code")) + inp("pf-pin3", tr("Nouveau code, encore", "New code, again"))
+      const body = k === "set" ? '<b>' + tr("Choisis un code à 4 chiffres", "Pick a 4-digit code") + '</b><span class="sm">' + tr("Il servira à sortir du mode Enfant. Ne le donne pas aux enfants.", "You'll need it to leave Kids mode. Don't give it to the kids.") + "</span>" + inp("pf-pin", tr("Code", "Code")) + inp("pf-pin2", tr("Confirme le code", "Once more"))
+        : k === "change" ? '<b>' + tr("Changer le code", "Change the code") + "</b>" + inp("pf-pin", tr("Code actuel", "Current code")) + inp("pf-pin2", tr("Nouveau code", "New code")) + inp("pf-pin3", tr("Confirme le nouveau code", "New code, again"))
         : k === "unlock" ? '<b>' + tr("Code du mode Enfant", "Kids mode code") + '</b><span class="sm">' + tr("Pour quitter le mode Enfant, entre le code.", "To leave Kids mode, enter the code.") + "</span>" + inp("pf-pin", "• • • •")
-        : '<b>' + tr("Question pour les adultes", "Grown-ups question") + '</b><span class="sm">' + tr("Combien font " + pinUI.a + " × " + pinUI.b + " ? La bonne réponse enlève le mode Enfant.", "What is " + pinUI.a + " × " + pinUI.b + "? The right answer turns off Kids mode.") + '</span><input class="txt pin" id="pf-pin" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off">';
+        : '<b>' + tr("Question pour les adultes", "Grown-ups question") + '</b><span class="sm">' + tr("Combien font " + pinUI.a + " × " + pinUI.b + " ? La bonne réponse désactive le mode Enfant.", "What is " + pinUI.a + " × " + pinUI.b + "? The right answer turns off Kids mode.") + '</span><input class="txt pin" id="pf-pin" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off">';
       return '<div class="gs-box pinbox">' + body + '<p class="err" data-perr hidden></p><div class="pinbtns"><button class="btn acc" type="button" data-pok>' + (k === "set" ? tr("Activer le mode Enfant", "Turn on Kids mode") : tr("Valider", "Confirm")) + '</button><button class="btn ghost" type="button" data-pcancel>' + tr("Annuler", "Cancel") + "</button></div>" +
         (k === "unlock" ? '<button class="link" type="button" data-pforgot style="align-self:flex-start">' + tr("Code oublié ?", "Forgot the code?") + "</button>" : "") + "</div>";
     };
@@ -2400,7 +2400,7 @@ function gProfilePage(){
     const SHORT = { sans: tr("Pas d'alcool", "No alcohol"), biere: tr("Bière", "Beer"), vin: tr("Vin", "Wine"), cocktail: "Cocktail", fort: "Shots" };
     const MODES = [["hard", "Hard", tr("Tout le contenu : jeux et paquets 18+, avatars Hot, gages avec alcool.", "Everything: 18+ games and packs, Hot avatars, drinking forfeits.")],
       ["soft", "Soft", tr("Rien de 18+ et des gages sans alcool. Pratique en famille ou avec des gens que tu connais peu.", "Nothing 18+ and alcohol-free forfeits. Handy with family or people you barely know.")],
-      ["kid", tr("Enfant", "Kids"), tr("Jeux tout public seulement, verrouillé par un code à 4 chiffres.", "Family-friendly games only, locked with a 4-digit code.")]];
+      ["kid", tr("Enfant", "Kids"), tr("Jeux tout public seulement. Mode verrouillé par un code à 4 chiffres.", "Family-friendly games only, locked with a 4-digit code.")]];
     const mainHTML = () => {
       const gp = gProf(store().gp), lim = gLim(gp), d = DRINKS[gp.drink], ph = myPhoto(), nm = clean(store().name, 16), t = alcTotals(), bac = alcBac(), S = gLocalSettings();
       const mode = curMode(), md = MODES.find(m => m[0] === mode) || MODES[0];
@@ -2439,7 +2439,7 @@ function gProfilePage(){
           '<input class="pr-file" type="file" accept="image/*" data-pf-file aria-label="' + tr("Choisir une photo", "Choose a photo") + '">' +
           '<button class="btn ghost" type="button" data-pf-pick>' + tr("Choisir une photo", "Choose a photo") + '</button><div class="row" style="gap:14px"><button class="link" type="button" data-pf-rand>' + tr("Au hasard", "Random") + "</button>" +
           (ph ? '<button class="link" type="button" data-pf-del>' + (avNum(ph) >= 0 ? tr("Retirer l'avatar", "Remove avatar") : tr("Retirer la photo", "Remove photo")) + "</button>" : "") + "</div></div></div>" +
-        '<div class="avtabs">' + AV_CATS.filter(c => c[0] !== "hot" || myHard()).map(c => '<button type="button" class="avtab' + (c[0] === "hot" ? " hot" : "") + '" data-avc="' + c[0] + '" aria-pressed="' + (c[0] === avTab) + '"><span class="avtab-i">' + avSvg(c[2][AV_TABICON[c[0]] || 0]) + '</span><span class="avtab-t">' + esc(c[1].replace(" 🔥", "")) + '</span><span class="avtab-n">' + c[2].length + "</span></button>").join("") + "</div>" +
+        '<div class="avtabs">' + AV_CATS.filter(c => c[0] !== "hot" || myHard()).map(c => '<button type="button" class="avtab' + (c[0] === "hot" ? " hot" : "") + '" data-avc="' + c[0] + '" aria-pressed="' + (c[0] === avTab) + '"><span class="avtab-i">' + avSvg(c[2][AV_TABICON[c[0]] || 0]) + '</span><span class="avtab-t">' + esc(c[1]) + '</span><span class="avtab-n">' + c[2].length + "</span></button>").join("") + "</div>" +
         '<div class="avgrid">' + (AV_CATS.find(c => c[0] === avTab) || AV_CATS[0])[2].map(i => '<button type="button" class="avpick" data-av="' + i + '" aria-pressed="' + (ph === "av:" + i) + '" aria-label="Avatar ' + (i + 1) + '">' + avSvg(i) + "</button>").join("") + "</div>" +
         '<button class="btn acc" type="button" data-pf-back>' + tr("Valider", "Done") + "</button></div>";
     };
@@ -2460,8 +2460,8 @@ function gProfilePage(){
         (d ? '<div class="field"><span class="eyebrow">' + tr("Comment on compte", "How it's counted") + '</span><ul class="gs-how">' +
           "<li><b>" + tr("1 gorgée", "1 sip") + "</b> " + tr("= une gorgée normale de ta boisson (" + d.sips + " par verre).", "= a normal sip of your drink (" + d.sips + " per drink).") + "</li>" +
           "<li><b>1 shot</b> " + (gp.drink === "fort" ? tr("= un shot (3 cl).", "= one shot (3 cl).") : tr("= 3 gorgées de ta boisson.", "= 3 sips of your drink.")) + "</li>" +
-          "<li><b>" + tr("1 cul-sec", "1 chug") + "</b> " + tr("= finir ton verre (" + d.glass + ").", "= finish your drink (" + d.glass + ").") + "</li>" +
-          "<li>" + tr("1 verre standard = 10 g d'alcool pur. Les repères santé conseillent pas plus de 10 par semaine et pas plus de 2 par jour.", "1 standard drink = 10 g of pure alcohol. Health guidelines suggest no more than 10 a week and no more than 2 a day.") + "</li></ul></div>" : "") +
+          "<li><b>" + tr("1 cul-sec", "1 chug") + "</b> " + tr("= finir ton verre : " + d.glass + ".", "= finish your drink: " + d.glass + ".") + "</li>" +
+          "<li>" + tr("1 verre standard = 10 g d'alcool pur. Les repères de santé conseillent de ne pas dépasser 10 verres par semaine, ni 2 par jour.", "1 standard drink = 10 g of pure alcohol. Health guidelines suggest no more than 10 a week and no more than 2 a day.") + "</li></ul></div>" : "") +
         (t.n || t.j ? '<button class="link" type="button" data-alc0 style="align-self:flex-start">' + tr("Remettre mon compteur à zéro", "Reset my counter") + "</button>" : "") + "</div>";
     };
     const draw = () => {
@@ -2491,7 +2491,7 @@ function gProfilePage(){
           if(k === "change" && pinHash(v1) !== kid.pin) return bad(tr("Ce n'est pas le bon code.", "That's not the right code."));
           const nw = k === "set" ? v1 : v2, cf = k === "set" ? v2 : ($("#pf-pin3", root) || {}).value || "";
           if(!/^\d{4}$/.test(nw)) return bad(tr("Le code doit faire 4 chiffres.", "The code must be 4 digits."));
-          if(nw !== cf) return bad(tr("Les deux codes ne sont pas pareils.", "The two codes don't match."));
+          if(nw !== cf) return bad(tr("Les deux codes ne correspondent pas.", "The two codes don't match."));
           if(k === "set") setMode("kid", pinHash(nw)); else { persist({ kid: { on: true, pin: pinHash(nw) } }); toast(tr("Code changé.", "Code changed.")); }
         } else if(k === "unlock"){
           if(pinHash(v1) !== kid.pin) return bad(tr("Ce n'est pas le bon code.", "That's not the right code."));
@@ -2597,8 +2597,8 @@ function alcTrackLocal(before, after){
 // Bloc « Moi » : ajouter un verre, retirer le dernier, total, estimation.
 function alcMineHTML(){
   const gp = gProf(store().gp), d = DRINKS[gp.drink], t = alcTotals(), a = alcStore(), bac = alcBac();
-  if(!d) return '<p class="sm" style="margin:0">' + tr("Tu as choisi « Je ne bois pas d'alcool » dans ton profil : rien à compter.", "You picked “I'm not drinking alcohol” in your profile: nothing to count.") + "</p>";
-  return '<div class="gs-box"><div class="gs-row"><span class="tx"><b>' + tr(t.n + (t.n > 1 ? " verres" : " verre") + " notés", t.n + (t.n === 1 ? " drink" : " drinks") + " logged") + '</b><span class="sm">' +
+  if(!d) return '<p class="sm" style="margin:0">' + tr("Tu as choisi « Pas d'alcool » dans ton profil : rien à compter.", "You picked “I'm not drinking alcohol” in your profile: nothing to count.") + "</p>";
+  return '<div class="gs-box"><div class="gs-row"><span class="tx"><b>' + tr(t.n + (t.n > 1 ? " verres notés" : " verre noté"), t.n + (t.n === 1 ? " drink" : " drinks") + " logged") + '</b><span class="sm">' +
       esc(tr("Ce soir : ", "Tonight: ") + alcStd(t.tot) + (t.j ? tr(" · dont " + alcStd(t.j) + " dans les jeux", " · " + alcStd(t.j) + " in games") : "")) + "</span></span>" +
       '<button type="button" class="gs-b" data-alc="-1" aria-label="' + tr("Retirer le dernier verre", "Remove the last drink") + '"' + (t.n ? "" : " disabled") + ">−</button>" +
       '<button type="button" class="gs-b" data-alc="1" aria-label="' + tr("Ajouter un verre", "Add a drink") + '">+</button></div>' +
@@ -2667,7 +2667,7 @@ function alcTablePage(rows){
           (r.sans ? tr("Sans alcool", "No alcohol") : esc(alcStd(r.tot)) + (r.v || r.j ? " · " + esc(tr("jeux " + alcNum(r.j || 0, 1) + " · notés " + alcNum(r.v || 0, 1), "games " + alcNum(r.j || 0, 1) + " · logged " + alcNum(r.v || 0, 1))) : "")) +
           '</span><span class="alc-bar"><i style="width:' + (r.sans ? 0 : Math.round(r.tot / max * 100)) + '%"></i></span></span></div>').join("")
           : '<p class="sm" style="padding:12px 0; margin:0">' + tr("Personne pour l'instant.", "Nobody yet.") + "</p>") + "</div>" +
-        '<p class="sm" style="margin:0">' + tr("« Jeux » : ce que les gages ont fait boire. « Notés » : les verres que chacun ajoute avec le +. Les gorgées des jeux viennent des verres : le total prend le plus grand des deux. En verres standard (10 g d'alcool pur). Le taux de chacun n'est jamais partagé.", "“Games”: what forfeits made people drink. “Logged”: drinks everyone adds with +. Game sips come out of those drinks: the total takes the bigger of the two. In standard drinks (10 g of pure alcohol). Nobody's estimate is ever shared.") + "</p></div></div>";
+        '<p class="sm" style="margin:0">' + tr("« Jeux » : ce que les gages ont fait boire. « Notés » : les verres que chacun ajoute avec le +. Les gorgées des jeux sont bues dans ces verres : le total retient le plus grand des deux compteurs. En verres standard (10 g d'alcool pur). Le taux de chacun n'est jamais partagé.", "“Games”: what forfeits made people drink. “Logged”: drinks everyone adds with +. Game sips come out of those drinks: the total takes the bigger of the two. In standard drinks (10 g of pure alcohol). Nobody's estimate is ever shared.") + "</p></div></div>";
       alcMineBind(root, () => draw(true));
     };
     draw(true);

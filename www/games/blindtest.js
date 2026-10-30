@@ -56,7 +56,7 @@ const THEMES = [
   { v: "rapfr", label: tr("Rap français", "French rap"), desc: "PNL, Jul, Ninho, Nekfeu, Orelsan…", artists: ["PNL", "Jul", "Ninho", "Booba", "Nekfeu", "Orelsan", "SCH", "Damso", "Niska", "Gazo", "Tiakola", "Lomepal", "Bigflo & Oli", "IAM", "Diam's", "Sexion d'Assaut"] },
   { v: "80s", label: tr("Années 80", "The 80s"), desc: "Michael Jackson, Madonna, Goldman…", artists: ["Michael Jackson", "Madonna", "Queen", "a-ha", "Cyndi Lauper", "Daniel Balavoine", "Jean-Jacques Goldman", "Indochine", "Téléphone", "Wham!", "Dire Straits", "Eurythmics", "Whitney Houston", "Bon Jovi", "Desireless", "Images"] },
   { v: "90s", label: tr("Années 90-2000", "90s & 2000s"), desc: "Spice Girls, Britney, Eminem, Alizée…", artists: ["Spice Girls", "Britney Spears", "Backstreet Boys", "Eminem", "Nirvana", "Oasis", "Destiny's Child", "Shakira", "Haddaway", "Eiffel 65", "Alizée", "Lorie", "Las Ketchup", "Lou Bega", "Ricky Martin", "Linkin Park"] },
-  { v: "variete", label: tr("Variété française", "French classics"), desc: "Johnny, Piaf, Goldman, Céline Dion…", artists: ["Johnny Hallyday", "Edith Piaf", "Charles Aznavour", "Joe Dassin", "Claude François", "Michel Sardou", "France Gall", "Céline Dion", "Francis Cabrel", "Renaud", "Michel Berger", "Dalida", "Serge Gainsbourg", "Mylène Farmer", "Patrick Bruel"] },
+  { v: "variete", label: tr("Variété française", "French classics"), desc: "Johnny, Piaf, Aznavour, Céline Dion…", artists: ["Johnny Hallyday", "Edith Piaf", "Charles Aznavour", "Joe Dassin", "Claude François", "Michel Sardou", "France Gall", "Céline Dion", "Francis Cabrel", "Renaud", "Michel Berger", "Dalida", "Serge Gainsbourg", "Mylène Farmer", "Patrick Bruel"] },
   { v: "dance", label: tr("Soirée dance", "Dance party"), desc: "Guetta, Avicii, Daft Punk, Dua Lipa…", artists: ["David Guetta", "Calvin Harris", "Avicii", "Bob Sinclar", "Daft Punk", "Clean Bandit", "Dua Lipa", "The Black Eyed Peas", "Pitbull", "LMFAO", "Major Lazer", "Kygo", "Lady Gaga", "Rihanna"] },
   { v: "rock", label: "Rock", desc: "Queen, AC/DC, Nirvana, Muse…", artists: ["Queen", "AC/DC", "Nirvana", "Red Hot Chili Peppers", "Muse", "Arctic Monkeys", "Linkin Park", "The Rolling Stones", "U2", "Green Day", "The Beatles", "Guns N' Roses", "Metallica", "Coldplay"] },
   { v: "metal", label: "Metal", desc: "Metallica, Rammstein, Slipknot, Gojira…", artists: ["Metallica", "Iron Maiden", "Rammstein", "Slipknot", "System of a Down", "Gojira", "Mass Hysteria", "Black Sabbath", "Ozzy Osbourne", "Motörhead", "Megadeth", "Pantera", "Korn", "Disturbed", "Avenged Sevenfold", "Sabaton", "Nightwish", "Evanescence", "Ghost", "Rage Against the Machine", "Limp Bizkit", "Bring Me The Horizon"] },
@@ -280,13 +280,13 @@ SB.register({
     { ev: "rapide", label: tr("Le plus rapide à trouver", "Fastest right answer"), kind: "distribue", n: 1 }
   ],
   rules: tr([
-    "L'hôte lance l'extrait : le son sort de son téléphone, mettez-le sur une enceinte si vous pouvez.",
+    "L'hôte lance l'extrait : le son sort de son téléphone, branchez-le sur une enceinte si vous pouvez.",
     "Mode QCM : 4 réponses s'affichent sur chaque téléphone. Touche la bonne au plus vite. Le premier qui trouve marque 3 points, le deuxième 2, les suivants 1.",
-    "Mode buzzer : le premier qui buzze répond à voix haute. L'hôte voit la réponse et valide (+2) ou non (le joueur ne peut plus buzzer sur cette chanson, l'hôte non plus puisqu'il a vu la réponse).",
+    "Mode buzzer : le premier qui buzze répond à voix haute. L'hôte voit la réponse et valide (+2) ou non. En cas d'erreur, ce joueur ne peut plus buzzer sur cette chanson, ni l'hôte, qui a vu la réponse.",
     "Thèmes : top du moment, tubes français, rap, années 80, 90-2000, variété, dance, rock, metal, Disney (là, on devine le film), manga & anime (on devine l'anime), ou ta propre playlist Deezer.",
     "Coups de théâtre : chanson en or, extrait éclair de 5 secondes, à l'envers (le titre au lieu de l'artiste).",
     "Les extraits viennent de Deezer : il faut Internet, mais aucun compte.",
-    "En équipes (2 à 4) : en QCM, un capitaine différent répond pour son équipe à chaque chanson ; au buzzer, le premier qui buzze répond pour son équipe, et si c'est faux toute l'équipe est bloquée sur cette chanson."
+    "En équipes (2 à 4) : en QCM, un capitaine différent répond pour son équipe à chaque chanson ; au buzzer, le premier qui buzze répond pour son équipe, et, si c'est faux, toute l'équipe est bloquée sur cette chanson."
   ], [
     "The host starts the clip: sound plays from their phone, hook it to a speaker if you can.",
     "Multiple choice: 4 answers appear on every phone. Tap the right one fast. First right answer scores 3 points, second 2, the rest 1.",
@@ -354,7 +354,7 @@ SB.register({
     if(s.phase === "teams"){
       const ok = SB.teams.ok(s.tm, s.tmn, ctx.ids);
       screen(root, "tm" + JSON.stringify(s.tm) + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Les équipes", "The teams") + "</span>" + SB.teams.grid(s.tm, s.tmn, ctx.ids, ctx.name, ctx.isHost) +
-        '<p class="sm" style="margin:0">' + (s.mode === "buzz" ? tr("Buzzer : le premier qui buzze répond pour son équipe. Raté, toute l'équipe est bloquée sur cette chanson.", "Buzzer: whoever buzzes first answers for their team. Wrong, and the whole team is out for that song.") : tr("QCM : à chaque chanson, un capitaine différent répond pour son équipe.", "Multiple choice: each song, a different captain answers for the team.")) + (ctx.isHost ? tr(" Touche un joueur pour le changer d'équipe.", " Tap a player to switch their team.") : "") + "</p>" +
+        '<p class="sm" style="margin:0">' + (s.mode === "buzz" ? tr("Buzzer : le premier qui buzze répond pour son équipe. En cas d'erreur, toute l'équipe est bloquée sur cette chanson.", "Buzzer: whoever buzzes first answers for their team. Wrong, and the whole team is out for that song.") : tr("QCM : à chaque chanson, un capitaine différent répond pour son équipe.", "Multiple choice: each song, a different captain answers for the team.")) + (ctx.isHost ? tr(" Touche un joueur pour le changer d'équipe.", " Tap a player to switch their team.") : "") + "</p>" +
         (ctx.isHost ? '<button class="link" type="button" data-mix style="align-self:flex-start">' + tr("Mélanger les équipes", "Shuffle the teams") + "</button>" : "") +
         SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-go' + (ok ? "" : " disabled") + ">" + tr("C'est parti", "Let's go") + "</button>" : '<p class="wait">' + tr("En attente de l'hôte…", "Waiting for the host…") + "</p>"), r => {
         if(!ctx.isHost) return;
@@ -403,7 +403,7 @@ SB.register({
         (s.phase === "buzzed" ? '<div class="who" style="text-align:center' + (s.tmn ? "; color:" + SB.teams.color(s.tm[s.who]) : "") + '">' + esc(ctx.name(s.who)) + "</div>" + (s.tmn ? '<p class="sm" style="text-align:center; margin:0">' + SB.teams.pill(s.tm[s.who]) + "</p>" : "") + '<p class="howto" style="text-align:center">' + (s.who === me ? tr("Réponds à voix haute !", "Answer out loud!") : tr("a buzzé ! On écoute sa réponse…", "buzzed! Listen to the answer…")) + "</p>" +
           (ctx.isHost && s.who !== me && ctx.priv().tk ? '<p class="note-box" style="text-align:center">' + tr("Réponse (toi seul la vois) : ", "Answer (only you see it): ") + "<b>" + esc(label(ctx.priv().tk, g2)) + "</b></p>" : "")
           : '<button type="button" class="bt-buzz" data-bz' + (canBuzz ? "" : " disabled") + ">BUZZ</button>" + (out.indexOf(me) >= 0 ? '<p class="sm" style="text-align:center">' + (ctx.isHost && !(s.tmn && SB.teams.members(s.tm, myT, ctx.ids).some(id => id !== me && out.indexOf(id) >= 0)) ? tr("Tu as vu la réponse : plus de buzz pour toi sur cette chanson.", "You saw the answer: no more buzzing for you on this song.") : s.tmn ? tr("Raté : ton équipe ne peut plus buzzer sur cette chanson.", "Wrong: your team can't buzz again on this song.") : tr("Raté : tu ne peux plus buzzer sur cette chanson.", "Wrong: you can't buzz again on this song.")) + "</p>" : "")) +
-        SB.u.dock(ctx.isHost ? (s.phase === "buzzed" ? '<div class="row"><button class="btn ghost" type="button" data-no>' + tr("Faux", "Wrong") + '</button><button class="btn acc" type="button" data-yes>' + tr("Juste !", "Right!") + "</button></div>" : '<button class="btn ghost" type="button" data-reveal>' + tr("Personne ne trouve : réponse", "Nobody gets it: reveal") + "</button>") : '<p class="wait"></p>'), r => {
+        SB.u.dock(ctx.isHost ? (s.phase === "buzzed" ? '<div class="row"><button class="btn ghost" type="button" data-no>' + tr("Faux", "Wrong") + '</button><button class="btn acc" type="button" data-yes>' + tr("Juste !", "Right!") + "</button></div>" : '<button class="btn ghost" type="button" data-reveal>' + tr("Personne ne trouve : voir la réponse", "Nobody gets it: reveal") + "</button>") : '<p class="wait"></p>'), r => {
         const b = r.querySelector("[data-bz]"); if(b) b.addEventListener("click", () => { buzz([30, 20, 30]); ctx.send({ bz: ctx.now() }); b.disabled = true; });
         const y = r.querySelector("[data-yes]"); if(y) y.addEventListener("click", () => ctx.act(c => {
           if(c.s.phase !== "buzzed") return; const x = c.s.tw === "x2" ? 2 : 1, pts = Object.assign({}, c.s.pts), tp = Object.assign({}, c.s.tp), got = { [c.s.who]: 2 * x }, tg = {}; pts[c.s.who] = (pts[c.s.who] || 0) + 2 * x;
@@ -478,8 +478,8 @@ SB.register({
           r.querySelector("[data-tw]").addEventListener("click", () => { twOn = !twOn; persist({ btTw: twOn }); setup(); });
           r.querySelector("[data-ed]").addEventListener("click", () => SB.music.editor(() => { const b = A(store().btPacks); if(b.length) sel = b.slice(); setup(); }));
           r.querySelector("[data-go]").addEventListener("click", () => {
-            if(!sel.length){ SB.u.toast(tr("Choisis au moins un thème", "Pick at least one theme")); return; }
-            if(tmn && !SB.teams.ok(tm, tmn, names)){ SB.u.toast(tr("Chaque équipe doit avoir au moins un joueur", "Every team needs at least one player")); return; }
+            if(!sel.length){ SB.u.toast(tr("Choisis au moins un thème.", "Pick at least one theme.")); return; }
+            if(tmn && !SB.teams.ok(tm, tmn, names)){ SB.u.toast(tr("Chaque équipe doit avoir au moins un joueur.", "Every team needs at least one player.")); return; }
             screen(root, "ld" + Math.random(), CSS + disc(true) + '<p class="wait" style="text-align:center">' + tr("Chargement des extraits…", "Loading the clips…") + "</p>");
             buildPool(SB.okPacks(sel, SB.music.packs()), rounds).then(p => { pool = p; n = 0; pts = {}; tw = null; gno++; next(); }).catch(() => {
               screen(root, "le" + Math.random(), CSS + '<p class="note-box">' + esc(LOAD_ERR) + "</p>" + SB.u.dock('<button class="btn acc" type="button" data-b>' + tr("Retour", "Back") + "</button>"), r2 => r2.querySelector("[data-b]").addEventListener("click", setup));

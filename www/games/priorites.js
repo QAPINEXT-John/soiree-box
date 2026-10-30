@@ -37,10 +37,10 @@ const CLASSIQUE = [
 ];
 const ADULTE = [
   "Un plan à trois","Les préliminaires","Le sexe au réveil","Les menottes","Un strip-tease","Un nude envoyé dans le mauvais groupe","Le porno","Un plan cul régulier",
-  "Coucher le premier soir","Le sexe dans la douche","Les applis de rencontre","Un club libertin","Une nuit avec ton crush","Le dirty talk","Les sex toys",
+  "Coucher le premier soir","Le sexe dans la douche","Les applis de rencontre","Un club libertin","Une nuit avec ton crush","Le dirty talk","Les sextoys",
   "Le sexe en public","Se faire surprendre au lit par ses parents","Les suçons","Une fessée","Le walk of shame","Un ex qui écrit à 3 h du matin","Une gueule de bois",
   "Un black-out total","Ton propre enterrement","Ton testament","Être réincarné en moustique","Mourir de rire","Une partouze","Les porte-jarretelles","Le sexting",
-  "Un plan d'un soir raté","Simuler","Un rencard Tinder catastrophique","Faire l'amour dans une voiture","La levrette","Un massage qui dérape",
+  "Un coup d'un soir raté","Simuler","Un rencard Tinder catastrophique","Faire l'amour dans une voiture","La levrette","Un massage qui dérape",
   "Embrasser un inconnu en soirée","Un jeu de rôle coquin","Le missionnaire","Se réveiller à côté d'un inconnu",
   "Les rendez-vous à l'aveugle","Un bisou sous le gui","Un slow à un mariage","Le premier message après un rencard","Les photos de profil trompeuses","Un massage aux huiles",
   "Les draps en satin","Le jacuzzi à deux","Un week-end en amoureux","Une déclaration d'amour en public","Un ex qui like une vieille photo","La lingerie en dentelle",
@@ -112,7 +112,7 @@ const TW = [
   { id: "rev", name: tr("Le pire d'abord", "Worst first"), desc: tr("On classe à l'envers : du plus détesté (1) au préféré.", "Rank it backwards: from most hated (1) to favorite.") },
   { id: "six", name: tr("Manche à six", "Round of six"), desc: tr("Six trucs à classer au lieu de cinq.", "Six things to rank instead of five.") },
   { id: "x2", name: tr("Points doublés", "Double points"), desc: tr("Tous les points de la manche comptent double.", "Every point this round counts double.") },
-  { id: "edges", name: tr("Les extrêmes", "The extremes"), desc: tr("Seuls la 1re et la dernière place comptent : 2 points chacune, +1 si les deux sont justes.", "Only first and last place count: 2 points each, +1 if you nail both.") },
+  { id: "edges", name: tr("Les extrêmes", "The extremes"), desc: tr("Seules la 1re et la dernière place comptent : 2 points chacune, +1 si les deux sont justes.", "Only first and last place count: 2 points each, +1 if you nail both.") },
   { id: "mate", name: tr("Invité surprise", "Surprise guest"), desc: tr("Un des trucs à classer est un joueur du groupe.", "One of the things to rank is a player from the group."), ok: o => o.n >= 3 },
   { id: "ally", name: tr("Complicité", "Partners in crime"), desc: tr("Celui qui classe marque autant que le meilleur devin, au lieu de la moyenne.", "The ranker scores as much as the best guesser instead of the average."), ok: o => o.n >= 3 }
 ];
@@ -200,7 +200,7 @@ SB.register({
     tr("Il les classe en secret, de ce qu'il préfère (1) à ce qu'il déteste le plus (5).", "They secretly rank them, from what they love most (1) to what they hate most (5)."),
     tr("Pendant ce temps, les autres devinent son classement sur leur téléphone.", "Meanwhile, everyone else guesses their ranking on their own phone."),
     tr("1 point par place bien devinée, +3 pour un sans-faute. Celui qui classe marque la moyenne des bonnes réponses : il a intérêt à être prévisible !", "1 point per spot guessed right, +3 for a perfect guess. The ranker scores the guessers' average, so it pays to be predictable!"),
-    tr("Coups de théâtre : classement à l'envers, manche à six, les extrêmes, invité surprise, complicité, points doublés. Les trucs déjà vus ne reviennent qu'en dernier.", "Twists: worst first, round of six, the extremes, surprise guest, partners in crime, double points. Things you've already seen only come back last.")
+    tr("Coups de théâtre : le pire d'abord, manche à six, les extrêmes, invité surprise, complicité, points doublés. Les trucs déjà vus ne reviennent qu'en dernier.", "Twists: worst first, round of six, the extremes, surprise guest, partners in crime, double points. Things you've already seen only come back last.")
   ],
   options: [
     { id: "packs", label: tr("Paquets", "Packs"), type: "multi", def: ["classique"], values: PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, kid: p.kid, count: p.list.length })) },
@@ -261,7 +261,7 @@ SB.register({
       } else {
         const dir = tw === "rev" ? tr("du plus détesté au préféré", "from most hated to favorite") : tr("du préféré au plus détesté", "from favorite to most hated");
         screen(root, "p" + s.k + isR, pickerHTML(lab + (isR ? tr('<p class="big">À toi de classer !</p><p class="sm">Touche les ' + n + " trucs dans l'ordre, " + dir + ". Les autres essaient de deviner.</p>", '<p class="big">Your turn to rank!</p><p class="sm">Tap the ' + n + " things in order, " + dir + ". Everyone else will try to guess.</p>")
-          : tr('<p class="big">Devine le classement de ' + esc(rn) + " !</p><p class=\"sm\">Touche les " + n + " trucs dans l'ordre où " + esc(rn) + " les classe selon toi (" + dir + ").</p>", '<p class="big">Guess ' + esc(rn) + "'s ranking!</p><p class=\"sm\">Tap the " + n + " things in the order you think " + esc(rn) + " will rank them (" + dir + ").</p>")), tw, n), r => {
+          : tr('<p class="big">Devine le classement de ' + esc(rn) + " !</p><p class=\"sm\">Touche les " + n + " trucs dans l'ordre où, selon toi, " + esc(rn) + " les classe (" + dir + ").</p>", '<p class="big">Guess ' + esc(rn) + "'s ranking!</p><p class=\"sm\">Tap the " + n + " things in the order you think " + esc(rn) + " will rank them (" + dir + ").</p>")), tw, n), r => {
           orderPicker(r, items, o => ctx.send({ o }), isR ? tr("Valider mon classement", "Lock in my ranking") : tr("Valider ma prédiction", "Lock in my prediction"));
         });
       }
@@ -280,7 +280,7 @@ SB.register({
       const read = ctx.ids.filter(id => A(kn[id])[1]).sort((a, b) => A(kn[b])[0] / A(kn[b])[1] - A(kn[a])[0] / A(kn[a])[1]);
       const med = ctx.ids.slice().sort((a, b) => (sf[b] || 0) - (sf[a] || 0))[0];
       screen(root, "end" + ctx.isHost, CSS + '<span class="eyebrow">' + esc(fl(FL.win, s.fl, 0)) + '</span><div class="who">' + esc(ctx.name(ids[0])) + "</div>" +
-        '<div class="bars">' + ids.map(id => '<div class="bar"><div class="lb"><span>' + esc(ctx.name(id)) + "</span><span>" + (sc[id] || 0) + tr(" pts", (sc[id] || 0) === 1 ? " pt" : " pts") + '</span></div><div class="tr"><div class="fl" style="width:' + Math.round(100 * (sc[id] || 0) / Math.max(1, sc[ids[0]] || 1)) + '%"></div></div></div>').join("") + "</div>" +
+        '<div class="bars">' + ids.map(id => '<div class="bar"><div class="lb"><span>' + esc(ctx.name(id)) + "</span><span>" + (sc[id] || 0) + ((sc[id] || 0) === 1 ? " pt" : " pts") + '</span></div><div class="tr"><div class="fl" style="width:' + Math.round(100 * (sc[id] || 0) / Math.max(1, sc[ids[0]] || 1)) + '%"></div></div></div>').join("") + "</div>" +
         (read.length ? '<div class="card"><span class="eyebrow">' + esc(fl(FL.open, s.fl, 1)) + '</span><div class="big">' + esc(ctx.name(read[0])) + '</div><span class="sm">' + tr("Le plus facile à deviner", "The easiest to read") + "</span></div>" : "") +
         (read.length > 1 ? '<div class="card"><span class="eyebrow">' + esc(fl(FL.myst, s.fl, 2)) + '</span><div class="big">' + esc(ctx.name(read[read.length - 1])) + '</div><span class="sm">' + tr("Le plus imprévisible", "The most unpredictable") + "</span></div>" : "") +
         (sf[med] ? '<div class="card"><span class="eyebrow">' + esc(fl(FL.med, s.fl, 3)) + '</span><div class="big">' + esc(ctx.name(med)) + '</div><span class="sm">' + SB.u.plural2(sf[med], "sans-faute", "sans-faute", "perfect guess", "perfect guesses") + "</span></div>" : "") +
@@ -288,7 +288,7 @@ SB.register({
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const s2 = c.s.scores || {}, o2 = c.ids.slice().sort((a, b2) => (s2[b2] || 0) - (s2[a] || 0)), mx = s2[o2[0]] || 0;
-          c.end({ title: tr("Priorités · " + c.name(o2[0]) + " gagne", "Priorities · " + c.name(o2[0]) + " wins"), lines: o2.map(id => c.name(id) + " · " + (s2[id] || 0) + tr(" pts", (s2[id] || 0) === 1 ? " pt" : " pts")), win: mx ? o2.filter(id => (s2[id] || 0) === mx) : [] });
+          c.end({ title: tr("Priorités · " + c.name(o2[0]) + " gagne", "Priorities · " + c.name(o2[0]) + " wins"), lines: o2.map(id => c.name(id) + " · " + (s2[id] || 0) + ((s2[id] || 0) === 1 ? " pt" : " pts")), win: mx ? o2.filter(id => (s2[id] || 0) === mx) : [] });
         }));
       });
     }
@@ -352,7 +352,7 @@ SB.register({
           if(pct >= .6) api.win(names);
           screen(root, "end" + L.score, CSS + '<span class="eyebrow">' + tr("Score du groupe", "Group score") + '</span><div class="report"><span class="n">' + L.score + '</span><span class="o">/' + L.max + '</span></div><p class="appre">' + tr("« ", "“") +
             (pct >= .7 ? tr("Vous vous connaissez par cœur.", "You know each other inside out.") : pct >= .45 ? tr("Pas mal, quelques surprises quand même.", "Not bad, but a few surprises in there.") : tr("Vous êtes sûrs d'être amis ?", "Are you sure you're actually friends?")) + tr(" »", "”") + "</p>" +
-            (pct >= .6 ? '<p class="sm">' + tr("Victoire collective : tout le monde marque une victoire au classement de la soirée.", "Team win: everyone gets a win on tonight's leaderboard.") + "</p>" : "") +
+            (pct >= .6 ? '<p class="sm">' + tr("Victoire collective : tout le monde est compté gagnant au classement de la soirée.", "Team win: everyone gets a win on tonight's leaderboard.") + "</p>" : "") +
             dock('<button class="btn acc" type="button" data-a>' + tr("Rejouer", "Play again") + '</button><button class="link" type="button" data-q style="align-self:center">' + tr("Choisir un autre jeu", "Pick another game") + "</button>"), r => {
             r.querySelector("[data-a]").addEventListener("click", () => api.again());
             r.querySelector("[data-q]").addEventListener("click", api.exit);

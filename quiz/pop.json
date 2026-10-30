@@ -807,7 +807,7 @@
   "t": "n",
   "n": 8,
   "fr": {
-   "q": "Combien de films compte la saga Harry Potter (hors Animaux fantastiques) ?",
+   "q": "Combien de films compte la saga Harry Potter (sans compter « Les Animaux fantastiques ») ?",
    "u": "films"
   },
   "en": {
@@ -903,7 +903,7 @@
   "t": "vf",
   "v": false,
   "fr": {
-   "q": "Dans Star Wars, Dark Vador dit « Luke, je suis ton père ».",
+   "q": "Dans « Star Wars », Dark Vador dit « Luke, je suis ton père ».",
    "x": "Faux : la vraie réplique est « Non, je suis ton père »."
   },
   "en": {
@@ -916,7 +916,7 @@
   "v": true,
   "fr": {
    "q": "Dans son tout premier jeu, Mario s'appelait « Jumpman ».",
-   "x": "Vrai : dans Donkey Kong (1981), il s'appelait Jumpman."
+   "x": "Vrai : dans « Donkey Kong » (1981), il s'appelait Jumpman."
   },
   "en": {
    "q": "In his very first game, Mario was called \"Jumpman\".",
@@ -940,7 +940,7 @@
   "v": true,
   "fr": {
    "q": "« Le Roi Lion » est sorti avant « Toy Story ».",
-   "x": "Vrai : Le Roi Lion date de 1994, Toy Story de 1995."
+   "x": "Vrai : « Le Roi Lion » date de 1994, « Toy Story » de 1995."
   },
   "en": {
    "q": "\"The Lion King\" came out before \"Toy Story\".",

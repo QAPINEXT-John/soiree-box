@@ -8,9 +8,9 @@ const SOIREE = [
   "bu de l'alcool au travail ou en cours","conduit après avoir trop bu","été viré d'un bar ou d'une boîte","fini une soirée aux urgences",
   "envoyé un message que tu as regretté le lendemain","appelé ton ex en étant bourré","menti à tes parents sur l'endroit où tu dormais",
   "raté un examen ou un rendez-vous important à cause d'une gueule de bois","dansé sur une table","fini une soirée tout nu","été réveillé par la police",
-  "passé une nuit en garde à vue","volé quelque chose dans un magasin","fraudé dans les transports plus de dix fois","fait pipi dans un lieu public",
+  "passé une nuit blanche juste avant un examen","volé un verre ou un objet dans un bar","fraudé dans les transports plus de dix fois","fait pipi dans un lieu public",
   "pris un taxi sans être capable de donner ton adresse","fait la fête plus de 24 heures d'affilée","dépensé plus de 200 € en une seule soirée",
-  "menti sur ton âge pour entrer quelque part","fait semblant d'être malade pour ne pas aller travailler","été viré d'un boulot",
+  "menti sur ton âge pour entrer quelque part","fait semblant d'être malade pour éviter une soirée","été mis dehors d'une soirée par l'hôte",
   "fait un tatouage sur un coup de tête","été tagué sur une photo compromettante","fini une soirée chez de parfaits inconnus","bu dans une chaussure",
   "enchaîné deux soirées sans dormir","oublié où tu avais garé ta voiture après une soirée","perdu ton téléphone en soirée","fini une bouteille entière tout seul",
   "mélangé tous les alcools de la soirée dans un seul verre","dormi dans une baignoire","raté le dernier train et dormi à la gare","découvert le lendemain, grâce aux photos des autres, ce que tu avais fait la veille",
@@ -18,11 +18,11 @@ const SOIREE = [
 ];
 const SEXE = [
   "embrassé quelqu'un dont tu ne connaissais pas le prénom","embrassé plus de trois personnes dans la même soirée","embrassé quelqu'un du même sexe",
-  "couché avec quelqu'un le premier soir","eu un plan d'un soir","eu un plan cul régulier","recouché avec ton ex après la rupture",
+  "couché avec quelqu'un le jour même de votre premier message","eu un plan d'un soir","eu un plan cul régulier","recouché avec ton ex après la rupture",
   "couché avec quelqu'un de ce groupe","couché avec l'ex d'un pote","couché avec un collègue","couché avec quelqu'un qui était en couple",
   "trompé quelqu'un","découvert que ton partenaire te trompait","fait l'amour dans un lieu public","fait l'amour dans une voiture","fait l'amour au travail",
   "fait l'amour dans les toilettes d'un bar ou d'une boîte","fait un plan à trois","mis les pieds dans un club libertin","envoyé des nudes",
-  "filmé ou photographié un moment intime, avec l'accord de l'autre","utilisé un sex toy","utilisé des menottes ou un bandeau","fait un jeu de rôle au lit",
+  "filmé ou photographié un moment intime, avec l'accord de l'autre","utilisé un sex-toy","utilisé des menottes ou un bandeau","fait un jeu de rôle au lit",
   "simulé un orgasme","regardé du porno avec ton partenaire","regardé du porno au travail","été surpris en pleine action","surpris quelqu'un en pleine action",
   "couché avec quelqu'un rencontré sur une appli le jour même","payé pour un strip-tease privé","fait l'amour plus de cinq fois dans la même journée",
   "fait l'amour dans le lit de quelqu'un sans qu'il le sache","couché avec quelqu'un qui avait au moins quinze ans de plus que toi","fait du sexting avec quelqu'un que tu n'avais jamais rencontré",
@@ -48,11 +48,11 @@ const COEUR = [
   "stalké le nouveau copain ou la nouvelle copine de ton ex","menti sur ton métier pour séduire quelqu'un","utilisé une photo retouchée sur une appli de rencontre","dragué quelqu'un qui était déjà en couple",
   "été amoureux de deux personnes en même temps","écrit une lettre d'amour que tu n'as jamais envoyée","écrit à ton ex au milieu de la nuit","fait une scène de jalousie en public",
   "fait semblant d'adorer un cadeau de ton partenaire","oublié un anniversaire de couple","rompu le jour de l'anniversaire de l'autre","craqué pour le partenaire d'un ami",
-  "été en couple avec deux personnes du même groupe d'amis","rompu puis remis ça plus de deux fois avec la même personne","annulé un rendez-vous avec une fausse excuse","quitté un rendez-vous galant avant la fin tellement c'était raté",
+  "été en couple avec deux personnes du même groupe d'amis","rompu et recollé les morceaux plus de deux fois avec la même personne","annulé un rendez-vous avec une fausse excuse","quitté un rendez-vous galant avant la fin tellement c'était raté",
   "pleuré à cause d'une rupture devant tes collègues","gardé un cadeau d'un ex en souvenir… et en cachette"
 ];
 const BOULOT = [
-  "dormi sur ton lieu de travail","fait une sieste dans les toilettes du bureau","envoyé un message moqueur à la personne dont tu te moquais","menti en entretien d'embauche",
+  "dormi sur ton lieu de travail","fait une sieste dans les toilettes du bureau","envoyé par erreur un message moqueur à la personne dont tu te moquais","menti en entretien d'embauche",
   "copié sur ton voisin pendant un examen","rendu un devoir écrit par quelqu'un d'autre","inventé une panne de réveil pour justifier un retard","quitté un job sans prévenir personne",
   "critiqué ton chef sans savoir qu'il t'entendait","fait semblant de travailler pendant une journée entière","coupé ta caméra en visio pour faire tout autre chose","gardé ton bas de pyjama pendant une visio",
   "piqué des fournitures au bureau","pris un arrêt maladie pour partir en week-end","séché plus de la moitié des cours d'un semestre","fait une présentation importante avec une gueule de bois",
@@ -75,18 +75,18 @@ const HONTE = [
 const HARD = [
   "fait une gorge profonde", "avalé après une fellation", "fait un 69", "essayé la sodomie",
   "aimé la sodomie", "fait un anulingus", "reçu un anulingus", "joui sur le visage de quelqu'un, ou reçu ça sur le tien",
-  "fait squirter quelqu'un, ou squirté toi-même", "utilisé un plug anal", "utilisé un gode-ceinture", "été attaché(e) pendant l'amour",
+  "fait squirter quelqu'un, ou squirté toi-même", "utilisé un plug anal", "utilisé un gode-ceinture", "été attaché pendant l'amour",
   "attaché quelqu'un pendant l'amour", "joué le rôle du soumis ou de la soumise au lit", "joué le rôle du dominant ou de la dominante au lit", "donné ou reçu une fessée qui a laissé des marques",
-  "utilisé un fouet, des pinces ou de la cire chaude", "réalisé un de tes fétiches au lit (pieds, latex, uniformes…)", "fait l'amour déguisé(e)", "fait un plan à quatre ou plus",
+  "utilisé un fouet, des pinces ou de la cire chaude", "réalisé un de tes fétiches au lit (pieds, latex, uniformes…)", "fait l'amour déguisé", "fait un plan à quatre ou plus",
   "été la seule fille ou le seul mec dans un plan à plusieurs", "fait de l'échangisme", "regardé ton ou ta partenaire coucher avec quelqu'un d'autre", "couché avec quelqu'un pendant que d'autres regardaient",
   "filmé un plan à plusieurs, avec l'accord de tous", "mis les pieds dans un club BDSM ou fétichiste", "fait l'amour dans un backroom", "testé un glory hole",
   "couché avec plus de 20 personnes", "couché avec plus de 50 personnes", "couché avec trois personnes différentes en une semaine", "fait l'amour plus de dix fois en un seul week-end",
   "eu une relation sexuelle avec quelqu'un du même sexe", "couché avec quelqu'un dont tu n'as jamais su le prénom", "couché avec quelqu'un rencontré sur internet sans jamais avoir vu son visage avant", "fait l'amour sans capote avec quelqu'un rencontré le soir même",
   "fait l'amour sous l'effet d'une drogue", "couché avec ton patron ou un de tes profs à la fac", "couché avec le copain ou la copine d'un ami", "été pendant des mois l'amant ou la maîtresse de quelqu'un de marié",
-  "trompé ton ou ta partenaire pendant une soirée où il ou elle était aussi", "couché avec deux personnes qui se connaissaient, sans que l'une sache pour l'autre", "couché avec quelqu'un juste pour obtenir quelque chose", "eu des aventures avec deux personnes présentes ce soir",
-  "masturbé quelqu'un sous la table", "été masturbé(e) sous la table", "eu un orgasme en public sans que personne ne le remarque", "fait l'amour dans un train ou un avion",
+  "trompé ton ou ta partenaire pendant une soirée où il ou elle était présent(e)", "couché avec deux personnes qui se connaissaient, sans que l'une sache pour l'autre", "couché avec quelqu'un juste pour obtenir quelque chose", "eu des aventures avec deux personnes présentes ce soir",
+  "masturbé quelqu'un sous la table", "été masturbé sous la table", "eu un orgasme en public sans que personne ne le remarque", "fait l'amour dans un train ou un avion",
   "fait l'amour dans une cabine d'essayage", "fait l'amour dans un parc ou une forêt en pleine journée", "fait l'amour sur un balcon visible depuis la rue", "fait l'amour dans une piscine ou un jacuzzi avec du monde autour",
-  "fait l'amour dans le lit de tes parents", "été surpris(e) en pleine action par tes parents", "fait l'amour pendant les règles (les tiennes ou celles de l'autre)", "eu une séance coquine par webcam avec quelqu'un que tu ne connaissais pas",
+  "fait l'amour dans le lit de tes parents", "été surpris en pleine action par tes parents", "fait l'amour pendant les règles (les tiennes ou celles de l'autre)", "eu une séance coquine par webcam avec quelqu'un que tu ne connaissais pas",
   "envoyé une vidéo de toi en train de te faire plaisir", "envoyé un nude à la mauvaise personne", "vendu des photos ou vidéos sexy de toi en ligne", "payé pour du contenu sexy en ligne",
   "fait un strip-tease intégral devant plusieurs personnes", "bu un shot sur le corps de quelqu'un", "proposé un plan à trois à ton ou ta partenaire", "couché avec quelqu'un qui avait au moins vingt ans de plus que toi",
   "couché avec quelqu'un juste pour pouvoir dire que tu l'avais fait", "joui en moins d'une minute", "eu un orgasme rien qu'avec des mots"
@@ -201,7 +201,7 @@ const DROGUES_EN = [
 const CRADO = [
   "porté le même caleçon ou la même culotte trois jours de suite", "passé plus de trois jours sans te doucher", "utilisé la brosse à dents de quelqu'un d'autre",
   "reniflé un vêtement sale pour savoir s'il pouvait encore se porter", "appliqué la règle des cinq secondes", "remis des chaussettes sales faute d'en avoir des propres",
-  "dormi sans te laver les dents ni te démaquiller", "fait pipi sous la douche", "mangé quelque chose périmé depuis plus d'une semaine",
+  "dormi sans te laver les dents ni te démaquiller", "fait pipi sous la douche", "mangé quelque chose de périmé depuis plus d'une semaine",
   "laissé de la vaisselle sale traîner plus d'une semaine", "mangé une crotte de nez depuis que tu es adulte", "gardé les mêmes draps plus d'un mois",
   "pété dans un ascenseur bondé", "accusé quelqu'un d'autre de ton pet", "fait tes besoins dans la nature sans papier",
   "remâché un chewing-gum que tu avais déjà mâché", "fini le fond de verre de quelqu'un d'autre en soirée", "oublié de te laver les mains en sortant des toilettes",
@@ -233,7 +233,7 @@ const PACKS = [
   { v: "honte", label: tr("Moments gênants", "Cringe moments"), desc: tr("Les hontes qu'on n'avoue jamais", "The shame you never admit to") },
   { v: "drogues", label: tr("Drogues & substances", "Drugs & substances"), desc: tr("Joints, pilules, bad trips", "Joints, pills, bad trips"), hot: true },
   { v: "crado", label: tr("Hygiène & crasse", "Hygiene & gross stuff"), desc: tr("Les petits secrets pas très propres", "Your not-so-clean little secrets") },
-  { v: "hardcore", label: "Hardcore 18+", desc: tr("Pratiques, plans à plusieurs, records : zéro filtre", "Kinks, group sex, body counts: zero filter"), hot: true }
+  { v: "hardcore", label: "Hardcore", desc: tr("Pratiques, plans à plusieurs, records : zéro filtre", "Kinks, group sex, body counts: zero filter"), hot: true }
 ];
 PACKS.forEach(p => { p.list = QS[LG(SB.lang())][p.v]; }); // listes de ce téléphone (réglages, compteurs)
 // Index des questions par langue : en réseau, les index (s.qi) se résolvent avec la langue de l'hôte (s.lg).
@@ -244,7 +244,7 @@ const PREFIX = { fr: "As-tu déjà…", en: "Have you ever…" };
 const pre = lg => PREFIX[LG(lg)];
 // Question complète (aveux) : « As-tu déjà… vomi ? » / "Have you ever thrown up?"
 const qfull = (lg, q) => LG(lg) === "en" ? "Have you ever " + q + "?" : PREFIX.fr + " " + q + " ?";
-const pct = p => tr(p + " %", p + "%");
+const pct = p => tr(p + "\u202f%", p + "%");
 const TITLES = [
   [90, [[tr("Ange tombé du ciel", "Heaven-sent angel"), tr("Pur comme de l'eau de roche. Personne ne te croit.", "Pure as the driven snow. Nobody believes you.")], [tr("Auréole certifiée", "Certified halo"), tr("Tu as forcément menti au moins une fois. Non ?", "You must have lied at least once. Right?")], [tr("Page blanche", "Blank page"), tr("Ta vie est un livre blanc. Très, très blanc.", "Your life is a blank book. Very, very blank.")]]],
   [75, [[tr("Plutôt sage", "Pretty tame"), tr("Quelques écarts, rien de grave. Pour l'instant.", "A few slip-ups, nothing serious. For now.")], [tr("Enfant de chœur repenti", "Reformed goody two-shoes"), tr("Tu as goûté au vice, du bout des lèvres.", "You've had a taste of sin. Just a tiny sip.")], [tr("Sage avec options", "Well-behaved, mostly"), tr("Un dossier léger, mais un dossier quand même.", "A thin file, but a file all the same.")]]],
@@ -443,7 +443,7 @@ function runQuiz(root, key, qi, onDone, header, note, tw, lg){
   draw();
 }
 function rankHTML(rows, seed){
-  return '<ul class="pu-rank">' + rows.map(r => { const t = title(r.p, seed); return '<li><span class="p">' + r.p + '%</span><span class="n"><b>' + esc(r.name) + '</b><span class="sm">' + esc(t[0]) + "</span></span></li>"; }).join("") + "</ul>";
+  return '<ul class="pu-rank">' + rows.map(r => { const t = title(r.p, seed); return '<li><span class="p">' + r.p + tr("\u202f%", "%") + '</span><span class="n"><b>' + esc(r.name) + '</b><span class="sm">' + esc(t[0]) + "</span></span></li>"; }).join("") + "</ul>";
 }
 function aveuxHTML(qi, rows, anon, total, tw, key, lg){
   const tm = twMap(tw);
@@ -472,7 +472,7 @@ function awardsHTML(rows, qi, tw, seed){
   });
   const best = m => Object.keys(m).sort((a, b) => m[b] - m[a])[0];
   const so = best(solo), tp = best(trap);
-  return '<div class="card acc"><span class="eyebrow">' + esc(aw("pure", seed)) + '</span><div class="big">' + esc(rows[0].name) + " · " + rows[0].p + '%</div><span class="eyebrow">' + esc(aw("demon", seed)) + '</span><div class="big">' + esc(rows[rows.length - 1].name) + " · " + rows[rows.length - 1].p + "%</div></div>" +
+  return '<div class="card acc"><span class="eyebrow">' + esc(aw("pure", seed)) + '</span><div class="big">' + esc(rows[0].name) + " · " + rows[0].p + tr("\u202f%", "%") + '</div><span class="eyebrow">' + esc(aw("demon", seed)) + '</span><div class="big">' + esc(rows[rows.length - 1].name) + " · " + rows[rows.length - 1].p + tr("\u202f%", "%") + "</div></div>" +
     (so ? '<div class="card"><span class="eyebrow">' + esc(aw("solo", seed)) + '</span><div class="big">' + esc(so) + '</div><span class="sm">' + tr("Seul à dire oui à " + solo[so] + " question" + (solo[so] > 1 ? "s" : ""), "The only one to say yes to " + solo[so] + " question" + (solo[so] > 1 ? "s" : "")) + "</span></div>" : "") +
     (tp ? '<div class="card"><span class="eyebrow">' + esc(aw("trap", seed)) + '</span><div class="big">' + esc(tp) + '</div><span class="sm">' + tr(trap[tp] + " « oui » sur les coups de théâtre", "Said yes to " + trap[tp] + " plot twist" + (trap[tp] > 1 ? "s" : "")) + "</span></div>" : "");
 }
@@ -499,7 +499,7 @@ SB.register({
     { id: "n", label: tr("Longueur", "Length"), type: "seg", def: 40, values: [{ v: 25, label: "25" }, { v: 40, label: "40" }, { v: 60, label: "60" }, { v: 0, label: tr("Tout", "All") }] },
     { id: "packs", label: tr("Thèmes", "Themes"), type: "multi", def: PACKS.map(p => p.v), values: PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, hot: p.hot, count: p.list.length })) },
     { id: "anon", label: tr("Aveux", "Confessions"), type: "toggle", text: tr("Aveux anonymes", "Anonymous confessions"), desc: tr("Sinon, on voit qui a dit oui à quoi", "Otherwise, everyone sees who said yes to what"), def: true },
-    { id: "twists", label: tr("Rebondissements", "Twists"), type: "toggle", text: tr("Coups de théâtre", "Plot twists"), desc: tr("Des questions piégées glissées dans le test", "Rigged questions slipped into the test"), def: true }
+    { id: "twists", label: tr("Coups de théâtre", "Twists"), type: "toggle", text: tr("Coups de théâtre", "Plot twists"), desc: tr("Des questions piégées glissées dans le test", "Rigged questions slipped into the test"), def: true }
   ],
   start(ctx, o){
     if(!A(o.packs).length) throw new Error(tr("Choisis au moins un thème.", "Pick at least one theme."));
@@ -519,7 +519,7 @@ SB.register({
     if(s.phase === "play"){
       const mine = ctx.mine();
       if(mine && typeof mine.a === "string" && mine.a.length === qi.length){
-        screen(root, "w" + s.k, CSS + '<span class="eyebrow">' + tr("Ton score", "Your score") + '</span><div class="pu-score">' + score(mine.a, s.tw) + '%</div><p class="big">' + esc(title(score(mine.a, s.tw), s.seed)[0]) + "</p>" +
+        screen(root, "w" + s.k, CSS + '<span class="eyebrow">' + tr("Ton score", "Your score") + '</span><div class="pu-score">' + score(mine.a, s.tw) + tr("\u202f%", "%") + '</div><p class="big">' + esc(title(score(mine.a, s.tw), s.seed)[0]) + "</p>" +
           '<p class="howto">' + tr("Garde-le pour toi. Le classement s'affiche quand tout le monde a fini.", "Keep it to yourself. The ranking shows up once everyone's done.") + "</p>" +
           profileHTML(qi, lg, seriesOf([{ name: "", a: mine.a }], qi, lg), 0) + dock('<p class="wait" data-wait></p>'));
         const live = ctx.ids.filter(id => ctx.here(id)), done = live.filter(id => { const i = ctx.input(id); return i && typeof i.a === "string" && i.a.length === qi.length; }).length;
@@ -591,13 +591,13 @@ SB.register({
             go();
           }, '<span class="eyebrow">' + esc(names[L.p]) + "</span>", tr("Réponds honnêtement, personne ne regarde.", "Answer honestly, nobody's looking."), L.twl, lg);
         } else if(L.phase === "done1"){
-          screen(root, "d1" + L.p, '<div class="pass"><span class="eyebrow">' + tr("C'est noté", "Got it") + '</span><div class="who">' + tr("Merci ", "Thanks, ") + esc(names[L.p]) + "</div><p>" + tr("Ton score restera secret jusqu'à la fin. Passe le téléphone au suivant.", "Your score stays secret until the end. Pass the phone to the next player.") + "</p></div>" +
+          screen(root, "d1" + L.p, '<div class="pass"><span class="eyebrow">' + tr("C'est noté", "Got it") + '</span><div class="who">' + tr("Merci, ", "Thanks, ") + esc(names[L.p]) + "</div><p>" + tr("Ton score restera secret jusqu'à la fin. Passe le téléphone au suivant.", "Your score stays secret until the end. Pass the phone to the next player.") + "</p></div>" +
             dock('<button class="btn acc" type="button" data-n>' + tr("Joueur suivant", "Next player") + "</button>"), r => { r.querySelector("[data-n]").addEventListener("click", () => { L.p++; L.phase = "pass"; go(); }); });
         } else if(L.phase === "res"){
           const rows = names.map((n, i) => ({ name: n, a: L.ans[i] || "", p: score(L.ans[i], L.twl) })).sort((a, b) => b.p - a.p);
           const solo = names.length === 1;
           if(!solo) api.win(rows.filter(x => x.p === rows[0].p).map(x => x.name));
-          screen(root, "res" + L.key, CSS + (solo ? '<span class="eyebrow">' + tr("Ton score de pureté", "Your purity score") + '</span><div class="pu-score">' + rows[0].p + '%</div><p class="big">' + esc(title(rows[0].p, L.seed)[0]) + '</p><p class="appre">' + tr("« " + esc(title(rows[0].p, L.seed)[1]) + " »", "“" + esc(title(rows[0].p, L.seed)[1]) + "”") + "</p>" + profileHTML(L.qi, lg, seriesOf(rows, L.qi, lg), 0)
+          screen(root, "res" + L.key, CSS + (solo ? '<span class="eyebrow">' + tr("Ton score de pureté", "Your purity score") + '</span><div class="pu-score">' + rows[0].p + tr("\u202f%", "%") + '</div><p class="big">' + esc(title(rows[0].p, L.seed)[0]) + '</p><p class="appre">' + tr("« " + esc(title(rows[0].p, L.seed)[1]) + " »", "“" + esc(title(rows[0].p, L.seed)[1]) + "”") + "</p>" + profileHTML(L.qi, lg, seriesOf(rows, L.qi, lg), 0)
             : '<span class="eyebrow">' + tr("Classement de pureté", "Purity ranking") + "</span>" + awardsHTML(rows, L.qi, L.twl, L.seed) + rankHTML(rows, L.seed) +
               (L.anon ? profileHTML(L.qi, lg, [avgSeries(rows, L.qi, lg)], 0, tr("Profil du groupe", "Group profile")) : compareHTML(L.qi, lg, rows, null)) + '<div class="field"><span class="eyebrow">' + tr("Les aveux", "Confessions") + (L.anon ? tr(" (anonymes)", " (anonymous)") : "") + "</span>" + aveuxHTML(L.qi, rows, L.anon, rows.length, L.twl, L.key, lg) + "</div>") +
             dock('<button class="btn acc" type="button" data-a>' + tr("Refaire un test", "Take another test") + '</button><button class="link" type="button" data-q style="align-self:center">' + tr("Choisir un autre jeu", "Choose another game") + "</button>"), r => {

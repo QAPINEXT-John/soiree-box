@@ -9,7 +9,7 @@ const CARDS = [
   ["Vampire",["Sang","Dents","Nuit","Cercueil","Dracula"]],["Football",["Ballon","But","Équipe","Match","Pied"]],
   ["Téléphone",["Appeler","Écran","Portable","Sonner","Message"]],["Noël",["Sapin","Cadeau","Décembre","Père","Neige"]],
   ["Pompier",["Feu","Camion","Échelle","Sirène","Incendie"]],["Chocolat",["Cacao","Tablette","Sucré","Pâques","Brun"]],
-  ["Avion",["Voler","Pilote","Aéroport","Ciel","Billet"]],["Dentiste",["Dent","Carie","Fauteuil","Brosse","Bouche"]],
+  ["Avion",["Voler","Pilote","Aéroport","Ciel","Billet"]],["Dentiste",["Soin","Carie","Fauteuil","Brosse","Bouche"]],
   ["Cinéma",["Film","Écran","Pop-corn","Salle","Acteur"]],["Mariage",["Alliance","Robe","Époux","Église","Fête"]],
   ["Zombie",["Mort","Vivant","Cerveau","Manger","Apocalypse"]],["Café",["Tasse","Noir","Matin","Boire","Expresso"]],
   ["Licorne",["Corne","Cheval","Arc-en-ciel","Magique","Blanc"]],["Ascenseur",["Étage","Bouton","Monter","Descendre","Immeuble"]],
@@ -29,9 +29,9 @@ const CARDS = [
   ["Parapluie",["Pluie","Ouvrir","Mouillé","Protéger","Météo"]],["Robot",["Machine","Métal","Intelligence","Futur","Programmer"]],
   ["Escargot",["Lent","Coquille","Bave","Bourgogne","Manger"]],["Astronaute",["Espace","Fusée","Lune","Combinaison","Planète"]],
   ["Frites",["Pomme de terre","Huile","Belgique","Ketchup","Frire"]],["Bébé",["Couche","Pleurer","Biberon","Petit","Naître"]],
-  ["Télécommande",["Télé","Bouton","Chaîne","Zapper","Canapé"]],["Moustique",["Piquer","Été","Sang","Insecte","Bourdonner"]],
+  ["Télécommande",["Écran","Bouton","Chaîne","Zapper","Canapé"]],["Moustique",["Piquer","Été","Sang","Insecte","Bourdonner"]],
   ["Château",["Roi","Princesse","Tour","Fort","Moyen Âge"]],["Douche",["Eau","Laver","Salle de bain","Savon","Shampoing"]],
-  ["Arc-en-ciel",["Couleurs","Pluie","Soleil","Ciel","Sept"]],["Chewing-gum",["Mâcher","Bulle","Coller","Menthe","Bouche"]],
+  ["Arc-en-ciel",["Couleurs","Pluie","Soleil","Météo","Sept"]],["Chewing-gum",["Mâcher","Bulle","Coller","Menthe","Bouche"]],
   ["Paris",["Capitale","France","Tour Eiffel","Ville","Seine"]],["Lunettes",["Yeux","Voir","Verres","Nez","Myope"]],
   ["Poker",["Cartes","Jeu","Bluff","Jetons","Casino"]],["Ninja",["Japon","Noir","Discret","Sabre","Combat"]],
   ["Cauchemar",["Rêve","Nuit","Peur","Dormir","Réveiller"]],["Bowling",["Quilles","Boule","Strike","Piste","Lancer"]],
@@ -45,14 +45,14 @@ const CARDS = [
   ["Boulanger",["Pain","Baguette","Four","Croissant","Farine"]],["Igloo",["Glace","Inuit","Maison","Neige","Froid"]],
   ["Cactus",["Épines","Désert","Plante","Piquer","Arroser"]],["Pharaon",["Égypte","Pyramide","Roi","Momie","Tombeau"]],
   ["Trampoline",["Sauter","Rebondir","Toile","Jardin","Haut"]],["Sous-marin",["Mer","Plonger","Bateau","Périscope","Eau"]],
-  ["Moustache",["Poils","Lèvre","Visage","Barbe","Homme"]],["Cerf-volant",["Vent","Ficelle","Voler","Plage","Ciel"]],
+  ["Moustache",["Poils","Lèvre","Visage","Barbe","Homme"]],["Cerf-volant",["Vent","Ficelle","Air","Plage","Ciel"]],
   ["Chaussette",["Pied","Paire","Laine","Trou","Chaussure"]],["Arbitre",["Sifflet","Match","Carton","Faute","Football"]],
   ["Magicien",["Tour","Chapeau","Lapin","Baguette","Magie"]],["Bougie",["Flamme","Cire","Allumer","Anniversaire","Lumière"]],
   ["Microbe",["Maladie","Petit","Virus","Microscope","Bactérie"]],["Cow-boy",["Cheval","Chapeau","Western","Lasso","Far West"]],
   ["Échecs",["Roi","Reine","Plateau","Pion","Mat"]],["Hérisson",["Piquants","Animal","Boule","Forêt","Épines"]],
   ["Plombier",["Fuite","Tuyau","Eau","Réparer","Robinet"]],["Tempête",["Vent","Pluie","Orage","Météo","Fort"]],
   ["Mouette",["Oiseau","Mer","Plage","Crier","Blanc"]],["Sapin",["Noël","Arbre","Vert","Aiguilles","Forêt"]],
-  ["Chevalier",["Armure","Épée","Cheval","Moyen Âge","Roi"]],["Sieste",["Dormir","Après-midi","Canapé","Repos","Fatigue"]],
+  ["Chevalier",["Armure","Épée","Bouclier","Moyen Âge","Roi"]],["Sieste",["Dormir","Après-midi","Canapé","Repos","Fatigue"]],
   ["Pâtes",["Italie","Spaghetti","Cuire","Sauce","Eau"]],["Sirène",["Poisson","Mer","Queue","Chanter","Femme"]],
   ["Tornade",["Vent","Tourner","Ouragan","Détruire","Météo"]],["Balançoire",["Jardin","Enfant","Pousser","Parc","Corde"]],
   ["Loup-garou",["Lune","Griffes","Transformer","Poils","Hurler"]],["Fromage",["Lait","Vache","Camembert","Trou","Odeur"]],
@@ -60,7 +60,7 @@ const CARDS = [
   ["Escalier",["Marches","Monter","Descendre","Étage","Rampe"]],["Dragon",["Feu","Cracher","Ailes","Château","Princesse"]],
   ["Coiffeur",["Cheveux","Couper","Ciseaux","Salon","Brushing"]],["Pique-nique",["Herbe","Panier","Manger","Nappe","Dehors"]],
   ["Taupe",["Trou","Terre","Aveugle","Jardin","Creuser"]],["Boomerang",["Revenir","Lancer","Australie","Bois","Courbe"]],
-  ["Squelette",["Os","Mort","Halloween","Crâne","Corps"]],["Sablier",["Temps","Sable","Retourner","Couler","Verre"]],
+  ["Squelette",["Os","Mort","Halloween","Crâne","Corps"]],["Sablier",["Temps","Minuteur","Retourner","Couler","Verre"]],
   ["Grenouille",["Sauter","Vert","Mare","Prince","Coasser"]],["Fondue",["Fromage","Savoie","Piquer","Pain","Caquelon"]],
   ["Feu d'artifice",["Exploser","Ciel","Couleurs","Juillet","Fusée"]],["Kangourou",["Australie","Sauter","Poche","Bébé","Animal"]]
 ];
@@ -83,7 +83,7 @@ const HARD_CARDS = [
   ["Sugar daddy",["Riche","Vieux","Cadeaux","Payer","Jeune"]],["Infidélité",["Tromper","Couple","Amant","Mensonge","Cocu"]],
   ["Strip-poker",["Cartes","Déshabiller","Perdre","Vêtements","Jeu"]],["Nuisette",["Dentelle","Nuit","Soie","Lingerie","Sexy"]],
   ["Speed dating",["Rencontre","Minutes","Table","Célibataire","Rapide"]],["Ivresse",["Alcool","Soûl","Boire","Tituber","Vin"]],
-  ["Shooter",["Verre","Petit","Cul sec","Alcool","Tequila"]],["Massage",["Huile","Mains","Dos","Détente","Masser"]],
+  ["Shooter",["Verre","Petit","Cul sec","Alcool","Tequila"]],["Massage",["Huile","Mains","Dos","Détente","Kiné"]],
   ["Corbillard",["Voiture","Mort","Cercueil","Enterrement","Noir"]],["Épitaphe",["Tombe","Inscription","Mort","Pierre","Phrase"]],
   ["Fossoyeur",["Creuser","Tombe","Cimetière","Pelle","Mort"]],["Rupture",["Couple","Quitter","Larmes","Ex","Séparer"]],
   ["Coup d'un soir",["Nuit","Lendemain","Inconnu","Coucher","Une fois"]]
@@ -243,7 +243,7 @@ SB.register({
   tag: tr("Fais deviner un mot à ton équipe sans dire les mots interdits. Chrono en main.", "Get your team to guess a word without saying the forbidden words. Against the clock."),
   min: 4, max: 20,
   gages: [
-    { ev: "buzz", label: tr("Buzzé (par mot interdit)", "Buzzed (per forbidden word)"), kind: "boit", n: 1 },
+    { ev: "buzz", label: tr("Buzzé (à chaque mot interdit)", "Buzzed (per forbidden word)"), kind: "boit", n: 1 },
     { ev: "zero", label: tr("Tour sans aucun mot trouvé", "Turn with no word guessed"), kind: "boit", n: 2 },
     { ev: "top", label: tr("Gros tour : 5 mots trouvés ou plus", "Big turn: 5+ words guessed"), kind: "distribue", n: 2 }
   ],
@@ -308,7 +308,7 @@ SB.register({
     const secs = Math.round(turnMs(s.dur, s.tw) / 1000), spName = esc(ctx.name(speaker));
     if(s.phase === "ready"){
       screen(root, "rd" + s.k + "|" + speaker + isSp, lab + SB.u.twistHTML(TW(s.tw)) + scoreHTML(s.score, s.tt) +
-        '<div class="pass"><span class="eyebrow">' + (isSp ? tr("C'est toi qui fais deviner", "You're giving the clues") : myTeam === s.tt ? tr("Ton équipe joue", "Your team is up") : tr("Vous surveillez", "You're on watch")) + '</span><div class="who">' + esc(ctx.name(speaker)) + "</div><p>" +
+        '<div class="pass"><span class="eyebrow">' + (isSp ? tr("C'est toi qui fais deviner", "You're giving the clues") : myTeam === s.tt ? tr("Ton équipe joue", "Your team is up") : tr("Tu surveilles", "You're on watch")) + '</span><div class="who">' + esc(ctx.name(speaker)) + "</div><p>" +
         (isSp ? tr("Prends ton téléphone, fais deviner un maximum de mots à ton équipe. " + secs + " secondes.", "Grab your phone and get your team to guess as many words as you can. " + secs + " seconds.") : myTeam === s.tt ? tr("Écoute " + spName + " et crie tes réponses.", "Listen to " + spName + " and shout your answers.") : tr("Tu verras la carte : buzze si " + spName + (s.tw === "mime" ? " parle." : s.tw === "unmot" ? " dit un mot interdit ou fait une phrase." : " dit un mot interdit."), "You'll see the card: buzz if " + spName + (s.tw === "mime" ? " talks." : s.tw === "unmot" ? " says a forbidden word or a full sentence." : " says a forbidden word."))) + "</p></div>" +
         '<details><summary>' + tr("Les équipes", "Teams") + '</summary><ul>' + teams.map((t, i) => "<li><b>" + esc(TEAMS[i].n) + "</b>" + tr(" : ", ": ") + esc(t.map(ctx.name).join(", ")) + "</li>").join("") + "</ul></details>" +
         SB.u.dock(isSp ? '<button class="btn acc" type="button" data-go>' + tr("C'est parti", "Let's go") + "</button>" : '<p class="wait">' + tr("On attend que " + spName + " lance le chrono…", "Waiting for " + spName + " to start the clock…") + "</p>"), r => {
@@ -320,7 +320,7 @@ SB.register({
       screen(root, "pl" + s.k + "|" + card.id + "|" + role, lab + miniTwist(s.tw) + scoreHTML(s.score, s.tt) + '<div class="timer" data-t></div>' +
         (role === "tm" ? '<div class="pass" style="min-height:24vh"><span class="eyebrow">' + tr("Devinez !", "Guess!") + '</span><div class="who">' + esc(ctx.name(speaker)) + (s.tw === "mime" ? tr(" mime", " is miming") : tr(" fait deviner", " is giving clues")) + '</div><p data-found></p></div>' : cardHTML(card)) +
         SB.u.dock((role === "sp" ? '<div class="row"><button class="btn ghost" type="button" data-a="p"' + (s.tw === "sanspasse" ? " disabled" : "") + ">" + (s.tw === "sanspasse" ? tr("Pas de passe", "No passing") : s.tw === "passe" ? tr("Passer (−1)", "Pass (−1)") : tr("Passer", "Pass")) + '</button><button class="btn ok" type="button" data-a="f">' + tr("Trouvé !", "Got it!") + "</button></div>" : "") +
-        (role === "op" ? '<button class="btn bad big-tap" type="button" data-a="b">' + tr("Buzz ! ", "Buzz! ") + (s.tw === "mime" ? tr("Il a parlé", "They talked") : tr("Mot interdit", "Forbidden word")) + "</button>" : "")), r => {
+        (role === "op" ? '<button class="btn bad big-tap" type="button" data-a="b">' + tr("Buzz ! ", "Buzz! ") + (s.tw === "mime" ? tr("A parlé !", "They talked") : tr("Mot interdit", "Forbidden word")) + "</button>" : "")), r => {
         r.querySelectorAll("[data-a]").forEach(b => b.addEventListener("click", () => {
           r.querySelectorAll("[data-a]").forEach(x => { x.disabled = true; });
           ctx.send({ c: card.id, a: b.dataset.a, n: Date.now() });
@@ -330,7 +330,7 @@ SB.register({
       const t = txt(root, "[data-t]", left); if(t) t.classList.toggle("low", left <= 10);
       if(left !== lastLeft){ if(left <= 5 && left > 0 && lastLeft > left) SB.u.buzz(left === 1 ? 60 : 15); lastLeft = left; }
       const nf = A(s.log).filter(x => A(x)[1] === "f").length;
-      txt(root, "[data-found]", tr(nf + " mot(s) trouvé(s)", nf + (nf === 1 ? " word guessed" : " words guessed")));
+      txt(root, "[data-found]", tr(nf + (nf > 1 ? " mots trouvés" : " mot trouvé"), nf + (nf === 1 ? " word guessed" : " words guessed")));
     } else if(s.phase === "turnEnd"){
       const last = s.turnNo + 1 >= s.turns * 2;
       if(root.dataset.key && root.dataset.key.slice(0, 2) === "pl") SB.u.buzz([80, 60, 80]);
@@ -353,7 +353,7 @@ SB.register({
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const s2 = A(c.s.score), w = s2[0] === s2[1] ? -1 : s2[0] > s2[1] ? 0 : 1, tm = A(c.s.teams).map(A);
-          c.end({ title: w < 0 ? tr("Égalité " + s2[0] + " à " + s2[1], "Tie, " + s2[0] + " to " + s2[1]) : tr(TEAMS[w].n + " gagne " + s2[w] + " à " + s2[1 - w], TEAMS[w].n + " wins " + s2[w] + " to " + s2[1 - w]),
+          c.end({ title: w < 0 ? tr("Égalité, " + s2[0] + " à " + s2[1], "Tie, " + s2[0] + " to " + s2[1]) : tr(TEAMS[w].n + " gagne " + s2[w] + " à " + s2[1 - w], TEAMS[w].n + " wins " + s2[w] + " to " + s2[1 - w]),
             lines: tm.map((t, i) => TEAMS[i].n + tr(" : ", ": ") + t.map(c.name).join(", ")).concat(awards(c.s.tl, x => c.name(x[0])).map(a => a[0] + tr(" : ", ": ") + a[1])), win: w < 0 ? [] : tm[w] });
         }));
       });
@@ -389,7 +389,7 @@ SB.register({
           });
         } else if(L.phase === "play"){
           screen(root, "pl" + L.card.id, lab() + miniTwist(L.tw) + scoreHTML(L.score, L.tt) + '<div class="timer" data-t></div>' + cardHTML(L.card) +
-            '<div class="dock"><div class="row"><button class="btn ghost" type="button" data-a="p"' + (L.tw === "sanspasse" ? " disabled" : "") + ">" + (L.tw === "sanspasse" ? tr("Pas de passe", "No passing") : L.tw === "passe" ? tr("Passer (−1)", "Pass (−1)") : tr("Passer", "Pass")) + '</button><button class="btn ok" type="button" data-a="f">' + tr("Trouvé !", "Got it!") + '</button></div><button class="btn bad" type="button" data-a="b">' + (L.tw === "mime" ? tr("Il a parlé", "They talked") : tr("Mot interdit", "Forbidden word")) + "</button></div>", r => {
+            '<div class="dock"><div class="row"><button class="btn ghost" type="button" data-a="p"' + (L.tw === "sanspasse" ? " disabled" : "") + ">" + (L.tw === "sanspasse" ? tr("Pas de passe", "No passing") : L.tw === "passe" ? tr("Passer (−1)", "Pass (−1)") : tr("Passer", "Pass")) + '</button><button class="btn ok" type="button" data-a="f">' + tr("Trouvé !", "Got it!") + '</button></div><button class="btn bad" type="button" data-a="b">' + (L.tw === "mime" ? tr("A parlé !", "They talked") : tr("Mot interdit", "Forbidden word")) + "</button></div>", r => {
             r.querySelectorAll("[data-a]").forEach(b => b.addEventListener("click", () => {
               const a = b.dataset.a; SB.u.buzz(a === "b" ? 80 : 12);
               const e = effect(a, L.tw, turnSum(L.log)[0]);

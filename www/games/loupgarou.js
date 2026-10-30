@@ -80,9 +80,9 @@ function awards(G, ids, nameOf, seed, lg){
   const out = [], E = T(lg, 0, 1) === 1, roles = G.roles || {}, vr = G.vr || {}, vw = G.vw || {}, sus = G.sus || {};
   const P = (fr, en, i) => { const k = (seed + i) % fr.length; return [E ? en[k] : fr[k], fr[k]]; }, add = (t, d) => out.push([t[0], d, t[1]]);
   const fl = ids.filter(id => roles[id] !== "loup" && vw[id]).sort((a, b) => vw[b] - vw[a])[0];
-  if(fl) add(P(["Flair d'or", "Nez fin", "Détective du village"], ["Golden nose", "Sharp instincts", "Village detective"], 0), nameOf(fl) + ", " + vw[fl] + (E ? (vw[fl] > 1 ? " votes against wolves" : " vote against a wolf") : (vw[fl] > 1 ? " votes contre des loups" : " vote contre un loup")));
+  if(fl) add(P(["Flair d'or", "Nez fin", "Détective du village"], ["Golden nose", "Sharp instincts", "Village detective"], 0), nameOf(fl) + ", " + vw[fl] + (E ? (vw[fl] > 1 ? " votes against wolves" : " vote against a wolf") : (vw[fl] > 1 ? " voix contre des loups" : " voix contre un loup")));
   const wl = ids.filter(id => roles[id] === "loup").sort((a, b) => ((vr[a] || 0) + (sus[a] || 0)) - ((vr[b] || 0) + (sus[b] || 0)))[0], ws = wl ? (vr[wl] || 0) + (sus[wl] || 0) : 0;
-  if(wl && G.vr) add(P(["Loup le plus discret", "Loup en peau d'agneau", "Masque parfait"], ["Sneakiest wolf", "Wolf in sheep's clothing", "Perfect poker face"], 1), nameOf(wl) + ", " + (E ? ws + (ws === 1 ? " suspicion" : " suspicions") : ws + " soupçon" + (ws > 1 ? "s" : "")));
+  if(wl && G.vr) add(P(["Loup le plus discret", "Loup déguisé en agneau", "Masque parfait"], ["Sneakiest wolf", "Wolf in sheep's clothing", "Perfect poker face"], 1), nameOf(wl) + ", " + (E ? ws + (ws === 1 ? " suspicion" : " suspicions") : ws + " soupçon" + (ws > 1 ? "s" : "")));
   const tt = ids.filter(id => vr[id]).sort((a, b) => vr[b] - vr[a])[0];
   if(tt) add(P(["Bouc émissaire", "Souffre-douleur", "Cible favorite"], ["Scapegoat", "Punching bag", "Favorite target"], 2), nameOf(tt) + ", " + vr[tt] + (E ? (vr[tt] > 1 ? " votes received" : " vote received") : " voix reçue" + (vr[tt] > 1 ? "s" : "")));
   if(G.fd) add(P(["Premier à tomber", "Pas de chance", "Première victime"], ["First to fall", "Bad luck", "First victim"], 3), nameOf(G.fd) + " (" + rn(roles[G.fd], E ? "en" : "fr") + ")");
@@ -114,7 +114,7 @@ function choicesHTML(list, nameOf, cur, attr){
   const sel = A(Array.isArray(cur) ? cur : [cur]);
   return '<div class="choices">' + list.map(id => '<button type="button" class="opt" data-' + attr + '="' + esc(id) + '" aria-pressed="' + (sel.indexOf(id) >= 0) + '">' + esc(nameOf(id)) + "</button>").join("") + "</div>";
 }
-const CAUSE = { loups: ["victime des loups", "killed by the wolves"], poison: ["victime de la sorcière", "poisoned by the Witch"], tir: ["victime du chasseur", "shot by the Hunter"], chagrin: ["victime du chagrin", "died of a broken heart"], vote: ["victime du vote", "voted out"] };
+const CAUSE = { loups: ["victime des loups", "killed by the wolves"], poison: ["victime de la sorcière", "poisoned by the Witch"], tir: ["victime du chasseur", "shot by the Hunter"], chagrin: ["mort de chagrin", "died of a broken heart"], vote: ["victime du vote", "voted out"] };
 function deathLine(d, roles, reveal, nameOf, lg){
   const c = CAUSE[d.c] || CAUSE.vote;
   return nameOf(d.id) + " · " + T(lg, c[0], c[1]) + (reveal ? " · " + rn(roles[d.id], lg) : "");
@@ -199,7 +199,7 @@ function shoot(c, target){
   const s = c.s, roles = s.roles || {}, W = W0(s), h = W.hq.shift(), n0 = W.deaths.length;
   if(target && W.alive.indexOf(target) >= 0){
     fall(W, target, "tir", roles);
-    const who = lg => W.deaths.slice(n0).map(d => c.name(d.id) + (d.c === "chagrin" ? T(lg, " (victime du chagrin)", " (died of a broken heart)") : "") + (s.reveal ? " · " + rn(roles[d.id], lg) : "")).join(", ");
+    const who = lg => W.deaths.slice(n0).map(d => c.name(d.id) + (d.c === "chagrin" ? T(lg, " (mort de chagrin)", " (died of a broken heart)") : "") + (s.reveal ? " · " + rn(roles[d.id], lg) : "")).join(", ");
     W.log.push({ t: c.name(h) + " (chasseur) emporte " + who("fr"), en: c.name(h) + " (Hunter) takes down " + who("en") });
   }
   settle(c, W);
@@ -238,13 +238,13 @@ const DEF = {
   ],
   rules: tr([
     "Chacun découvre son rôle en secret : loup-garou, villageois, ou un rôle spécial.",
-    "La nuit, tout le monde touche son écran pour ne pas se trahir. Les loups choisissent une victime ensemble, la voyante découvre le rôle d'un joueur.",
-    "La sorcière a deux potions à usage unique : l'une sauve la victime des loups, l'autre empoisonne quelqu'un. Le chasseur emporte quelqu'un avec lui en mourant.",
+    "La nuit, tout le monde touche son écran pour ne pas se trahir. Les loups choisissent une victime ensemble, la Voyante découvre le rôle d'un joueur.",
+    "La Sorcière a deux potions à usage unique : l'une sauve la victime des loups, l'autre empoisonne quelqu'un. Le Chasseur emporte quelqu'un avec lui en mourant.",
     "Rôles étendus : Cupidon désigne deux amoureux la première nuit (si l'un meurt, l'autre aussi), le Salvateur protège un joueur chaque nuit, l'Ancien survit à la première attaque des loups.",
     "Composition surprise : l'appli choisit les rôles en jeu, et personne ne sait lesquels.",
-    "Événements de village : de temps en temps, un maire dont la voix compte double, la lettre anonyme du corbeau, un couvre-feu, une éclipse qui aveugle la voyante…",
+    "Événements de village : de temps en temps, un maire dont la voix compte double, la lettre anonyme du corbeau, un couvre-feu, une éclipse qui aveugle la Voyante…",
     "Le jour, on débat, puis chacun vote pour éliminer un suspect. En cas d'égalité, personne n'est éliminé.",
-    "Les villageois gagnent quand tous les loups sont morts. Les loups gagnent dès qu'ils sont aussi nombreux que les autres joueurs. Un couple d'amoureux loup + villageois gagne s'il est le dernier en vie."
+    "Les villageois gagnent quand tous les loups sont morts. Les loups gagnent dès qu'ils sont aussi nombreux que les autres joueurs. Un couple d'amoureux loup + villageois gagne si les deux amoureux sont les derniers survivants."
   ], [
     "Everyone secretly gets a role: Werewolf, Villager, or a special role.",
     "At night, everyone taps their screen so nobody gives themselves away. The wolves pick a victim together, and the Seer learns one player's role.",
@@ -338,7 +338,7 @@ const DEF = {
       if(UI.k !== s.k){ UI.k = s.k; UI.cu = []; }
       if(isAlive && myRole === "loup"){
         const team = alive.filter(id => roles[id] === "loup" && id !== me);
-        act = '<span class="eyebrow">' + tr("Loups-garous : choisissez votre victime", "Werewolves: choose your victim") + "</span>" + choicesHTML(targets, nameOf, mine.w, "w") +
+        act = '<span class="eyebrow">' + (team.length ? tr("Loups-garous : choisissez votre victime", "Werewolves: choose your victim") : tr("Loup-garou : choisis ta victime", "Werewolf: choose your victim")) + "</span>" + choicesHTML(targets, nameOf, mine.w, "w") +
           (team.length ? '<div class="field"><span class="eyebrow">' + tr("La meute", "The pack") + '</span><div class="lg-team">' + team.map(id => { const t = (ctx.input(id) || {}).w; return '<span class="chip' + (t ? " ok" : "") + '">' + esc(nameOf(id)) + " → " + esc(t ? nameOf(t) : "…") + "</span>"; }).join("") + "</div><p class=\"sm\">" + tr("Mettez-vous d'accord : vous devez tous choisir la même victime.", "Agree among yourselves: you must all pick the same victim.") + "</p></div>" : "");
         key += JSON.stringify([mine.w, team.map(id => (ctx.input(id) || {}).w)]);
       } else if(isAlive && myRole === "voyante" && s.ev !== "eclipse"){
@@ -524,7 +524,7 @@ const DEF = {
       function guardTurn(){
         const g = roleHolder("salvateur");
         if(!g){ G.guard = ""; wolvesTurn(); return; }
-        pickScreen("ng" + G.night, CSS + '<span class="eyebrow">' + tr("Nuit " + G.night + " · le salvateur", "Night " + G.night + " · the Bodyguard") + "</span>" + say(tr("Salvateur, réveille-toi. Qui protèges-tu cette nuit ?", "Bodyguard, wake up. Who are you protecting tonight?")) + '<p class="sm">' + tr("Salvateur : ", "Bodyguard: ") + esc(nameOf(g)) + (G.gLast && G.alive.indexOf(G.gLast) >= 0 ? tr(" · interdit cette nuit : " + esc(nameOf(G.gLast)) + " (déjà protégé hier)", " · off-limits tonight: " + esc(nameOf(G.gLast)) + " (protected last night)") : "") + "</p>",
+        pickScreen("ng" + G.night, CSS + '<span class="eyebrow">' + tr("Nuit " + G.night + " · le Salvateur", "Night " + G.night + " · the Bodyguard") + "</span>" + say(tr("Salvateur, réveille-toi. Qui protèges-tu cette nuit ?", "Bodyguard, wake up. Who are you protecting tonight?")) + '<p class="sm">' + tr("Salvateur : ", "Bodyguard: ") + esc(nameOf(g)) + (G.gLast && G.alive.indexOf(G.gLast) >= 0 ? tr(" · interdit cette nuit : " + esc(nameOf(G.gLast)) + " (déjà protégé hier)", " · off-limits tonight: " + esc(nameOf(G.gLast)) + " (protected last night)") : "") + "</p>",
           G.alive.filter(id => id !== G.gLast), t => { G.guard = t; G.gLast = t; wolvesTurn(); });
       }
       function wolvesTurn(){
@@ -544,15 +544,15 @@ const DEF = {
           screen(root, "nse" + G.night, CSS + '<span class="eyebrow">' + tr("Nuit " + G.night + " · éclipse", "Night " + G.night + " · eclipse") + "</span>" + say(tr("Les loups se rendorment. Éclipse : la voyante ne se réveille pas cette nuit.", "The wolves go back to sleep. Eclipse: the Seer doesn't wake up tonight.")) + dock('<button class="btn acc" type="button" data-n>' + tr("Continuer", "Continue") + "</button>"), r => r.querySelector("[data-n]").addEventListener("click", witchTurn));
           return;
         }
-        pickScreen("ns" + G.night, CSS + '<span class="eyebrow">' + tr("Nuit " + G.night + " · la voyante", "Night " + G.night + " · the Seer") + "</span>" + say(tr("Les loups se rendorment. Voyante, réveille-toi : de qui veux-tu connaître le rôle ?", "The wolves go back to sleep. Seer, wake up: whose role do you want to know?")) + '<p class="sm">' + tr("Voyante : ", "Seer: ") + esc(nameOf(v)) + "</p>", G.alive.filter(id => id !== v), t => {
+        pickScreen("ns" + G.night, CSS + '<span class="eyebrow">' + tr("Nuit " + G.night + " · la Voyante", "Night " + G.night + " · the Seer") + "</span>" + say(tr("Les loups se rendorment. Voyante, réveille-toi : de qui veux-tu connaître le rôle ?", "The wolves go back to sleep. Seer, wake up: whose role do you want to know?")) + '<p class="sm">' + tr("Voyante : ", "Seer: ") + esc(nameOf(v)) + "</p>", G.alive.filter(id => id !== v), t => {
           screen(root, "nsr" + G.night, CSS + '<span class="eyebrow">' + tr("Montre l'écran à la voyante", "Show the screen to the Seer") + '</span><div class="card acc"><div class="big">' + tr(esc(nameOf(t)) + " est", esc(nameOf(t)) + " is the") + '</div><div class="lg-role' + (R(t) === "loup" ? " wolf" : "") + '">' + esc(rn(R(t))) + "</div></div>" + dock('<button class="btn acc" type="button" data-n>' + tr("La voyante se rendort", "The Seer goes back to sleep") + "</button>"), r => r.querySelector("[data-n]").addEventListener("click", witchTurn));
         });
       }
       function witchTurn(){
         const w = roleHolder("sorciere");
-        if(!w || (!G.pot.heal && !G.pot.poison)){ dawn(false, ""); return; }
+        if(!w || (!G.pot.heal && !G.pot.poison)){ dawn(false, "", !roleHolder("voyante")); return; }
         let h = false, p = "";
-        const draw = () => screen(root, "nwi" + G.night + h + p, CSS + '<span class="eyebrow">' + tr("Nuit " + G.night + " · la sorcière", "Night " + G.night + " · the Witch") + "</span>" + say(tr((roleHolder("voyante") ? "" : "Les loups se rendorment. ") + "Sorcière, réveille-toi. " + (G.wv ? "Cette nuit, les loups ont attaqué " + nameOf(G.wv) + "." + (G.pot.heal ? " Veux-tu utiliser ta potion de vie ?" : "") : "Personne n'est en danger cette nuit.") + (G.pot.poison ? " Veux-tu empoisonner quelqu'un ?" : ""),
+        const draw = () => screen(root, "nwi" + G.night + h + p, CSS + '<span class="eyebrow">' + tr("Nuit " + G.night + " · la Sorcière", "Night " + G.night + " · the Witch") + "</span>" + say(tr((roleHolder("voyante") ? "" : "Les loups se rendorment. ") + "Sorcière, réveille-toi. " + (G.wv ? "Cette nuit, les loups ont attaqué " + nameOf(G.wv) + "." + (G.pot.heal ? " Veux-tu utiliser ta potion de vie ?" : "") : "Personne n'est en danger cette nuit.") + (G.pot.poison ? " Veux-tu empoisonner quelqu'un ?" : ""),
             (roleHolder("voyante") ? "" : "The wolves go back to sleep. ") + "Witch, wake up. " + (G.wv ? "Tonight, the wolves attacked " + nameOf(G.wv) + "." + (G.pot.heal ? " Do you want to use your healing potion?" : "") : "Nobody is in danger tonight.") + (G.pot.poison ? " Do you want to poison someone?" : ""))) + '<p class="sm">' + tr("Sorcière : ", "Witch: ") + esc(nameOf(w)) + "</p>" +
           (G.pot.heal && G.wv ? '<div class="packs"><button type="button" class="pack" data-heal aria-pressed="' + h + '"><span class="box">✓</span><span class="tx"><span class="nm">' + tr("Potion de vie", "Healing potion") + '</span><span class="ds">' + tr("Sauver ", "Save ") + esc(nameOf(G.wv)) + "</span></span></button></div>" : '<p class="sm">' + (G.pot.heal ? "" : tr("Potion de vie déjà utilisée.", "Healing potion already used.")) + "</p>") +
           (G.pot.poison ? '<div class="field"><span class="eyebrow">' + tr("Potion de mort", "Death potion") + "</span>" + choicesHTML(G.alive.filter(id => id !== w), nameOf, p, "q") + "</div>" : '<p class="sm">' + tr("Potion de mort déjà utilisée.", "Death potion already used.") + "</p>") +
@@ -563,7 +563,7 @@ const DEF = {
         });
         draw();
       }
-      function dawn(heal, poison){
+      function dawn(heal, poison, sleepy){
         const dead = [];
         G.hq = [];
         if(heal) G.pot.heal = false;
@@ -578,8 +578,8 @@ const DEF = {
         }
         G.log.push(tr("Nuit " + G.night + " : ", "Night " + G.night + ": ") + (dead.length ? dead.map(id => nameOf(id) + " · " + rn(R(id))).join(", ") : tr("personne n'est mort", "nobody died")));
         const ev = evView(G.ev, G.evP, nameOf), dayEv = evType(G.ev) === "day";
-        screen(root, "dw" + G.day, CSS + '<span class="eyebrow">' + tr("Jour ", "Day ") + G.day + "</span>" + say(tr("Le village se réveille. " + (dead.length ? "Cette nuit, le village a perdu " + deadTxt(dead) + "." : "Personne n'est mort cette nuit !") + (dayEv && ev ? " " + ev.name + " : " + ev.desc : ""),
-            "The village wakes up. " + (dead.length ? "Tonight, the village lost " + deadTxt(dead) + "." : "Nobody died tonight!") + (dayEv && ev ? " " + ev.name + ": " + ev.desc : ""))) +
+        screen(root, "dw" + G.day, CSS + '<span class="eyebrow">' + tr("Jour ", "Day ") + G.day + "</span>" + say(tr((sleepy ? "Les loups se rendorment. " : "") + "Le village se réveille. " + (dead.length ? "Cette nuit, le village a perdu " + deadTxt(dead) + "." : "Personne n'est mort cette nuit !") + (dayEv && ev ? " " + ev.name + ". " + ev.desc : ""),
+            (sleepy ? "The wolves go back to sleep. " : "") + "The village wakes up. " + (dead.length ? "Tonight, the village lost " + deadTxt(dead) + "." : "Nobody died tonight!") + (dayEv && ev ? " " + ev.name + ": " + ev.desc : ""))) +
           bannerL("day") + dock('<button class="btn acc" type="button" data-n>' + tr("Continuer", "Continue") + "</button>"), r => r.querySelector("[data-n]").addEventListener("click", () => check(vote)));
       }
       function vote(){
@@ -597,7 +597,7 @@ const DEF = {
       }
       const go = ph => {
         if(ph === "setup"){
-          screen(root, "su" + sp.join() + nw + compo + evs, CSS + '<p class="howto">' + tr("Il faut un meneur qui ne joue pas : c'est lui qui garde le téléphone et lit le texte à voix haute. On commence par se passer le téléphone pour découvrir les rôles. Ne mets pas le meneur dans la liste des joueurs.", "You need a narrator who doesn't play: they keep the phone and read the lines out loud. First, pass the phone around so everyone sees their role. Don't put the narrator in the player list.") + "</p>" +
+          screen(root, "su" + sp.join() + nw + compo + evs, CSS + '<p class="howto">' + tr("Il faut un meneur qui ne joue pas : c'est lui qui garde le téléphone et lit le texte à voix haute. On commence par se passer le téléphone pour découvrir les rôles. Si le meneur est dans la liste des joueurs, reviens en arrière pour le retirer.", "You need a narrator who doesn't play: they keep the phone and read the lines out loud. First, pass the phone around so everyone sees their role. Don't put the narrator in the player list.") + "</p>" +
             '<div class="field"><span class="eyebrow">' + tr("Loups-garous", "Werewolves") + '</span><div class="seg">' + ["auto", "1", "2", "3"].map(v => '<button type="button" data-w="' + v + '" aria-pressed="' + (v === nw) + '">' + (v === "auto" ? "Auto (" + wolvesFor(names.length, "auto") + ")" : v) + "</button>").join("") + "</div></div>" +
             '<div class="field"><span class="eyebrow">' + tr("Composition", "Lineup") + '</span><div class="seg"><button type="button" data-cp="choix" aria-pressed="' + (compo === "choix") + '">' + tr("Au choix", "Pick") + '</button><button type="button" data-cp="surprise" aria-pressed="' + (compo === "surprise") + '">' + tr("Surprise", "Surprise") + "</button></div></div>" +
             (compo === "choix" ? '<div class="field"><span class="eyebrow">' + tr("Rôles spéciaux", "Special roles") + '</span><div class="packs">' + SPECIALS.map(x => '<button type="button" class="pack" data-k="' + x.v + '" aria-pressed="' + (sp.indexOf(x.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(x.label) + '</span><span class="ds">' + esc(x.desc) + "</span></span></button>").join("") + "</div></div>"
@@ -618,7 +618,7 @@ const DEF = {
         } else if(ph === "deal"){
           const id = String(i), r0 = R(id), pack = ids.filter(x => R(x) === "loup" && x !== id);
           screen(root, "de" + i, CSS + '<span class="eyebrow">' + esc(names[i]) + '</span><div class="card acc"><span class="eyebrow">' + tr("Ton rôle", "Your role") + '</span><div class="lg-role' + (r0 === "loup" ? " wolf" : "") + '">' + esc(rn(r0)) + "</div><p>" + esc(ROLES[r0].d) + "</p>" + (r0 === "loup" && pack.length ? "<p>" + tr("Ta meute : ", "Your pack: ") + "<b>" + esc(pack.map(nameOf).join(", ")) + "</b></p>" : "") + "</div>" +
-            dock('<button class="btn acc" type="button" data-n>' + tr("C'est retenu, cacher", "Got it, hide") + "</button>"), r => r.querySelector("[data-n]").addEventListener("click", () => { i++; if(i < names.length) go("pass"); else go("meneur"); }));
+            dock('<button class="btn acc" type="button" data-n>' + tr("C'est noté, cacher mon rôle", "Got it, hide my role") + "</button>"), r => r.querySelector("[data-n]").addEventListener("click", () => { i++; if(i < names.length) go("pass"); else go("meneur"); }));
         } else if(ph === "meneur"){
           screen(root, "mj", CSS + '<div class="pass"><span class="eyebrow">' + tr("C'est parti", "Here we go") + '</span><div class="who">' + tr("Au meneur !", "Over to the narrator!") + "</div><p>" + tr("Donne le téléphone au meneur. Il lira le texte à voix haute et notera les choix de chacun.", "Hand the phone to the narrator. They'll read the lines out loud and record everyone's choices.") + "</p></div>" + compoHTML(G.roles, "choix") + dock('<button class="btn acc" type="button" data-n>' + tr("Je suis le meneur", "I'm the narrator") + "</button>"), r => r.querySelector("[data-n]").addEventListener("click", night));
         } else if(ph === "end"){

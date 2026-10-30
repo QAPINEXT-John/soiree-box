@@ -22,7 +22,7 @@ const CARDS = [
   "Les célibataires prennent {T2}. Les couples, {T1} chacun.","{A}, devine la couleur des chaussettes de {B}. Raté : {T2}.",
   "Ceux qui ont déjà vomi en soirée : {T2}.","{A}, fais 10 pompes ou prends {T3}.","Le premier à lever la main distribue {T3}.",
   "{A} raconte une anecdote, vraie ou fausse. Les autres votent. Ceux qui se trompent : {T1}.",
-  "Ceux qui ont déjà oublié l'anniversaire d'un proche : {T2}.","{A} et {B} échangent de place jusqu'à la fin de la partie.",
+  "Ceux qui ont déjà oublié l'anniversaire d'un proche : {T2}.","{A} et {B} échangent leurs places jusqu'à la fin de la partie.",
   "Jeu : {A} commence, chacun cite une marque de voiture. Le premier qui sèche ou répète prend {T3}.",
   "Tout le monde lit à voix haute son dernier message envoyé. Ceux qui refusent : {T3}.",
   "{A}, fais rire {B} en moins de 20 secondes. Réussi : {B} prend {T2}. Raté : {T2} pour toi.",
@@ -39,7 +39,7 @@ const CARDS = [
   "Ceux qui ont déjà eu une amende : {T2}.","{A} parle à {B} uniquement en chantant jusqu'à la prochaine carte, ou {T2}.",
   "Vote : qui s'endormira en premier ce soir ? Le plus désigné prend {T2}.","{A}, fais un compliment à chaque joueur, ou {T3}.",
   "Les fans de pizza à l'ananas : {T2}. Oui, c'est une punition.","{A}, devine le deuxième prénom de {B}. Raté : {T2}. Trouvé : {B} prend {T2}.",
-  "{A} et {B} trinquent et prennent {T1} chacun en se regardant dans les yeux.","Celui qui a le moins dormi la nuit dernière distribue {T2}.",
+  "{A} et {B} se regardent dans les yeux et prennent {T1} chacun.","Celui qui a le moins dormi la nuit dernière distribue {T2}.",
   "{A}, révèle ton dernier achat en ligne, ou {T2}.","Ceux qui ont des chaussettes dépareillées : {T1}.",
   "{A}, fais une déclaration d'amour à {B} en 15 secondes. Si c'est réussi, distribue {T3}.",
   "Jeu : comptez jusqu'à 21 chacun votre tour en remplaçant les multiples de 3 par « bip ». {A} commence. Le premier qui se trompe : {T3}.",
@@ -77,7 +77,7 @@ const CARDS = [
   "Vote : qui raconterait le mieux une histoire d'horreur ? Le plus désigné en raconte une en 30 secondes, ou {T2}.","Vote : qui oublie toujours de répondre aux messages ? Le plus désigné prend {T2}.",
   "Jeu : {A} commence, chacun cite un super-héros. Le premier qui sèche ou répète prend {T2}.","Jeu : {A} dit un mot, le suivant enchaîne avec un mot qui commence par la dernière lettre. Le premier qui bloque prend {T2}.",
   "Jeu : {A} commence une histoire, chacun ajoute une phrase. Celui qui bloque ou casse l'histoire prend {T2}.","Jeu : {A} murmure une phrase à son voisin, qui la fait passer jusqu'au dernier. Si elle arrive intacte, {A} distribue {T2}. Sinon, tout le monde prend {T1}.",
-  "{A}, parle comme un robot jusqu'à la prochaine carte, ou {T2}.","{A}, fais une publicité de 15 secondes pour la chaussure de {B}. Si le groupe est convaincu, distribue {T2}.",
+  "{A}, parle comme un robot jusqu'à la prochaine carte, ou {T2}.","{A}, fais une publicité de 15 secondes pour les chaussures de {B}. Si le groupe est convaincu, distribue {T2}.",
   "{A}, donne un surnom à chaque joueur. Celui qui proteste prend {T1}.","{A}, devine ce que {B} a mangé à midi. Raté : {T1}.",
   "{A}, fais un discours de mariage pour {B} et {C}, ou {T3}.","{A}, décris {B} en trois mots. Si {B} n'est pas d'accord : {T2} pour toi.",
   "{A}, tiens une cuillère en équilibre sur ton nez 10 secondes, ou {T2}.","Le dernier à avoir envoyé un message prend {T1}.",
@@ -129,7 +129,7 @@ const HOT = [
   "Ceux qui ont déjà oublié le prénom de la personne avec qui ils ont couché : {T3}.","{A}, lis à voix haute le dernier message coquin que tu as envoyé, ou {CS}.",
   "Confession : {A}, ta pire technique de drague, en démonstration, ou {T2}.","Confession : {A}, ton crush le plus inavouable, ou {CS}.",
   "Confession : {A}, le message le plus osé que tu aies reçu : raconte ou {T3}.","Ceux qui ont déjà embrassé quelqu'un dans cette pièce : {T2}.",
-  "Ceux qui ont déjà dragué sans le savoir quelqu'un de déjà pris : {T2}.","Ceux qui l'ont déjà fait dans une voiture : {T2}.",
+  "Ceux qui ont déjà dragué, sans le savoir, quelqu'un en couple : {T2}.","Ceux qui l'ont déjà fait dans une voiture : {T2}.",
   "Ceux qui ont déjà eu deux rendez-vous galants le même jour : {T2}.","Ceux qui ont déjà menti sur leur nombre de partenaires : {T2}.",
   "Duel : {A} et {B} font leur meilleur regard de séduction. Le groupe vote : le perdant prend {T2}.","Duel : {A} contre {B}, la meilleure phrase de drague en 10 secondes. Le perdant prend {T2}.",
   "Duel : {A} et {B} décrivent leur date idéal en une phrase. Le moins convaincant prend {T2}.","Vote : qui a le plus de messages coquins dans son téléphone ? Le plus désigné prend {T2}.",
@@ -139,7 +139,7 @@ const HOT = [
   "{A} fait un compliment osé à {B}. Si {B} rougit, {B} prend {T2}.","{A}, montre ta dernière conversation sur une appli de rencontre, ou {CS}.",
   "{A}, la chose la plus folle que tu aies faite par amour ? Réponds ou {T2}.","{A} et {B} se regardent dans les yeux 20 secondes. Le premier qui détourne le regard prend {T2}.",
   "Ceux qui ont déjà dû se cacher dans un placard ou sous un lit : {T2}.","Ceux qui ont déjà envoyé « tu dors ? » après minuit : {T1}.",
-  "Ceux qui ont déjà eu un crush sur leur médecin, leur kiné ou leur coiffeur : {T1}.","Je n'ai jamais, version adulte : {A} commence. Ceux qui l'ont fait prennent {T1}. Un tour complet."
+  "Ceux qui ont déjà eu un crush sur leur médecin, leur kiné ou leur coiffeur : {T1}.","Je n'ai jamais, version adulte : {A} commence, chacun dit une chose coquine qu'il n'a jamais faite. Ceux qui l'ont faite prennent {T1}. Un tour complet."
 ];
 const HOT_RULES = [
   ["Nouvelle règle : chaque fois que quelqu'un dit « sexe », tout le monde prend {T1}.", "Fin de la règle : le mot « sexe » est de nouveau gratuit."],
@@ -187,7 +187,7 @@ const CARDS_EN = [
   "Everyone who's ever gotten a ticket or a fine: {T2}.","{A} can only talk to {B} by singing until the next card, or takes {T2}.",
   "Vote: who'll fall asleep first tonight? Whoever gets the most votes takes {T2}.","{A}, pay every player a compliment, or take {T3}.",
   "Pineapple-on-pizza fans: {T2}. Yes, it's a punishment.","{A}, guess {B}'s middle name. Wrong: {T2}. Right: {B} takes {T2}.",
-  "{A} and {B} clink glasses and take {T1} each, looking each other in the eye.","Whoever slept the least last night hands out {T2}.",
+  "{A} and {B} look each other in the eye and take {T1} each.","Whoever slept the least last night hands out {T2}.",
   "{A}, reveal your last online purchase, or take {T2}.","Everyone who is wearing mismatched socks: {T1}.",
   "{A}, declare your undying love to {B} in 15 seconds. If it lands, hand out {T3}.",
   "Game: count to 21 in turn, saying \"beep\" instead of every multiple of 3. {A} starts. First to slip up: {T3}.",
@@ -287,7 +287,7 @@ const HOT_EN = [
   "{A} gives {B} a cheeky compliment. If {B} blushes, {B} takes {T2}.","{A}, show your last conversation on a dating app, or it's {CS}.",
   "{A}, the craziest thing you've ever done for love? Answer or take {T2}.","{A} and {B} look into each other's eyes for 20 seconds. First to look away takes {T2}.",
   "Everyone who's ever had to hide in a closet or under a bed: {T2}.","Everyone who's ever sent \"u up?\" after midnight: {T1}.",
-  "Everyone who's ever had a crush on their doctor, physical therapist or hairdresser: {T1}.","Never have I ever, adult edition: {A} starts. Everyone who has done it takes {T1}. One full round."
+  "Everyone who's ever had a crush on their doctor, physical therapist or hairdresser: {T1}.","Never have I ever, adult edition: {A} starts, everyone names something naughty they've never done. Everyone who has done it takes {T1}. One full round."
 ];
 const HOT_RULES_EN = [
   ["New rule: every time someone says \"sex\", everyone takes {T1}.", "Rule over: the word \"sex\" is free again."],
@@ -327,14 +327,14 @@ const CHAOS = [
 function tok(mode, mult, lg){
   const drink = mode !== "soft", m = mult || 1;
   if(lg === "en") return { T: n => (n * m) + " " + (drink ? "sip" : "forfeit") + (n * m > 1 ? "s" : ""), CS: drink ? (m > 1 ? "two chugs" : "a chug") : (m > 1 ? "two XXL forfeits" : "an XXL forfeit") };
-  return { T: n => (n * m) + " " + (drink ? "gorgée" : "gage") + (n * m > 1 ? "s" : ""), CS: drink ? (m > 1 ? "deux culs secs" : "un cul sec") : (m > 1 ? "deux gages XXL" : "un gage XXL") };
+  return { T: n => (n * m) + " " + (drink ? "gorgée" : "gage") + (n * m > 1 ? "s" : ""), CS: drink ? (m > 1 ? "deux culs-secs" : "un cul-sec") : (m > 1 ? "deux gages XXL" : "un gage XXL") };
 }
 function need(t){ return /\{C\}/.test(t) ? 3 : /\{B\}/.test(t) ? 2 : /\{A\}/.test(t) ? 1 : 0; }
 function kindOf(t){
   if(/^(Jeu|Je n'ai jamais|Ni oui ni non|Game|Never have I ever)/.test(t)) return "game";
   if(/^Vote/.test(t)) return "vote";
   if(/^Duel|\{A\} contre \{B\}|^\{A\} et \{B\} :|\{A\} vs \{B\}|^\{A\} and \{B\}:/.test(t)) return "duel";
-  if(/^(Confession|Ceux qui|Everyone who)/.test(t)) return "conf";
+  if(/^Confession/.test(t) || (/^(Ceux qui|Everyone who)/.test(t) && /déjà|ever\b/.test(t))) return "conf";
   return "card";
 }
 function render(t, who, mode, mult, lg){
@@ -513,7 +513,7 @@ const DEF = {
         b.addEventListener("click", () => { b.disabled = true; ctx.send({ nx: s.i + 1 }); });
       });
     } else {
-      screen(root, "end" + s.k + ctx.isHost, CSS + '<div class="pass"><span class="eyebrow">' + tr("Fin de la partie", "Game over") + '</span><div class="who">' + tr("Santé !", "Cheers!") + "</div><p>" + tr(s.n + " cartes jouées. Hydratez-vous, et rentrez prudemment.", s.n + " cards played. Drink some water, and get home safe.") + "</p></div>" + awardsHTML(s.aw) +
+      screen(root, "end" + s.k + ctx.isHost, CSS + '<div class="pass"><span class="eyebrow">' + tr("Fin de la partie", "Game over") + '</span><div class="who">' + tr("Santé !", "Cheers!") + "</div><p>" + tr(s.n + " cartes jouées. Hydratez-vous et rentrez prudemment.", s.n + " cards played. Drink some water, and get home safe.") + "</p></div>" + awardsHTML(s.aw) +
         dock(ctx.isHost ? '<button class="btn acc" type="button" data-again>' + tr("Nouvelle partie", "New game") + '</button><button class="btn ghost" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va relancer ou revenir au salon.", "The host will start a new game or go back to the room.") + "</p>"), r => {
         const a = r.querySelector("[data-again]");
         if(a) a.addEventListener("click", () => ctx.act(c => { if(c.s.phase === "end") c.set(Object.assign(DEF.deal(c, c.opts, c.s.lg), { k: c.rid() })); }));
@@ -547,7 +547,7 @@ const DEF = {
             r.querySelectorAll("[data-l]").forEach(b => b.addEventListener("click", () => { len = +b.dataset.l; persist({ dfLen: len }); go("setup"); }));
             r.querySelectorAll("[data-k]").forEach(b => b.addEventListener("click", () => { const x = sel.indexOf(b.dataset.k); if(x >= 0) sel.splice(x, 1); else sel.push(b.dataset.k); persist({ dfPacks: sel }); go("setup"); }));
             r.querySelector("[data-go]").addEventListener("click", () => {
-              if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet", "Pick at least one pack")); return; }
+              if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet.", "Pick at least one pack.")); return; }
               seq = build(names, SB.okPacks(sel, PACKS), mode, len, deck, twists, SB.lang()); i = 0; rules = applyRules([], seq[0], 0); go("card");
             });
           });
@@ -560,7 +560,7 @@ const DEF = {
             });
           });
         } else {
-          screen(root, "end" + seq.length + i, CSS + '<div class="pass"><span class="eyebrow">' + tr("Fin de la partie", "Game over") + '</span><div class="who">' + tr("Santé !", "Cheers!") + "</div><p>" + tr(seq.length + " cartes jouées. Hydratez-vous, et rentrez prudemment.", seq.length + " cards played. Drink some water, and get home safe.") + "</p></div>" + awardsHTML(stats(seq, names, seq.length, SB.lang())) +
+          screen(root, "end" + seq.length + i, CSS + '<div class="pass"><span class="eyebrow">' + tr("Fin de la partie", "Game over") + '</span><div class="who">' + tr("Santé !", "Cheers!") + "</div><p>" + tr(seq.length + " cartes jouées. Hydratez-vous et rentrez prudemment.", seq.length + " cards played. Drink some water, and get home safe.") + "</p></div>" + awardsHTML(stats(seq, names, seq.length, SB.lang())) +
             dock('<button class="btn acc" type="button" data-a>' + tr("Rejouer", "Play again") + '</button><button class="btn ghost" type="button" data-q>' + tr("Choisir un autre jeu", "Pick another game") + "</button>"), r => {
             r.querySelector("[data-a]").addEventListener("click", api.again);
             r.querySelector("[data-q]").addEventListener("click", api.exit);

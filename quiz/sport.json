@@ -1,47 +1,785 @@
 [
-{"t":"q","fr":{"q":"Quel pays a remporté la Coupe du monde de football 1998 ?","a":["France","Brésil","Croatie","Pays-Bas"]},"en":{"q":"Which country won the 1998 FIFA World Cup?","a":["France","Brazil","Croatia","Netherlands"]}},
-{"t":"q","fr":{"q":"Qui a marqué deux buts de la tête en finale de la Coupe du monde 1998 ?","a":["Zinédine Zidane","Emmanuel Petit","Thierry Henry","Youri Djorkaeff"]},"en":{"q":"Who scored two headers in the 1998 World Cup final?","a":["Zinédine Zidane","Emmanuel Petit","Thierry Henry","Youri Djorkaeff"]}},
-{"t":"q","fr":{"q":"Contre quel pays la France a-t-elle gagné la finale de la Coupe du monde 2018 ?","a":["Croatie","Belgique","Argentine","Allemagne"]},"en":{"q":"Which country did France beat in the 2018 World Cup final?","a":["Croatia","Belgium","Argentina","Germany"]}},
-{"t":"q","fr":{"q":"Quel pays a remporté la Coupe du monde de football 2022 ?","a":["Argentine","France","Croatie","Maroc"]},"en":{"q":"Which country won the 2022 FIFA World Cup?","a":["Argentina","France","Croatia","Morocco"]}},
-{"t":"q","fr":{"q":"Quel pays a organisé ET remporté la toute première Coupe du monde de football ?","a":["Uruguay","Brésil","Italie","Argentine"]},"en":{"q":"Which country both hosted AND won the very first FIFA World Cup?","a":["Uruguay","Brazil","Italy","Argentina"]}},
-{"t":"q","fr":{"q":"Qui a battu la France en finale de l'Euro 2016, au Stade de France ?","a":["Portugal","Allemagne","Espagne","Italie"]},"en":{"q":"Who beat France in the Euro 2016 final at the Stade de France?","a":["Portugal","Germany","Spain","Italy"]}},
-{"t":"q","fr":{"q":"Qui a marqué l'unique but de la finale de l'Euro 2016 ?","a":["Éder","Cristiano Ronaldo","Nani","Ricardo Quaresma"]},"en":{"q":"Who scored the only goal of the Euro 2016 final?","a":["Éder","Cristiano Ronaldo","Nani","Ricardo Quaresma"]}},
-{"t":"q","fr":{"q":"Quel club français a remporté la Ligue des champions en 1993 ?","a":["Olympique de Marseille","AS Monaco","Paris Saint-Germain","Olympique lyonnais"]},"en":{"q":"Which French club won the Champions League in 1993?","a":["Olympique de Marseille","AS Monaco","Paris Saint-Germain","Olympique Lyonnais"]}},
-{"t":"q","fr":{"q":"Quel Français a remporté le Ballon d'Or en 1991 ?","a":["Jean-Pierre Papin","Éric Cantona","Michel Platini","Didier Deschamps"]},"en":{"q":"Which Frenchman won the Ballon d'Or in 1991?","a":["Jean-Pierre Papin","Éric Cantona","Michel Platini","Didier Deschamps"]}},
-{"t":"q","fr":{"q":"Contre quel club français le Real Madrid a-t-il gagné la toute première Coupe des clubs champions, en 1956 ?","a":["Stade de Reims","AS Saint-Étienne","Olympique de Marseille","OGC Nice"]},"en":{"q":"Which French club did Real Madrid beat in the very first European Cup final, in 1956?","a":["Stade de Reims","AS Saint-Étienne","Olympique de Marseille","OGC Nice"]}},
-{"t":"q","fr":{"q":"Quel pays a remporté la première Coupe du monde de rugby, en 1987 ?","a":["Nouvelle-Zélande","Australie","France","Angleterre"]},"en":{"q":"Which country won the first Rugby World Cup, in 1987?","a":["New Zealand","Australia","France","England"]}},
-{"t":"q","fr":{"q":"Sur quelle surface se joue Roland-Garros ?","a":["Terre battue","Gazon","Dur","Moquette"]},"en":{"q":"What surface is the French Open (Roland-Garros) played on?","a":["Clay","Grass","Hard court","Carpet"]}},
-{"t":"q","fr":{"q":"Quel tournoi du Grand Chelem se joue sur gazon ?","a":["Wimbledon","US Open","Open d'Australie","Roland-Garros"]},"en":{"q":"Which Grand Slam tournament is played on grass?","a":["Wimbledon","US Open","Australian Open","French Open"]}},
-{"t":"q","fr":{"q":"Quel Français a remporté Roland-Garros en 1983 ?","a":["Yannick Noah","Henri Leconte","Guy Forget","Cédric Pioline"]},"en":{"q":"Which Frenchman won Roland-Garros in 1983?","a":["Yannick Noah","Henri Leconte","Guy Forget","Cédric Pioline"]}},
-{"t":"q","fr":{"q":"Qui a remporté Roland-Garros 2005, son tout premier titre du Grand Chelem ?","a":["Rafael Nadal","Roger Federer","Novak Djokovic","Mariano Puerta"]},"en":{"q":"Who won Roland-Garros 2005, his very first Grand Slam title?","a":["Rafael Nadal","Roger Federer","Novak Djokovic","Mariano Puerta"]}},
-{"t":"q","fr":{"q":"Quel Français a remporté le Tour de France 1985 ?","a":["Bernard Hinault","Laurent Fignon","Bernard Thévenet","Jacques Anquetil"]},"en":{"q":"Which Frenchman won the 1985 Tour de France?","a":["Bernard Hinault","Laurent Fignon","Bernard Thévenet","Jacques Anquetil"]}},
-{"t":"q","fr":{"q":"Sur le Tour de France, comment est le maillot du meilleur grimpeur ?","a":["Blanc à pois rouges","Vert","Blanc","Rose"]},"en":{"q":"In the Tour de France, what does the best climber's jersey look like?","a":["White with red polka dots","Green","White","Pink"]}},
-{"t":"q","fr":{"q":"Qui a remporté le Tour de France 1989 avec 8 secondes d'avance sur Laurent Fignon ?","a":["Greg LeMond","Pedro Delgado","Stephen Roche","Miguel Indurain"]},"en":{"q":"Who won the 1989 Tour de France by 8 seconds over Laurent Fignon?","a":["Greg LeMond","Pedro Delgado","Stephen Roche","Miguel Indurain"]}},
-{"t":"q","fr":{"q":"Dans quelle ville ont eu lieu les premiers Jeux olympiques modernes, en 1896 ?","a":["Athènes","Paris","Londres","Rome"]},"en":{"q":"Where were the first modern Olympic Games held, in 1896?","a":["Athens","Paris","London","Rome"]}},
-{"t":"q","fr":{"q":"Quel Français est à l'origine de la renaissance des Jeux olympiques modernes ?","a":["Pierre de Coubertin","Jules Rimet","Henri Desgrange","Gabriel Hanot"]},"en":{"q":"Which Frenchman revived the modern Olympic Games?","a":["Pierre de Coubertin","Jules Rimet","Henri Desgrange","Gabriel Hanot"]}},
-{"t":"q","fr":{"q":"Dans quelle ville Marie-José Pérec a-t-elle réussi le doublé 200 m - 400 m aux JO ?","a":["Atlanta","Sydney","Barcelone","Séoul"]},"en":{"q":"In which city did Marie-José Pérec win the Olympic 200 m - 400 m double?","a":["Atlanta","Sydney","Barcelona","Seoul"]}},
-{"t":"q","fr":{"q":"Quelle ville française a accueilli les Jeux olympiques d'hiver de 1992 ?","a":["Albertville","Grenoble","Chamonix","Annecy"]},"en":{"q":"Which French town hosted the 1992 Winter Olympics?","a":["Albertville","Grenoble","Chamonix","Annecy"]}},
-{"t":"q","fr":{"q":"Qui a été le tout premier champion du monde de Formule 1, en 1950 ?","a":["Giuseppe Farina","Juan Manuel Fangio","Alberto Ascari","Stirling Moss"]},"en":{"q":"Who was the very first Formula 1 world champion, in 1950?","a":["Giuseppe Farina","Juan Manuel Fangio","Alberto Ascari","Stirling Moss"]}},
-{"t":"q","fr":{"q":"Quel pilote français a été quatre fois champion du monde de F1 ?","a":["Alain Prost","Jean Alesi","René Arnoux","Jacques Laffite"]},"en":{"q":"Which French driver was a four-time Formula 1 world champion?","a":["Alain Prost","Jean Alesi","René Arnoux","Jacques Laffite"]}},
-{"t":"q","fr":{"q":"Quel numéro Michael Jordan portait-il aux Chicago Bulls ?","a":["23","33","32","8"]},"en":{"q":"What number did Michael Jordan wear for the Chicago Bulls?","a":["23","33","32","8"]}},
-{"t":"q","fr":{"q":"Qui a inventé le basket-ball, en 1891 ?","a":["James Naismith","William G. Morgan","Walter Camp","Abner Doubleday"]},"en":{"q":"Who invented basketball, in 1891?","a":["James Naismith","William G. Morgan","Walter Camp","Abner Doubleday"]}},
-{"t":"q","fr":{"q":"Dans quelle franchise NBA Tony Parker a-t-il passé l'essentiel de sa carrière ?","a":["San Antonio Spurs","Charlotte Hornets","Los Angeles Lakers","Boston Celtics"]},"en":{"q":"Which NBA team did Tony Parker spend most of his career with?","a":["San Antonio Spurs","Charlotte Hornets","Los Angeles Lakers","Boston Celtics"]}},
-{"t":"n","n":1930,"fr":{"q":"En quelle année a eu lieu la première Coupe du monde de football ?","u":""},"en":{"q":"In what year was the first FIFA World Cup held?","u":""}},
-{"t":"n","n":1903,"fr":{"q":"En quelle année a eu lieu le premier Tour de France ?","u":""},"en":{"q":"In what year was the first Tour de France held?","u":""}},
-{"t":"n","n":1900,"fr":{"q":"En quelle année Paris a-t-elle accueilli les Jeux olympiques pour la première fois ?","u":""},"en":{"q":"In what year did Paris host the Olympic Games for the first time?","u":""}},
-{"t":"n","n":2009,"fr":{"q":"En quelle année Usain Bolt a-t-il couru le 100 m en 9\"58 ?","u":""},"en":{"q":"In what year did Usain Bolt run the 100 m in 9.58 seconds?","u":""}},
-{"t":"n","n":42195,"fr":{"q":"Quelle est la distance officielle d'un marathon, en mètres ?","u":"m"},"en":{"q":"What is the official length of a marathon, in metres?","u":"m"}},
-{"t":"n","n":305,"fr":{"q":"À quelle hauteur se trouve un panier de basket, en centimètres ?","u":"cm"},"en":{"q":"How high is a basketball hoop, in centimetres?","u":"cm"}},
-{"t":"n","n":15,"fr":{"q":"Combien de joueurs par équipe sur le terrain au rugby à XV ?","u":"joueurs"},"en":{"q":"How many players per team are on the pitch in rugby union?","u":"players"}},
-{"t":"n","n":80,"fr":{"q":"Combien de minutes dure un match de rugby à XV (hors arrêts de jeu) ?","u":"min"},"en":{"q":"How many minutes does a rugby union match last (excluding stoppages)?","u":"min"}},
-{"t":"n","n":5,"fr":{"q":"Combien de Tours de France Eddy Merckx a-t-il remportés ?","u":"Tours"},"en":{"q":"How many Tours de France did Eddy Merckx win?","u":"Tours"}},
-{"t":"vf","v":true,"fr":{"q":"La finale de l'Euro 2000 entre la France et l'Italie s'est décidée sur un but en or.","x":"Vrai : David Trezeguet a marqué le but en or en prolongation."},"en":{"q":"The Euro 2000 final between France and Italy was decided by a golden goal.","x":"True: David Trezeguet scored the golden goal in extra time."}},
-{"t":"vf","v":true,"fr":{"q":"Zinédine Zidane a marqué un but lors de la finale de la Coupe du monde 2006.","x":"Vrai : il a ouvert le score sur penalty, avant d'être expulsé en prolongation."},"en":{"q":"Zinédine Zidane scored a goal in the 2006 World Cup final.","x":"True: he opened the scoring with a penalty, before being sent off in extra time."}},
-{"t":"vf","v":true,"fr":{"q":"Michael Jordan a joué au baseball en professionnel.","x":"Vrai : en 1994, entre deux périodes NBA, il a joué en ligue mineure avec les Birmingham Barons."},"en":{"q":"Michael Jordan played professional baseball.","x":"True: in 1994, between NBA stints, he played minor league ball for the Birmingham Barons."}},
-{"t":"vf","v":true,"fr":{"q":"La France a remporté la Coupe Davis en 1991.","x":"Vrai : les Bleus ont battu les États-Unis en finale à Lyon."},"en":{"q":"France won the Davis Cup in 1991.","x":"True: France beat the United States in the final in Lyon."}},
-{"t":"vf","v":true,"fr":{"q":"En 2011, la France a perdu la finale de la Coupe du monde de rugby d'un seul point.","x":"Vrai : défaite 8-7 contre la Nouvelle-Zélande à Auckland."},"en":{"q":"In 2011, France lost the Rugby World Cup final by a single point.","x":"True: they lost 8-7 to New Zealand in Auckland."}},
-{"t":"vf","v":false,"fr":{"q":"Roland Garros était un célèbre joueur de tennis.","x":"Faux : c'était un aviateur, le premier à traverser la Méditerranée en avion, en 1913."},"en":{"q":"Roland Garros was a famous tennis player.","x":"False: he was an aviator, the first to fly across the Mediterranean, in 1913."}},
-{"t":"vf","v":false,"fr":{"q":"Le maillot jaune du Tour de France est jaune en hommage au soleil de juillet.","x":"Faux : c'était la couleur du papier du journal L'Auto, organisateur du Tour."},"en":{"q":"The Tour de France yellow jersey is yellow as a tribute to the July sun.","x":"False: it was the colour of the paper of L'Auto, the newspaper that organised the Tour."}},
-{"t":"vf","v":false,"fr":{"q":"Les JO d'hiver et d'été ont toujours lieu la même année.","x":"Faux : c'était le cas jusqu'en 1992, mais depuis 1994 ils sont décalés de deux ans."},"en":{"q":"The Winter and Summer Olympics are always held in the same year.","x":"False: they were until 1992, but since 1994 they have been two years apart."}},
-{"t":"vf","v":false,"fr":{"q":"Le Stade de France a été construit pour l'Euro 2016.","x":"Faux : il a été inauguré en 1998, pour la Coupe du monde."},"en":{"q":"The Stade de France was built for Euro 2016.","x":"False: it opened in 1998, for the World Cup."}}
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel pays a remporté la Coupe du monde de football 1998 ?",
+   "a": [
+    "France",
+    "Brésil",
+    "Croatie",
+    "Pays-Bas"
+   ]
+  },
+  "en": {
+   "q": "Which country won the 1998 FIFA World Cup?",
+   "a": [
+    "France",
+    "Brazil",
+    "Croatia",
+    "Netherlands"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Qui a marqué deux buts de la tête en finale de la Coupe du monde 1998 ?",
+   "a": [
+    "Zinédine Zidane",
+    "Emmanuel Petit",
+    "Thierry Henry",
+    "Youri Djorkaeff"
+   ]
+  },
+  "en": {
+   "q": "Who scored two headers in the 1998 World Cup final?",
+   "a": [
+    "Zinédine Zidane",
+    "Emmanuel Petit",
+    "Thierry Henry",
+    "Youri Djorkaeff"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Contre quel pays la France a-t-elle gagné la finale de la Coupe du monde 2018 ?",
+   "a": [
+    "Croatie",
+    "Belgique",
+    "Argentine",
+    "Allemagne"
+   ]
+  },
+  "en": {
+   "q": "Which country did France beat in the 2018 World Cup final?",
+   "a": [
+    "Croatia",
+    "Belgium",
+    "Argentina",
+    "Germany"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel pays a remporté la Coupe du monde de football 2022 ?",
+   "a": [
+    "Argentine",
+    "France",
+    "Croatie",
+    "Maroc"
+   ]
+  },
+  "en": {
+   "q": "Which country won the 2022 FIFA World Cup?",
+   "a": [
+    "Argentina",
+    "France",
+    "Croatia",
+    "Morocco"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel pays a à la fois organisé et remporté la toute première Coupe du monde de football ?",
+   "a": [
+    "Uruguay",
+    "Brésil",
+    "Italie",
+    "Argentine"
+   ]
+  },
+  "en": {
+   "q": "Which country both hosted AND won the very first FIFA World Cup?",
+   "a": [
+    "Uruguay",
+    "Brazil",
+    "Italy",
+    "Argentina"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Qui a battu la France en finale de l'Euro 2016, au Stade de France ?",
+   "a": [
+    "Portugal",
+    "Allemagne",
+    "Espagne",
+    "Italie"
+   ]
+  },
+  "en": {
+   "q": "Who beat France in the Euro 2016 final at the Stade de France?",
+   "a": [
+    "Portugal",
+    "Germany",
+    "Spain",
+    "Italy"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Qui a marqué l'unique but de la finale de l'Euro 2016 ?",
+   "a": [
+    "Éder",
+    "Cristiano Ronaldo",
+    "Nani",
+    "Ricardo Quaresma"
+   ]
+  },
+  "en": {
+   "q": "Who scored the only goal of the Euro 2016 final?",
+   "a": [
+    "Éder",
+    "Cristiano Ronaldo",
+    "Nani",
+    "Ricardo Quaresma"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel club français a remporté la Ligue des champions en 1993 ?",
+   "a": [
+    "Olympique de Marseille",
+    "AS Monaco",
+    "Paris Saint-Germain",
+    "Olympique lyonnais"
+   ]
+  },
+  "en": {
+   "q": "Which French club won the Champions League in 1993?",
+   "a": [
+    "Olympique de Marseille",
+    "AS Monaco",
+    "Paris Saint-Germain",
+    "Olympique Lyonnais"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel Français a remporté le Ballon d'Or en 1991 ?",
+   "a": [
+    "Jean-Pierre Papin",
+    "Éric Cantona",
+    "Michel Platini",
+    "Didier Deschamps"
+   ]
+  },
+  "en": {
+   "q": "Which Frenchman won the Ballon d'Or in 1991?",
+   "a": [
+    "Jean-Pierre Papin",
+    "Éric Cantona",
+    "Michel Platini",
+    "Didier Deschamps"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Contre quel club français le Real Madrid a-t-il gagné la toute première Coupe des clubs champions, en 1956 ?",
+   "a": [
+    "Stade de Reims",
+    "AS Saint-Étienne",
+    "Olympique de Marseille",
+    "OGC Nice"
+   ]
+  },
+  "en": {
+   "q": "Which French club did Real Madrid beat in the very first European Cup final, in 1956?",
+   "a": [
+    "Stade de Reims",
+    "AS Saint-Étienne",
+    "Olympique de Marseille",
+    "OGC Nice"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel pays a remporté la première Coupe du monde de rugby, en 1987 ?",
+   "a": [
+    "Nouvelle-Zélande",
+    "Australie",
+    "France",
+    "Angleterre"
+   ]
+  },
+  "en": {
+   "q": "Which country won the first Rugby World Cup, in 1987?",
+   "a": [
+    "New Zealand",
+    "Australia",
+    "France",
+    "England"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Sur quelle surface se joue Roland-Garros ?",
+   "a": [
+    "Terre battue",
+    "Gazon",
+    "Dur",
+    "Moquette"
+   ]
+  },
+  "en": {
+   "q": "What surface is the French Open (Roland-Garros) played on?",
+   "a": [
+    "Clay",
+    "Grass",
+    "Hard court",
+    "Carpet"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel tournoi du Grand Chelem se joue sur gazon ?",
+   "a": [
+    "Wimbledon",
+    "US Open",
+    "Open d'Australie",
+    "Roland-Garros"
+   ]
+  },
+  "en": {
+   "q": "Which Grand Slam tournament is played on grass?",
+   "a": [
+    "Wimbledon",
+    "US Open",
+    "Australian Open",
+    "French Open"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel Français a remporté Roland-Garros en 1983 ?",
+   "a": [
+    "Yannick Noah",
+    "Henri Leconte",
+    "Guy Forget",
+    "Cédric Pioline"
+   ]
+  },
+  "en": {
+   "q": "Which Frenchman won Roland-Garros in 1983?",
+   "a": [
+    "Yannick Noah",
+    "Henri Leconte",
+    "Guy Forget",
+    "Cédric Pioline"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Qui a remporté Roland-Garros 2005, son tout premier titre du Grand Chelem ?",
+   "a": [
+    "Rafael Nadal",
+    "Roger Federer",
+    "Novak Djokovic",
+    "Mariano Puerta"
+   ]
+  },
+  "en": {
+   "q": "Who won Roland-Garros 2005, his very first Grand Slam title?",
+   "a": [
+    "Rafael Nadal",
+    "Roger Federer",
+    "Novak Djokovic",
+    "Mariano Puerta"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel Français a remporté le Tour de France 1985 ?",
+   "a": [
+    "Bernard Hinault",
+    "Laurent Fignon",
+    "Bernard Thévenet",
+    "Jacques Anquetil"
+   ]
+  },
+  "en": {
+   "q": "Which Frenchman won the 1985 Tour de France?",
+   "a": [
+    "Bernard Hinault",
+    "Laurent Fignon",
+    "Bernard Thévenet",
+    "Jacques Anquetil"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Sur le Tour de France, de quelle couleur est le maillot du meilleur grimpeur ?",
+   "a": [
+    "Blanc à pois rouges",
+    "Vert",
+    "Blanc",
+    "Rose"
+   ]
+  },
+  "en": {
+   "q": "In the Tour de France, what does the best climber's jersey look like?",
+   "a": [
+    "White with red polka dots",
+    "Green",
+    "White",
+    "Pink"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Qui a remporté le Tour de France 1989 avec 8 secondes d'avance sur Laurent Fignon ?",
+   "a": [
+    "Greg LeMond",
+    "Pedro Delgado",
+    "Stephen Roche",
+    "Miguel Indurain"
+   ]
+  },
+  "en": {
+   "q": "Who won the 1989 Tour de France by 8 seconds over Laurent Fignon?",
+   "a": [
+    "Greg LeMond",
+    "Pedro Delgado",
+    "Stephen Roche",
+    "Miguel Indurain"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Dans quelle ville ont eu lieu les premiers Jeux olympiques modernes, en 1896 ?",
+   "a": [
+    "Athènes",
+    "Paris",
+    "Londres",
+    "Rome"
+   ]
+  },
+  "en": {
+   "q": "Where were the first modern Olympic Games held, in 1896?",
+   "a": [
+    "Athens",
+    "Paris",
+    "London",
+    "Rome"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel Français est à l'origine de la renaissance des Jeux olympiques modernes ?",
+   "a": [
+    "Pierre de Coubertin",
+    "Jules Rimet",
+    "Henri Desgrange",
+    "Gabriel Hanot"
+   ]
+  },
+  "en": {
+   "q": "Which Frenchman revived the modern Olympic Games?",
+   "a": [
+    "Pierre de Coubertin",
+    "Jules Rimet",
+    "Henri Desgrange",
+    "Gabriel Hanot"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Dans quelle ville Marie-José Pérec a-t-elle réussi le doublé 200 m - 400 m aux JO ?",
+   "a": [
+    "Atlanta",
+    "Sydney",
+    "Barcelone",
+    "Séoul"
+   ]
+  },
+  "en": {
+   "q": "In which city did Marie-José Pérec win the Olympic 200 m - 400 m double?",
+   "a": [
+    "Atlanta",
+    "Sydney",
+    "Barcelona",
+    "Seoul"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quelle ville française a accueilli les Jeux olympiques d'hiver de 1992 ?",
+   "a": [
+    "Albertville",
+    "Grenoble",
+    "Chamonix",
+    "Annecy"
+   ]
+  },
+  "en": {
+   "q": "Which French town hosted the 1992 Winter Olympics?",
+   "a": [
+    "Albertville",
+    "Grenoble",
+    "Chamonix",
+    "Annecy"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Qui a été le tout premier champion du monde de Formule 1, en 1950 ?",
+   "a": [
+    "Giuseppe Farina",
+    "Juan Manuel Fangio",
+    "Alberto Ascari",
+    "Stirling Moss"
+   ]
+  },
+  "en": {
+   "q": "Who was the very first Formula 1 world champion, in 1950?",
+   "a": [
+    "Giuseppe Farina",
+    "Juan Manuel Fangio",
+    "Alberto Ascari",
+    "Stirling Moss"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel pilote français a été quatre fois champion du monde de F1 ?",
+   "a": [
+    "Alain Prost",
+    "Jean Alesi",
+    "René Arnoux",
+    "Jacques Laffite"
+   ]
+  },
+  "en": {
+   "q": "Which French driver was a four-time Formula 1 world champion?",
+   "a": [
+    "Alain Prost",
+    "Jean Alesi",
+    "René Arnoux",
+    "Jacques Laffite"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Quel numéro Michael Jordan portait-il aux Chicago Bulls ?",
+   "a": [
+    "23",
+    "33",
+    "32",
+    "8"
+   ]
+  },
+  "en": {
+   "q": "What number did Michael Jordan wear for the Chicago Bulls?",
+   "a": [
+    "23",
+    "33",
+    "32",
+    "8"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Qui a inventé le basket-ball, en 1891 ?",
+   "a": [
+    "James Naismith",
+    "William G. Morgan",
+    "Walter Camp",
+    "Abner Doubleday"
+   ]
+  },
+  "en": {
+   "q": "Who invented basketball, in 1891?",
+   "a": [
+    "James Naismith",
+    "William G. Morgan",
+    "Walter Camp",
+    "Abner Doubleday"
+   ]
+  }
+ },
+ {
+  "t": "q",
+  "fr": {
+   "q": "Dans quelle franchise NBA Tony Parker a-t-il passé l'essentiel de sa carrière ?",
+   "a": [
+    "San Antonio Spurs",
+    "Charlotte Hornets",
+    "Los Angeles Lakers",
+    "Boston Celtics"
+   ]
+  },
+  "en": {
+   "q": "Which NBA team did Tony Parker spend most of his career with?",
+   "a": [
+    "San Antonio Spurs",
+    "Charlotte Hornets",
+    "Los Angeles Lakers",
+    "Boston Celtics"
+   ]
+  }
+ },
+ {
+  "t": "n",
+  "n": 1930,
+  "fr": {
+   "q": "En quelle année a eu lieu la première Coupe du monde de football ?",
+   "u": ""
+  },
+  "en": {
+   "q": "In what year was the first FIFA World Cup held?",
+   "u": ""
+  }
+ },
+ {
+  "t": "n",
+  "n": 1903,
+  "fr": {
+   "q": "En quelle année a eu lieu le premier Tour de France ?",
+   "u": ""
+  },
+  "en": {
+   "q": "In what year was the first Tour de France held?",
+   "u": ""
+  }
+ },
+ {
+  "t": "n",
+  "n": 1900,
+  "fr": {
+   "q": "En quelle année Paris a-t-elle accueilli les Jeux olympiques pour la première fois ?",
+   "u": ""
+  },
+  "en": {
+   "q": "In what year did Paris host the Olympic Games for the first time?",
+   "u": ""
+  }
+ },
+ {
+  "t": "n",
+  "n": 2009,
+  "fr": {
+   "q": "En quelle année Usain Bolt a-t-il couru le 100 m en 9 s 58 ?",
+   "u": ""
+  },
+  "en": {
+   "q": "In what year did Usain Bolt run the 100 m in 9.58 seconds?",
+   "u": ""
+  }
+ },
+ {
+  "t": "n",
+  "n": 42195,
+  "fr": {
+   "q": "Quelle est la distance officielle d'un marathon, en mètres ?",
+   "u": "m"
+  },
+  "en": {
+   "q": "What is the official length of a marathon, in metres?",
+   "u": "m"
+  }
+ },
+ {
+  "t": "n",
+  "n": 305,
+  "fr": {
+   "q": "À quelle hauteur se trouve un panier de basket, en centimètres ?",
+   "u": "cm"
+  },
+  "en": {
+   "q": "How high is a basketball hoop, in centimetres?",
+   "u": "cm"
+  }
+ },
+ {
+  "t": "n",
+  "n": 8,
+  "fr": {
+   "q": "Combien de joueurs de chaque équipe forment la mêlée au rugby à XV ?",
+   "u": "joueurs"
+  },
+  "en": {
+   "q": "How many players from each team make up the scrum in rugby union?",
+   "u": "players"
+  }
+ },
+ {
+  "t": "n",
+  "n": 80,
+  "fr": {
+   "q": "Combien de minutes dure un match de rugby à XV (hors arrêts de jeu) ?",
+   "u": "min"
+  },
+  "en": {
+   "q": "How many minutes does a rugby union match last (excluding stoppages)?",
+   "u": "min"
+  }
+ },
+ {
+  "t": "n",
+  "n": 5,
+  "fr": {
+   "q": "Combien de Tours de France Eddy Merckx a-t-il remportés ?",
+   "u": "Tours"
+  },
+  "en": {
+   "q": "How many Tours de France did Eddy Merckx win?",
+   "u": "Tours"
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "La finale de l'Euro 2000 entre la France et l'Italie s'est décidée sur un but en or.",
+   "x": "Vrai : David Trezeguet a marqué le but en or en prolongation."
+  },
+  "en": {
+   "q": "The Euro 2000 final between France and Italy was decided by a golden goal.",
+   "x": "True: David Trezeguet scored the golden goal in extra time."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "Zinédine Zidane a marqué un but lors de la finale de la Coupe du monde 2006.",
+   "x": "Vrai : il a ouvert le score sur penalty, avant d'être expulsé en prolongation."
+  },
+  "en": {
+   "q": "Zinédine Zidane scored a goal in the 2006 World Cup final.",
+   "x": "True: he opened the scoring with a penalty, before being sent off in extra time."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "Michael Jordan a joué au baseball en professionnel.",
+   "x": "Vrai : en 1994, entre deux périodes NBA, il a joué en ligue mineure avec les Birmingham Barons."
+  },
+  "en": {
+   "q": "Michael Jordan played professional baseball.",
+   "x": "True: in 1994, between NBA stints, he played minor league ball for the Birmingham Barons."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "La France a remporté la Coupe Davis en 1991.",
+   "x": "Vrai : les Bleus ont battu les États-Unis en finale à Lyon."
+  },
+  "en": {
+   "q": "France won the Davis Cup in 1991.",
+   "x": "True: France beat the United States in the final in Lyon."
+  }
+ },
+ {
+  "t": "vf",
+  "v": true,
+  "fr": {
+   "q": "En 2011, la France a perdu la finale de la Coupe du monde de rugby d'un seul point.",
+   "x": "Vrai : défaite 8-7 contre la Nouvelle-Zélande à Auckland."
+  },
+  "en": {
+   "q": "In 2011, France lost the Rugby World Cup final by a single point.",
+   "x": "True: they lost 8-7 to New Zealand in Auckland."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "Roland Garros était un célèbre joueur de tennis.",
+   "x": "Faux : c'était un aviateur, le premier à traverser la Méditerranée en avion, en 1913."
+  },
+  "en": {
+   "q": "Roland Garros was a famous tennis player.",
+   "x": "False: he was an aviator, the first to fly across the Mediterranean, in 1913."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "Le maillot jaune du Tour de France est jaune en hommage au soleil de juillet.",
+   "x": "Faux : c'était la couleur du papier du journal L'Auto, organisateur du Tour."
+  },
+  "en": {
+   "q": "The Tour de France yellow jersey is yellow as a tribute to the July sun.",
+   "x": "False: it was the colour of the paper of L'Auto, the newspaper that organised the Tour."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "Les JO d'hiver et d'été ont toujours lieu la même année.",
+   "x": "Faux : c'était le cas jusqu'en 1992, mais depuis 1994 ils sont décalés de deux ans."
+  },
+  "en": {
+   "q": "The Winter and Summer Olympics are always held in the same year.",
+   "x": "False: they were until 1992, but since 1994 they have been two years apart."
+  }
+ },
+ {
+  "t": "vf",
+  "v": false,
+  "fr": {
+   "q": "Le Stade de France a été construit pour l'Euro 2016.",
+   "x": "Faux : il a été inauguré en 1998, pour la Coupe du monde."
+  },
+  "en": {
+   "q": "The Stade de France was built for Euro 2016.",
+   "x": "False: it opened in 1998, for the World Cup."
+  }
+ }
 ]

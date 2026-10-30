@@ -191,7 +191,7 @@
  {
   "t": "q",
   "fr": {
-   "q": "Dans quel musée peut-on admirer La Joconde ?",
+   "q": "Dans quel musée peut-on admirer « La Joconde » ?",
    "a": [
     "Le Louvre",
     "Le musée d'Orsay",
@@ -359,21 +359,21 @@
  {
   "t": "q",
   "fr": {
-   "q": "Quelle est la capitale de l'Australie ?",
+   "q": "Dans quelle ville se trouve la statue de la Petite Sirène ?",
    "a": [
-    "Canberra",
-    "Sydney",
-    "Melbourne",
-    "Perth"
+    "Copenhague",
+    "Oslo",
+    "Stockholm",
+    "Amsterdam"
    ]
   },
   "en": {
-   "q": "What is the capital of Australia?",
+   "q": "Which city is home to the Little Mermaid statue?",
    "a": [
-    "Canberra",
-    "Sydney",
-    "Melbourne",
-    "Perth"
+    "Copenhagen",
+    "Oslo",
+    "Stockholm",
+    "Amsterdam"
    ]
   }
  },
@@ -949,14 +949,14 @@
  },
  {
   "t": "vf",
-  "v": true,
+  "v": false,
   "fr": {
-   "q": "Pour un botaniste, la tomate est un fruit.",
-   "x": "Vrai : elle se forme à partir de la fleur et contient les graines, c'est donc un fruit."
+   "q": "La Grande Muraille de Chine est visible à l'œil nu depuis la Lune.",
+   "x": "Faux : elle est bien trop étroite. Même depuis l'orbite basse, les astronautes la distinguent à peine."
   },
   "en": {
-   "q": "To a botanist, a tomato is a fruit.",
-   "x": "True: it develops from the flower and contains the seeds, so it is a fruit."
+   "q": "The Great Wall of China is visible to the naked eye from the Moon.",
+   "x": "False: it's far too narrow. Even from low orbit, astronauts can barely make it out."
   }
  },
  {

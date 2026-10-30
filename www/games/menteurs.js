@@ -21,7 +21,7 @@ function stat(E, id, k, n){ const S = E.st = E.st || {}; const o = S[id] = Objec
 /* Coups de théâtre : une règle spéciale pour toute la manche (jamais à la première, jamais deux fois de suite). */
 const EVENTS = [
   { id: "joker", name: tr("Jokers en folie", "Joker frenzy"), desc: tr("Deux jokers de plus dans le paquet : dire la vérité devient plus facile… et démasquer un menteur, plus difficile.", "Two extra jokers in the deck: telling the truth gets easier… and catching a liar gets harder.") },
-  { id: "double", name: tr("Double table", "Double table"), desc: tr("Cette manche, deux valeurs de cartes sont valables.", "This round, two card values count.") },
+  { id: "double", name: tr("Double table", "Double table"), desc: tr("Pour cette manche, deux valeurs de cartes comptent.", "This round, two card values count.") },
   { id: "sens", name: tr("Sens inversé", "Reverse order"), desc: tr("On joue dans l'autre sens : tu ne passes plus après le même joueur.", "Play goes the other way: you no longer follow the same player."), ok: o => o.E.order.filter(id => o.E.alive[id]).length > 2 },
   { id: "petit", name: tr("Mains légères", "Light hands"), desc: tr("Seulement 3 cartes chacun : la manche va vite.", "Only 3 cards each: this round goes fast.") },
   { id: "une", name: tr("Une à la fois", "One at a time"), desc: tr("Une seule carte par tour, pas plus.", "Just one card per turn, no more.") },
@@ -207,7 +207,7 @@ function shotHTML(E, nameOf, bullet){
   const n = E.pulls[E.loser] || 0;
   let gun = '<div class="lb-gun">'; for(let i = 1; i <= 6; i++) gun += '<i class="' + (E.boom && i === n ? "b" : i <= n ? "x" : "") + '"></i>'; gun += "</div>";
   return CSS + '<div class="pass" style="min-height:30vh"><div class="lb-big' + (E.boom ? " boom" : "") + '">' + (E.boom ? tr("PAN !", "BANG!") : tr("Clic…", "Click…")) + '</div><div class="who" style="text-align:center">' + esc(nameOf(E.loser)) + '</div><p style="text-align:center; max-width:none">' +
-    (E.boom ? tr("est hors jeu.", "is out.") : tr("survit. Prochain coup : 1 risque sur " + Math.max(1, 6 - n) + ".", "survives. Next shot: 1 in " + Math.max(1, 6 - n) + " risk.")) + (E.more > 0 && !E.boom ? tr(" <b>Barillet nerveux : encore un coup !</b>", " <b>Hair trigger: one more shot!</b>") : "") + "</p>" + gun + "</div>" + (E.winner ? '<p class="lb-log">' + tr("Il ne reste que " + esc(nameOf(E.winner)) + " !", "Only " + esc(nameOf(E.winner)) + " is left!") + "</p>" : "");
+    (E.boom ? tr("est hors jeu.", "is out.") : tr("survit. Prochain coup : 1 chance sur " + Math.max(1, 6 - n) + " d'y passer.", "survives. Next shot: 1 in " + Math.max(1, 6 - n) + " risk.")) + (E.more > 0 && !E.boom ? tr(" <b>Barillet nerveux : encore un coup !</b>", " <b>Hair trigger: one more shot!</b>") : "") + "</p>" + gun + "</div>" + (E.winner ? '<p class="lb-log">' + tr("Il ne reste que " + esc(nameOf(E.winner)) + " !", "Only " + esc(nameOf(E.winner)) + " is left!") + "</p>" : "");
 }
 const OUTRO = tr(["Le seul à tenir encore debout au bar.", "Les autres ont mordu la poussière.", "Le barman lui offre la tournée.", "Personne n'a su lire dans son jeu.", "Des nerfs d'acier… et un peu de chance."],
   ["The last one still standing at the bar.", "Everyone else bit the dust.", "The bartender says this round's on the house.", "Nobody could read that poker face.", "Nerves of steel… and a little luck."]);
@@ -390,7 +390,7 @@ const DEF = {
       });
     } else {
       screen(root, "end" + s.k + ctx.isHost, endHTML(E, nameOf) + dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
-        const b = r.querySelector("[data-back]"); if(b) b.addEventListener("click", () => ctx.act(c => { const F = fromState(c.s); c.end({ title: tr("Roulette des menteurs : " + c.name(c.s.winner) + " survit", "Liars: " + c.name(c.s.winner) + " survives"), lines: [tr(c.s.round + " manches", SB.u.plural2(c.s.round, "", "", "round"))].concat(awardLines(F, c.name).map(x => tr(x[0] + " : " + x[1], x[0] + ": " + x[1]))), win: [c.s.winner] }); }));
+        const b = r.querySelector("[data-back]"); if(b) b.addEventListener("click", () => ctx.act(c => { const F = fromState(c.s); c.end({ title: tr("Roulette des menteurs : " + c.name(c.s.winner) + " survit", "Liars: " + c.name(c.s.winner) + " survives"), lines: [tr(c.s.round + (c.s.round > 1 ? " manches" : " manche"), SB.u.plural2(c.s.round, "", "", "round"))].concat(awardLines(F, c.name).map(x => tr(x[0] + " : " + x[1], x[0] + ": " + x[1]))), win: [c.s.winner] }); }));
       });
     }
   },
@@ -421,7 +421,7 @@ const DEF = {
           r.querySelector("[data-tw]").addEventListener("click", () => { tw = !tw; persist({ lbTw: tw }); setup(); });
           r.querySelector("[data-go]").addEventListener("click", () => {
             nameMap = {}; const ids = names.map((nm, i) => { nameMap["h" + i] = nm; return "h" + i; });
-            for(let i = 0; i < bots; i++){ nameMap["b" + i] = BOTN[i] + " 🤖"; ids.push("b" + i); }
+            for(let i = 0; i < bots; i++){ nameMap["b" + i] = BOTN[i] + " (bot)"; ids.push("b" + i); }
             E = { order: shuffle(ids), alive: {}, pulls: {}, round: 1, tw, st: {} };
             E.order.forEach(id => { E.alive[id] = true; E.pulls[id] = 0; });
             E.start = E.order[0]; deal(E); bullets = newBullets(E.order); gno++;

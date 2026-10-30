@@ -107,21 +107,21 @@
  {
   "t": "q",
   "fr": {
-   "q": "Lequel de ces fruits est, botaniquement, une baie ?",
+   "q": "Quel animal peut dormir avec une seule moitié du cerveau à la fois ?",
    "a": [
-    "La banane",
-    "La fraise",
-    "La framboise",
-    "La cerise"
+    "Le dauphin",
+    "Le chat",
+    "Le cheval",
+    "Le requin blanc"
    ]
   },
   "en": {
-   "q": "Which of these fruits is botanically a berry?",
+   "q": "Which animal can sleep with only half of its brain at a time?",
    "a": [
-    "The banana",
-    "The strawberry",
-    "The raspberry",
-    "The cherry"
+    "The dolphin",
+    "The cat",
+    "The horse",
+    "The great white shark"
    ]
   }
  },
@@ -506,42 +506,42 @@
  {
   "t": "q",
   "fr": {
-   "q": "Lequel de ces mammifères pond des œufs ?",
+   "q": "Quel animal a des empreintes digitales presque identiques aux nôtres ?",
    "a": [
-    "L'ornithorynque",
-    "Le castor",
-    "La loutre",
-    "Le tatou"
+    "Le koala",
+    "Le panda",
+    "Le raton laveur",
+    "Le lémurien"
    ]
   },
   "en": {
-   "q": "Which of these mammals lays eggs?",
+   "q": "Which animal has fingerprints almost identical to ours?",
    "a": [
-    "The platypus",
-    "The beaver",
-    "The otter",
-    "The armadillo"
+    "The koala",
+    "The panda",
+    "The raccoon",
+    "The lemur"
    ]
   }
  },
  {
   "t": "q",
   "fr": {
-   "q": "Que contient la bosse du dromadaire ?",
+   "q": "De quel pays le kiwi (le fruit) est-il originaire ?",
    "a": [
-    "De la graisse",
-    "De l'eau",
-    "Du lait",
-    "De l'air"
+    "La Chine",
+    "La Nouvelle-Zélande",
+    "L'Australie",
+    "Le Chili"
    ]
   },
   "en": {
-   "q": "What does a dromedary's hump contain?",
+   "q": "Which country does the kiwi fruit originally come from?",
    "a": [
-    "Fat",
-    "Water",
-    "Milk",
-    "Air"
+    "China",
+    "New Zealand",
+    "Australia",
+    "Chile"
    ]
   }
  },
@@ -611,34 +611,34 @@
  {
   "t": "q",
   "fr": {
-   "q": "À quelle famille de plantes appartient la cacahuète ?",
+   "q": "Quel animal a les plus grands yeux du règne animal ?",
    "a": [
-    "Les légumineuses",
-    "Les fruits à coque",
-    "Les céréales",
-    "Les agrumes"
+    "Le calmar colossal",
+    "La baleine bleue",
+    "L'autruche",
+    "Le hibou grand-duc"
    ]
   },
   "en": {
-   "q": "Which plant family does the peanut belong to?",
+   "q": "Which animal has the largest eyes in the animal kingdom?",
    "a": [
-    "Legumes",
-    "Tree nuts",
-    "Cereals",
-    "Citrus"
+    "The colossal squid",
+    "The blue whale",
+    "The ostrich",
+    "The eagle-owl"
    ]
   }
  },
  {
   "t": "n",
-  "n": 3,
+  "n": 5,
   "fr": {
-   "q": "Combien de cœurs a une pieuvre ?",
-   "u": "cœurs"
+   "q": "Combien de litres de sang contient le corps d'un adulte, environ ?",
+   "u": "litres"
   },
   "en": {
-   "q": "How many hearts does an octopus have?",
-   "u": "hearts"
+   "q": "About how many litres of blood does an adult body hold?",
+   "u": "litres"
   }
  },
  {
@@ -667,14 +667,14 @@
  },
  {
   "t": "n",
-  "n": 206,
+  "n": 110,
   "fr": {
-   "q": "Combien d'os compte le squelette d'un adulte ?",
-   "u": "os"
+   "q": "À quelle vitesse maximale un guépard peut-il courir, environ ?",
+   "u": "km/h"
   },
   "en": {
-   "q": "How many bones are in an adult human skeleton?",
-   "u": "bones"
+   "q": "Roughly how fast can a cheetah run at top speed?",
+   "u": "km/h"
   }
  },
  {
@@ -739,14 +739,14 @@
  },
  {
   "t": "n",
-  "n": 10,
+  "n": 46,
   "fr": {
-   "q": "Combien de pattes a un homard, pinces comprises ?",
-   "u": "pattes"
+   "q": "Combien de chromosomes compte une cellule humaine ?",
+   "u": "chromosomes"
   },
   "en": {
-   "q": "How many legs does a lobster have, claws included?",
-   "u": "legs"
+   "q": "How many chromosomes does a human cell have?",
+   "u": "chromosomes"
   }
  },
  {
@@ -811,14 +811,14 @@
  },
  {
   "t": "vf",
-  "v": false,
+  "v": true,
   "fr": {
-   "q": "Le poisson rouge n'a que 3 secondes de mémoire.",
-   "x": "Faux : des expériences montrent qu'il peut se souvenir de choses pendant des mois."
+   "q": "Un koala peut dormir jusqu'à 20 heures par jour.",
+   "x": "Vrai : il dort 18 à 22 heures par jour, car les feuilles d'eucalyptus lui apportent très peu d'énergie."
   },
   "en": {
-   "q": "Goldfish only have a 3-second memory.",
-   "x": "False: experiments show they can remember things for months."
+   "q": "A koala can sleep up to 20 hours a day.",
+   "x": "True: it sleeps 18 to 22 hours a day, because eucalyptus leaves give it very little energy."
   }
  },
  {
@@ -847,26 +847,26 @@
  },
  {
   "t": "vf",
-  "v": false,
+  "v": true,
   "fr": {
-   "q": "Les Vikings portaient des casques à cornes au combat.",
-   "x": "Faux : aucune preuve archéologique, cette image vient de costumes d'opéra du XIXe siècle."
+   "q": "Le cœur d'une crevette se trouve dans sa tête.",
+   "x": "Vrai : il est logé dans le céphalothorax, la partie avant qui réunit la tête et le thorax."
   },
   "en": {
-   "q": "Vikings wore horned helmets in battle.",
-   "x": "False: there is no archaeological evidence; the image comes from 19th-century opera costumes."
+   "q": "A shrimp's heart is located in its head.",
+   "x": "True: it sits in the cephalothorax, the front part that combines head and thorax."
   }
  },
  {
   "t": "vf",
   "v": false,
   "fr": {
-   "q": "Napoléon était particulièrement petit pour son époque.",
-   "x": "Faux : il mesurait environ 1,69 m, une taille moyenne voire un peu au-dessus pour l'époque."
+   "q": "L'autruche cache sa tête dans le sable quand elle a peur.",
+   "x": "Faux : elle se couche au sol, le cou à plat, ce qui de loin donne l'illusion d'une tête enfouie."
   },
   "en": {
-   "q": "Napoleon was particularly short for his time.",
-   "x": "False: he was about 1.69 m (5'7\"), average or slightly above for the era."
+   "q": "Ostriches bury their heads in the sand when scared.",
+   "x": "False: they lie flat on the ground with their necks stretched out, which from afar looks like a buried head."
   }
  }
 ]

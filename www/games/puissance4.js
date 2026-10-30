@@ -122,9 +122,9 @@ function put(root, sel, html, bind){ const el = root.querySelector(sel); if(!el 
 const scoreHTML = (sc, n1, n2) => '<div class="p4-score"><span>' + disc(1).replace("<i", '<i class="d"') + esc(n1) + " " + (sc[1] || 0) + "</span><span>–</span><span>" + (sc[2] || 0) + " " + esc(n2) + disc(2) + "</span></div>";
 
 SB.register({
-  id: "puissance4", name: tr("Puissance 4", "Connect Four"), glyph: "4", pitch: tr("Aligne 4 pions avant l'autre", "Line up 4 before they do"), hot: false, ticks: true,
+  id: "puissance4", name: tr("Puissance 4", "Connect Four"), glyph: "4", pitch: tr("Aligne 4 pions avant ton adversaire.", "Line up 4 before they do"), hot: false, ticks: true,
   accent: { light: "#2a4fd1", dark: "#6f8fff" },
-  tag: tr("Le classique : chacun son tour, fais tomber un pion dans une colonne. Le premier qui en aligne 4 gagne la manche. À plus de 2, Rouges contre Jaunes en équipes.", "The classic: take turns dropping a disc into a column. First to line up 4 wins the round. With more than 2, Red vs Yellow in teams."),
+  tag: tr("Le classique : chacun son tour, fais tomber un pion dans une colonne. Le premier qui en aligne 4 gagne la manche. À plus de 2 joueurs, c'est Rouges contre Jaunes, en équipes.", "The classic: take turns dropping a disc into a column. First to line up 4 wins the round. With more than 2, Red vs Yellow in teams."),
   min: 2, max: 20,
   gages: [
     { ev: "perdu", label: tr("Manche perdue", "Round lost"), kind: "boit", n: 2 },
@@ -133,8 +133,8 @@ SB.register({
     { ev: "temps", label: tr("Temps écoulé : pion joué au hasard", "Time's up: random disc"), kind: "boit", n: 1 }
   ],
   rules: tr([
-    "Chacun son tour, touche une colonne : ton pion tombe tout en bas. Le premier qui aligne 4 pions (en ligne, en colonne ou en diagonale) gagne la manche.",
-    "À 2 joueurs, c'est un duel. À plus de 2, deux équipes (Rouges et Jaunes) jouent chacun leur tour : le joueur qui pose change à chaque coup.",
+    "Chacun son tour, touche une colonne : ton pion tombe tout en bas. Le premier qui aligne 4 pions (à l'horizontale, à la verticale ou en diagonale) gagne la manche.",
+    "À 2 joueurs, c'est un duel. À plus de 2, deux équipes (Rouges et Jaunes) jouent à tour de rôle : le joueur qui pose change à chaque coup.",
     "Grille géante : 9 colonnes, 7 lignes, et il faut aligner 5 pions.",
     "Chrono par coup (option) : si le temps est écoulé, le pion tombe au hasard.",
     "Le perdant d'une manche commence la suivante. Coups de théâtre : manche en or, chrono éclair, dernier coup caché.",

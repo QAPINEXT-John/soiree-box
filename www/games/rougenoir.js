@@ -10,6 +10,8 @@ const SUITS = ["h", "d", "s", "c"], SYM = { h: "♥", d: "♦", s: "♠", c: "�
 const newDeck = () => shuffle([].concat(...SUITS.map(su => [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(v => v + su))));
 const val = c => parseInt(c, 10), suit = c => String(c).slice(-1), red = c => suit(c) === "h" || suit(c) === "d";
 const rank = v => (v <= 10 ? String(v) : tr({ 11: "V", 12: "D", 13: "R", 14: "A" }[v], { 11: "J", 12: "Q", 13: "K", 14: "A" }[v]));
+// En toutes lettres, avec l'article, pour les phrases : « que le 7 », « que la dame », « que l'as ».
+const rankFR = v => (v <= 10 ? "le " + v : { 11: "le valet", 12: "la dame", 13: "le roi", 14: "l'as" }[v]);
 const SUITN = { h: tr("Cœur", "Hearts"), d: tr("Carreau", "Diamonds"), s: tr("Pique", "Spades"), c: tr("Trèfle", "Clubs") };
 function cardHTML(c, cls){ return '<span class="rn-c ' + (red(c) ? "r" : "b") + (cls ? " " + cls : "") + '" aria-label="' + esc(rank(val(c)) + " " + SUITN[suit(c)]) + '"><i>' + esc(rank(val(c))) + "</i><b>" + SYM[suit(c)] + "</b></span>"; }
 const backHTML = () => '<span class="rn-c back" aria-hidden="true"></span>';
@@ -60,17 +62,17 @@ const BETS = [
 const betName = (st, b) => { const x = BETS[st]().find(y => y[0] === b); return x ? x[1] : b; };
 function question(E){
   const cs = E.cards;
-  if(E.step === 0) return tr("Rouge ou noir ? Ou violet : les deux prochaines cartes de couleurs différentes (double).", "Red or black? Or purple: the next two cards are different colors (double).");
-  if(E.step === 1) return tr("Plus haut ou plus bas que le " + rank(val(cs[cs.length - 1])) + " ?", "Higher or lower than the " + rank(val(cs[cs.length - 1])) + "?");
+  if(E.step === 0) return tr("Rouge ou noir ? Ou violet : les deux prochaines cartes seront de couleurs différentes (gain double).", "Red or black? Or purple: the next two cards are different colors (double).");
+  if(E.step === 1) return tr("Plus haut ou plus bas que " + rankFR(val(cs[cs.length - 1])) + " ?", "Higher or lower than the " + rank(val(cs[cs.length - 1])) + "?");
   if(E.step === 2){ const b = bounds(cs); return tr("Entre " + rank(b[0]) + " et " + rank(b[1]) + ", ou à l'extérieur ?", "Between " + rank(b[0]) + " and " + rank(b[1]) + ", or outside?"); }
   return tr("Quelle enseigne ?", "Which suit?");
 }
-const STEPN = [tr("Couleur", "Color"), tr("Plus ou moins", "Higher or lower"), tr("Entre ou dehors", "Inside or outside"), tr("Enseigne", "Suit")];
+const STEPN = [tr("Couleur", "Color"), tr("Plus ou moins", "Higher or lower"), tr("Entre ou à l'extérieur", "Inside or outside"), tr("Enseigne", "Suit")];
 
 /* ---------- Coups de théâtre (un tour au maximum) ---------- */
 const TW = [
   { id: "or", name: tr("Tour en or", "Golden turn"), desc: tr("Tous les gages de ce tour comptent double.", "Every forfeit this turn counts double.") },
-  { id: "inverse", name: tr("Le monde à l'envers", "Upside down"), desc: tr("Ce tour-ci, si tu as bon tu prends le gage, si tu te trompes tu distribues !", "This turn, if you're right you take the forfeit, if you're wrong you hand it out!") },
+  { id: "inverse", name: tr("Le monde à l'envers", "Upside down"), desc: tr("Ce tour-ci, si tu as bon, tu prends le gage ; si tu te trompes, tu distribues !", "This turn, if you're right you take the forfeit, if you're wrong you hand it out!") },
   { id: "tous", name: tr("Tout le monde parie", "Everyone bets"), desc: tr("Pour la couleur, tout le monde parie avec le joueur. Ceux qui se trompent prennent un gage.", "For the color, everyone bets along. Those who are wrong get a forfeit."), ok: o => o.n >= 3 }
 ];
 const TWL = TW.filter(t => t.id !== "tous");
@@ -109,9 +111,9 @@ function awards(ids, E, nameOf){
   const best = ids.filter(id => (ok[id] || 0) + (ko[id] || 0)).sort((a, b) => rate(b) - rate(a))[0];
   if(best) out.push([tr("La voyante", "The psychic"), nameOf(best), tr(Math.round(rate(best) * 100) + " % de bons paris", Math.round(rate(best) * 100) + "% right")]);
   const bad = ids.filter(id => ko[id]).sort((a, b) => (ko[b] || 0) - (ko[a] || 0))[0];
-  if(bad && bad !== best) out.push([tr("Le chat noir", "The black cat"), nameOf(bad), tr(ko[bad] + " paris ratés", ko[bad] + " wrong bets")]);
+  if(bad && bad !== best) out.push([tr("Le chat noir", "The black cat"), nameOf(bad), tr(ko[bad] + (ko[bad] > 1 ? " paris ratés" : " pari raté"), ko[bad] + " wrong bets")]);
   const v = E.vio || {}, vi = ids.filter(id => v[id]).sort((a, b) => v[b] - v[a])[0];
-  if(vi) out.push([tr("Accro au violet", "Purple addict"), nameOf(vi), tr(v[vi] + " paris violets", v[vi] + " purple bets")]);
+  if(vi) out.push([tr("Accro au violet", "Purple addict"), nameOf(vi), tr(v[vi] + (v[vi] > 1 ? " paris violets" : " pari violet"), v[vi] + " purple bets")]);
   return out;
 }
 // Applique un pari : points, stats, et la liste des gages ({ id, ev, x }).
@@ -131,7 +133,7 @@ function apply(E, deck, b, allBets){
 SB.register({
   id: "rougenoir", name: tr("Rouge, noir ou violet", "Red, Black or Purple"), glyph: "♥ ♠", pitch: tr("Parie sur la prochaine carte. Violet : double ou rien.", "Bet on the next card. Purple: double or nothing."), hot: false,
   accent: { light: "#9b3fe0", dark: "#b77cff" },
-  tag: tr("Rouge ou noir ? Ou violet, deux cartes de couleurs différentes. En option, le Ride the bus complet : plus ou moins, entre ou dehors, l'enseigne.", "Red or black? Or purple, two cards of different colors. Optional full Ride the Bus: higher or lower, inside or outside, the suit."),
+  tag: tr("Rouge ou noir ? Ou violet, deux cartes de couleurs différentes. En option, le « Ride the bus » complet : plus ou moins, entre ou à l'extérieur, l'enseigne.", "Red or black? Or purple, two cards of different colors. Optional full Ride the Bus: higher or lower, inside or outside, the suit."),
   min: 2, max: 16,
   gages: [
     { ev: "perdu", label: tr("Mauvais pari (× l'étape, × 2 en violet)", "Wrong bet (× the step, × 2 on purple)"), kind: "boit", n: 1 },
@@ -139,12 +141,12 @@ SB.register({
     { ev: "public", label: tr("Tout le monde parie : raté", "Everyone bets: wrong"), kind: "boit", n: 1 }
   ],
   rules: tr([
-    "Chacun son tour, tu paries sur la prochaine carte : rouge (cœur, carreau) ou noir (pique, trèfle).",
+    "À ton tour, tu paries sur la prochaine carte : rouge (cœur, carreau) ou noir (pique, trèfle).",
     "Violet : tu paries que les deux prochaines cartes seront de couleurs différentes. Ça compte double.",
     "Bon pari : tu distribues. Mauvais pari : tu prends le gage.",
     "Option Ride the bus : après la couleur, plus haut ou plus bas que la carte, puis entre ou à l'extérieur des deux premières cartes, puis l'enseigne exacte. Chaque étape vaut un peu plus que la précédente (1, 2, 3, puis 4).",
-    "Égalité de valeur (plus ou moins, entre ou dehors) : c'est perdu. L'as est la carte la plus forte.",
-    "Les bons paris rapportent des points. À la fin des tours, le plus de points gagne.",
+    "Égalité de valeur (plus ou moins, entre ou à l'extérieur) : c'est perdu. L'as est la carte la plus forte.",
+    "Les bons paris rapportent des points. À la fin des tours, celui qui a le plus de points gagne.",
     "Coups de théâtre : tour en or, le monde à l'envers, tout le monde parie."
   ], [
     "Taking turns, you bet on the next card: red (hearts, diamonds) or black (spades, clubs).",
@@ -208,7 +210,7 @@ SB.register({
       });
       return;
     }
-    const head = CSS + '<span class="eyebrow">' + tr("Tour de ", "") + esc(ctx.name(cur)) + tr("", "'s turn") + " · " + tr("tour ", "turn ") + (((s.done || {})[cur] || 0) + 1) + " / " + s.turns + (s.ride ? " · " + STEPN[s.step] : "") + "</span>" + SB.u.twistHTML(T) + stepsHTML(s);
+    const head = CSS + '<span class="eyebrow">' + tr("Tour de ", "") + esc(ctx.name(cur)) + tr("", "'s turn") + " · " + tr("", "turn ") + (((s.done || {})[cur] || 0) + 1) + " / " + s.turns + (s.ride ? " · " + STEPN[s.step] : "") + "</span>" + SB.u.twistHTML(T) + stepsHTML(s);
     const tousMe = s.tw === "tous" && s.step === 0 && !mine && s.phase === "bet";
     let body = "", dockH = "";
     if(s.phase === "bet"){
@@ -257,7 +259,7 @@ SB.register({
           });
         });
       }
-      const head = () => CSS + '<span class="eyebrow">' + tr("Tour de ", "") + esc(E.order[E.ti]) + tr("", "'s turn") + " · " + tr("tour ", "turn ") + ((E.done[E.order[E.ti]] || 0) + 1) + " / " + E.turns + (E.ride ? " · " + STEPN[E.step] : "") + "</span>" + SB.u.twistHTML(SB.u.byTwist(TWL, E.tw)) + stepsHTML(E);
+      const head = () => CSS + '<span class="eyebrow">' + tr("Tour de ", "") + esc(E.order[E.ti]) + tr("", "'s turn") + " · " + tr("", "turn ") + ((E.done[E.order[E.ti]] || 0) + 1) + " / " + E.turns + (E.ride ? " · " + STEPN[E.step] : "") + "</span>" + SB.u.twistHTML(SB.u.byTwist(TWL, E.tw)) + stepsHTML(E);
       function bet(){
         screen(root, "b" + gno + ":" + E.n + ":" + E.step, head() + cardsHTML(E, 0) + '<p class="rn-q">' + question(E) + "</p>" +
           SB.u.dock('<div class="rn-bets' + (E.step === 3 ? " s4" : "") + '">' + BETS[E.step]().map(x => '<button type="button" class="' + x[2] + '" data-b="' + esc(x[0]) + '">' + esc(x[1]) + "</button>").join("") + '</div><button class="link" type="button" data-q style="align-self:center">' + tr("Choisir un autre jeu", "Choose another game") + "</button>"), r => {

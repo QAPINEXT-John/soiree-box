@@ -29,7 +29,7 @@ const TWISTS = [
   { id: "glace", name: tr("Manche glacée", "Frozen round"), desc: tr("Les 0 comptent −1 au décompte.", "0s count as −1 when scoring.") },
   { id: "douze", name: tr("Douze maudits", "Cursed twelves"), desc: tr("Les 12 comptent 20 au décompte.", "12s count as 20 when scoring.") },
   { id: "trois", name: tr("Coup d'œil", "Sneak peek"), desc: tr("Chacun retourne 3 cartes au départ au lieu de 2.", "Everyone flips 3 cards at the start instead of 2.") },
-  { id: "filet", name: tr("Sans filet", "No safety net"), desc: tr("Si celui qui finit n'a pas le plus petit score, il est triplé au lieu de doublé.", "If whoever finishes doesn't have the lowest score, it's tripled instead of doubled.") },
+  { id: "filet", name: tr("Sans filet", "No safety net"), desc: tr("Si celui qui finit n'a pas le plus petit score, son score est triplé au lieu d'être doublé.", "If whoever finishes doesn't have the lowest score, it's tripled instead of doubled.") },
   { id: "cadeau", name: tr("Cadeau de la maison", "On the house"), desc: tr("La défausse démarre avec un −2.", "The discard pile starts with a −2.") }
 ];
 const twistOf = id => SB.u.byTwist ? SB.u.byTwist(TWISTS, id) : TWISTS.find(t => t.id === id) || null;
@@ -110,7 +110,7 @@ function beginPlay(E, nameOf){
   const first = E.prev && E.order.indexOf(E.prev) >= 0 ? E.prev : starter(E);
   E.phase = "play"; E.turn = first; E.step = "pick"; E.held = "";
   const nm = nameOf ? nameOf(first) : "?";
-  E.log = E.prev ? L(E, nm + " a fini la manche d'avant : à lui de commencer.", nm + " finished last round, so they go first.") : L(E, nm + " a la plus grosse somme : à lui de commencer.", nm + " has the highest total, so they go first.");
+  E.log = E.prev ? L(E, nm + " a fini la manche d'avant : c'est à son tour de commencer.", nm + " finished last round, so they go first.") : L(E, nm + " a la plus grosse somme : c'est à son tour de commencer.", nm + " has the highest total, so they go first.");
 }
 const nextOf = (E, id) => E.order[(E.order.indexOf(id) + 1) % E.order.length];
 const topOf = E => (E.disc.length ? E.disc[E.disc.length - 1] : "");
@@ -316,7 +316,7 @@ function tableHTML(V, me, nameOf, ui){
   else
   if(V.phase === "flip"){
     const left = me && V.cells[me] ? V.nflip - A(V.cells[me]).filter(c => typeof c === "number").length - (ui.mine || []).length : 0;
-    turn = me && left > 0 ? (left < V.nflip ? tr("Retourne encore " + left + " carte", "Flip " + left + " more card" + (left > 1 ? "s" : "")) : tr("Retourne " + left + " cartes pour commencer", "Flip " + left + " cards to start")) : tr("C'est bon ! On attend que les autres retournent leurs cartes…", "Done! Waiting for the others to flip their cards…");
+    turn = me && left > 0 ? (left < V.nflip ? tr("Retourne encore " + left + " carte" + (left > 1 ? "s" : ""), "Flip " + left + " more card" + (left > 1 ? "s" : "")) : tr("Retourne " + left + " cartes pour commencer", "Flip " + left + " cards to start")) : tr("C'est bon ! On attend que les autres retournent leurs cartes…", "Done! Waiting for the others to flip their cards…");
   } else if(V.phase === "play") turn = V.turn === me ? tr("À toi !", "Your turn!") : tr("Au tour de " + esc(nameOf(V.turn)), esc(nameOf(V.turn)) + "'s turn");
   h += '<div class="gr-mid"><div class="gr-turn">' + turn + (V.closer && V.phase === "play" ? '<span class="gr-last">' + tr("Dernier tour ! " + esc(nameOf(V.closer)) + " a tout retourné", "Last turn! " + esc(nameOf(V.closer)) + " flipped everything") + "</span>" : "") + "</div>";
   // Pioche, carte en main, défausse
@@ -436,7 +436,7 @@ let LTOK = 0;
 const DEF = {
   id: "grille", name: tr("Grille", "Grid"), glyph: "Skyjo", pitch: tr("12 cartes cachées, vise le plus petit total.", "12 hidden cards, aim for the lowest total."), hot: false,
   accent: { light: "#1aa6b7", dark: "#3ccbd9" },
-  tag: tr("12 cartes face cachée en grille. Prends la défausse ou pioche, remplace tes grosses cartes, aligne 3 cartes identiques pour faire disparaître une colonne. Le plus petit total gagne.", "12 face-down cards in a grid. Take the discard or draw, swap out your big cards, line up 3 identical cards to clear a column. Lowest total wins."),
+  tag: tr("12 cartes face cachée en grille. Prends la défausse ou pioche, remplace tes grosses cartes, aligne 3 cartes identiques dans une colonne pour la faire disparaître. Le plus petit total gagne.", "12 face-down cards in a grid. Take the discard or draw, swap out your big cards, line up 3 identical cards to clear a column. Lowest total wins."),
   min: 2, max: 8,
   gages: [
     { ev: "max", label: tr("Plus gros score de la manche", "Highest score of the round"), kind: "boit", n: 2 },
@@ -446,14 +446,14 @@ const DEF = {
   ],
   rules: tr([
     "Chacun a 12 cartes face cachée, en 3 lignes de 4. Les cartes vont de −2 à 12. Au début de la manche, retourne 2 cartes de ton choix.",
-    "La plus grosse somme commence la première manche. Ensuite, c'est celui qui a fini la manche d'avant qui commence.",
+    "Le joueur dont les cartes retournées font la plus grosse somme commence la première manche. Ensuite, c'est celui qui a fini la manche d'avant qui commence.",
     "À ton tour, au choix : prends la carte du dessus de la défausse et échange-la avec une de tes cartes (visible ou cachée), ou pioche.",
     "Si tu pioches : échange la carte avec une des tiennes, ou défausse-la et retourne une de tes cartes cachées.",
     "La carte que tu remplaces part face visible sur la défausse.",
-    "Colonne complète : 3 cartes visibles de même valeur dans une colonne, et elle disparaît.",
+    "Colonne complète : si une colonne a 3 cartes visibles de même valeur, elle disparaît.",
     "Dès qu'un joueur a toutes ses cartes visibles, chacun des autres joue encore un tour. Puis on retourne tout et on compte.",
     "Attention : si celui qui a fini n'a pas le score strictement le plus bas, et que son score est positif, ses points de la manche sont doublés.",
-    "La partie s'arrête quand quelqu'un atteint l'objectif (50 ou 100 points), ou après une seule manche. Le plus petit total gagne.",
+    "La partie s'arrête quand quelqu'un atteint l'objectif (50 ou 100 points), ou après une seule manche avec l'option « 1 manche ». Le plus petit total gagne.",
     "Coups de théâtre : certaines manches changent une règle (les 0 comptent −1, 3 cartes retournées au départ…)."
   ], [
     "Everyone has 12 face-down cards, in 3 rows of 4. Cards go from −2 to 12. At the start of the round, flip 2 cards of your choice.",
@@ -538,7 +538,7 @@ const DEF = {
         const away = V.phase === "flip" ? V.order.filter(id => !ctx.here(id) && A(V.cells[id]).filter(c => typeof c === "number").length < V.nflip) : V.order.filter(id => id === V.turn && !ctx.here(id));
         if(ctx.isHost && away.length){
           const box = document.createElement("button"); box.type = "button"; box.className = "link warn"; box.style.alignSelf = "center";
-          box.textContent = tr("Faire jouer " + away.map(ctx.name).join(", ") + " (absent)", "Play for " + away.map(ctx.name).join(", ") + " (away)");
+          box.textContent = tr("Faire jouer " + away.map(ctx.name).join(", ") + (away.length > 1 ? " (absents)" : " (absent)"), "Play for " + away.map(ctx.name).join(", ") + " (away)");
           box.addEventListener("click", () => ctx.act(c => {
             const F = fromState(c.s, c.priv()); GX.length = 0;
             away.forEach(id => botMove(F, id, c.name));
@@ -592,7 +592,7 @@ const DEF = {
           r.querySelector("[data-tw]").addEventListener("click", () => { tw = !tw; persist({ grTw: tw }); setup(); });
           r.querySelector("[data-go]").addEventListener("click", () => {
             nameMap = {}; const ids = names.map((nm, i) => { nameMap["h" + i] = nm; return "h" + i; });
-            for(let i = 0; i < bots; i++){ nameMap["b" + i] = BOTN[i] + " 🤖"; ids.push("b" + i); }
+            for(let i = 0; i < bots; i++){ nameMap["b" + i] = BOTN[i] + " (bot)"; ids.push("b" + i); }
             E = { lg: SB.lang(), order: shuffle(ids), round: 1, goal, tw, twi: "", score: {}, prev: "", mv: 0 };
             GX.length = 0; newRound(E); gno++; viewer = "";
             step();

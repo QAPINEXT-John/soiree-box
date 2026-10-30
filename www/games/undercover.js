@@ -157,7 +157,7 @@ function awards(ids, roles, vh, outAt, last, name){
   const hit = {}, got = {};
   A(vh).map(A).forEach(v => { if(!bad(v[1]) && bad(v[2])) hit[v[1]] = (hit[v[1]] || 0) + 1; if(!bad(v[2])) got[v[2]] = (got[v[2]] || 0) + 1; });
   const h = Object.keys(hit).sort((a, b) => hit[b] - hit[a])[0];
-  if(h) out.push([vary(tr(["Flair de limier", "Œil de lynx", "Détecteur de mensonges", "Inspecteur en chef"], ["Bloodhound", "Eagle Eye", "Human Lie Detector", "Chief Inspector"]), seed), name(h), tr(SB.u.plural(hit[h], "vote") + " contre les imposteurs", SB.u.plural2(hit[h], "", "", "vote") + " against the impostors")]);
+  if(h) out.push([vary(tr(["Flair de limier", "Œil de lynx", "Détecteur de mensonges", "Inspecteur en chef"], ["Bloodhound", "Eagle Eye", "Human Lie Detector", "Chief Inspector"]), seed), name(h), tr(SB.u.plural(hit[h], "vote") + " contre les intrus", SB.u.plural2(hit[h], "", "", "vote") + " against the impostors")]);
   const g = Object.keys(got).sort((a, b) => got[b] - got[a])[0];
   if(g && got[g] >= 2) out.push([vary(tr(["Tête de suspect", "Coupable idéal", "Paratonnerre", "Bouc émissaire"], ["Usual Suspect", "Perfect Fall Guy", "Lightning Rod", "Scapegoat"]), seed + 1), name(g), tr(SB.u.plural(got[g], "vote") + " reçus sans être coupable", "took " + SB.u.plural2(got[g], "", "", "vote") + " while innocent")]);
   const b = ids.filter(bad).map(id => [id, outAt[id] || last + 1]).sort((x, y) => y[1] - x[1])[0];
@@ -165,7 +165,7 @@ function awards(ids, roles, vh, outAt, last, name){
   return out;
 }
 function awardsHTML(a){ return a.length ? '<div class="field"><span class="eyebrow">' + tr("Trophées", "Awards") + '</span><ul class="list">' + a.map(x => '<li><span class="t" style="font-size:19px">' + esc(x[0]) + '</span><span class="by">' + esc(x[1]) + " · " + esc(x[2]) + "</span></li>").join("") + "</ul></div>" : ""; }
-function winTitle(w){ return w === "c" ? tr("Victoire des civils", "The Civilians win") : w === "w" ? tr("Mister White a deviné !", "Mister White guessed it!") : tr("Victoire des imposteurs", "The impostors win"); }
+function winTitle(w){ return w === "c" ? tr("Victoire des civils", "The Civilians win") : w === "w" ? tr("Mister White a deviné !", "Mister White guessed it!") : tr("Victoire des intrus", "The impostors win"); }
 function winners(ids, roles, w){ return ids.filter(id => w === "c" ? roles[id] === "c" : w === "w" ? roles[id] === "w" : roles[id] !== "c"); }
 function packBtn(attr, on, name, desc, hot){ return '<button type="button" class="pack' + (hot ? " hot" : "") + '" ' + attr + ' aria-pressed="' + on + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(name) + (hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(desc) + "</span></span></button>"; }
 
@@ -309,7 +309,7 @@ SB.register({
         : '<span class="eyebrow">' + tr("Éliminé", "Voted out") + '</span><div class="who">' + esc(ctx.name(s.out)) + '</div><p style="font-size:18px">' + tr(esc(ctx.name(s.out)) + " était <b>", esc(ctx.name(s.out)) + " was <b>") + roleLabel(roles[s.out]) + "</b>." + (roles[s.out] === "w" ? (s.wg ? tr(" Sa proposition, « " + esc(s.wg) + " », est fausse.", " Their guess, “" + esc(s.wg) + "”, is wrong.") : tr(" Il n'a rien proposé.", " They didn't make a guess.")) : tr(" Son mot : « " + esc(words[s.out]) + " ».", " Their word: “" + esc(words[s.out]) + "”.")) + "</p>";
       const open = s.tw === "decouvert" ? '<div class="field"><span class="eyebrow">' + tr("Vote à découvert", "Open vote") + '</span><ul class="list">' + A(s.vl).map(A).map(v => '<li><span class="t" style="font-size:17px">' + esc(ctx.name(v[0])) + " → " + esc(ctx.name(v[1])) + "</span></li>").join("") + "</ul></div>" : "";
       screen(root, "out" + s.k + ctx.isHost + s.tie + s.out, head + '<div class="field"><span class="eyebrow">Votes</span><div class="bars">' + rows.map(id => '<div class="bar"><div class="lb"><span>' + esc(ctx.name(id)) + "</span><span>" + t[id] + '</span></div><div class="tr"><div class="fl" style="width:' + Math.round(100 * t[id] / Math.max(1, alive.length + (s.tie ? 0 : 1))) + '%"></div></div></div>').join("") + "</div></div>" + open +
-        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>' + tr("Continuer", "Continue") + "</button>" : '<p class="wait">' + tr("L'hôte lance la suite…", "Waiting for the host…") + "</p>"), r => {
+        SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>' + tr("Continuer", "Continue") + "</button>" : '<p class="wait">' + tr("L'hôte passe à la suite…", "Waiting for the host…") + "</p>"), r => {
         const b = r.querySelector("[data-next]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const st = c.s, al = A(st.alive), ro = st.roles || {};
@@ -334,7 +334,7 @@ SB.register({
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const ro = c.s.roles || {}, bads = c.ids.filter(id => ro[id] !== "c").map(id => c.name(id) + (ro[id] === "w" ? " (Mister White)" : ""));
           const aw2 = awards(c.ids, ro, c.s.vh, c.s.outAt || {}, c.s.round, c.name);
-          c.end({ title: winTitle(c.s.winner), lines: tr(["Imposteurs : " + bads.join(", "), "Civils : « " + c.s.civ + " » · Intrus : « " + c.s.und + " »"].concat(aw2.map(a => a[0] + " : " + a[1])), ["Impostors: " + bads.join(", "), "Civilians: “" + c.s.civ + "” · Undercover: “" + c.s.und + "”"].concat(aw2.map(a => a[0] + ": " + a[1]))), win: winners(c.ids, ro, c.s.winner) });
+          c.end({ title: winTitle(c.s.winner), lines: tr(["Camp des intrus : " + bads.join(", "), "Civils : « " + c.s.civ + " » · Intrus : « " + c.s.und + " »"].concat(aw2.map(a => a[0] + " : " + a[1])), ["Impostors: " + bads.join(", "), "Civilians: “" + c.s.civ + "” · Undercover: “" + c.s.und + "”"].concat(aw2.map(a => a[0] + ": " + a[1]))), win: winners(c.ids, ro, c.s.winner) });
         }));
       });
     }
@@ -385,14 +385,14 @@ SB.register({
               r.querySelector("[data-n]").addEventListener("click", () => { L.seen = true; go(); });
             });
           } else {
-            screen(root, "s" + L.i, '<span class="eyebrow">' + esc(nm) + '</span><div class="card acc"><span class="eyebrow">' + (isW ? tr("Ton rôle", "Your role") : tr("Ton mot secret", "Your secret word")) + '</span><p class="huge">' + (isW ? "Mister White" : esc(L.roles[L.i] === "u" ? L.und : L.civ)) + "</p>" + (isW ? '<p class="sm">' + tr("Tu n'as pas de mot. Bluffe ! Si on t'élimine, devine le mot des civils pour gagner.", "You have no word. Bluff! If you get voted out, guess the Civilians' word to win.") + "</p>" : "") + '</div><p class="howto">' + tr("Retiens-le, puis cache l'écran.", "Memorize it, then hide the screen.") + '</p><div class="dock"><button class="btn acc" type="button" data-n>' + tr("C'est retenu, cacher", "Got it, hide") + "</button></div>", r => {
+            screen(root, "s" + L.i, '<span class="eyebrow">' + esc(nm) + '</span><div class="card acc"><span class="eyebrow">' + (isW ? tr("Ton rôle", "Your role") : tr("Ton mot secret", "Your secret word")) + '</span><p class="huge">' + (isW ? "Mister White" : esc(L.roles[L.i] === "u" ? L.und : L.civ)) + "</p>" + (isW ? '<p class="sm">' + tr("Tu n'as pas de mot. Bluffe ! Si on t'élimine, devine le mot des civils pour gagner.", "You have no word. Bluff! If you get voted out, guess the Civilians' word to win.") + "</p>" : "") + '</div><p class="howto">' + tr("Retiens-le, puis cache l'écran.", "Memorize it, then hide the screen.") + '</p><div class="dock"><button class="btn acc" type="button" data-n>' + tr("C'est retenu", "Got it, hide") + "</button></div>", r => {
               r.querySelector("[data-n]").addEventListener("click", () => { L.seen = false; L.i++; if(L.i >= n) talk(); go(); });
             });
           }
         } else if(L.phase === "talk"){
-          const how = L.tw === "deux" ? "un indice de deux mots" : L.tw === "verbe" ? "un verbe à l'infinitif" : L.tw === "emotion" ? "une émotion" : L.tw === "lieu" ? "un lieu" : L.tw === "lettre" ? "un indice commençant par " + esc(L.tp) : "un indice en un mot";
+          const how = L.tw === "deux" ? "un indice de deux mots" : L.tw === "verbe" ? "un verbe à l'infinitif" : L.tw === "emotion" ? "une émotion ou une sensation" : L.tw === "lieu" ? "un lieu" : L.tw === "lettre" ? "un indice commençant par " + esc(L.tp) : "un indice en un mot";
           const howEn = L.tw === "deux" ? "a two-word clue" : L.tw === "verbe" ? "a single verb" : L.tw === "emotion" ? "an emotion" : L.tw === "lieu" ? "a place" : L.tw === "lettre" ? "a clue starting with " + esc(L.tp) : "a one-word clue";
-          screen(root, "t" + L.round, '<span class="eyebrow">' + tr("Tour ", "Round ") + L.round + "</span>" + twBanner(L.tw, L.tp) + '<div class="pass"><span class="eyebrow">' + tr("À vous de jouer", "Your turn, everyone") + '</span><div class="who">' + tr("Indices !", "Clues!") + "</div><p>" + tr("Chacun son tour, dites " + how + " en rapport avec votre mot, sans le dire. C'est <b>" + esc(names[L.first]) + "</b> qui commence. Ensuite, votez à voix haute." + (L.tw === "double" ? " Le vote de " + esc(names[L.first]) + " compte double." : ""), "Take turns giving " + howEn + " about your word, without saying it. <b>" + esc(names[L.first]) + "</b> goes first. Then vote out loud." + (L.tw === "double" ? " " + esc(names[L.first]) + "'s vote counts twice." : "")) + "</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>" + tr("On a voté", "We've voted") + "</button></div>", r => {
+          screen(root, "t" + L.round, '<span class="eyebrow">' + tr("Tour ", "Round ") + L.round + "</span>" + twBanner(L.tw, L.tp) + '<div class="pass"><span class="eyebrow">' + tr("À vous de jouer", "Your turn, everyone") + '</span><div class="who">' + tr("Indices !", "Clues!") + "</div><p>" + tr("Chacun son tour, donnez " + how + " en rapport avec votre mot, sans le prononcer. C'est <b>" + esc(names[L.first]) + "</b> qui commence. Ensuite, votez à voix haute." + (L.tw === "double" ? " Le vote de " + esc(names[L.first]) + " compte double." : ""), "Take turns giving " + howEn + " about your word, without saying it. <b>" + esc(names[L.first]) + "</b> goes first. Then vote out loud." + (L.tw === "double" ? " " + esc(names[L.first]) + "'s vote counts twice." : "")) + "</p></div><div class=\"dock\"><button class=\"btn acc\" type=\"button\" data-n>" + tr("On a voté", "We've voted") + "</button></div>", r => {
             r.querySelector("[data-n]").addEventListener("click", () => { L.phase = "elim"; go(); });
           });
         } else if(L.phase === "elim"){

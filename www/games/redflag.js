@@ -34,7 +34,7 @@ const FLAGS = [
   "Ton date n'a d'avis sur rien","Ton date a un avis sur absolument tout","Ton date poste une citation inspirante tous les matins","Ton date te glisse des petits mots dans les poches",
   "Ton date te demande ton avis avant de commander","Ton date calcule ta part de l'addition sur une appli, devant toi","Ton date fait un escape game chaque week-end","Ton date parle cinq langues mais ne répond à aucun message",
   "Ton date t'interdit de manger dans sa voiture","Ton date veut adopter un serpent","Ton date déteste le fromage","Ton date se lève à 4 h pour méditer",
-  "Ton date garde sa veste sur le dos au restaurant, comme prêt à filer","Ton date relit ses messages à voix haute avant de les envoyer"
+  "Ton date garde sa veste sur le dos au restaurant, comme s'il était prêt à filer","Ton date relit ses messages à voix haute avant de les envoyer"
 ];
 const ADULTE = [
   "Ton date propose un plan à trois au deuxième rendez-vous","Ton date garde ses chaussettes pendant l'acte","Ton date a gardé les nudes de tous ses ex",
@@ -58,7 +58,7 @@ const ADULTE = [
 const PERKS = [
   "est d'une beauté renversante","est riche à millions","est drôle comme personne","te cuisine des plats de grand chef tous les soirs","te masse tous les soirs","a une maison avec piscine",
   "est fou amoureux de toi","t'offre un voyage par mois","est une star de cinéma","s'entend à merveille avec tes parents","adore tes amis","fait le ménage sans qu'on le lui demande",
-  "a le même humour que toi","a des abdos en béton","est le meilleur coup de ta vie","est médecin, pompier et chanteur","sent toujours incroyablement bon",
+  "a le même humour que toi","a des abdos en béton","embrasse comme un dieu","est médecin, pompier et chanteur","sent toujours incroyablement bon",
   "te prépare des surprises chaque semaine","a un chien adorable","a une voix qui donne des frissons",
   "parle six langues","a son propre bateau","est champion du monde de quelque chose","te fait des crêpes tous les dimanches","joue de la guitare comme personne",
   "t'écrit des poèmes","est toujours de bonne humeur","a un chalet à la montagne","sait tout réparer","a un sourire qui fait fondre tout le monde",
@@ -121,7 +121,7 @@ const ADULTE_EN = [
 const PERKS_EN = [
   "is drop-dead gorgeous","is a multi-millionaire","is the funniest person you've ever met","cooks you chef-level dinners every night","gives you a massage every night","has a house with a pool",
   "is head over heels for you","takes you on a trip every month","is a movie star","gets along great with your parents","loves your friends","does the cleaning without being asked",
-  "has the exact same sense of humor as you","has rock-hard abs","is the best you've ever had","is a doctor, a firefighter and a singer","always smells incredible",
+  "has the exact same sense of humor as you","has rock-hard abs","kisses like a god","is a doctor, a firefighter and a singer","always smells incredible",
   "plans a surprise for you every week","has the cutest dog","has a voice that gives you chills",
   "speaks six languages","owns a boat","is a world champion at something","makes you pancakes every Sunday","plays guitar like a rock star",
   "writes you poems","is always in a good mood","has a cabin in the mountains","can fix anything","has a smile that melts everyone",
@@ -142,7 +142,7 @@ const tr = SB.tr, TWL = tr("Coup de théâtre", "Plot twist");
 
 /* ---------- Rejouabilité : coups de théâtre ---------- */
 const TW_V = [
-  { id: "deal", name: "Deal breaker", desc: tr("Un seul red flag suffit : si quelqu'un vote rouge, c'est rouge, et seuls les rouges marquent.", "One red flag is enough: if anyone votes red, it's red, and only red votes score.") },
+  { id: "deal", name: "Deal breaker", desc: tr("Un seul red flag suffit : si quelqu'un vote red, c'est red, et seuls les votes red marquent.", "One red flag is enough: if anyone votes red, it's red, and only red votes score.") },
   { id: "double", name: "Double flag", desc: tr("Deux traits d'un coup : on juge le combo.", "Two traits at once: judge the combo.") },
   { id: "perk", name: tr("Cadeau empoisonné", "Poisoned gift"), desc: tr("Le flag arrive avec une qualité de rêve. Ça change tout ?", "The flag comes with a dream quality. Does that change everything?") },
   { id: "minor", name: tr("Minorité gagnante", "Minority rules"), desc: tr("Cette fois, ce sont les votes les plus rares qui marquent.", "This time, the rarest votes score.") },
@@ -258,16 +258,16 @@ const PL = SB.u.plural2;
 const ph = (k, seed) => PH[k][(+seed || 0) % PH[k].length];
 function awardCard(title, who, sub){ return '<div class="card"><span class="eyebrow">' + esc(title) + '</span><div class="big">' + esc(who) + "</div>" + (sub ? '<span class="sm">' + esc(sub) + "</span>" : "") + "</div>"; }
 function voteEndHTML(st, nameAt, n, seed, hl){
-  return (st.pts[st.top] ? '<div class="card acc"><span class="eyebrow">' + esc(ph("sync", seed)) + '</span><div class="big">' + esc(st.winners.map(nameAt).join(" & ")) + '</div><span class="sm">' + tr((st.pts[st.top] || 0) + " points", PL(st.pts[st.top] || 0, "point", "points", "point")) + "</span></div>" : "") +
-    awardCard(ph("strict", seed), nameAt(st.strict), tr((st.red[st.strict] || 0) + " red flags distribués", PL(st.red[st.strict] || 0, "", "", "red flag given", "red flags given"))) +
-    awardCard(ph("cool", seed + 1), nameAt(st.cool), tr((st.green[st.cool] || 0) + " green flags distribués", PL(st.green[st.cool] || 0, "", "", "green flag given", "green flags given"))) +
+  return (st.pts[st.top] ? '<div class="card acc"><span class="eyebrow">' + esc(ph("sync", seed)) + '</span><div class="big">' + esc(st.winners.map(nameAt).join(" & ")) + '</div><span class="sm">' + PL(st.pts[st.top] || 0, "point", "points", "point") + "</span></div>" : "") +
+    awardCard(ph("strict", seed), nameAt(st.strict), PL(st.red[st.strict] || 0, "red flag distribué", "red flags distribués", "red flag given", "red flags given")) +
+    awardCard(ph("cool", seed + 1), nameAt(st.cool), PL(st.green[st.cool] || 0, "green flag distribué", "green flags distribués", "green flag given", "green flags given")) +
     (st.reb[st.rebel] ? awardCard(ph("rebel", seed), nameAt(st.rebel), tr(st.reb[st.rebel] + " fois dans la minorité", "In the minority " + PL(st.reb[st.rebel], "", "", "time"))) : "") +
     (st.duo && n > 2 ? awardCard(ph("duo", seed + 2), nameAt(st.duo[0]) + " & " + nameAt(st.duo[1]), st.best + " / " + hl + tr(" votes identiques", " matching votes")) : "");
 }
 function dateEndHTML(ids, t, full, first, nameOf, seed, max){
   const order = ids.slice().sort((a, b) => (t[b] || 0) - (t[a] || 0));
   const fk = ids.slice().sort((a, b) => (full[b] || 0) - (full[a] || 0))[0], ek = ids.slice().sort((a, b) => (first[b] || 0) - (first[a] || 0))[0];
-  return '<span class="eyebrow">' + esc(ph("desp", seed)) + '</span><div class="who">' + esc(nameOf(order[0])) + "</div><p>" + tr((t[order[0]] || 0) + " points gagnés à force d'encaisser des red flags.", PL(t[order[0]] || 0, "", "", "point") + " earned by putting up with red flags.") + "</p>" +
+  return '<span class="eyebrow">' + esc(ph("desp", seed)) + '</span><div class="who">' + esc(nameOf(order[0])) + "</div><p>" + PL(t[order[0]] || 0, "point gagné", "points gagnés", "point earned", "points earned") + tr(" à force d'encaisser des red flags.", " by putting up with red flags.") + "</p>" +
     '<div class="bars">' + order.map(id => '<div class="bar"><div class="lb"><span>' + esc(nameOf(id)) + "</span><span>" + (t[id] || 0) + ' pts</span></div><div class="tr"><div class="fl" style="width:' + Math.min(100, Math.round(100 * (t[id] || 0) / Math.max(1, max))) + '%"></div></div></div>').join("") + "</div>" +
     awardCard(ph("strict", seed), nameOf(order[order.length - 1])) +
     (full[fk] ? awardCard(ph("full", seed), nameOf(fk), tr(full[fk] + " date" + (full[fk] > 1 ? "s" : "") + " tenu" + (full[fk] > 1 ? "s" : "") + " jusqu'au bout", PL(full[fk], "", "", "date") + " seen through to the end")) : "") +
@@ -316,13 +316,13 @@ SB.register({
   rules: tr([
     "Mode « Red ou green ? » : un trait de ton date s'affiche. Chacun vote en secret : red flag, beige flag (bizarre mais ça passe) ou green flag.",
     "Ceux qui votent comme la majorité marquent un point. À la fin, le joueur le plus en phase avec le groupe gagne ; on découvre aussi le plus exigeant, le plus cool, le rebelle et le duo le plus compatible.",
-    "Mode « Tu restes ou tu pars ? » : un date parfait sur le papier, puis des red flags révélés un par un. À chaque fois, tu restes ou tu fuis. Chaque red flag encaissé rapporte un point.",
+    "Mode « Tu restes ou tu pars ? » : un date parfait sur le papier, puis des red flags révélés un par un. À chaque fois, tu restes ou tu fuis. Chaque red flag encaissé rapporte un point. Ce mode compte 8 dates au maximum.",
     "Coups de théâtre : de temps en temps, une manche change de règle (deal breaker, double flag, minorité gagnante, date express, coup de foudre…).",
     "Les flags déjà vus sur ce téléphone reviennent en dernier. Sur un seul téléphone, chacun répond à côté de son prénom, puis on révèle."
   ], [
     "\"Red or green?\" mode: a trait of your date appears. Everyone votes in secret: red flag, beige flag (weird but fine) or green flag.",
     "Everyone who votes with the majority scores a point. At the end, the player most in sync with the group wins; you also find out who's the pickiest, the chillest, the rebel and the most compatible duo.",
-    "\"Stay or leave?\" mode: a date who's perfect on paper, then red flags revealed one by one. Each time, you stay or you run. Every red flag you put up with earns a point.",
+    "\"Stay or leave?\" mode: a date who's perfect on paper, then red flags revealed one by one. Each time, you stay or you run. Every red flag you put up with earns a point. This mode has 8 dates at most.",
     "Plot twists: every now and then, a round changes the rules (deal breaker, double flag, minority rules, speed date, love at first sight…).",
     "Flags already seen on this phone come back last. On a single phone, everyone answers next to their name, then you reveal."
   ]),
@@ -422,7 +422,7 @@ SB.register({
         (blind ? '<div class="card"><span class="eyebrow">' + tr("Fuite discrète", "Quiet exit") + '</span><div class="big">' + (left.length ? tr(left.length + " départ" + (left.length > 1 ? "s" : "") + " en douce", left.length + " slipped away") : tr("Personne ne bouge", "Nobody moves")) + '</div><span class="sm">' + tr("Les noms seront révélés à la fin du date.", "Names will be revealed at the end of the date.") + "</span></div>"
           : '<div class="card"><span class="eyebrow">' + (left.length ? tr("Ont pris la fuite", "Ran for it") : tr("Personne ne part", "Nobody leaves")) + '</span><div class="big">' + esc(left.map(ctx.name).join(", ") || tr("Ils tiennent bon…", "They're hanging in there…")) + "</div>" +
           '<span class="sm">' + tr("Encore là : ", "Still here: ") + esc(stay.map(ctx.name).join(", ") || tr("plus personne", "nobody left")) + "</span></div>") +
-        (ctx.isHost ? dock('<button class="btn acc" type="button" data-next>' + (last ? tr("Fin de la manche", "End of the round") : tr("Red flag suivant", "Next red flag")) + "</button>") : dock('<p class="wait">' + tr("L'hôte révèle la suite…", "The host reveals what's next…") + "</p>")), r => {
+        (ctx.isHost ? dock('<button class="btn acc" type="button" data-next>' + (last ? tr("Fin du date", "End of the date") : tr("Red flag suivant", "Next red flag")) + "</button>") : dock('<p class="wait">' + tr("L'hôte révèle la suite…", "The host reveals what's next…") + "</p>")), r => {
         const b = r.querySelector("[data-next]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const st = c.s; if(st.phase !== "stepres") return;
