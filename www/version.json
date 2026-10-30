@@ -1,16 +1,15 @@
 {
- "version": "4.39.0",
+ "version": "4.38.1",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Nouveau dans Mon profil : « Statistiques d'utilisation ». L'appli compte ton temps passé et tes jeux les plus lancés, sur ton téléphone. En salon, ces chiffres (avec ton prénom) partent vers le créateur de l'appli s'il est là. Jamais ce que tu dis ou réponds en jeu. Tu peux le couper à tout moment",
-  "Pour le créateur : panneau de suivi (installations, actifs, temps, jeux préférés, versions), sans aucun serveur"
+  "Nouveaux gros titres sur les cartes de l'accueil : Uno (Dernière carte), Skyjo (Grille), Code Names (Agents secrets), Cible (Killer) et Limite limite (Punchline)"
  ],
  "files": {
   "core.js": {
-   "h": "accae09422b9b72f38c0598a17430a0ec9e9df773c275d7d30e086a0f7c8f66e",
-   "s": 325878
+   "h": "49d11d4d9e48289d6cb03050fc4df38c286945a752381e9bf6f009cd43594509",
+   "s": 309501
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",

@@ -819,7 +819,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.39.0";
+const VERSION = "4.38.1";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -1342,7 +1342,7 @@ async function netEnter(code, asHost){
   Object.assign(N, { nr, code, host: nr.isHost(), peers: nr.peers(), seenHost: false, g: null });
   if(N.host) N.g = freshSalon();
   N.unsubs.push(nr.onHostChange((h, g) => becomeHost(h, g)));
-  N.unsubs.push(nr.onPeers(() => { N.peers = nr.peers(); scheduleRender(); setTimeout(() => stShare(false), 2500); }));
+  N.unsubs.push(nr.onPeers(() => { N.peers = nr.peers(); scheduleRender(); }));
   if(typeof nr.onBlob === "function") N.unsubs.push(nr.onBlob(blobGot));
   trail("Salon " + code + " · " + (N.host ? "hôte" : "joueur") + " · " + (nr.diag ? nr.diag() : nr.kind));
   N.unsubs.push(nr.onConnection(c => {
@@ -1414,90 +1414,11 @@ function hostSetG(patch){
 /* ---------- Photos partagées pendant une partie (mémoire seulement, effacées à la fin) ---------- */
 const BLOBS = new Map();
 function blobGot(id, data){
-  if(typeof data === "string" && data.indexOf(ST_TAG) === 0){ stGot(data); return; }
   if(typeof data !== "string" || !/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(data)) return;
   BLOBS.delete(id); BLOBS.set(id, data);
   while(BLOBS.size > 30) BLOBS.delete(BLOBS.keys().next().value);
   scheduleRender();
 }
-/* ---------- Statistiques d'utilisation (maison, sans serveur) ----------
-   - Chaque téléphone tient sa propre fiche (localStorage « soiree-stats ») : installation, ouvertures,
-     minutes passées dans l'appli (écran allumé), minutes et parties par jeu, version, APK ou web.
-   - En salon (relais Internet), il envoie sa fiche aux autres téléphones du salon, sauf si le joueur a coupé
-     « Statistiques d'utilisation » dans son profil. Rien sur ce qui est dit ou répondu pendant les parties.
-   - Seul un téléphone où le panneau de suivi est débloqué (7 appuis sur la version, dans Mon profil)
-     garde les fiches reçues (« soiree-stats-col ») et les affiche. Les autres les ignorent. */
-const ST_KEY = "soiree-stats", ST_COL = "soiree-stats-col", ST_TAG = "SBSTATS1:";
-const stDay = (t) => { const d = t ? new Date(t) : new Date(), z = n => String(n).padStart(2, "0"); return d.getFullYear() + z(d.getMonth() + 1) + z(d.getDate()); };
-function stPlat(){ if(window.AndroidShare) return "apk"; try{ if(matchMedia("(display-mode: standalone)").matches || navigator.standalone) return "pwa"; }catch(e){} return "web"; }
-function stLoad(k){ try{ const o = JSON.parse(localStorage.getItem(k) || "null"); return o && typeof o === "object" ? o : null; }catch(e){ return null; } }
-function stSave(k, o){ try{ localStorage.setItem(k, JSON.stringify(o)); }catch(e){} }
-const ST = (() => {
-  const now = Date.now(), o = stLoad(ST_KEY) || {};
-  if(!/^[a-z0-9]{10,20}$/.test(String(o.id || ""))) o.id = rid() + rid();
-  if(!(o.f > 0)) o.f = now;
-  o.o = (+o.o || 0) + 1; o.l = now; o.m = +o.m || 0; o.s = +o.s || 0; o.lo = +o.lo || 0;
-  o.d = o.d && typeof o.d === "object" ? o.d : {}; o.g = o.g && typeof o.g === "object" ? o.g : {};
-  o.d[stDay()] = +o.d[stDay()] || 0;
-  return o;
-})();
-function stTouch(){
-  const st = store();
-  ST.v = VERSION; ST.p = stPlat(); ST.nm = clean(st.name, 16); ST.l = Date.now(); ST.u = Date.now();
-  const keys = Object.keys(ST.d).sort(); while(keys.length > 60) delete ST.d[keys.shift()];
-  stSave(ST_KEY, ST);
-}
-stTouch();
-function stGame(gid, launch){
-  if(!gid || !/^[a-z0-9]{1,24}$/i.test(gid)) return;
-  const r = A(ST.g[gid]); ST.g[gid] = [(+r[0] || 0) + (launch ? 1 : 0), +r[1] || 0];
-  if(launch){ if(current === "local") ST.lo++; else ST.s++; }
-  stTouch();
-}
-// Une minute de plus toutes les minutes où l'appli est à l'écran.
-setInterval(() => {
-  if(document.visibilityState !== "visible") return;
-  ST.m++; const k = stDay(); ST.d[k] = (+ST.d[k] || 0) + 1;
-  const gid = current === "local" && L.def ? L.def.id : current === "game" && G() && G().phase === "game" ? G().game : "";
-  if(gid && ST.g[gid]) ST.g[gid][1] = (+ST.g[gid][1] || 0) + 1;
-  stTouch();
-}, 60000);
-const stOn = () => store().statsOff !== true;
-const stAdmin = () => store().statsAdmin === true;
-// Envoi de ma fiche au salon : à l'arrivée, quand quelqu'un de nouveau entre, et toutes les 10 minutes.
-const STS = { sent: new Set(), at: 0, code: "", t: null };
-function stShare(force){
-  if(!stOn() || !N.nr || typeof N.nr.blob !== "function" || !N.connected) return;
-  if(STS.code !== N.code){ STS.code = N.code; STS.sent = new Set(); STS.at = 0; }
-  const ids = A(N.peers).map(p => p && p.peer).filter(Boolean), fresh = ids.some(id => !STS.sent.has(id));
-  if(ids.length < 2) return;
-  if(!force && !fresh && Date.now() - STS.at < 600000) return;
-  if(Date.now() - STS.at < 15000){ clearTimeout(STS.t); STS.t = setTimeout(() => stShare(true), 15500 - (Date.now() - STS.at)); return; }
-  stTouch(); STS.at = Date.now(); ids.forEach(id => STS.sent.add(id));
-  try{ N.nr.blob("st" + rid(), ST_TAG + JSON.stringify(ST)); }catch(e){}
-}
-setInterval(() => stShare(false), 30000);
-function stClean(x){
-  if(!x || typeof x !== "object" || !/^[a-z0-9]{10,20}$/.test(String(x.id || ""))) return null;
-  const n = (v, max) => { v = Math.round(+v || 0); return v > 0 ? Math.min(v, max) : 0; }, now = Date.now();
-  const o = { id: x.id, nm: clean(x.nm, 16), f: n(x.f, now + 864e5), l: n(x.l, now + 864e5), u: n(x.u, now + 864e5), o: n(x.o, 1e6), m: n(x.m, 1e7), s: n(x.s, 1e6), lo: n(x.lo, 1e6),
-    v: /^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(String(x.v || "")) ? x.v : "", p: ["apk", "pwa", "web"].indexOf(x.p) >= 0 ? x.p : "web", d: {}, g: {} };
-  Object.keys(x.d && typeof x.d === "object" ? x.d : {}).filter(k => /^\d{8}$/.test(k)).sort().slice(-60).forEach(k => { o.d[k] = n(x.d[k], 1440); });
-  Object.keys(x.g && typeof x.g === "object" ? x.g : {}).filter(k => /^[a-z0-9]{1,24}$/i.test(k)).slice(0, 80).forEach(k => { const r = A(x.g[k]); o.g[k] = [n(r[0], 1e6), n(r[1], 1e7)]; });
-  return o;
-}
-function stGot(data){
-  if(!stAdmin()) return;
-  let x; try{ x = JSON.parse(data.slice(ST_TAG.length)); }catch(e){ return; }
-  const r = stClean(x); if(!r || r.id === ST.id) return;
-  const col = stLoad(ST_COL) || {}, old = col[r.id];
-  if(old && (+old.u || 0) > r.u) return;
-  col[r.id] = Object.assign(r, { rx: Date.now() });
-  const ids = Object.keys(col); if(ids.length > 150) ids.sort((a, b) => (col[a].l || 0) - (col[b].l || 0)).slice(0, ids.length - 150).forEach(k => { delete col[k]; });
-  stSave(ST_COL, col);
-}
-SB.stats = { me: () => (stTouch(), stClean(ST)), all: () => { stTouch(); const col = stLoad(ST_COL) || {}; return [stClean(ST)].concat(Object.keys(col).map(k => Object.assign(stClean(col[k]) || {}, { rx: col[k].rx })).filter(r => r.id)); }, clear: () => stSave(ST_COL, {}) };
-
 /* ---------- Contexte passé aux jeux ---------- */
 let pending = null, pendingEnd = null, inHost = false;
 function makeCtx(){
@@ -1608,7 +1529,7 @@ function render(){
     if(!ctx.playing){ $("#sp-game").textContent = def.name; show("spect"); return; }
     show("game");
     const root = $("#game-root");
-    if(root.dataset.gid !== g.gid){ stopSounds(); stGame(def.id, true); root.dataset.gid = g.gid; root.dataset.key = ""; root.innerHTML = ""; buzz([30, 50, 30]); }
+    if(root.dataset.gid !== g.gid){ stopSounds(); root.dataset.gid = g.gid; root.dataset.key = ""; root.innerHTML = ""; buzz([30, 50, 30]); }
     $("#gm-title").textContent = def.name; $("#gm-gl").textContent = def.glyph || "";
     const ex = $("#gm-exit");
     const exKey = g.gid + (N.host ? "h" : "p");
@@ -1925,7 +1846,7 @@ function startLocal(def, names){
       const w = A(list); if(def.gagesEnd !== false) gLocalApply(def.id, names, w.map(n => ({ id: n, ev: "_win" })).concat(names.filter(n => w.indexOf(n) < 0).map(n => ({ id: n, ev: "_lose" }))), "end" + rid()); },
     // Gages d'une manche : [{ id: prénom, ev }], clé unique par manche.
     gage(list, key){ gLocalApply(def.id, names, list, key); } };
-  stopSounds(); stGame(def.id, true);
+  stopSounds();
   try{ def.local.start(root, api); }catch(e){ console.error(e); }
 }
 
@@ -2436,44 +2357,6 @@ function gLimText(drink, lim){
   const d = DRINKS[drink]; if(!d) return "";
   return gVerres(lim, drink) + " · " + tr("≈ " + Math.round(lim * d.sips) + " gorgées", "≈ " + Math.round(lim * d.sips) + " sips") + " · " + tr("environ " + lim * d.std + " verre" + (lim * d.std > 1 ? "s" : "") + " standard", "about " + lim * d.std + " standard drink" + (lim * d.std > 1 ? "s" : ""));
 }
-// Panneau de suivi : tableau de bord calculé à partir des fiches reçues en salon (et de la mienne).
-function stPanelHTML(){
-  const all = SB.stats.all(), now = Date.now(), D = 864e5, me = all[0] && all[0].id;
-  const act = d => all.filter(r => r.l > now - d * D).length;
-  const mins = all.reduce((a, r) => a + (r.m || 0), 0), games = {};
-  all.forEach(r => Object.keys(r.g || {}).forEach(k => { const g = games[k] = games[k] || [0, 0, 0]; g[0] += r.g[k][0]; g[1] += r.g[k][1]; if(r.g[k][0]) g[2]++; }));
-  const parts = Object.keys(games).reduce((a, k) => a + games[k][0], 0);
-  const hm = m => (m >= 60 ? Math.floor(m / 60) + " h " + String(m % 60).padStart(2, "0") : m + " min");
-  const ago = t => { const d = Math.floor((now - t) / D); return d <= 0 ? tr("aujourd'hui", "today") : d === 1 ? tr("hier", "yesterday") : tr("il y a " + d + " j", d + " d ago"); };
-  const gname = k => (SB.byId[k] ? SB.byId[k].name : k);
-  const kpi = (v, l) => '<div class="st-k"><b>' + esc(String(v)) + "</b><span>" + esc(l) + "</span></div>";
-  // Activité des 14 derniers jours (minutes, tous téléphones) et installations des 8 dernières semaines.
-  const days = []; for(let i = 13; i >= 0; i--){ const t = now - i * D, k = stDay(t); days.push([k, all.reduce((a, r) => a + (+(r.d || {})[k] || 0), 0), new Date(t)]); }
-  const wk = []; for(let i = 7; i >= 0; i--){ const a0 = now - (i + 1) * 7 * D, a1 = now - i * 7 * D; wk.push([all.filter(r => r.f > a0 && r.f <= a1).length, new Date(a1)]); }
-  const bars = (rows, lab) => { const mx = Math.max(1, ...rows.map(r => r[0])); return '<div class="st-bars">' + rows.map(r => '<div class="st-b" title="' + esc(lab(r)) + '"><i style="height:' + Math.max(r[0] ? 6 : 2, Math.round(r[0] / mx * 100)) + '%"></i></div>').join("") + "</div>"; };
-  const dd = d => d.getDate() + "/" + (d.getMonth() + 1);
-  const top = Object.keys(games).sort((a, b) => games[b][0] - games[a][0] || games[b][1] - games[a][1]).slice(0, 10), gmx = Math.max(1, ...top.map(k => games[k][0]));
-  const cnt = f => { const o = {}; all.forEach(r => { const k = f(r); o[k] = (o[k] || 0) + 1; }); return Object.keys(o).sort((a, b) => o[b] - o[a]).map(k => [k, o[k]]); };
-  const PL = { apk: tr("Appli Android", "Android app"), pwa: tr("Appli web installée", "Installed web app"), web: tr("Navigateur", "Browser") };
-  const ppl = all.slice().sort((a, b) => b.l - a.l);
-  return '<style>.st-kpis{display:grid; grid-template-columns:repeat(3,1fr); gap:8px}.st-k{background:var(--card); border:1.5px solid var(--line); border-radius:14px; padding:10px 8px; display:flex; flex-direction:column; gap:2px; text-align:center}.st-k b{font-size:22px; line-height:1.1}.st-k span{font-size:11px; color:var(--muted); font-weight:700}' +
-    '.st-bars{display:flex; align-items:flex-end; gap:4px; height:90px; padding:8px 6px 0; background:var(--card); border:1.5px solid var(--line); border-radius:14px}.st-b{flex:1; height:100%; display:flex; align-items:flex-end}.st-b i{display:block; width:100%; border-radius:4px 4px 0 0; background:var(--acc)}.st-ax{display:flex; justify-content:space-between; font-size:11px; color:var(--muted); font-weight:700; padding:2px 4px 0}' +
-    '.st-g{display:grid; grid-template-columns:minmax(0,1fr) 2fr auto; gap:6px 10px; align-items:center; font-size:14px}.st-g .n{white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:700}.st-g .bar{height:10px; border-radius:99px; background:var(--soft); overflow:hidden}.st-g .bar i{display:block; height:100%; background:var(--acc)}.st-g .c{font-size:12px; color:var(--muted); font-weight:700; text-align:right}' +
-    '.st-p{display:flex; flex-direction:column; gap:6px}.st-pr{display:flex; justify-content:space-between; gap:10px; padding:10px 12px; background:var(--card); border:1.5px solid var(--line); border-radius:14px}.st-pr .tx{display:flex; flex-direction:column; min-width:0}.st-pr .tx b{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}.st-pr .tx span,.st-pr .r span{font-size:12px; color:var(--muted); font-weight:600}.st-pr .r{display:flex; flex-direction:column; align-items:flex-end; flex:none}.st-ch{display:flex; flex-wrap:wrap; gap:6px}.st-ch span{padding:6px 10px; border-radius:99px; background:var(--card); border:1.5px solid var(--line); font-size:13px; font-weight:700}</style>' +
-    '<div class="st-kpis">' + kpi(all.length, tr("installations", "installs")) + kpi(act(1), tr("actifs aujourd'hui", "active today")) + kpi(act(7), tr("actifs 7 jours", "active 7 days")) +
-      kpi(act(30), tr("actifs 30 jours", "active 30 days")) + kpi(hm(mins), tr("temps total", "total time")) + kpi(hm(Math.round(mins / Math.max(1, all.length))), tr("par personne", "per person")) +
-      kpi(parts, tr("parties lancées", "games started")) + kpi(all.reduce((a, r) => a + (r.o || 0), 0), tr("ouvertures", "app opens")) + kpi(all.reduce((a, r) => a + (r.s || 0), 0) + " / " + all.reduce((a, r) => a + (r.lo || 0), 0), tr("salon / 1 tél.", "room / 1 phone")) + "</div>" +
-    '<div class="field"><span class="eyebrow">' + tr("Temps passé, 14 derniers jours", "Time spent, last 14 days") + "</span>" + bars(days.map(d => [d[1], d[2]]), r => dd(r[1]) + " : " + hm(r[0])) + '<div class="st-ax"><span>' + dd(days[0][2]) + "</span><span>" + tr("aujourd'hui", "today") + "</span></div></div>" +
-    '<div class="field"><span class="eyebrow">' + tr("Nouvelles installations, 8 dernières semaines", "New installs, last 8 weeks") + "</span>" + bars(wk, r => tr("semaine du ", "week to ") + dd(r[1]) + " : " + r[0]) + '<div class="st-ax"><span>' + tr("il y a 8 sem.", "8 wks ago") + "</span><span>" + tr("cette semaine", "this week") + "</span></div></div>" +
-    '<div class="field"><span class="eyebrow">' + tr("Jeux les plus lancés", "Most played games") + "</span>" + (top.length ? '<div class="st-g">' + top.map(k => '<span class="n">' + esc(gname(k)) + '</span><span class="bar"><i style="width:' + Math.round(games[k][0] / gmx * 100) + '%"></i></span><span class="c">' + games[k][0] + " · " + hm(games[k][1]) + "</span>").join("") + "</div>" : '<p class="sm" style="margin:0">' + tr("Aucune partie pour l'instant.", "No games yet.") + "</p>") + "</div>" +
-    '<div class="field"><span class="eyebrow">' + tr("Versions et appareils", "Versions and devices") + '</span><div class="st-ch">' + cnt(r => r.v || "?").map(x => "<span>" + esc(x[0]) + " · " + x[1] + "</span>").join("") + '</div><div class="st-ch">' + cnt(r => r.p).map(x => "<span>" + esc(PL[x[0]] || x[0]) + " · " + x[1] + "</span>").join("") + "</div></div>" +
-    '<div class="field"><span class="eyebrow">' + tr("Par personne", "Per person") + '</span><div class="st-p">' + ppl.map(r => {
-      const fav = Object.keys(r.g || {}).sort((a, b) => r.g[b][0] - r.g[a][0])[0];
-      return '<div class="st-pr"><span class="tx"><b>' + esc(r.nm || tr("Sans prénom", "No name")) + (r.id === me ? tr(" (moi)", " (me)") : "") + "</b><span>" + esc((fav ? tr("préféré : ", "favourite: ") + gname(fav) + " · " : "") + tr("installé le ", "installed ") + dd(new Date(r.f))) + '</span></span><span class="r"><b>' + esc(hm(r.m || 0)) + "</b><span>" + esc(ago(r.l) + (r.v ? " · " + r.v : "")) + "</span></span></div>";
-    }).join("") + "</div></div>" +
-    '<p class="sm" style="margin:0">' + tr("Les fiches arrivent quand tu es dans le même salon qu'un ami (relais Internet) : elles sont à jour à la dernière partie jouée ensemble. Ceux qui ont coupé « Statistiques d'utilisation » n'envoient rien.", "Records arrive when you're in the same room as a friend (Internet relay): they're as fresh as your last game together. Friends who turned off \"Usage statistics\" send nothing.") + "</p>" +
-    '<div class="row" style="gap:14px"><button class="link" type="button" data-st-clear>' + tr("Effacer les fiches reçues", "Erase received records") + '</button><button class="link" type="button" data-st-off>' + tr("Masquer le panneau", "Hide the dashboard") + "</button></div>";
-}
 function gProfilePage(){
   SB.page(tr("Mon profil", "My profile"), root => {
     let pinUI = null;
@@ -2497,8 +2380,8 @@ function gProfilePage(){
     };
     const cur = avNum(store().photo); let avTab = (AV_CATS.find(c => c[2].includes(cur)) || AV_CATS[0])[0];
     // Trois vues dans la même page : le profil, le choix de l'avatar, le taux d'alcool.
-    let view = "main", verTaps = 0, verLast = 0, stClr = 0;
-    const go = v => { view = v; buzz(6); draw(); root.scrollTop = 0; try{ $("#page-root").scrollTop = 0; $("#s-page").scrollTop = 0; window.scrollTo(0, 0); }catch(e){} };
+    let view = "main";
+    const go = v => { view = v; buzz(6); draw(); root.scrollTop = 0; try{ $("#page-root").scrollTop = 0; window.scrollTo(0, 0); }catch(e){} };
     SB._pageBack = () => { if(view === "main") return false; go("main"); return true; };
     const CHEV = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
     const LOCK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
@@ -2531,11 +2414,9 @@ function gProfilePage(){
         '<div class="field"><span class="eyebrow">' + tr("Réglages", "Settings") + '</span><div class="gs-box">' +
           '<div class="gs-row"><button type="button" class="pf-go" data-pf-gages><span class="t">' + tr("Gages", "Forfeits") + '</span><span class="v">' + (S.on ? tr("Activés", "On") : tr("Désactivés", "Off")) + "</span>" + CHEV + "</button></div>" +
           '<div class="gs-row"><span class="tx"><b>' + tr("Langue", "Language") + '</b></span><div class="seg pf-lang">' + [["fr", "FR"], ["en", "EN"]].map(l => '<button type="button" data-pf-lang="' + l[0] + '" aria-pressed="' + (LANG === l[0]) + '">' + l[1] + "</button>").join("") + "</div></div>" +
-          '<div class="gs-row"><span class="tx"><b>' + tr("Statistiques d'utilisation", "Usage statistics") + '</b><span class="sm">' + tr("Aide le créateur de l'appli à savoir à quoi vous jouez", "Helps the app's creator see what you play") + '</span></span><button type="button" class="gs-sw" data-pf-stats aria-pressed="' + stOn() + '" aria-label="' + tr("Statistiques d'utilisation", "Usage statistics") + '"><i></i></button></div>' +
-          (stAdmin() ? '<div class="gs-row"><button type="button" class="pf-go" data-pf-panel><span class="t">' + tr("Panneau de suivi", "Usage dashboard") + '</span><span class="v">' + plural2(SB.stats.all().length, "téléphone", "téléphones", "phone") + "</span>" + CHEV + "</button></div>" : "") +
         "</div></div>" +
-        '<p class="sm pf-priv">' + LOCK + (stOn() ? tr(" Les autres voient ta photo et ton prénom. Quand tu joues en salon, ton prénom, ton temps passé dans l'appli et tes jeux les plus lancés partent aussi vers le créateur de l'appli s'il est dans le salon. Jamais ce que tu dis ou réponds en jeu.", " Others see your photo and name. When you play in a room, your name, time spent in the app and most-played games also go to the app's creator if they're in the room. Never what you say or answer in games.") : tr(" Tout reste sur ton téléphone. Les autres ne voient que ta photo et ton prénom.", " Everything stays on your phone. Others only see your photo and name.")) + "</p>" +
-        '<p class="sm" data-pf-ver style="margin:0; text-align:center; -webkit-user-select:none; user-select:none">Soirée Box ' + VERSION + (IS_BETA ? " · beta" : "") + "</p></div>";
+        '<p class="sm pf-priv">' + LOCK + tr(" Tout reste sur ton téléphone. Les autres ne voient que ta photo et ton prénom.", " Everything stays on your phone. Others only see your photo and name.") + "</p>" +
+        '<p class="sm" style="margin:0; text-align:center">Soirée Box ' + VERSION + (IS_BETA ? " · beta" : "") + "</p></div>";
     };
     const avatarHTML = () => {
       if(avTab === "hot" && !myHard()) avTab = AV_CATS[0][0];
@@ -2572,17 +2453,8 @@ function gProfilePage(){
     };
     const draw = () => {
       if(view === "alc" && !DRINKS[gProf(store().gp).drink]) view = "main";
-      if(view === "panel" && !stAdmin()) view = "main";
-      root.innerHTML = view === "avatar" ? avatarHTML() : view === "alc" ? alcHTML() : view === "panel" ? '<div class="gs pf2">' + backRow(tr("Profil", "Profile")) + stPanelHTML() + "</div>" : mainHTML();
-      $("#pg-title").textContent = view === "avatar" ? tr("Avatar", "Avatar") : view === "alc" ? tr("Taux d'alcool", "Blood alcohol") : view === "panel" ? tr("Panneau de suivi", "Usage dashboard") : tr("Mon profil", "My profile");
-      const sw = $("[data-pf-stats]", root); if(sw) sw.addEventListener("click", () => { persist({ statsOff: stOn() }); buzz(8); draw(); });
-      const pn = $("[data-pf-panel]", root); if(pn) pn.addEventListener("click", () => go("panel"));
-      const pv = $("[data-pf-ver]", root); if(pv) pv.addEventListener("click", () => {
-        const now = Date.now(); verTaps = now - verLast < 1500 ? verTaps + 1 : 1; verLast = now;
-        if(verTaps >= 7){ verTaps = 0; if(stAdmin()){ toast(tr("Le panneau de suivi est déjà activé.", "The dashboard is already on.")); return; } persist({ statsAdmin: true }); buzz([20, 40, 20]); toast(tr("Panneau de suivi activé. Ce téléphone garde maintenant les statistiques reçues en salon.", "Dashboard on. This phone now keeps the stats received in rooms.")); draw(); }
-      });
-      const pclr = $("[data-st-clear]", root); if(pclr) pclr.addEventListener("click", () => { if(stClr < Date.now() - 3000){ stClr = Date.now(); toast(tr("Appuie encore pour effacer les fiches reçues.", "Tap again to erase the received records.")); return; } SB.stats.clear(); stClr = 0; draw(); });
-      const poff = $("[data-st-off]", root); if(poff) poff.addEventListener("click", () => { persist({ statsAdmin: false }); go("main"); });
+      root.innerHTML = view === "avatar" ? avatarHTML() : view === "alc" ? alcHTML() : mainHTML();
+      $("#pg-title").textContent = view === "avatar" ? tr("Avatar", "Avatar") : view === "alc" ? tr("Taux d'alcool", "Blood alcohol") : tr("Mon profil", "My profile");
       const save = p => { const g2 = Object.assign(gProf(store().gp), p); g2.alc = g2.drink !== "sans"; persist({ gp: g2 }); CORE_X._gp = g2; SB.refreshExtras(); draw(); };
       $$("[data-pf-back]", root).forEach(b => b.addEventListener("click", () => go("main")));
       const avb = $("[data-pf-av]", root); if(avb) avb.addEventListener("click", () => go("avatar"));
