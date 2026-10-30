@@ -1,4 +1,7 @@
 {
+  "4.39.6": [
+    "Profil : la limite d'alcool devient un simple choix « Avec / Sans limite », valable pour tous les alcools. Le nombre de verres n'apparaît qu'avec limite"
+  ],
   "4.39.5": [
     "Les gages sont maintenant activés par défaut (niveau Moyen). Si tu les avais coupés toi-même, ton choix est gardé"
   ],

@@ -830,7 +830,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.39.5";
+const VERSION = "4.39.6";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -2414,9 +2414,11 @@ function gProfilePage(){
         (roomHard() ? '<div class="field"><span class="eyebrow">' + tr("Ce soir, je bois", "Tonight I'm drinking") + '</span><div class="pf-chips">' +
           ["sans"].concat(Object.keys(DRINKS)).map(k => '<button type="button" class="pf-chip" data-gd="' + k + '" aria-pressed="' + (gp.drink === k) + '">' + esc(SHORT[k]) + "</button>").join("") + "</div>" +
           (d ? '<div class="gs-box">' +
-            '<div class="gs-row"><span class="tx"><b>' + tr("Ma limite", "My limit") + '</b><span class="sm">' + (gp.nolim ? tr("Pas de limite ce soir", "No limit tonight") : esc(gVerres(lim, gp.drink)) + tr(" · au-delà, gages sans alcool", " · then no-alcohol forfeits")) + "</span></span>" +
-              (gp.nolim ? "" : '<button type="button" class="gs-b" data-gl="-1" aria-label="' + tr("Moins", "Less") + '">−</button><b class="gs-n">' + lim + '</b><button type="button" class="gs-b" data-gl="1" aria-label="' + tr("Plus", "More") + '">+</button>') + "</div>" +
-            '<div class="gs-row"><span class="tx"><b>' + tr("Sans limite", "No limit") + '</b></span><button type="button" class="gs-sw" data-gnolim aria-pressed="' + !!gp.nolim + '" aria-label="' + tr("Sans limite", "No limit") + '"><i></i></button></div>' +
+            // Limite : un seul choix « Avec / Sans limite », valable pour tous les alcools ; le nombre de verres n'apparaît qu'avec limite.
+            '<div class="gs-row"><span class="tx"><b>' + tr("Ma limite", "My limit") + '</b><span class="sm">' + tr("Pour tous les alcools", "For every drink") + '</span></span><div class="seg pf-lang">' +
+              '<button type="button" data-gnolim="0" aria-pressed="' + !gp.nolim + '">' + tr("Avec", "On") + '</button><button type="button" data-gnolim="1" aria-pressed="' + !!gp.nolim + '">' + tr("Sans limite", "No limit") + "</button></div></div>" +
+            (gp.nolim ? "" : '<div class="gs-row"><span class="tx"><b>' + esc(gVerres(lim, gp.drink)) + '</b><span class="sm">' + tr("Au-delà, gages sans alcool", "Then no-alcohol forfeits") + "</span></span>" +
+              '<button type="button" class="gs-b" data-gl="-1" aria-label="' + tr("Moins", "Less") + '">−</button><b class="gs-n">' + lim + '</b><button type="button" class="gs-b" data-gl="1" aria-label="' + tr("Plus", "More") + '">+</button></div>') +
             '<div class="gs-row"><span class="tx"><b>' + tr("Mon compteur", "My counter") + '</b><span class="sm">' + esc(tr(t.n + (t.n > 1 ? " verres notés" : " verre noté"), t.n + (t.n === 1 ? " drink logged" : " drinks logged")) + " · " + alcStd(t.tot)) + "</span></span>" +
               '<button type="button" class="gs-b" data-alc="-1" aria-label="' + tr("Retirer le dernier verre", "Remove the last drink") + '"' + (t.n ? "" : " disabled") + '>−</button><button type="button" class="gs-b pf-plus" data-alc="1" aria-label="' + tr("Ajouter un verre", "Add a drink") + '">+</button></div>' +
             '<div class="gs-row"><button type="button" class="pf-go" data-pf-alc><span class="t">' + tr("Taux d'alcool estimé", "Blood alcohol estimate") + '</span><span class="v">' + (bac == null ? tr("À régler", "Set up") : "≈ " + alcNum(bac, 2) + " g/L") + "</span>" + CHEV + "</button></div>" +
@@ -2523,7 +2525,7 @@ function gProfilePage(){
         SB._pageClose = () => { SB._pageClose = null; gProfilePage(); };
       });
       $$("[data-pf-lang]", root).forEach(b => b.addEventListener("click", () => { if(b.dataset.pfLang !== LANG){ buzz(8); SB.setLang(b.dataset.pfLang); } }));
-      const nl = $("[data-gnolim]", root); if(nl) nl.addEventListener("click", () => { buzz(8); save({ nolim: !gProf(store().gp).nolim }); });
+      $$("[data-gnolim]", root).forEach(b => b.addEventListener("click", () => { const v = b.dataset.gnolim === "1"; if(v === !!gProf(store().gp).nolim) return; buzz(8); save({ nolim: v }); }));
       alcMineBind(root, draw);
       // Poids tapé au clavier : enregistré dès qu'il est valable, l'estimation se met à jour quand on quitte le champ.
       const kg = $("#pf-kg", root);

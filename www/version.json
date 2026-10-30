@@ -1,15 +1,15 @@
 {
- "version": "4.39.5",
+ "version": "4.39.6",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Les gages sont maintenant activés par défaut (niveau Moyen). Si tu les avais coupés toi-même, ton choix est gardé"
+  "Profil : la limite d'alcool devient un simple choix « Avec / Sans limite », valable pour tous les alcools. Le nombre de verres n'apparaît qu'avec limite"
  ],
  "files": {
   "core.js": {
-   "h": "46db89c6985b6d2308968bbe3ec0316d6932d5cfb4d6035b1e74f47ae2b13cec",
-   "s": 310416
+   "h": "c348e1bc0e207a4e3be91187fca9b5adfbd77ac547084c78ac4199b307a7f3d4",
+   "s": 310705
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
