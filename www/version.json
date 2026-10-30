@@ -1,16 +1,15 @@
 {
- "version": "4.40.3",
+ "version": "4.40.4",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Agents secrets se joue maintenant à 3 : mode Duo à 3, le (la) troisième devine avec celui (celle) qui cherche. Le mode est choisi tout seul à 2 ou 3 joueurs",
-  "Féminin entre parenthèses aussi dans Red Flag, Défis, Agents secrets, Dernière carte, Blind test, C'est un 10 mais…, Grille, Débat, Undercover, Qui a dit ça et la Course de défis"
+  "Féminin entre parenthèses aussi dans Note sur 10, Punchline et les écrans de l'appli (accueil, gages, profil)"
  ],
  "files": {
   "core.js": {
-   "h": "47328cf733424d846bdf0fa62d1eb1f25ec243b7e5e9c5755f976c7a05917a30",
-   "s": 311886
+   "h": "c92f127629e890a2d6412bec9eff6028ea4dc89867c8db54bfd74ccdb3a52029",
+   "s": 311876
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",

@@ -830,7 +830,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.40.3";
+const VERSION = "4.40.4";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -2122,7 +2122,7 @@ function gSettingsPage(get, set, editable, tally, onReset){
         }
       } else if(view === "jeux"){
         h += backRow() + '<p class="sm pf-desc">' + tr("Par défaut, chaque jeu suit le niveau choisi pour tous (" + GN[lv] + "). Touche un jeu seulement si tu veux qu'il soit différent.", "By default, every game follows the level chosen for all (" + GN[lv] + "). Only open a game if you want it to be different.") + "</p>" +
-          (hard ? '<div class="gd-legend"><span><i class="gk-boit"></i>' + tr("boit", "drinks") + '</span><span><i class="gk-distribue"></i>' + tr("distribue (il (elle) choisit qui boit)", "hands out (picks who drinks)") + '</span><span><i class="gk-tous"></i>' + tr("tout le monde", "everyone") + "</span></div>" : "");
+          (hard ? '<div class="gd-legend"><span><i class="gk-boit"></i>' + tr("boit", "drinks") + '</span><span><i class="gk-distribue"></i>' + tr("distribue : choisit qui boit", "hands out (picks who drinks)") + '</span><span><i class="gk-tous"></i>' + tr("tout le monde", "everyone") + "</span></div>" : "");
         const fams = FILTERS.filter(f => ["votes", "bluff", "cartes", "quiz", "action"].indexOf(f[0]) >= 0).map(f => [f[1], gGames().filter(d => CATS[d.id] === f[0])]);
         const rest = gGames().filter(d => ["votes", "bluff", "cartes", "quiz", "action"].indexOf(CATS[d.id]) < 0);
         if(rest.length) fams.push([tr("Autres", "Others"), rest]);
