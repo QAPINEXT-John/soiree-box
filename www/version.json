@@ -1,14 +1,14 @@
 {
- "version": "4.40.1",
+ "version": "4.40.2",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Le féminin apparaît maintenant entre parenthèses quand un texte parle d'un joueur : « seul(e) », « viré(e) », « celui (celle) qui »… (en cours sur tous les jeux)"
+  "Féminin entre parenthèses aussi dans 7 secondes, Mots interdits, Je n'ai jamais, Tu préfères, Menteurs, Qui est le plus… et le Quiz"
  ],
  "files": {
   "core.js": {
-   "h": "fb3f0b20e4cf4417a23bbe1088353fe6534df507718113bf31dd41ac7d8d76b2",
+   "h": "5556fd5480e8a692365c30197dedf4015c5e1126150f29954c1751d67bc511c0",
    "s": 311886
   },
   "firebase-app-compat.js": {
@@ -88,12 +88,12 @@
    "s": 106749
   },
   "games/agents.js": {
-   "h": "ff3d32120d762e08dc951bc4e43ee31d24818eec62da3bb4f5ff6fbc4130894e",
-   "s": 64493
+   "h": "0809c18815cd676c476f39d6c672a4512c82be7f6fc8760f7f9f71f126f641c0",
+   "s": 64503
   },
   "games/blindtest.js": {
-   "h": "8da1903044b19f1cf566ee3eefeb1ccc737c3cfe95bdb565bf4f344e0b3c6180",
-   "s": 63322
+   "h": "3c5224ed413afc55fd9fe1507065ce8898315e077977efba1de939a7dc830d99",
+   "s": 63400
   },
   "games/bombe.js": {
    "h": "c6723714a1d878c1d8d6712ace77c9d2a36bc52c4b71798ea83f0d7cb96b3e79",
@@ -104,16 +104,16 @@
    "s": 50101
   },
   "games/debat.js": {
-   "h": "5232e217d32f98ad30b9bc4deee0cf64ab98f0e4e8e177499d8218d67ba21b7e",
-   "s": 51628
+   "h": "8a0a4ef593a4392dcf112a80783fb804b4f56f911ea0ed8d0a908bf66f256594",
+   "s": 51792
   },
   "games/defis.js": {
    "h": "7bd0d8e3dd795a12039a9f8b914c2ef1efaab4eddd1441c47464bef72467657e",
    "s": 66936
   },
   "games/dernierecarte.js": {
-   "h": "c9ed70f5e0d24c7374eb994db44204985ed7fbf1f9ac53ddf48060d68b305a0a",
-   "s": 64065
+   "h": "b1a8998694d3a8b6f506b287d7c95a19b1f63bbf3c137b98ce5af564f4a58c69",
+   "s": 64167
   },
   "games/dixmais.js": {
    "h": "fe6839adeca1a3bcf3ef79b60c1e534de602bf0a4d7da6aa779123c78b0b3853",
@@ -128,28 +128,28 @@
    "s": 45889
   },
   "games/killer.js": {
-   "h": "5a848e99ddb9b1d27794e4e3db075a923870642423425786b2ac567c956830fa",
-   "s": 66465
+   "h": "0405a3311cdb12c54370a632459f1300848123863df1c92ec85163bd4dfcc3b9",
+   "s": 66628
   },
   "games/kink.js": {
    "h": "b5dad12fd11d49ea7f5d5ca89af4030b48450134419471e228f29f1d31be4ada",
    "s": 28404
   },
   "games/loupgarou.js": {
-   "h": "0809addf40b85dd73ee11b4ad8c0f0f5297aaded888e8c24c9a177471f1b4bd4",
-   "s": 70761
+   "h": "a1f875147feea9ec90699471d2a0ed7abcf81732b39874fdd8555e6dea0bd1d3",
+   "s": 70889
   },
   "games/menteurs.js": {
-   "h": "789188d7bca4bb920913bc3953a37a276c874fdb01ee14d54c51bf1d5c70c15c",
-   "s": 44522
+   "h": "7c78a7248f52bbd85a5ff287689185e8ee575c1f83af36416c38897ddacb2efa",
+   "s": 44662
   },
   "games/motsint.js": {
    "h": "a11c2e3b5c70f5e94769f4ed11c621a0886d3b29f047a28cee8b0e8281537f24",
    "s": 46953
   },
   "games/note10.js": {
-   "h": "2be5549d62ab9136d27dcdd6bf6872ea7d2dcb97f5558cea0b0bc9e559a58664",
-   "s": 134701
+   "h": "10a34be98382e3eddac1610cfc01e3939f311c187f71b22e5ed20b392712dbf7",
+   "s": 135064
   },
   "games/photoroulette.js": {
    "h": "e30d23bed5605a39e74c98e6f4fc02fbabe0f9214013790d7d843c80175fc4ae",
@@ -176,20 +176,20 @@
    "s": 71248
   },
   "games/quiadit.js": {
-   "h": "d12b3b00d180e85da98ae9f7b421c1e041af077e9d0f99ca597a0d963c7a2aa7",
-   "s": 50123
+   "h": "4c6b53ae36e5475f260df01119d5b5002a94a5a4496b97bdc6fdf99293a36c7a",
+   "s": 50203
   },
   "games/quiplus.js": {
-   "h": "e4a8e4fe0df448b2e8a417ef59d87fb9600322b6c2c575f5a5fb6c8af7ca89e7",
-   "s": 42461
+   "h": "98165e9ae0a2c71a053f0f0a6d9f96fef3c923120b575d158dd03479b551a8c5",
+   "s": 42722
   },
   "games/quiz-data.js": {
    "h": "a1f193364395541fe126dc79a6248992cb1bd6461ddd318f3182bc0ce29e2354",
    "s": 123463
   },
   "games/quiz.js": {
-   "h": "2338e137bc30bdfc99f17c5c3486b82074d4ef21cdf1722b3dfc042ffa2c0308",
-   "s": 41350
+   "h": "4bdf0469b0a55e616681bb4ddcbd45e1b4fe8369814c60fa1de591c3fd3254cc",
+   "s": 41384
   },
   "games/redflag.js": {
    "h": "d220a8696a2c815037af0ec290675d541b1dd41aa60c6f32e8b468c298fc9365",
@@ -208,8 +208,8 @@
    "s": 45668
   },
   "games/undercover.js": {
-   "h": "2ea24e4263befb5f48d7f4d56a073f33e0f3dfc022b221d1d5fac4bd3066aeb8",
-   "s": 50358
+   "h": "77ceba4ba89d4898aac2ed4ca5d860343862eb9cc4f947cf63a9d434dc23334b",
+   "s": 50499
   },
   "icons/apple-touch-icon.png": {
    "h": "c6a8d73afcfb5db146ca68617cea122c1b06465d3a6bde68efe2ecc2d8ece998",

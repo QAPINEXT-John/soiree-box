@@ -130,14 +130,14 @@ const CSS = '<style>.kl-m{font-size:22px; font-weight:800; line-height:1.25; ove
 /* ----- Coups de théâtre : des événements qui relancent la chasse ----- */
 const MIN = 60000;
 const EVENTS = [
-  { id: "prime", name: tr("Prime sur une tête", "Bounty"), desc: tr("Celui qui élimine {p} gagne 2 points de bonus. Prime valable 10 minutes.", "Whoever takes out {p} gets 2 bonus points. Bounty lasts 10 minutes."), ms: 10 * MIN, ok: o => o.n >= 3 },
+  { id: "prime", name: tr("Prime sur une tête", "Bounty"), desc: tr("Celui (celle) qui élimine {p} gagne 2 points de bonus. Prime valable 10 minutes.", "Whoever takes out {p} gets 2 bonus points. Bounty lasts 10 minutes."), ms: 10 * MIN, ok: o => o.n >= 3 },
   { id: "treve", name: tr("Trêve", "Truce"), desc: tr("Pendant 3 minutes, aucune mission ne peut être annoncée. Préparez vos coups en douce.", "For 3 minutes, nobody can claim a mission. Set up your moves on the sly."), ms: 3 * MIN },
   { id: "express", name: tr("Contrat express", "Express contract"), desc: tr("Pendant 10 minutes, tu peux aussi éliminer ta cible avec la mission bonus : “{m}”. Elle rapporte 1 point de plus.", "For 10 minutes, you can also take out your target with the bonus mission: “{m}”. It's worth 1 extra point."), ms: 10 * MIN },
   { id: "double", name: tr("Chasse ouverte", "Open season"), desc: tr("Pendant 10 minutes, chaque élimination rapporte 2 points.", "For 10 minutes, every kill is worth 2 points."), ms: 10 * MIN },
   { id: "melange", name: tr("Grand chambardement", "Big shake-up"), desc: tr("Les cibles sont redistribuées et chacun reçoit une nouvelle mission. Allez vite voir la vôtre !", "Targets are reshuffled and everyone gets a new mission. Go check yours!"), ok: o => o.n >= 3 },
   { id: "inverse", name: tr("Demi-tour", "U-turn"), desc: tr("La chaîne s'inverse : tu chasses maintenant la personne qui te chassait. Nouvelles missions pour tous.", "The chain flips: you're now hunting the person who was hunting you. New missions for everyone."), ok: o => o.n >= 3 },
   { id: "ordres", name: tr("Nouveaux ordres", "New orders"), desc: tr("Même cible, mais tout le monde reçoit une nouvelle mission.", "Same target, but everyone gets a new mission."), ok: o => o.n >= 2 },
-  { id: "amnistie", name: tr("Amnistie", "Amnesty"), desc: tr("Ceux qui ont déjà utilisé leur accusation la récupèrent : chacun peut de nouveau tenter de démasquer son chasseur.", "Anyone who already used their accusation gets it back: everyone can try to unmask their hunter again."), ok: o => o.used > 0 }
+  { id: "amnistie", name: tr("Amnistie", "Amnesty"), desc: tr("Ceux qui ont déjà utilisé leur accusation la récupèrent : chacun peut de nouveau tenter de démasquer son (sa) chasseur(se).", "Anyone who already used their accusation gets it back: everyone can try to unmask their hunter again."), ok: o => o.used > 0 }
 ];
 // Messages personnels (W.note) : { t: français, en: anglais, at } ; chaque téléphone affiche sa langue.
 const RETARGET = { melange: ["Coup de théâtre : nouvelle cible et nouvelle mission !", "Plot twist: new target and new mission!"], inverse: ["Demi-tour : tu chasses la personne qui te chassait. Nouvelle mission !", "U-turn: you're hunting the person who was hunting you. New mission!"], ordres: ["Nouveaux ordres : même cible, nouvelle mission.", "New orders: same target, new mission."] };
@@ -203,7 +203,7 @@ function eliminate(W, victim, by, how, fresh, now, x){
 function klGages(W, n0){
   const out = [];
   A(W.log).slice(n0).forEach(x => {
-    out.push(x.how === "u" ? { id: x.on, ev: "mort", why: tr("Démasqué par ta cible", "Unmasked by your target") } : { id: x.on, ev: "mort" });
+    out.push(x.how === "u" ? { id: x.on, ev: "mort", why: tr("Démasqué(e) par ta cible", "Unmasked by your target") } : { id: x.on, ev: "mort" });
     out.push({ id: x.by, ev: "tue" });
   });
   return out;
@@ -222,7 +222,7 @@ function ptsTxt(n, lg){ return T(lg, n + " pt" + (n > 1 ? "s" : ""), n + (n === 
 function graveHTML(log, nameOf){
   const l = A(log).slice().reverse();
   if(!l.length) return '<p class="sm">' + tr("Personne n'est encore tombé.", "Nobody has fallen yet.") + "</p>";
-  return '<ul class="list">' + l.map(x => '<li><span class="t">' + esc(nameOf(x.on)) + '</span><span class="by">' + (x.how === "u" ? tr("Démasqué par ", "Unmasked by ") + esc(nameOf(x.by)) : tr("Éliminé par ", "Taken out by ") + esc(nameOf(x.by)) + (x.m ? tr(" · “" + esc(x.m) + "”", " · “" + esc(x.m) + "”") : "")) + (x.b === "p" ? tr(" · prime encaissée", " · bounty claimed") : x.x ? tr(" · contrat express", " · express contract") : "") + "</span></li>").join("") + "</ul>";
+  return '<ul class="list">' + l.map(x => '<li><span class="t">' + esc(nameOf(x.on)) + '</span><span class="by">' + (x.how === "u" ? tr("Démasqué(e) par ", "Unmasked by ") + esc(nameOf(x.by)) : tr("Éliminé(e) par ", "Taken out by ") + esc(nameOf(x.by)) + (x.m ? tr(" · “" + esc(x.m) + "”", " · “" + esc(x.m) + "”") : "")) + (x.b === "p" ? tr(" · prime encaissée", " · bounty claimed") : x.x ? tr(" · contrat express", " · express contract") : "") + "</span></li>").join("") + "</ul>";
 }
 /* ----- Trophées de fin : tirés des stats de la partie, formulés différemment à chaque fois ----- */
 function seedOf(str){ let h = 7; String(str).split("").forEach(ch => { h = (h * 31 + ch.charCodeAt(0)) >>> 0; }); return h; }
@@ -234,13 +234,13 @@ function awards(W, ids, nameOf, seed, lg){
   if(W.fast && W.fast.id) add(P(["Gâchette la plus rapide", "Tir éclair", "Plus rapide que son ombre"], ["Quickest trigger", "Lightning strike", "Faster than their shadow"], 0), nameOf(W.fast.id) + (E ? ", a mission done in " : ", une mission bouclée en ") + dur(W.fast.dt));
   if(log.length) add(P(["Premier sang", "A ouvert le bal", "Premier coup de couteau"], ["First blood", "Kicked things off", "First stab"], 1), nameOf(log[0].by) + (E ? " struck first" : " a frappé en premier"));
   const u = log.find(x => x.how === "u");
-  if(u) add(P(["L'arroseur arrosé", "Pris à son propre piège", "Grillé par sa propre cible"], ["Hunter hunted", "Caught in their own trap", "Busted by their own target"], 2), nameOf(u.on) + (E ? ", unmasked by " : ", démasqué par ") + nameOf(u.by));
+  if(u) add(P(["L'arroseur arrosé", "Pris(e) à son propre piège", "Grillé(e) par sa propre cible"], ["Hunter hunted", "Caught in their own trap", "Busted by their own target"], 2), nameOf(u.on) + (E ? ", unmasked by " : ", démasqué(e) par ") + nameOf(u.by));
   const pr = log.find(x => x.b === "p");
-  if(pr) add(P(["Chasseur de primes", "Mercenaire de la soirée", "A encaissé la prime"], ["Bounty hunter", "Party mercenary", "Cashed the bounty"], 3), nameOf(pr.by) + (E ? " got " + nameOf(pr.on) + "'s head" : " a eu la tête de " + nameOf(pr.on)));
+  if(pr) add(P(["Chasseur(se) de primes", "Mercenaire de la soirée", "A encaissé la prime"], ["Bounty hunter", "Party mercenary", "Cashed the bounty"], 3), nameOf(pr.by) + (E ? " got " + nameOf(pr.on) + "'s head" : " a eu la tête de " + nameOf(pr.on)));
   const acc = W.acc || {}, ghost = ranking(ids.filter(id => !acc[id] && (W.kills[id] || 0) > 0), W)[0];
-  if(ghost) add(P(["Fantôme de la soirée", "Ninja silencieux", "Insoupçonnable"], ["Ghost of the party", "Silent ninja", "Above suspicion"], 4), nameOf(ghost) + (E ? ", not a single accusation" : ", aucune accusation reçue"));
+  if(ghost) add(P(["Fantôme de la soirée", "Ninja silencieux(se)", "Insoupçonnable"], ["Ghost of the party", "Silent ninja", "Above suspicion"], 4), nameOf(ghost) + (E ? ", not a single accusation" : ", aucune accusation reçue"));
   const nope = W.nope || {}, liar = ids.filter(id => nope[id]).sort((a, b) => nope[b] - nope[a])[0];
-  if(liar) add(P(["Mauvaise foi d'or", "Jamais coupable", "Avocat du diable"], ["Golden denial", "Never guilty", "Devil's advocate"], 5), nameOf(liar) + ", " + nope[liar] + (E ? (nope[liar] > 1 ? " missions disputed" : " mission disputed") : " mission" + (nope[liar] > 1 ? "s" : "") + " contestée" + (nope[liar] > 1 ? "s" : "")));
+  if(liar) add(P(["Mauvaise foi d'or", "Jamais coupable", "Avocat(e) du diable"], ["Golden denial", "Never guilty", "Devil's advocate"], 5), nameOf(liar) + ", " + nope[liar] + (E ? (nope[liar] > 1 ? " missions disputed" : " mission disputed") : " mission" + (nope[liar] > 1 ? "s" : "") + " contestée" + (nope[liar] > 1 ? "s" : "")));
   // Plus de 4 trophées possibles : on en garde 4, différents d'une partie à l'autre.
   return (out.length > 4 ? out.map(x => [seedOf(x[2] + seed), x]).sort((a, b) => a[0] - b[0]).slice(0, 4).map(x => x[1]) : out).map(x => [x[0], x[1]]);
 }
@@ -261,17 +261,17 @@ const DEF = {
   tag: tr("Une cible, une mission secrète. Réussis-la sans te faire griller et récupère la cible de ta victime.", "One target, one secret mission. Pull it off without getting caught and inherit your victim's target."),
   min: 4, max: 20,
   gages: [
-    { ev: "mort", label: tr("Éliminé", "Taken out"), kind: "boit", n: 2 },
+    { ev: "mort", label: tr("Éliminé(e)", "Taken out"), kind: "boit", n: 2 },
     { ev: "tue", label: tr("Élimine quelqu'un", "Takes someone out"), kind: "distribue", n: 1 }
   ],
   rules: tr([
     "Chacun reçoit en secret une cible et une mission, par exemple : faire dire « ananas » à ta cible.",
     "Le jeu tourne en fond pendant toute la soirée : vous pouvez jouer aux autres jeux en même temps.",
     "Mission réussie ? Touche « J'ai réussi ma mission ». Ta victime confirme, tu marques un point et tu récupères sa cible et sa mission.",
-    "Tu penses savoir qui te chasse ? Tu n'as droit qu'à une accusation : si tu as raison, ton chasseur est éliminé.",
+    "Tu penses savoir qui te chasse ? Tu n'as droit qu'à une accusation : si tu as raison, ton (ta) chasseur(se) est éliminé(e).",
     "Mission impossible ? Ton joker te donne une nouvelle mission, une seule fois.",
     "Coups de théâtre : après une élimination, ou quand ça traîne, un événement peut tomber. Prime sur une tête, trêve, contrat express, cibles mélangées…",
-    "Le dernier survivant gagne. L'hôte peut arrêter la partie avant la fin : le meilleur score l'emporte alors."
+    "Le (la) dernier(ère) survivant(e) gagne. L'hôte peut arrêter la partie avant la fin : le meilleur score l'emporte alors."
   ], [
     "Everyone secretly gets a target and a mission, for example: get your target to say “pineapple”.",
     "The game runs in the background all night: you can play other games at the same time.",
@@ -326,7 +326,7 @@ const DEF = {
           if(hunter && inp.a.w === hunter){
             const g = eliminate(W, hunter, id, "u", fresh, now);
             if(g && g !== id) W.note[g] = noteOf("Ta cible a été éliminée par quelqu'un d'autre. Tu as une nouvelle cible et une nouvelle mission.", "Your target was taken out by someone else. You have a new target and a new mission.", now);
-            W.note[id] = noteOf("Bien vu, c'était " + ctx.name(hunter) + " ! Ton chasseur est hors jeu.", "Good call, it was " + ctx.name(hunter) + "! Your hunter is out.", now);
+            W.note[id] = noteOf("Bien vu, c'était " + ctx.name(hunter) + " ! Ton (ta) chasseur(se) est hors jeu.", "Good call, it was " + ctx.name(hunter) + "! Your hunter is out.", now);
           } else W.note[id] = noteOf("Raté, ce n'était pas " + ctx.name(inp.a.w) + ". Tu n'as plus d'accusation.", "Wrong, it wasn't " + ctx.name(inp.a.w) + ". You're out of accusations.", now);
         }
       }
@@ -360,8 +360,8 @@ const DEF = {
     const seed = seedOf(ctx.g.gid || "k");
     if(s.phase === "end"){
       const order = ranking(ctx.ids, W), wt = winTitle(W, ctx.ids, nameOf, seed);
-      screen(root, "end" + ctx.isHost + W.log.length, CSS + '<span class="eyebrow">' + (W.win ? tr("Dernier survivant", "Last survivor") : tr("Meilleur score", "Top score")) + '</span><div class="who">' + esc(nameOf(wt.w)) + "</div>" +
-        '<div class="field"><span class="eyebrow">' + tr("Tableau de chasse", "Kill board") + '</span><ul class="kl-chain">' + order.map(id => "<li><span>" + esc(nameOf(id)) + (alive.indexOf(id) >= 0 ? tr(" · vivant", " · alive") : "") + "</span><span>" + ptsTxt(score(W, id)) + "</span></li>").join("") + "</ul></div>" +
+      screen(root, "end" + ctx.isHost + W.log.length, CSS + '<span class="eyebrow">' + (W.win ? tr("Dernier(ère) survivant(e)", "Last survivor") : tr("Meilleur score", "Top score")) + '</span><div class="who">' + esc(nameOf(wt.w)) + "</div>" +
+        '<div class="field"><span class="eyebrow">' + tr("Tableau de chasse", "Kill board") + '</span><ul class="kl-chain">' + order.map(id => "<li><span>" + esc(nameOf(id)) + (alive.indexOf(id) >= 0 ? tr(" · vivant(e)", " · alive") : "") + "</span><span>" + ptsTxt(score(W, id)) + "</span></li>").join("") + "</ul></div>" +
         awardsHTML(awards(W, ctx.ids, nameOf, seed)) +
         '<div class="field"><span class="eyebrow">' + tr("Cimetière", "Graveyard") + "</span>" + graveHTML(W.log, nameOf) + "</div>" +
         dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
@@ -385,13 +385,13 @@ const DEF = {
     let html = CSS, dk = "";
     if(!isAlive){
       const dead = W.log.find(x => x.on === me);
-      html += banner + '<div class="card acc"><span class="eyebrow">' + tr("Tu es mort", "You're dead") + '</span><div class="big">' + (dead ? (dead.how === "u" ? tr("Démasqué par ", "Unmasked by ") + esc(nameOf(dead.by)) : tr("Éliminé par ", "Taken out by ") + esc(nameOf(dead.by))) : tr("Éliminé", "Taken out")) + "</div>" + (dead && dead.m ? '<p class="sm">' + tr("Mission : “" + esc(dead.m) + "”", "Mission: “" + esc(dead.m) + "”") + "</p>" : "") +
+      html += banner + '<div class="card acc"><span class="eyebrow">' + tr("Tu es mort(e)", "You're dead") + '</span><div class="big">' + (dead ? (dead.how === "u" ? tr("Démasqué(e) par ", "Unmasked by ") + esc(nameOf(dead.by)) : tr("Éliminé(e) par ", "Taken out by ") + esc(nameOf(dead.by))) : tr("Éliminé(e)", "Taken out")) + "</div>" + (dead && dead.m ? '<p class="sm">' + tr("Mission : “" + esc(dead.m) + "”", "Mission: “" + esc(dead.m) + "”") + "</p>" : "") +
         '<p class="sm">' + tr("Tu peux maintenant suivre toutes les chasses. Chut, ne dis rien !", "You can now follow every hunt. Shh, don't say a word!") + "</p></div>" +
         '<div class="field"><span class="eyebrow">' + tr("Qui chasse qui", "Who's hunting whom") + '</span><ul class="kl-chain">' + alive.map(h => "<li><span>" + esc(nameOf(h)) + "</span><span>→ " + esc(nameOf(tgt[h])) + "</span></li>").join("") + "</ul></div>";
     } else if(onMe){
       const om = esc(onMe.x && W.ev && W.ev.m ? W.ev.m : mis[onMe.by]);
       html += '<div class="pass" style="min-height:0"><span class="eyebrow">' + tr("Alerte", "Alert") + '</span><div class="who">' + esc(nameOf(onMe.by)) + "</div><p>" + tr("dit avoir réussi " + (onMe.x ? "le contrat express" : "sa mission") + " sur toi :", "says they pulled off " + (onMe.x ? "the express contract" : "their mission") + " on you:") + '</p></div><div class="card acc"><div class="kl-m">' + tr("“" + om + "”", "“" + om + "”") + "</div></div>";
-      dk = dock('<div class="row"><button class="btn bad" type="button" data-yes>' + tr("Oui, je suis mort", "Yes, I'm dead") + '</button><button class="btn ghost" type="button" data-no>' + tr("Non, c'est faux", "No, that's not true") + "</button></div>");
+      dk = dock('<div class="row"><button class="btn bad" type="button" data-yes>' + tr("Oui, je suis mort(e)", "Yes, I'm dead") + '</button><button class="btn ghost" type="button" data-no>' + tr("Non, c'est faux", "No, that's not true") + "</button></div>");
     } else {
       html += '<span class="eyebrow">' + tr(alive.length + " joueurs encore en vie", alive.length + (alive.length === 1 ? " player still alive" : " players still alive")) + " · " + ptsTxt(score(W, me)) + "</span>" + banner + (note ? '<p class="note-box">' + esc(noteTxt(note)) + "</p>" : "") +
         '<div class="card acc"><span class="eyebrow">' + tr("Ta cible", "Your target") + "</span>" +
@@ -488,7 +488,7 @@ const DEF = {
         } else if(ph === "main"){
           if(news){ const e = news; news = null; go("event", e); return; }
           const e = evNow();
-          screen(root, "ma" + W.log.length + W.alive.length + e.on + (W.ev ? W.ev.at : 0), CSS + '<span class="eyebrow">' + tr(W.alive.length + " joueurs encore en vie", W.alive.length + (W.alive.length === 1 ? " player still alive" : " players still alive")) + "</span>" + bannerL() + '<p class="howto">' + tr("Posez le téléphone au milieu. Chacun touche son prénom pour relire sa mission, annoncer qu'il l'a réussie ou accuser son chasseur.", "Leave the phone in the middle. Tap your name to reread your mission, claim you pulled it off, or accuse your hunter.") + "</p>" +
+          screen(root, "ma" + W.log.length + W.alive.length + e.on + (W.ev ? W.ev.at : 0), CSS + '<span class="eyebrow">' + tr(W.alive.length + " joueurs encore en vie", W.alive.length + (W.alive.length === 1 ? " player still alive" : " players still alive")) + "</span>" + bannerL() + '<p class="howto">' + tr("Posez le téléphone au milieu. Chacun touche son prénom pour relire sa mission, annoncer qu'il (elle) l'a réussie ou accuser son (sa) chasseur(se).", "Leave the phone in the middle. Tap your name to reread your mission, claim you pulled it off, or accuse your hunter.") + "</p>" +
             '<div class="choices">' + W.alive.map(id => '<button type="button" class="opt" data-p="' + id + '">' + esc(nameOf(id)) + (score(W, id) ? ' <span class="pill">' + ptsTxt(score(W, id)) + "</span>" : "") + "</button>").join("") + "</div>" +
             '<div class="field"><span class="eyebrow">' + tr("Cimetière", "Graveyard") + "</span>" + graveHTML(W.log, nameOf) + "</div>" +
             dock('<button class="link warn" type="button" data-stop style="align-self:center">' + tr("Arrêter et voir le classement", "Stop and see the rankings") + "</button>"), r => {
@@ -541,14 +541,14 @@ const DEF = {
         } else if(ph === "news"){
           const L2 = last;
           if(L2.miss !== undefined){
-            screen(root, "nw-miss" + W.log.length + Math.random(), '<div class="pass"><span class="eyebrow">' + tr("Raté", "Miss") + '</span><div class="who">' + tr("Pas ", "Not ") + esc(nameOf(L2.miss)) + "</div><p>" + tr(esc(nameOf(cur)) + " n'a plus d'accusation. Son chasseur court toujours…", esc(nameOf(cur)) + " is out of accusations. Their hunter is still on the loose…") + "</p></div>" + dock('<button class="btn acc" type="button" data-n>' + tr("Continuer", "Continue") + "</button>"), r => r.querySelector("[data-n]").addEventListener("click", () => go("main")));
+            screen(root, "nw-miss" + W.log.length + Math.random(), '<div class="pass"><span class="eyebrow">' + tr("Raté", "Miss") + '</span><div class="who">' + tr("Pas ", "Not ") + esc(nameOf(L2.miss)) + "</div><p>" + tr(esc(nameOf(cur)) + " n'a plus d'accusation. Son (sa) chasseur(se) court toujours…", esc(nameOf(cur)) + " is out of accusations. Their hunter is still on the loose…") + "</p></div>" + dock('<button class="btn acc" type="button" data-n>' + tr("Continuer", "Continue") + "</button>"), r => r.querySelector("[data-n]").addEventListener("click", () => go("main")));
             return;
           }
           const over = W.phase === "end";
           const heir = L2.how === "k" && !(news && RETARGET[news.id]) ? L2.by : "";
           const lg = W.log[W.log.length - 1] || {};
-          screen(root, "nw" + W.log.length, '<div class="pass"><span class="eyebrow">' + (L2.how === "u" ? tr("Démasqué !", "Unmasked!") : tr("Éliminé !", "Taken out!")) + '</span><div class="who">' + esc(nameOf(L2.on)) + "</div><p>" +
-            (L2.how === "u" ? tr(esc(nameOf(L2.by)) + " a démasqué son chasseur.", esc(nameOf(L2.by)) + " unmasked their hunter.") : tr("par " + esc(nameOf(L2.by)) + ", avec la mission “" + esc(L2.m) + "”.", "by " + esc(nameOf(L2.by)) + ", with the mission “" + esc(L2.m) + "”.")) + "</p>" +
+          screen(root, "nw" + W.log.length, '<div class="pass"><span class="eyebrow">' + (L2.how === "u" ? tr("Démasqué(e) !", "Unmasked!") : tr("Éliminé(e) !", "Taken out!")) + '</span><div class="who">' + esc(nameOf(L2.on)) + "</div><p>" +
+            (L2.how === "u" ? tr(esc(nameOf(L2.by)) + " a démasqué son (sa) chasseur(se).", esc(nameOf(L2.by)) + " unmasked their hunter.") : tr("par " + esc(nameOf(L2.by)) + ", avec la mission “" + esc(L2.m) + "”.", "by " + esc(nameOf(L2.by)) + ", with the mission “" + esc(L2.m) + "”.")) + "</p>" +
             (lg.p > 1 ? '<p class="sm">' + tr(esc(nameOf(L2.by)) + " marque " + ptsTxt(lg.p) + (lg.b === "p" ? ", prime comprise" : "") + ".", esc(nameOf(L2.by)) + " scores " + ptsTxt(lg.p) + (lg.b === "p" ? ", bounty included" : "") + ".") + "</p>" : "") + "</div>" +
             dock(over ? '<button class="btn acc" type="button" data-end>' + tr("Voir le vainqueur", "See the winner") + "</button>"
               : heir ? '<button class="btn acc" type="button" data-heir>' + esc(nameOf(heir)) + tr(" : voir ma nouvelle cible", ": see my new target") + "</button>" : '<button class="btn acc" type="button" data-n>' + tr("Continuer", "Continue") + "</button>"), r => {
@@ -560,8 +560,8 @@ const DEF = {
         } else if(ph === "end"){
           const order = ranking(ids, W), wt = winTitle(W, ids, nameOf, seed);
           api.win([nameOf(wt.w)]);
-          screen(root, "end", CSS + '<span class="eyebrow">' + (W.win ? tr("Dernier survivant", "Last survivor") : tr("Meilleur score", "Top score")) + '</span><div class="who">' + esc(nameOf(wt.w)) + "</div>" +
-            '<div class="field"><span class="eyebrow">' + tr("Tableau de chasse", "Kill board") + '</span><ul class="kl-chain">' + order.map(id => "<li><span>" + esc(nameOf(id)) + (W.alive.indexOf(id) >= 0 ? tr(" · vivant", " · alive") : "") + "</span><span>" + ptsTxt(score(W, id)) + "</span></li>").join("") + "</ul></div>" +
+          screen(root, "end", CSS + '<span class="eyebrow">' + (W.win ? tr("Dernier(ère) survivant(e)", "Last survivor") : tr("Meilleur score", "Top score")) + '</span><div class="who">' + esc(nameOf(wt.w)) + "</div>" +
+            '<div class="field"><span class="eyebrow">' + tr("Tableau de chasse", "Kill board") + '</span><ul class="kl-chain">' + order.map(id => "<li><span>" + esc(nameOf(id)) + (W.alive.indexOf(id) >= 0 ? tr(" · vivant(e)", " · alive") : "") + "</span><span>" + ptsTxt(score(W, id)) + "</span></li>").join("") + "</ul></div>" +
             awardsHTML(awards(W, ids, nameOf, seed)) +
             '<div class="field"><span class="eyebrow">' + tr("Cimetière", "Graveyard") + "</span>" + graveHTML(W.log, nameOf) + "</div>" +
             dock('<button class="btn acc" type="button" data-a>' + tr("Rejouer", "Play again") + '</button><button class="btn ghost" type="button" data-q>' + tr("Choisir un autre jeu", "Pick another game") + "</button>"), r => {

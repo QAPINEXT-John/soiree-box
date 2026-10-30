@@ -155,11 +155,11 @@ function advance(E, steps, nameOf){
 /* ---------- Trophées de fin de partie ---------- */
 const AWARDS = {
   pl: { t: tr(["Mitraillette à cartes", "Distributeur automatique", "Le bras le plus rapide"], ["Card machine gun", "Vending machine", "Fastest arm in the room"]), d: v => tr(v + " cartes posées", v + (v === 1 ? " card played" : " cards played")), min: 3 },
-  dr: { t: tr(["Aspirateur à cartes", "Collectionneur malgré lui", "Éventail géant"], ["Card vacuum", "Reluctant collector", "Giant fan of cards"]), d: v => tr(v + " cartes piochées", v + (v === 1 ? " card drawn" : " cards drawn")), min: 4 },
+  dr: { t: tr(["Aspirateur à cartes", "Collectionneur(se) malgré lui (elle)", "Éventail géant"], ["Card vacuum", "Reluctant collector", "Giant fan of cards"]), d: v => tr(v + " cartes piochées", v + (v === 1 ? " card drawn" : " cards drawn")), min: 4 },
   pen: { t: tr(["Cible préférée des +4", "Punching-ball de la table", "Victime désignée"], ["Favorite +4 target", "The table's punching bag", "Designated victim"]), d: v => tr(v + " cartes de pénalité", v + (v === 1 ? " penalty card" : " penalty cards")), min: 2 },
   ct: { t: tr(["Œil de lynx", "Gendarme de la table", "Radar à « Dernière ! »"], ["Eagle eye", "Table cop", "“Last card!” radar"]), d: v => tr(v + " oubli" + (v > 1 ? "s" : "") + " attrapé" + (v > 1 ? "s" : ""), v + (v === 1 ? " slip caught" : " slips caught")), min: 1 },
-  jp: { t: tr(["Intercepteur", "Voleur de tour", "Sniper de la défausse"], ["Interceptor", "Turn thief", "Discard pile sniper"]), d: v => tr(v + " interception" + (v > 1 ? "s" : ""), v + (v === 1 ? " jump-in" : " jump-ins")), min: 1 },
-  sw: { t: tr(["Roi du troc", "Pickpocket", "As de l'échange"], ["King of trading", "Pickpocket", "Swap master"]), d: v => tr(v + " main" + (v > 1 ? "s" : "") + " échangée" + (v > 1 ? "s" : ""), v + (v === 1 ? " hand swapped" : " hands swapped")), min: 1 }
+  jp: { t: tr(["Intercepteur(trice)", "Voleur(se) de tour", "Sniper de la défausse"], ["Interceptor", "Turn thief", "Discard pile sniper"]), d: v => tr(v + " interception" + (v > 1 ? "s" : ""), v + (v === 1 ? " jump-in" : " jump-ins")), min: 1 },
+  sw: { t: tr(["Roi (reine) du troc", "Pickpocket", "As de l'échange"], ["King of trading", "Pickpocket", "Swap master"]), d: v => tr(v + " main" + (v > 1 ? "s" : "") + " échangée" + (v > 1 ? "s" : ""), v + (v === 1 ? " hand swapped" : " hands swapped")), min: 1 }
 };
 function awards(E){
   const S = E.st || {}, out = [];
@@ -512,11 +512,11 @@ const DEF = {
   ],
   rules: tr([
     "Chacun reçoit 7 cartes. À ton tour, pose une carte de la même couleur ou de la même valeur que celle du dessus.",
-    "Passe-tour : le suivant saute son tour. Inversion : le sens change. +2 et +4 : le suivant pioche 2 ou 4 cartes et passe son tour. Joker et +4 : tu choisis la couleur.",
+    "Passe-tour : le (la) suivant(e) saute son tour. Inversion : le sens change. +2 et +4 : le (la) suivant(e) pioche 2 ou 4 cartes et passe son tour. Joker et +4 : tu choisis la couleur.",
     "Pas de carte jouable ? Pioche. Si la carte piochée va, tu peux la poser tout de suite.",
-    "Avec le cumul, on peut renvoyer un +2 avec un +2 ou un +4, et un +4 avec un +4. Celui qui ne peut pas (ou ne veut pas) renchérir encaisse le total.",
+    "Avec le cumul, on peut renvoyer un +2 avec un +2 ou un +4, et un +4 avec un +4. Celui (celle) qui ne peut pas (ou ne veut pas) renchérir encaisse le total.",
     "Quand il te reste 2 cartes, touche « Dernière ! » avant de poser l'avant-dernière. Si tu te retrouves avec une seule carte sans l'avoir annoncé, n'importe qui peut toucher « Contre ! » : tu pioches 2 cartes.",
-    "Le premier qui n'a plus de cartes gagne la manche et marque la valeur des cartes restant dans la main des autres.",
+    "Le (la) premier(ère) qui n'a plus de cartes gagne la manche et marque la valeur des cartes restant dans la main des autres.",
     "Règles maison au choix : Sept-zéro (7 = tu échanges ta main avec qui tu veux, 0 = toutes les mains tournent), Interception (pose hors de ton tour une carte identique à celle du dessus), Pioche jusqu'à pouvoir jouer (on continue de piocher tant que la carte ne va pas).",
     "Coups de théâtre : de temps en temps, un événement chamboule la partie (couleur interdite, pluie de cartes, mains échangées, double tour…)."
   ], [
@@ -531,7 +531,7 @@ const DEF = {
   ]),
   options: [
     { id: "rounds", label: tr("Manches", "Rounds"), type: "seg", def: 1, values: [{ v: 1, label: "1" }, { v: 3, label: "3" }, { v: 5, label: "5" }] },
-    { id: "stack", label: tr("Cumul", "Stacking"), type: "toggle", text: tr("Cumul des +2 et +4", "Stack +2s and +4s"), desc: tr("On peut renvoyer la pénalité au suivant", "Pass the penalty on to the next player"), def: true },
+    { id: "stack", label: tr("Cumul", "Stacking"), type: "toggle", text: tr("Cumul des +2 et +4", "Stack +2s and +4s"), desc: tr("On peut renvoyer la pénalité au (à la) suivant(e)", "Pass the penalty on to the next player"), def: true },
     { id: "sz", label: tr("Sept-zéro", "Seven-Zero"), type: "toggle", text: tr("Sept-zéro", "Seven-Zero"), desc: tr("7 : échange ta main avec qui tu veux. 0 : toutes les mains tournent", "7: swap hands with anyone you like. 0: all hands rotate"), def: false },
     { id: "jump", label: tr("Interception", "Jump-in"), type: "toggle", text: tr("Interception", "Jump-in"), desc: tr("Pose hors de ton tour une carte identique à celle du dessus", "Play out of turn a card identical to the top card"), def: false },
     { id: "dp", label: tr("Pioche", "Drawing"), type: "toggle", text: tr("Pioche jusqu'à pouvoir jouer", "Draw until you can play"), desc: tr("On pioche jusqu'à tomber sur une carte jouable", "Keep drawing until you get a playable card"), def: false },
@@ -618,7 +618,7 @@ const DEF = {
       if(UI.sel !== UI.prev){ selFx(root, UI.sel, UI.prev); UI.prev = UI.sel; }
     } else {
       const last = s.phase === "end", champ = last ? bestOf(E) : s.winner;
-      screen(root, "e" + s.k + s.phase + s.round + ctx.isHost, CSS + '<span class="eyebrow">' + (last ? (s.rounds > 1 ? tr("Vainqueur de la partie", "Game winner") : tr("Vainqueur", "Winner")) : tr("Manche " + s.round + " gagnée par", "Round " + s.round + " won by")) + '</span><div class="who">' + esc(ctx.name(champ)) + "</div>" +
+      screen(root, "e" + s.k + s.phase + s.round + ctx.isHost, CSS + '<span class="eyebrow">' + (last ? (s.rounds > 1 ? tr("Vainqueur(e) de la partie", "Game winner") : tr("Vainqueur(e)", "Winner")) : tr("Manche " + s.round + " gagnée par", "Round " + s.round + " won by")) + '</span><div class="who">' + esc(ctx.name(champ)) + "</div>" +
         '<p class="dc-log">' + esc(s.log) + "</p>" + (s.rounds > 1 ? '<div class="field"><span class="eyebrow">' + tr("Scores", "Scores") + "</span>" + scoresHTML(E, ctx.name) + "</div>" : "") + (last ? awardsHTML(E, ctx.name) : "") +
         dock(ctx.isHost ? (last ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<button class="btn acc" type="button" data-next>' + tr("Manche suivante", "Next round") + "</button>") : '<p class="wait">' + tr("L'hôte passe à la suite…", "The host is moving on…") + "</p>"), r => {
         const nx = r.querySelector("[data-next]");
@@ -643,7 +643,7 @@ const DEF = {
       let rounds = [1, 3, 5].indexOf(st.dcRounds) >= 0 ? st.dcRounds : 1;
       // Règles maison (mêmes réglages que le salon en réseau)
       const R = { stack: st.dcStack !== false, sz: !!st.dcSz, jump: !!st.dcJump, dp: !!st.dcDp, tw: st.dcTw !== false };
-      const RULES = [["stack", "dcStack", tr("Cumul des +2 et +4", "Stack +2s and +4s"), tr("On peut renvoyer la pénalité au suivant", "Pass the penalty on to the next player")], ["sz", "dcSz", tr("Sept-zéro", "Seven-Zero"), tr("7 : échange ta main avec qui tu veux. 0 : toutes les mains tournent", "7: swap hands with anyone you like. 0: all hands rotate")],
+      const RULES = [["stack", "dcStack", tr("Cumul des +2 et +4", "Stack +2s and +4s"), tr("On peut renvoyer la pénalité au (à la) suivant(e)", "Pass the penalty on to the next player")], ["sz", "dcSz", tr("Sept-zéro", "Seven-Zero"), tr("7 : échange ta main avec qui tu veux. 0 : toutes les mains tournent", "7: swap hands with anyone you like. 0: all hands rotate")],
         ["jump", "dcJump", tr("Interception", "Jump-in"), tr("Pose hors de ton tour une carte identique à celle du dessus", "Play out of turn a card identical to the top card")], ["dp", "dcDp", tr("Pioche jusqu'à pouvoir jouer", "Draw until you can play"), tr("On pioche jusqu'à tomber sur une carte jouable", "Keep drawing until you get a playable card")],
         ["tw", "dcTw", tr("Coups de théâtre", "Plot twists"), tr("Des événements surprises en pleine manche", "Surprise events mid-round")]];
       const BOTN = tr(["Robotte", "Bipbip", "Zorglub"], ["Robbie", "Beepboop", "Zorglub"]);
@@ -661,7 +661,7 @@ const DEF = {
           '<div class="field"><span class="eyebrow">' + tr("Bots", "Bots") + '</span><div class="seg">' + [0, 1, 2, 3].map(b => '<button type="button" data-b="' + b + '" aria-pressed="' + (b === bots) + '">' + b + "</button>").join("") + "</div></div>" +
           '<div class="field"><span class="eyebrow">' + tr("Manches", "Rounds") + '</span><div class="seg">' + [1, 3, 5].map(x => '<button type="button" data-r="' + x + '" aria-pressed="' + (x === rounds) + '">' + x + "</button>").join("") + "</div></div>" +
           '<div class="field"><span class="eyebrow">' + tr("Règles maison", "House rules") + '</span><div class="packs">' + RULES.map(x => '<button type="button" class="pack" data-s="' + x[0] + '" aria-pressed="' + R[x[0]] + '"><span class="box">✓</span><span class="tx"><span class="nm">' + x[2] + '</span><span class="ds">' + x[3] + "</span></span></button>").join("") + "</div></div>" +
-          (total < 2 ? '<p class="err">' + tr("Ajoute au moins un bot pour jouer seul.", "Add at least one bot to play solo.") + "</p>" : total > 10 ? '<p class="err">' + tr("10 joueurs maximum, bots compris.", "10 players max, bots included.") + "</p>" : "") +
+          (total < 2 ? '<p class="err">' + tr("Ajoute au moins un bot pour jouer seul(e).", "Add at least one bot to play solo.") + "</p>" : total > 10 ? '<p class="err">' + tr("10 joueurs maximum, bots compris.", "10 players max, bots included.") + "</p>" : "") +
           dock('<button class="btn acc" type="button" data-go' + (total < 2 || total > 10 ? " disabled" : "") + ">" + tr("Distribuer", "Deal") + "</button>"), r => {
           r.querySelectorAll("[data-b]").forEach(b => b.addEventListener("click", () => { bots = +b.dataset.b; persist({ dcBots: bots }); setup(); }));
           r.querySelectorAll("[data-r]").forEach(b => b.addEventListener("click", () => { rounds = +b.dataset.r; persist({ dcRounds: rounds }); setup(); }));
@@ -749,7 +749,7 @@ const DEF = {
         clearTimeout(timer);
         const last = E.phase === "end", champ = last && E.rounds > 1 ? bestOf(E) : E.winner;
         if(last && api.win) api.win([nameOf(champ)]);
-        screen(root, "end" + E.round + E.phase, CSS + '<span class="eyebrow">' + (last ? (E.rounds > 1 ? tr("Vainqueur de la partie", "Game winner") : tr("Vainqueur", "Winner")) : tr("Manche " + E.round + " gagnée par", "Round " + E.round + " won by")) + '</span><div class="who">' + esc(nameOf(champ)) + "</div>" +
+        screen(root, "end" + E.round + E.phase, CSS + '<span class="eyebrow">' + (last ? (E.rounds > 1 ? tr("Vainqueur(e) de la partie", "Game winner") : tr("Vainqueur(e)", "Winner")) : tr("Manche " + E.round + " gagnée par", "Round " + E.round + " won by")) + '</span><div class="who">' + esc(nameOf(champ)) + "</div>" +
           '<p class="dc-log">' + esc(E.log) + "</p>" + (E.rounds > 1 ? '<div class="field"><span class="eyebrow">' + tr("Scores", "Scores") + "</span>" + scoresHTML(E, nameOf) + "</div>" : "") + (last ? awardsHTML(E, nameOf) : "") +
           dock(last ? '<button class="btn acc" type="button" data-a>' + tr("Rejouer", "Play again") + '</button><button class="btn ghost" type="button" data-q>' + tr("Choisir un autre jeu", "Pick another game") + "</button>" : '<button class="btn acc" type="button" data-n>' + tr("Manche suivante", "Next round") + "</button>"), r => {
           const nx = r.querySelector("[data-n]"); if(nx) nx.addEventListener("click", () => { E.round++; newRound(E); viewer = humans().length === 1 ? humans()[0] : ""; step(); });

@@ -12,10 +12,10 @@ const SOFT = [
   "Ta dernière recherche Google gênante","Le pire job que tu as fait","Ton talent caché","La célébrité que tu détestes sans raison","Le film qui t'a le plus fait pleurer",
   "Ta pire cuite en une phrase","Ce que tu volerais dans un musée","Ta dernière grosse colère","L'excuse la plus nulle que tu as donnée pour annuler un plan",
   "Les 3 trucs que tu emporterais sur une île déserte","Le plat que tu ne peux pas avaler","Le pire conseil qu'on t'a donné","Le titre de ton autobiographie",
-  "Ton rêve le plus bizarre","Ta plus grosse bêtise d'enfant","Ce que tu fais quand tu es seul chez toi","La règle que tu enfreindrais si personne ne regardait",
+  "Ton rêve le plus bizarre","Ta plus grosse bêtise d'enfant","Ce que tu fais quand tu es seul(e) chez toi","La règle que tu enfreindrais si personne ne regardait",
   "Ce qui te rend jaloux","Le pire prénom que tu pourrais donner à un enfant","La phrase que tu dis tout le temps","Ton plus gros fail en public",
   "Ce que tu as déjà fait pour éviter quelqu'un","Le message que tu regrettes d'avoir envoyé","Ce que tu dirais au toi d'il y a 10 ans","Ta théorie du complot préférée",
-  "Le pire endroit où tu t'es endormi","Ce que tu caches dans ta chambre","Ta dernière dispute pour un truc débile","Le personnage de fiction dont tu étais amoureux",
+  "Le pire endroit où tu t'es endormi(e)","Ce que tu caches dans ta chambre","Ta dernière dispute pour un truc débile","Le personnage de fiction dont tu étais amoureux(se)",
   "La pire chose que tu as mangée","L'appli que tu ouvres le plus, et pourquoi","Un truc que tu n'as jamais avoué à {p}","Ce qui t'agace le plus chez les gens",
   "Ta pire tenue de soirée","Ce que tu ferais si tu étais invisible pendant une journée","Le pire surnom qu'on t'a donné","Ce que tu changerais chez {p}",
   "La pire chose que tu as dite à un prof","Ton premier crush en 3 mots","Ce que tu fais en douce au travail ou en cours",
@@ -138,7 +138,7 @@ const TW = [
   { id: "x2", name: tr("Points doublés", "Double points"), desc: tr("Tous les points de cette question comptent double.", "Every point on this question counts double.") },
   { id: "disg", name: tr("Déguisement", "Disguise"), desc: tr("Réponds comme le ferait le joueur indiqué. Chaque joueur berné rapporte 2 points.", "Answer the way the player shown would. Each player you fool earns 2 points.") },
   { id: "perfect", name: tr("Crime parfait", "Perfect crime"), desc: tr("Si personne ne trouve ta réponse, tu gagnes 3 points bonus.", "If nobody guesses your answer, you get 3 bonus points.") },
-  { id: "lone", name: tr("Flair solitaire", "Lone wolf"), desc: tr("Seul à trouver l'auteur ? 3 points au lieu d'un.", "The only one to find the author? 3 points instead of 1.") }
+  { id: "lone", name: tr("Flair solitaire", "Lone wolf"), desc: tr("Seul(e) à trouver l'auteur(e) ? 3 points au lieu d'un.", "The only one to find the author? 3 points instead of 1.") }
 ];
 const twBanner = t => SB.u.twistHTML(t, tr("Coup de théâtre", "Plot twist"));
 function pickTw(on, round, last){ return on && round > 1 ? SB.u.twist(TW, { last, rate: .4 }) : null; }
@@ -164,8 +164,8 @@ function qdGages(aid, voters, right){
 }
 function merge(base, d){ const o = {}; Object.keys(d).forEach(k => { o[k] = Object.assign({}, base[k] || {}); Object.keys(d[k]).forEach(id => { o[k][id] = (o[k][id] || 0) + d[k][id]; }); }); return o; }
 const FL = tr({
-  win: ["Vainqueur", "Le cerveau de la soirée", "Imbattable", "Le plus fin limier"],
-  det: ["Meilleur détective", "Œil de lynx", "Rien ne lui échappe"],
+  win: ["Vainqueur(e)", "Le cerveau de la soirée", "Imbattable", "Le plus fin limier"],
+  det: ["Meilleur(e) détective", "Œil de lynx", "Rien ne lui échappe"],
   fool: ["Le plus imprévisible", "Maître du bluff", "Insaisissable"],
   fnd: ["Le livre ouvert", "Trop facile à lire", "Cartes sur table"],
   bot: ["Chasseur d'imposteurs", "Détecteur de mensonges", "Pas dupe une seconde"]
@@ -183,7 +183,7 @@ function awards(ids, s, nameOf){
   const best = m => { const by = list => { let b = "", v = 0; list.forEach(id => { if((m[id] || 0) > v){ v = m[id]; b = id; } }); return b; }; const r = by(ids.filter(id => used.indexOf(id) < 0)) || by(ids); if(r) used.push(r); return r; };
   const d = best(s.det || {}); if(d) out.push([fl(FL.det, seed, 1), nameOf(d), tr(s.det[d] + " bonne" + (s.det[d] > 1 ? "s" : "") + " réponse" + (s.det[d] > 1 ? "s" : ""), PL(s.det[d], "", "", "correct guess", "correct guesses"))]);
   const f = best(s.fool || {}); if(f) out.push([fl(FL.fool, seed, 2), nameOf(f), tr("A berné les autres " + s.fool[f] + " fois", "Fooled people " + PL(s.fool[f], "", "", "time"))]);
-  const n = best(s.fnd || {}); if(n) out.push([fl(FL.fnd, seed, 3), nameOf(n), tr("Démasqué " + s.fnd[n] + " fois", "Unmasked " + PL(s.fnd[n], "", "", "time"))]);
+  const n = best(s.fnd || {}); if(n) out.push([fl(FL.fnd, seed, 3), nameOf(n), tr("Démasqué(e) " + s.fnd[n] + " fois", "Unmasked " + PL(s.fnd[n], "", "", "time"))]);
   const b = best(s.bot || {}); if(b) out.push([fl(FL.bot, seed, 4), nameOf(b), tr("A repéré " + s.bot[b] + " fausse" + (s.bot[b] > 1 ? "s" : "") + " réponse" + (s.bot[b] > 1 ? "s" : ""), "Spotted " + PL(s.bot[b], "", "", "fake answer"))]);
   return out;
 }
@@ -230,14 +230,14 @@ const DEF = {
   tag: tr("Une question, chacun répond en secret. Les réponses tombent sans les noms : à vous de trouver qui a écrit quoi.", "One question, everyone answers in secret. The answers drop without names: your job is to figure out who wrote what."),
   min: 3, max: 12,
   gages: [
-    { ev: "demasque", label: tr("Démasqué par la majorité", "Unmasked by most players"), kind: "boit", n: 1 },
-    { ev: "berne", label: tr("Auteur jamais démasqué", "Nobody guessed you"), kind: "distribue", n: 2 },
-    { ev: "piege", label: tr("Piégé par l'imposteur", "Fooled by the Impostor"), kind: "boit", n: 1 }
+    { ev: "demasque", label: tr("Démasqué(e) par la majorité", "Unmasked by most players"), kind: "boit", n: 1 },
+    { ev: "berne", label: tr("Auteur(e) jamais démasqué(e)", "Nobody guessed you"), kind: "distribue", n: 2 },
+    { ev: "piege", label: tr("Piégé(e) par l'imposteur", "Fooled by the Impostor"), kind: "boit", n: 1 }
   ],
   rules: tr([
     "Une question s'affiche. Chacun écrit sa réponse en secret sur son téléphone.",
-    "Les réponses apparaissent une par une, sans le nom. Tout le monde vote pour désigner l'auteur, y compris l'auteur lui-même, pour brouiller les pistes.",
-    "1 point si tu trouves l'auteur. L'auteur gagne 1 point par joueur qu'il a berné.",
+    "Les réponses apparaissent une par une, sans le nom. Tout le monde vote pour désigner l'auteur(e), y compris l'auteur(e) lui-même (elle-même), pour brouiller les pistes.",
+    "1 point si tu trouves l'auteur(e). L'auteur(e) gagne 1 point par joueur qu'il (elle) a berné.",
     "Coups de théâtre : cinq mots maximum, imposteur glissé par le jeu, déguisement, crime parfait, points doublés…",
     "Questions variées (complète, avoue, prédis, écris comme…), sans redites d'une soirée à l'autre. À la fin : podium et trophées."
   ], [
@@ -318,7 +318,7 @@ const DEF = {
         if(isBot) note = '<p class="sm">' + tr("Fausse réponse glissée par le jeu. ", "Fake answer slipped in by the game. ") + (right.length ? tr("Bien vu !", "Nice catch!") : tr("Tout le monde s'est fait avoir.", "Everyone fell for it.")) + "</p>";
         else if(wrong.length) note = '<p class="sm">' + tr(esc(nameOf(a.id)) + " a berné " + wrong.length + " joueur" + (wrong.length > 1 ? "s" : "") + " : ", esc(nameOf(a.id)) + " fooled " + PL(wrong.length, "", "", "player") + ": ") + esc(wrong.map(v => nameOf(v) + " (" + nameOf(votes[v]) + ")").join(", ")) + "</p>";
         if(tw === "perfect" && !isBot && !right.length && voters.length >= 2) note += '<p class="note-box">' + tr("Crime parfait ! " + esc(nameOf(a.id)) + " prend 3 points bonus.", "Perfect crime! " + esc(nameOf(a.id)) + " gets 3 bonus points.") + "</p>";
-        if(tw === "lone" && right.length === 1 && !isBot) note += '<p class="note-box">' + tr("Flair solitaire : " + esc(nameOf(right[0])) + " est le seul à avoir trouvé, +3 !", "Lone wolf: " + esc(nameOf(right[0])) + " was the only one to get it: +3!") + "</p>";
+        if(tw === "lone" && right.length === 1 && !isBot) note += '<p class="note-box">' + tr("Flair solitaire : " + esc(nameOf(right[0])) + " est le (la) seul(e) à avoir trouvé, +3 !", "Lone wolf: " + esc(nameOf(right[0])) + " was the only one to get it: +3!") + "</p>";
         const gk = Object.keys(gain).filter(id => gain[id]);
         screen(root, "r" + s.k + ctx.isHost, CSS + head + '<span class="eyebrow">' + tr("C'était", "It was") + '</span><div class="who">' + esc(nameOf(a.id)) + "</div>" +
           '<div class="field"><span class="eyebrow">' + tr("Ont trouvé", "Got it right") + '</span><div class="qd-ok">' + (right.length ? right.map(v => '<span class="chip ok">' + esc(nameOf(v)) + "</span>").join("") : '<span class="sm">' + tr("Personne !", "Nobody!") + "</span>") + "</div></div>" + note +
@@ -402,7 +402,7 @@ const DEF = {
           const a = ans[i];
           const head = '<span class="eyebrow">Question ' + round + " / " + rounds + "</span>" + twBanner(tw) + '<p class="qd-q">' + esc(qOf()) + '</p><span class="eyebrow">' + tr("Réponse ", "Answer ") + (i + 1) + " / " + ans.length + '</span><div class="card acc"><div class="qd-a">' + tr("« ", "“") + esc(a.t) + tr(" »", "”") + "</div></div>";
           if(ph === "guess"){
-            screen(root, "gu" + round + "-" + i, CSS + head + '<p class="howto">' + tr("Débattez : qui a écrit ça ?", "Debate: who wrote this?") + (fk ? tr(" Attention, l'une des réponses a été écrite par le jeu.", " Careful, one of the answers was written by the game.") : "") + tr(" Chacun annonce son suspect à voix haute, puis on révèle.", " Everyone names their suspect out loud, then reveal.") + "</p>" + dock('<button class="btn acc" type="button" data-n>' + tr("Révéler l'auteur", "Reveal the author") + "</button>"), r => {
+            screen(root, "gu" + round + "-" + i, CSS + head + '<p class="howto">' + tr("Débattez : qui a écrit ça ?", "Debate: who wrote this?") + (fk ? tr(" Attention, l'une des réponses a été écrite par le jeu.", " Careful, one of the answers was written by the game.") : "") + tr(" Chacun annonce son suspect à voix haute, puis on révèle.", " Everyone names their suspect out loud, then reveal.") + "</p>" + dock('<button class="btn acc" type="button" data-n>' + tr("Révéler l'auteur(e)", "Reveal the author") + "</button>"), r => {
               r.querySelector("[data-n]").addEventListener("click", () => { found = []; go("rev"); });
             });
           } else {

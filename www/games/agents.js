@@ -126,10 +126,10 @@ function duoEnd(G){
 
 /* ---------- Coups de théâtre (un tour au maximum, jamais au premier) ---------- */
 const TW = [
-  { id: "mime", name: tr("Indice mimé", "Mimed clue"), desc: tr("L'espion n'a pas le droit de parler : il donne seulement le nombre et mime son indice.", "The spymaster can't speak: they only give the number and mime the clue.") },
+  { id: "mime", name: tr("Indice mimé", "Mimed clue"), desc: tr("L'espion n'a pas le droit de parler : il (elle) donne seulement le nombre et mime son indice.", "The spymaster can't speak: they only give the number and mime the clue.") },
   { id: "chrono", name: tr("Chrono", "Clock"), desc: tr("Les agents ont 60 secondes pour tout le tour. Une fois le temps écoulé, seuls les votes déjà faits comptent.", "Agents have 60 seconds for the whole turn. When time's up, the votes cast so far count.") },
   { id: "flash", name: tr("Indice flash", "Flash clue"), desc: tr("L'espion a 30 secondes pour donner son indice, sinon son équipe passe son tour.", "The spymaster has 30 seconds to give a clue, or the team loses the turn.") },
-  { id: "muet", name: tr("Silence radio", "Radio silence"), desc: tr("Les agents ne parlent pas entre eux pendant ce tour : chacun vote seul.", "Agents can't talk to each other this turn: everyone votes alone.") }
+  { id: "muet", name: tr("Silence radio", "Radio silence"), desc: tr("Les agents ne parlent pas entre eux pendant ce tour : chacun vote seul(e).", "Agents can't talk to each other this turn: everyone votes alone.") }
 ];
 const TWL = TW.filter(t => t.id !== "chrono" && t.id !== "flash").concat([{ id: "dos", name: tr("Dos tourné", "Back turned"), desc: tr("L'espion donne son indice dos aux agents, sans les regarder.", "The spymaster gives the clue with their back to the agents.") }]);
 const nextTw = (on, n, last) => (on && n > 1 ? SB.u.twist(TW, { last, rate: .3 }) : null);

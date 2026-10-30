@@ -136,10 +136,10 @@ SB.register({
   rules: tr([
     "Avant chaque question, on voit le thème et le type. Chacun mise 1, 2 ou 3 points selon sa confiance.",
     "QCM et vrai ou faux : bonne réponse = + la mise, mauvaise = − la mise. S'il y a plusieurs bonnes réponses, la plus rapide gagne 1 point de plus.",
-    "Estimation : tape un nombre. Le plus proche gagne sa mise + 1 (sa mise + 2 s'il tombe pile). Le plus loin perd sa mise.",
+    "Estimation : tape un nombre. Le plus proche gagne sa mise + 1 (sa mise + 2 s'il (elle) tombe pile). Le plus loin perd sa mise.",
     "Coups de théâtre : question en or (tout compte double), chrono éclair (10 secondes), tapis (tout le monde mise 3).",
     "Thèmes : culture G, pop culture, histoire, géo, sport, bouffe, insolite, soirée, culture coquine (18+), enfants, et vos propres questions.",
-    "En équipes (2 à 4) : à chaque question, un capitaine différent mise et répond pour son équipe. Mettez-vous d'accord ! Les points vont à l'équipe, et une mauvaise réponse donne un gage à toute l'équipe."
+    "En équipes (2 à 4) : à chaque question, un(e) capitaine différent(e) mise et répond pour son équipe. Mettez-vous d'accord ! Les points vont à l'équipe, et une mauvaise réponse donne un gage à toute l'équipe."
   ], [
     "Before each question you see its theme and type. Everyone bets 1, 2 or 3 points depending on how sure they feel.",
     "Multiple choice and true or false: right = + your bet, wrong = − your bet. The fastest right answer gets 1 extra point.",
@@ -197,7 +197,7 @@ SB.register({
     if(s.phase === "teams"){
       const ok = SB.teams.ok(s.tm, s.tmn, ctx.ids);
       screen(root, "tm" + JSON.stringify(s.tm) + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Les équipes", "The teams") + "</span>" + SB.teams.grid(s.tm, s.tmn, ctx.ids, ctx.name, ctx.isHost) +
-        '<p class="sm" style="margin:0">' + (ctx.isHost ? tr("Touche un joueur pour le changer d'équipe. À chaque question, un capitaine différent répond pour son équipe : mettez-vous d'accord !", "Tap a player to switch their team. Each question, a different captain answers for the team: agree together!") : tr("L'hôte prépare les équipes. À chaque question, un capitaine différent répond pour son équipe.", "The host is setting the teams. Each question, a different captain answers for the team.")) + "</p>" +
+        '<p class="sm" style="margin:0">' + (ctx.isHost ? tr("Touche un joueur pour le changer d'équipe. À chaque question, un(e) capitaine différent(e) répond pour son équipe : mettez-vous d'accord !", "Tap a player to switch their team. Each question, a different captain answers for the team: agree together!") : tr("L'hôte prépare les équipes. À chaque question, un(e) capitaine différent(e) répond pour son équipe.", "The host is setting the teams. Each question, a different captain answers for the team.")) + "</p>" +
         (ctx.isHost ? '<button class="link" type="button" data-mix style="align-self:flex-start">' + tr("Mélanger les équipes", "Shuffle the teams") + "</button>" : "") +
         SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-go' + (ok ? "" : " disabled") + ">" + tr("C'est parti", "Let's go") + "</button>" : '<p class="wait">' + tr("En attente de l'hôte…", "Waiting for the host…") + "</p>"), r => {
         if(!ctx.isHost) return;
@@ -215,7 +215,7 @@ SB.register({
     if(s.phase === "bet"){
       const my = s.tw === "tapis" ? 3 : +sh.bet || 0, sec = Math.max(0, Math.ceil((s.startAt + BET_MS - ctx.now()) / 1000));
       screen(root, "bt" + s.k + my + isCap, H + '<p class="howto" style="text-align:center; margin:0">' + (s.tw === "tapis" ? tr("Tapis : tout le monde mise 3 !", "All in: everyone bets 3!") : tr("Combien tu mises sur cette question ?", "How much do you bet on this question?")) + "</p>" +
-        '<div class="qz-bets">' + [1, 2, 3].map(v => '<button type="button" data-bet="' + v + '" aria-pressed="' + (my === v) + '"' + (!isCap || s.tw === "tapis" ? " disabled" : "") + ">" + v + "<small>" + [tr("prudent", "careful"), tr("confiant", "confident"), tr("sûr de moi", "sure")][v - 1] + "</small></button>").join("") + "</div>" +
+        '<div class="qz-bets">' + [1, 2, 3].map(v => '<button type="button" data-bet="' + v + '" aria-pressed="' + (my === v) + '"' + (!isCap || s.tw === "tapis" ? " disabled" : "") + ">" + v + "<small>" + [tr("prudent(e)", "careful"), tr("confiant(e)", "confident"), tr("sûr(e) de moi", "sure")][v - 1] + "</small></button>").join("") + "</div>" +
         '<div class="qz-t" data-t>' + sec + "</div>" + SB.u.dock('<p class="wait" data-w></p>'), r => {
         r.querySelectorAll("[data-bet]").forEach(b => b.addEventListener("click", () => { buzz(10); ctx.send({ bet: +b.dataset.bet }); }));
       });
