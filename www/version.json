@@ -1,18 +1,15 @@
 {
- "version": "4.42.0",
+ "version": "4.43.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "En salon, chacun garde sa langue : un joueur en anglais voit tout en anglais (cartes, questions, mots, messages, fin de partie) même si l'hôte est en français, et inversement",
-  "Téléphone verrouillé ou appli en arrière-plan : le salon te garde ta place pendant 10 minutes (l'hôte aussi) au lieu de quelques secondes",
-  "Reconnexion : si l'appli se ferme ou que le réseau coupe, le bouton « Revenir dans le salon » sur l'accueil te remet dans la partie en cours, à ta place. L'hôte qui revient reprend la main",
-  "Listes anglaises réalignées dans plusieurs jeux (Agents secrets, Débat, 7 secondes, Je n'ai jamais, Punchline…) pour que tout le monde voie la même carte"
+  "Nouveau jeu : La Coupe du Roi (King's Cup). Chacun tire une carte, chaque valeur déclenche une règle : cascade, pour toi / pour moi, au sol, maître du pouce, je n'ai jamais, au ciel, partenaire, rimes, catégories, nouvelle règle, maître des questions. Le 4e roi boit la coupe. En salon ou sur un seul téléphone, avec ou sans alcool, option Hot & Hard"
  ],
  "files": {
   "core.js": {
-   "h": "ca44be33194de16e8b67610ad24d8ae6f6e6096e7e42b90bafb8332882aa48c3",
-   "s": 316290
+   "h": "2622f5000755d4ac35060ef4b724d1048040f497526793f6d15a73495be956c8",
+   "s": 316310
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -134,6 +131,10 @@
    "h": "8072a0f4fcdf6936d03fc88ed91770baa72a12421d8aaf1b1d4b0d4226ace0a7",
    "s": 67087
   },
+  "games/kingscup.js": {
+   "h": "4e0d86e139ac2f8ea9cda72b12ac8d3acaedd8c0e6fb8c94076ca66340522c4b",
+   "s": 28605
+  },
   "games/kink.js": {
    "h": "ab31c157ed8224e184bad7c762ec66d8225c4ac9efb71b8bdba352bcfeb5b2a6",
    "s": 28407
@@ -239,8 +240,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "2ddf9a98e86184b65955a5f6c24236d229a9af641e2d2f422bfe648a7a4fea1d",
-   "s": 64052
+   "h": "912afdb7f54a8963463dbee671a1d7c8b3287c4197c243273f9536e4f7e49aa2",
+   "s": 64094
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",

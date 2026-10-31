@@ -861,7 +861,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.42.0";
+const VERSION = "4.43.0";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -984,7 +984,7 @@ SB.bug = openBug;
 
 /* Familles de jeux pour les filtres de l'accueil et du salon */
 const CATS = { jamais: "votes", debat: "votes", dixmais: "votes", note10: "votes", photoroulette: "wip", kink: "votes", quiplus: "votes", tupref: "votes", redflag: "votes", purete: "votes", quiadit: "votes", priorites: "votes",
-  undercover: "bluff", killer: "bluff", loupgarou: "bluff", menteurs: "bluff", motsint: "cartes", defis: "action", dernierecarte: "cartes", punchline: "votes", actionverite: "action", grille: "cartes", agents: "cartes", rougenoir: "cartes", sept: "cartes", pmu: "cartes", blindtest: "quiz", quiz: "quiz", course: "action", puissance4: "cartes", bombe: "action" };
+  undercover: "bluff", killer: "bluff", loupgarou: "bluff", menteurs: "bluff", motsint: "cartes", defis: "action", dernierecarte: "cartes", punchline: "votes", actionverite: "action", grille: "cartes", agents: "cartes", rougenoir: "cartes", sept: "cartes", pmu: "cartes", blindtest: "quiz", quiz: "quiz", course: "action", puissance4: "cartes", bombe: "action", kingscup: "cartes" };
 const FILTERS = [["all", tr("Tous", "All")], ["votes", tr("Votes", "Voting")], ["bluff", "Bluff"], ["cartes", tr("Cartes", "Cards")], ["quiz", "Quiz"], ["action", "Action"], ["hot", "18+"], ["wip", tr("En travaux", "Beta")]];
 // Jeux « en travaux » : jouables pour les tester, mais rangés à part, seulement dans leur filtre.
 const isWip = d => CATS[d.id] === "wip";
