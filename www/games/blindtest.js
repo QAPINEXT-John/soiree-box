@@ -368,8 +368,8 @@ SB.register({
     const q = '<p class="howto" style="text-align:center; margin:0">' + (g2 === "titre" ? tr("Quel est le titre ?", "What's the title?") : s.film === "anime" ? tr("De quel anime ?", "Which anime?") : s.film ? tr("De quel film ?", "Which movie?") : tr("Qui chante ?", "Who's singing?")) + "</p>";
     if(s.phase === "load"){ screen(root, "ld" + s.k, head + disc(true) + '<p class="wait" style="text-align:center">' + tr("Chargement des extraits…", "Loading the clips…") + "</p>"); return; }
     if(s.phase === "err"){
-      screen(root, "er" + ctx.isHost, head + '<p class="note-box">' + esc(s.err) + "</p>" + SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : ""), r => {
-        const b = r.querySelector("[data-back]"); if(b) b.addEventListener("click", () => ctx.act(c => c.end({ title: tr("Blind test", "Blind Test"), lines: [] })));
+      screen(root, "er" + ctx.isHost, head + '<p class="note-box">' + esc(s.err ? LOAD_ERR : "") + "</p>" + SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : ""), r => {
+        const b = r.querySelector("[data-back]"); if(b) b.addEventListener("click", () => ctx.act(c => c.end({ title: SB.u.both("Blind test", "Blind Test"), lines: [] })));
       });
       return;
     }
@@ -437,11 +437,11 @@ SB.register({
         if(b) b.addEventListener("click", () => ctx.act(c => {
           if(c.s.tmn){
             const B = SB.teams.best(c.s.tp || {}, c.s.tmn);
-            c.end({ title: tr("Blind test : les ", "Blind Test: ") + B.win.map(SB.teams.name).join(" & "), lines: SB.teams.ids(c.s.tmn).sort((x, y) => ((c.s.tp || {})[y] || 0) - ((c.s.tp || {})[x] || 0)).map((t, i) => (i + 1) + ". " + SB.teams.name(t) + " · " + ((c.s.tp || {})[t] || 0) + " pts"), win: B.mx > 0 ? c.ids.filter(id => B.win.indexOf(c.s.tm[id]) >= 0) : [] });
+            const TNM = { fr: { a: "Rouges", b: "Bleus", c: "Verts", d: "Jaunes" }, en: { a: "Red", b: "Blue", c: "Green", d: "Yellow" } }; c.end({ title: SB.u.both("Blind test : les " + B.win.map(t => TNM.fr[t]).join(" & "), "Blind Test: " + B.win.map(t => TNM.en[t]).join(" & ")), lines: SB.teams.ids(c.s.tmn).sort((x, y) => ((c.s.tp || {})[y] || 0) - ((c.s.tp || {})[x] || 0)).map((t, i) => SB.u.both((i + 1) + ". " + TNM.fr[t] + " · " + ((c.s.tp || {})[t] || 0) + " pts", (i + 1) + ". " + TNM.en[t] + " · " + ((c.s.tp || {})[t] || 0) + " pts")), win: B.mx > 0 ? c.ids.filter(id => B.win.indexOf(c.s.tm[id]) >= 0) : [] });
             return;
           }
           const pp = c.s.pts || {}, o2 = c.ids.slice().sort((a, b2) => (pp[b2] || 0) - (pp[a] || 0)), mx = pp[o2[0]] || 0;
-          c.end({ title: tr("Blind test : ", "Blind Test: ") + c.name(o2[0]), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (pp[id] || 0) + " pts"), win: mx ? o2.filter(id => (pp[id] || 0) === mx) : [] });
+          c.end({ title: SB.u.both("Blind test : " + c.name(o2[0]), "Blind Test: " + c.name(o2[0])), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (pp[id] || 0) + " pts"), win: mx ? o2.filter(id => (pp[id] || 0) === mx) : [] });
         }));
       });
     }

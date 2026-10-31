@@ -111,10 +111,13 @@ const PACKS = [
 ];
 const SEEN = "killer:m";
 const listOf = (p, lg) => lg === "en" ? p.en : p.list;
+// Une mission = { fr, en } : chaque téléphone la lit dans sa langue (les deux listes sont alignées).
+const pairsOf = p => p.list.map((t, i) => SB.u.both(t, p.en[i] || t));
+const ML = m => SB.u.L(m);
 // Paquet de missions dans la langue lg (celle de l'hôte) : celles jamais vues sur ce téléphone sortent en premier.
-function deckFor(packs, lg){
-  const sel = A(packs), pool = PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(p => listOf(p, lg));
-  return SB.u.fresh(SEEN, pool.length ? pool : listOf(PACKS[0], lg));
+function deckFor(packs){
+  const sel = A(packs), pool = PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(pairsOf);
+  return SB.u.fresh(SEEN, pool.length ? pool : pairsOf(PACKS[0]));
 }
 function take(deck){ const m = deck.pop(); if(m) SB.u.saw(SEEN, m); return m; }
 function packButtons(sel){
@@ -151,7 +154,7 @@ function evOn(W, now){
 }
 function evView(e, nameOf){
   const t = SB.u.byTwist(EVENTS, e && e.id); if(!t) return null;
-  return { name: t.name, desc: t.desc.replace("{p}", e.p ? nameOf(e.p) : "").replace("{m}", e.m || "") };
+  return { name: t.name, desc: t.desc.replace("{p}", e.p ? nameOf(e.p) : "").replace("{m}", ML(e.m)) };
 }
 function startEvent(W, t, fresh, now){
   const e = { id: t.id, at: now, until: t.ms ? now + t.ms : 0 };
@@ -203,7 +206,7 @@ function eliminate(W, victim, by, how, fresh, now, x){
 function klGages(W, n0){
   const out = [];
   A(W.log).slice(n0).forEach(x => {
-    out.push(x.how === "u" ? { id: x.on, ev: "mort", why: tr("Démasqué(e) par ta cible", "Unmasked by your target") } : { id: x.on, ev: "mort" });
+    out.push(x.how === "u" ? { id: x.on, ev: "mort", why: SB.u.both("Démasqué(e) par ta cible", "Unmasked by your target") } : { id: x.on, ev: "mort" });
     out.push({ id: x.by, ev: "tue" });
   });
   return out;
@@ -214,7 +217,7 @@ function work(s){
   return o;
 }
 function freshFrom(ctx){
-  return () => { let deck = A(ctx.priv().deck).slice(); if(!deck.length) deck = deckFor(ctx.opts.packs, ctx.s.lg || "fr"); const m = take(deck); ctx.setPriv({ deck }); return m; };
+  return () => { let deck = A(ctx.priv().deck).slice(); if(!deck.length) deck = deckFor(ctx.opts.packs); const m = take(deck); ctx.setPriv({ deck }); return m; };
 }
 function score(W, id){ return (W.pts || {})[id] != null ? W.pts[id] : (W.kills || {})[id] || 0; }
 function ranking(ids, W){ return ids.slice().sort((a, b) => (score(W, b) - score(W, a)) || (((W.kills || {})[b] || 0) - ((W.kills || {})[a] || 0))); }
@@ -222,7 +225,7 @@ function ptsTxt(n, lg){ return T(lg, n + " pt" + (n > 1 ? "s" : ""), n + (n === 
 function graveHTML(log, nameOf){
   const l = A(log).slice().reverse();
   if(!l.length) return '<p class="sm">' + tr("Personne n'est encore tombé.", "Nobody has fallen yet.") + "</p>";
-  return '<ul class="list">' + l.map(x => '<li><span class="t">' + esc(nameOf(x.on)) + '</span><span class="by">' + (x.how === "u" ? tr("Démasqué(e) par ", "Unmasked by ") + esc(nameOf(x.by)) : tr("Éliminé(e) par ", "Taken out by ") + esc(nameOf(x.by)) + (x.m ? tr(" · “" + esc(x.m) + "”", " · “" + esc(x.m) + "”") : "")) + (x.b === "p" ? tr(" · prime encaissée", " · bounty claimed") : x.x ? tr(" · contrat express", " · express contract") : "") + "</span></li>").join("") + "</ul>";
+  return '<ul class="list">' + l.map(x => '<li><span class="t">' + esc(nameOf(x.on)) + '</span><span class="by">' + (x.how === "u" ? tr("Démasqué(e) par ", "Unmasked by ") + esc(nameOf(x.by)) : tr("Éliminé(e) par ", "Taken out by ") + esc(nameOf(x.by)) + (x.m ? tr(" · “" + esc(ML(x.m)) + "”", " · “" + esc(ML(x.m)) + "”") : "")) + (x.b === "p" ? tr(" · prime encaissée", " · bounty claimed") : x.x ? tr(" · contrat express", " · express contract") : "") + "</span></li>").join("") + "</ul>";
 }
 /* ----- Trophées de fin : tirés des stats de la partie, formulés différemment à chaque fois ----- */
 function seedOf(str){ let h = 7; String(str).split("").forEach(ch => { h = (h * 31 + ch.charCodeAt(0)) >>> 0; }); return h; }
@@ -288,8 +291,8 @@ const DEF = {
   ],
   start(ctx, o){
     if(!A(o.packs).length) throw new Error(tr("Choisis au moins un paquet de missions.", "Pick at least one mission pack."));
-    const lg = SB.lang(), order = shuffle(ctx.ids), tgt = {}, mis = {}, since = {}, deck = deckFor(o.packs, lg), now = ctx.now();
-    order.forEach((id, i) => { tgt[id] = order[(i + 1) % order.length]; mis[id] = take(deck) || listOf(PACKS[0], lg)[0]; since[id] = now; });
+    const lg = SB.lang(), order = shuffle(ctx.ids), tgt = {}, mis = {}, since = {}, deck = deckFor(o.packs), now = ctx.now();
+    order.forEach((id, i) => { tgt[id] = order[(i + 1) % order.length]; mis[id] = take(deck) || pairsOf(PACKS[0])[0]; since[id] = now; });
     ctx.setPriv({ deck });
     return { phase: "play", lg, t0: now, jk: o.jokers !== false, evs: o.events !== false, alive: ctx.ids.slice(), tgt, mis, since, kills: {}, pts: {}, log: [], claims: {}, used: {}, note: {}, seen: {}, jok: {}, acc: {}, nope: {}, ev: null, evLast: "", lastEv: 0, fast: null, win: "" };
   },
@@ -367,9 +370,12 @@ const DEF = {
         dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
-          const lg = c.s.lg || "fr", sep = T(lg, " : ", ": ");
-          const W2 = work(c.s), o2 = ranking(c.ids, W2), sd = seedOf(c.g.gid || "k"), t2 = winTitle(W2, c.ids, c.name, sd, lg);
-          c.end({ title: "Killer" + sep + t2.t, win: [t2.w], lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + ptsTxt(score(W2, id), lg)).concat(awards(W2, c.ids, c.name, sd, lg).slice(0, 2).map(a => a[0] + sep + a[1])) });
+          // Titre et lignes de fin dans les deux langues : chaque téléphone affiche la sienne.
+          const W2 = work(c.s), o2 = ranking(c.ids, W2), sd = seedOf(c.g.gid || "k");
+          const inL = lg => { const sep = T(lg, " : ", ": "), t2 = winTitle(W2, c.ids, c.name, sd, lg);
+            return { w: t2.w, title: "Killer" + sep + t2.t, lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + ptsTxt(score(W2, id), lg)).concat(awards(W2, c.ids, c.name, sd, lg).slice(0, 2).map(a => a[0] + sep + a[1])) }; };
+          const F = inL("fr"), En = inL("en");
+          c.end({ title: SB.u.both(F.title, En.title), win: [F.w], lines: F.lines.map((l, i) => SB.u.both(l, En.lines[i] || l)) });
         }));
       });
       return;
@@ -389,14 +395,14 @@ const DEF = {
         '<p class="sm">' + tr("Tu peux maintenant suivre toutes les chasses. Chut, ne dis rien !", "You can now follow every hunt. Shh, don't say a word!") + "</p></div>" +
         '<div class="field"><span class="eyebrow">' + tr("Qui chasse qui", "Who's hunting whom") + '</span><ul class="kl-chain">' + alive.map(h => "<li><span>" + esc(nameOf(h)) + "</span><span>→ " + esc(nameOf(tgt[h])) + "</span></li>").join("") + "</ul></div>";
     } else if(onMe){
-      const om = esc(onMe.x && W.ev && W.ev.m ? W.ev.m : mis[onMe.by]);
+      const om = esc(ML(onMe.x && W.ev && W.ev.m ? W.ev.m : mis[onMe.by]));
       html += '<div class="pass" style="min-height:0"><span class="eyebrow">' + tr("Alerte", "Alert") + '</span><div class="who">' + esc(nameOf(onMe.by)) + "</div><p>" + tr("dit avoir réussi " + (onMe.x ? "le contrat express" : "sa mission") + " sur toi :", "says they pulled off " + (onMe.x ? "the express contract" : "their mission") + " on you:") + '</p></div><div class="card acc"><div class="kl-m">' + tr("“" + om + "”", "“" + om + "”") + "</div></div>";
       dk = dock('<div class="row"><button class="btn bad" type="button" data-yes>' + tr("Oui, je suis mort(e)", "Yes, I'm dead") + '</button><button class="btn ghost" type="button" data-no>' + tr("Non, c'est faux", "No, that's not true") + "</button></div>");
     } else {
       html += '<span class="eyebrow">' + tr(alive.length + " joueurs encore en vie", alive.length + (alive.length === 1 ? " player still alive" : " players still alive")) + " · " + ptsTxt(score(W, me)) + "</span>" + banner + (note ? '<p class="note-box">' + esc(noteTxt(note)) + "</p>" : "") +
         '<div class="card acc"><span class="eyebrow">' + tr("Ta cible", "Your target") + "</span>" +
-        (UI.open ? '<div class="who">' + esc(nameOf(myT)) + '</div><span class="eyebrow">' + tr("Ta mission", "Your mission") + '</span><div class="kl-m">' + esc(mis[me]) + "</div>" +
-          (express ? '<div class="kl-x"><span class="eyebrow">' + tr("Ou le contrat express (+1 point)", "Or the express contract (+1 point)") + '</span><div class="kl-m">' + esc(W.ev.m) + "</div></div>" : "") : '<p class="kl-hid">' + tr("Cache ton écran, puis touche « Voir ma mission ».", "Hide your screen, then tap “Show my mission”.") + "</p>") +
+        (UI.open ? '<div class="who">' + esc(nameOf(myT)) + '</div><span class="eyebrow">' + tr("Ta mission", "Your mission") + '</span><div class="kl-m">' + esc(ML(mis[me])) + "</div>" +
+          (express ? '<div class="kl-x"><span class="eyebrow">' + tr("Ou le contrat express (+1 point)", "Or the express contract (+1 point)") + '</span><div class="kl-m">' + esc(ML(W.ev.m)) + "</div></div>" : "") : '<p class="kl-hid">' + tr("Cache ton écran, puis touche « Voir ma mission ».", "Hide your screen, then tap “Show my mission”.") + "</p>") +
         '<button class="btn ghost" type="button" data-eye>' + (UI.open ? tr("Cacher", "Hide") : tr("Voir ma mission", "Show my mission")) + "</button>" +
         (UI.open && W.jk && !W.jok[me] && !myClaim ? '<button class="link" type="button" data-jok style="align-self:center">' + tr("Joker : changer de mission", "Joker: swap my mission") + "</button>" : "") + "</div>";
       if(UI.acc){
@@ -447,7 +453,7 @@ const DEF = {
       const gk = "kl" + Math.random().toString(36).slice(2, 8);
       const gage = n0 => { if(api.gage && W.log.length > n0) api.gage(klGages(W, n0).map(e => Object.assign({}, e, { id: nameOf(e.id) })), gk + ":" + W.log.length); };
       let W = null, deck = [], i = 0, cur = "", open = false, last = null, at = "", arg0 = "", news = null, seed = 0;
-      const fresh = () => { if(!deck.length) deck = deckFor(SB.okPacks(sel, PACKS), SB.lang()); return take(deck); };
+      const fresh = () => { if(!deck.length) deck = deckFor(SB.okPacks(sel, PACKS)); return take(deck); };
       const toggle = (k, v, label, desc) => '<button type="button" class="pack" data-t="' + k + '" aria-pressed="' + v + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(label) + '</span><span class="ds">' + esc(desc) + "</span></span></button>";
       const evNow = () => { const on = evOn(W, Date.now()); return { on, v: on ? evView(W.ev, nameOf) : null }; };
       const bannerL = () => { const e = evNow(); return e.v ? SB.u.twistHTML(e.v) + (W.ev.until ? '<p class="kl-cd" data-cd>' + esc(cdText(W, Date.now())) + "</p>" : "") : ""; };
@@ -469,7 +475,7 @@ const DEF = {
             r.querySelectorAll("[data-t]").forEach(b => b.addEventListener("click", () => { if(b.dataset.t === "jk"){ jk = !jk; persist({ klJk: jk }); } else { evs = !evs; persist({ klEv: evs }); } go("setup"); }));
             r.querySelector("[data-go]").addEventListener("click", () => {
               if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet", "Pick at least one pack")); return; }
-              deck = deckFor(SB.okPacks(sel, PACKS), SB.lang()); const order = shuffle(ids), tgt = {}, mis = {}, since = {}, now = Date.now();
+              deck = deckFor(SB.okPacks(sel, PACKS)); const order = shuffle(ids), tgt = {}, mis = {}, since = {}, now = Date.now();
               order.forEach((id, x) => { tgt[id] = order[(x + 1) % order.length]; mis[id] = fresh(); since[id] = now; });
               W = { phase: "play", win: "", t0: now, jk, evs, alive: ids.slice(), tgt, mis, since, kills: {}, pts: {}, log: [], claims: {}, used: {}, note: {}, jok: {}, acc: {}, nope: {}, ev: null, evLast: "", lastEv: 0, fast: null };
               seed = seedOf(String(now)); news = null; i = 0; go("pass");
@@ -505,7 +511,7 @@ const DEF = {
           screen(root, "me" + cur + open + (arg || "") + e.on + W.jok[cur] + W.mis[cur], CSS + '<span class="eyebrow">' + esc(nameOf(cur)) + " · " + ptsTxt(score(W, cur)) + "</span>" + bannerL() +
             (open && nt ? '<p class="note-box">' + esc(noteTxt(nt)) + "</p>" : "") +
             (open ? '<div class="card acc"><span class="eyebrow">' + tr("Ta cible", "Your target") + '</span><div class="who">' + esc(nameOf(t)) + '</div><span class="eyebrow">' + tr("Ta mission", "Your mission") + '</span><div class="kl-m">' + esc(W.mis[cur]) + "</div>" +
-                (express ? '<div class="kl-x"><span class="eyebrow">' + tr("Ou le contrat express (+1 point)", "Or the express contract (+1 point)") + '</span><div class="kl-m">' + esc(W.ev.m) + "</div></div>" : "") +
+                (express ? '<div class="kl-x"><span class="eyebrow">' + tr("Ou le contrat express (+1 point)", "Or the express contract (+1 point)") + '</span><div class="kl-m">' + esc(ML(W.ev.m)) + "</div></div>" : "") +
                 (W.jk && !W.jok[cur] ? '<button class="link" type="button" data-jok style="align-self:center">' + tr("Joker : changer de mission", "Joker: swap my mission") + "</button>" : "") + "</div>"
               : '<div class="pass" style="min-height:24vh"><p>' + tr("C'est bien toi, " + esc(nameOf(cur)) + " ? Cache l'écran avant d'ouvrir.", "Is that really you, " + esc(nameOf(cur)) + "? Hide the screen before opening.") + "</p></div>") +
             (arg === "acc" ? '<div class="field"><span class="eyebrow">' + tr("Qui te chasse ? Une seule chance", "Who's hunting you? One shot only") + '</span><div class="choices">' + W.alive.filter(id => id !== cur).map(id => '<button type="button" class="opt" data-w="' + id + '">' + esc(nameOf(id)) + "</button>").join("") + "</div></div>" : "") +
@@ -548,7 +554,7 @@ const DEF = {
           const heir = L2.how === "k" && !(news && RETARGET[news.id]) ? L2.by : "";
           const lg = W.log[W.log.length - 1] || {};
           screen(root, "nw" + W.log.length, '<div class="pass"><span class="eyebrow">' + (L2.how === "u" ? tr("Démasqué(e) !", "Unmasked!") : tr("Éliminé(e) !", "Taken out!")) + '</span><div class="who">' + esc(nameOf(L2.on)) + "</div><p>" +
-            (L2.how === "u" ? tr(esc(nameOf(L2.by)) + " a démasqué son (sa) chasseur(se).", esc(nameOf(L2.by)) + " unmasked their hunter.") : tr("par " + esc(nameOf(L2.by)) + ", avec la mission “" + esc(L2.m) + "”.", "by " + esc(nameOf(L2.by)) + ", with the mission “" + esc(L2.m) + "”.")) + "</p>" +
+            (L2.how === "u" ? tr(esc(nameOf(L2.by)) + " a démasqué son (sa) chasseur(se).", esc(nameOf(L2.by)) + " unmasked their hunter.") : tr("par " + esc(nameOf(L2.by)) + ", avec la mission “" + esc(ML(L2.m)) + "”.", "by " + esc(nameOf(L2.by)) + ", with the mission “" + esc(ML(L2.m)) + "”.")) + "</p>" +
             (lg.p > 1 ? '<p class="sm">' + tr(esc(nameOf(L2.by)) + " marque " + ptsTxt(lg.p) + (lg.b === "p" ? ", prime comprise" : "") + ".", esc(nameOf(L2.by)) + " scores " + ptsTxt(lg.p) + (lg.b === "p" ? ", bounty included" : "") + ".") + "</p>" : "") + "</div>" +
             dock(over ? '<button class="btn acc" type="button" data-end>' + tr("Voir le vainqueur", "See the winner") + "</button>"
               : heir ? '<button class="btn acc" type="button" data-heir>' + esc(nameOf(heir)) + tr(" : voir ma nouvelle cible", ": see my new target") + "</button>" : '<button class="btn acc" type="button" data-n>' + tr("Continuer", "Continue") + "</button>"), r => {

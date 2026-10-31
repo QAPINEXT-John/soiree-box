@@ -1253,10 +1253,12 @@ function levelFor(E){
   const total = E.laps * E.order.length, done = (E.lap - 1) * E.order.length + E.i, k = Math.min(L.length - 1, Math.floor(done / total * L.length));
   return Math.random() < .2 && k > 0 ? L[k - 1] : L[k];
 }
+// Les cartes FR et EN sont alignées : la carte tirée est rangée en { fr, en } (chaque téléphone la lit dans sa langue).
 function draw(E, kind, lvl){
-  const D = deckOf(E.lg), key = kind + ":" + lvl, src = (kind === "v" ? D.VT : D.AC)[lvl] || [];
+  const key = kind + ":" + lvl, src = (kind === "v" ? DECK.fr.VT : DECK.fr.AC)[lvl] || [], srcE = (kind === "v" ? DECK.en.VT : DECK.en.AC)[lvl] || [];
   let d = A(E.dk[key]).slice(); if(!d.length) d = SB.u.fresh(SEEN + key, src);
-  const c = d.pop(); E.dk[key] = d; SB.u.saw(SEEN + key, c); return c || "";
+  const c = d.pop(); E.dk[key] = d; SB.u.saw(SEEN + key, c); if(!c) return "";
+  const i = src.indexOf(c); return SB.u.both(c, srcE[i] || c);
 }
 function fillCard(E, t){
   const others = shuffle(E.order.filter(id => id !== E.cur)), a = others[0] || "", b = others[1] || "";
@@ -1286,17 +1288,18 @@ function pen(E, kind){ return (kind === "a" ? 3 : 2) * (E.tw === "x2" ? 2 : 1); 
 // Texte de la sanction, dans la langue de la partie (E.lg). Le nombre de gorgées est réaffiché dans la langue de chaque téléphone (sipsText).
 function sipsText(n){ return tr(n + " gorgée" + (n > 1 ? "s" : ""), n === 1 ? "1 sip" : n + " sips"); }
 function penText(E, n){
-  if(E.lg === "en") return E.mode === "drink" ? (n === 1 ? "1 sip" : n + " sips") : "forfeit: " + pick(GAGES_EN) + (n >= 4 ? " (plus a second one picked by the group)" : "");
-  return E.mode === "drink" ? n + " gorgée" + (n > 1 ? "s" : "") : "gage : " + pick(GAGES) + (n >= 4 ? " (et un deuxième au choix du groupe)" : "");
+  if(E.mode === "drink") return SB.u.both(n + " gorgée" + (n > 1 ? "s" : ""), n === 1 ? "1 sip" : n + " sips");
+  const i = Math.floor(Math.random() * GAGES.length);
+  return SB.u.both("gage : " + GAGES[i] + (n >= 4 ? " (et un deuxième au choix du groupe)" : ""), "forfeit: " + (GAGES_EN[i] || GAGES[i]) + (n >= 4 ? " (plus a second one picked by the group)" : ""));
 }
 // Résultat du tour : "ok" (fait / répondu), "jk" (joker), "no" (refus).
 function settle(E, res, live){
   const id = E.cur, m = E.tw === "x2" ? 2 : 1;
-  if(res === "jk" && (E.jk[id] || 0) > 0 && E.tw !== "nojk"){ E.jk[id]--; E.jok[id] = (E.jok[id] || 0) + 1; E.last = { who: id, kind: E.kind, res: "jk", txt: "joker utilisé" }; }
+  if(res === "jk" && (E.jk[id] || 0) > 0 && E.tw !== "nojk"){ E.jk[id]--; E.jok[id] = (E.jok[id] || 0) + 1; E.last = { who: id, kind: E.kind, res: "jk", txt: SB.u.both("joker utilisé", "joker used") }; }
   else if(res === "ok"){
     const p = ((E.kind === "a" ? 2 : 1) + (E.rand ? 1 : 0)) * m;
     E.pts[id] = (E.pts[id] || 0) + p; (E.kind === "a" ? E.did : E.told)[id] = ((E.kind === "a" ? E.did : E.told)[id] || 0) + 1;
-    E.last = { who: id, kind: E.kind, res: "ok", txt: "+" + p + " point" + (p > 1 ? "s" : ""), x2: m > 1 ? 1 : 0 };
+    E.last = { who: id, kind: E.kind, res: "ok", txt: SB.u.both("+" + p + " point" + (p > 1 ? "s" : ""), "+" + p + " point" + (p > 1 ? "s" : "")), x2: m > 1 ? 1 : 0 };
   } else {
     const n = pen(E, E.kind);
     E.ref[id] = (E.ref[id] || 0) + 1; if(E.mode === "drink") E.sips[id] = (E.sips[id] || 0) + n;
@@ -1314,7 +1317,7 @@ function dareGage(E, id){ const l = E.last; return E.mode === "drink" && l && l.
 
 /* ---------- Affichage ---------- */
 function fillHTML(t, E, nameOf){
-  const en = E.lg === "en";
+  const en = SB.lang() === "en"; t = SB.u.L(t);
   return esc(t).replace(/\{A\}/g, '<b class="av-n">' + esc(E.ca ? nameOf(E.ca) : en ? "someone" : "quelqu'un") + "</b>").replace(/\{B\}/g, '<b class="av-n">' + esc(E.cb ? nameOf(E.cb) : en ? "someone else" : "quelqu'un d'autre") + "</b>");
 }
 const CSS = '<style>' +
@@ -1332,20 +1335,21 @@ const CSS = '<style>' +
   '.av-row{display:flex; justify-content:space-between; gap:8px; font-size:13px; color:var(--muted); font-weight:700}' +
   '</style>';
 const FL = {
-  win: [tr("Le plus téméraire", "Most fearless"), tr("Sans peur et sans reproche", "Fearless and flawless"), tr("Champion(ne) de la soirée", "Champion of the night"), tr("Rien ne lui fait peur", "Scared of nothing")],
-  did: [tr("Trompe-la-mort", "Daredevil"), tr("Le plus courageux(se)", "The bravest"), tr("Toujours partant(e)", "Always up for it")],
-  told: [tr("Livre ouvert", "Open book"), tr("Zéro secret", "Zero secrets"), tr("Confessions intimes", "True confessions")],
-  ref: [tr("Poule mouillée", "Scaredy-cat"), tr("Champion(ne) du refus", "Refusal champion"), tr("Le plus prudent(e)", "Plays it safe")],
-  sips: [tr("Gosier en pente", "Hollow legs"), tr("Le plus assoiffé(e)", "The thirstiest"), tr("Abonné(e) aux gorgées", "Sip subscriber")]
+  win: [["Le plus téméraire", "Most fearless"], ["Sans peur et sans reproche", "Fearless and flawless"], ["Champion(ne) de la soirée", "Champion of the night"], ["Rien ne lui fait peur", "Scared of nothing"]],
+  did: [["Trompe-la-mort", "Daredevil"], ["Le plus courageux(se)", "The bravest"], ["Toujours partant(e)", "Always up for it"]],
+  told: [["Livre ouvert", "Open book"], ["Zéro secret", "Zero secrets"], ["Confessions intimes", "True confessions"]],
+  ref: [["Poule mouillée", "Scaredy-cat"], ["Champion(ne) du refus", "Refusal champion"], ["Le plus prudent(e)", "Plays it safe"]],
+  sips: [["Gosier en pente", "Hollow legs"], ["Le plus assoiffé(e)", "The thirstiest"], ["Abonné(e) aux gorgées", "Sip subscriber"]]
 };
-const fl = (l, s, k) => l[((s || 0) + k) % l.length];
-function awards(E, nameOf){
-  const out = [], used = [];
+// Titres en [fr, en] : t choisit la langue (tr par défaut, ou une langue fixe pour le résumé de fin rangé en { fr, en }).
+const fl = (l, s, k, t) => { const x = l[((s || 0) + k) % l.length]; return (t || tr)(x[0], x[1]); };
+function awards(E, nameOf, t){
+  t = t || tr; const out = [], used = [];
   const top = (m, min, label, one, many) => { let b = "", v = min - 1; Object.keys(m || {}).forEach(id => { if((m[id] || 0) > v && used.indexOf(id) < 0){ v = m[id]; b = id; } }); if(b){ used.push(b); out.push([label, nameOf(b), m[b] + " " + (m[b] > 1 ? many : one)]); } };
-  top(E.did, 2, fl(FL.did, E.fl, 1), tr("action", "dare"), tr("actions", "dares"));
-  top(E.told, 2, fl(FL.told, E.fl, 2), tr("vérité", "truth"), tr("vérités", "truths"));
-  top(E.ref, 2, fl(FL.ref, E.fl, 3), tr("refus", "refusal"), tr("refus", "refusals"));
-  if(E.mode === "drink") top(E.sips, 4, fl(FL.sips, E.fl, 4), tr("gorgée", "sip"), tr("gorgées", "sips"));
+  top(E.did, 2, fl(FL.did, E.fl, 1, t), t("action", "dare"), t("actions", "dares"));
+  top(E.told, 2, fl(FL.told, E.fl, 2, t), t("vérité", "truth"), t("vérités", "truths"));
+  top(E.ref, 2, fl(FL.ref, E.fl, 3, t), t("refus", "refusal"), t("refus", "refusals"));
+  if(E.mode === "drink") top(E.sips, 4, fl(FL.sips, E.fl, 4, t), t("gorgée", "sip"), t("gorgées", "sips"));
   return out;
 }
 function awardsHTML(aw){ return aw.length ? '<ul class="list">' + aw.map(a => '<li><span class="t">' + esc(a[1]) + '</span><span class="by">' + esc(a[0]) + " · " + esc(a[2]) + "</span></li>").join("") + "</ul>" : ""; }
@@ -1355,8 +1359,8 @@ function bars(E, nameOf){
 }
 function lastHTML(E, nameOf){
   const l = E.last; if(!l || !l.who) return "";
-  const sips = l.res === "no" && E.mode === "drink" && parseInt(l.txt, 10) > 0 ? sipsText(parseInt(l.txt, 10)) : l.txt;
-  const what = l.res === "no" ? '<span class="no">' + (l.kind === "a" ? tr("a refusé l'action", "chickened out of the dare") : tr("a refusé la vérité", "dodged the truth")) + "</span> · " + esc(sips) : l.res === "jk" ? tr("a utilisé un joker", "used a joker") : '<span class="ok">' + (l.kind === "a" ? tr("a relevé le défi", "completed the dare") : tr("a dit la vérité", "told the truth")) + "</span> · " + esc(l.txt);
+  const lt = SB.u.L(l.txt), sips = l.res === "no" && E.mode === "drink" && parseInt(lt, 10) > 0 ? sipsText(parseInt(lt, 10)) : lt;
+  const what = l.res === "no" ? '<span class="no">' + (l.kind === "a" ? tr("a refusé l'action", "chickened out of the dare") : tr("a refusé la vérité", "dodged the truth")) + "</span> · " + esc(sips) : l.res === "jk" ? tr("a utilisé un joker", "used a joker") : '<span class="ok">' + (l.kind === "a" ? tr("a relevé le défi", "completed the dare") : tr("a dit la vérité", "told the truth")) + "</span> · " + esc(lt);
   return '<div class="av-last"><b>' + esc(nameOf(l.who)) + "</b> " + what + "</div>";
 }
 function headHTML(E, nameOf){
@@ -1450,7 +1454,10 @@ const DEF = {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const F = fromState(c.s, {}), o2 = ranking(F), mx = F.pts[o2[0]] || 0;
-          c.end({ title: tr("Action ou vérité · " + c.name(o2[0]) + " gagne", "Truth or Dare · " + c.name(o2[0]) + " wins"), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (F.pts[id] || 0) + tr(" pts", (F.pts[id] || 0) === 1 ? " pt" : " pts")).concat(awards(F, c.name).slice(0, 2).map(a => a[0] + tr(" : ", ": ") + a[1])),
+          const Ff = (f, e) => f, Fe = (f, e) => e, ptsF = n => n + (n === 1 ? " pt" : " pts");
+          const lF = o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + ptsF(F.pts[id] || 0)).concat(awards(F, c.name, Ff).slice(0, 2).map(a => a[0] + " : " + a[1]));
+          const lE = o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + ptsF(F.pts[id] || 0)).concat(awards(F, c.name, Fe).slice(0, 2).map(a => a[0] + ": " + a[1]));
+          c.end({ title: SB.u.both("Action ou vérité · " + c.name(o2[0]) + " gagne", "Truth or Dare · " + c.name(o2[0]) + " wins"), lines: lF.map((l, i) => SB.u.both(l, lE[i] || l)),
             win: mx ? o2.filter(id => (F.pts[id] || 0) === mx) : [] });
         }));
       });

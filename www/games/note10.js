@@ -442,14 +442,23 @@ function points(n, g, tw){
   return d === 0 ? 3 : d === 1 ? 2 : d === 2 ? 1 : d === 3 && tw === "large" ? 1 : 0;
 }
 // Note inversée : on échange les deux bouts de l'échelle.
-function view(c, tw){ c = A(c); return tw === "inv" ? [c[0], c[2], c[1]] : c; }
+function view(c, tw){ c = A(c).map(x => L(x)); return tw === "inv" ? [c[0], c[2], c[1]] : c; }
 const VERDICTS = { 6: [tr("Jackpot !", "Jackpot!"), tr("Double ou rien… et c'est double.", "Double or nothing… and it's double.")], 3: [tr("Pile !", "Spot on!"), tr("Vous êtes sur la même longueur d'onde.", "You're on the same wavelength.")], 2: [tr("Presque !", "So close!"), tr("À une note près. Très belle lecture.", "Off by one. Great read.")], 1: [tr("Pas loin", "Not far"), tr("Pas pile, mais ça compte quand même.", "Not spot on, but it still counts.")], 0: [tr("Raté", "Missed"), tr("Les indices n'ont pas parlé à tout le monde.", "The clues didn't click for everyone.")] };
+// Langue forcée pour les textes que l'hôte range dans l'état (fin de partie) : on les calcule en français puis en anglais.
+let FORCE = null;
+const t2 = (fr, en) => (FORCE === "fr" ? fr : FORCE === "en" ? en : tr(fr, en));
+const pl2 = (n, w) => (FORCE ? n + " " + w + (n === 1 ? "" : "s") : SB.u.plural2(n, w, null, w));
+const inBoth = fn => { FORCE = "fr"; let f; try{ f = fn(); } finally{ FORCE = null; } FORCE = "en"; let e; try{ e = fn(); } finally{ FORCE = null; } return { fr: f, en: e }; };
+const L = SB.u.L, both = SB.u.both;
+// Carte d'une catégorie en réseau : chaque élément en { fr, en } (listes FR/EN alignées). Les catégories perso restent telles quelles.
+const BI = (() => { const m = {}; ["classique", "geek", "absurde", "adulte"].forEach(k => DECK.fr[k].forEach((c, i) => { const e = DECK.en[k][i] || c; m[c[0]] = [both(c[0], e[0]), both(c[1], e[1]), both(c[2], e[2])]; })); return m; })();
+const biCard = c => (c && BI[c[0]] ? BI[c[0]].map(x => Object.assign({}, x)) : c);
 function mention(pct){
-  if(pct >= .9) return [tr("Félicitations du jury", "Top of the class"), tr("Vous partagez visiblement un seul cerveau.", "You clearly share a single brain.")];
-  if(pct >= .7) return [tr("Très bien", "Very good"), tr("Vous vous comprenez à demi-mot. Belle équipe.", "You barely need words. Great team.")];
-  if(pct >= .5) return [tr("Assez bien", "Good"), tr("Des éclairs de génie et quelques malentendus.", "Flashes of genius and a few mix-ups.")];
-  if(pct >= .3) return [tr("Peut mieux faire", "Could do better"), tr("Avez-vous déjà discuté ensemble ?", "Have you ever actually talked?")];
-  return [tr("Bavardages", "Talks too much in class"), tr("Vous ne parlez pas encore la même langue. Revanche ?", "You're not speaking the same language yet. Rematch?")];
+  if(pct >= .9) return [t2("Félicitations du jury", "Top of the class"), t2("Vous partagez visiblement un seul cerveau.", "You clearly share a single brain.")];
+  if(pct >= .7) return [t2("Très bien", "Very good"), t2("Vous vous comprenez à demi-mot. Belle équipe.", "You barely need words. Great team.")];
+  if(pct >= .5) return [t2("Assez bien", "Good"), t2("Des éclairs de génie et quelques malentendus.", "Flashes of genius and a few mix-ups.")];
+  if(pct >= .3) return [t2("Peut mieux faire", "Could do better"), t2("Avez-vous déjà discuté ensemble ?", "Have you ever actually talked?")];
+  return [t2("Bavardages", "Talks too much in class"), t2("Vous ne parlez pas encore la même langue. Revanche ?", "You're not speaking the same language yet. Rematch?")];
 }
 // Trophées de fin de partie, tirés de l'historique. Le titre change d'une partie à l'autre.
 function vary(list, seed){ return list[Math.abs(seed) % list.length]; }
@@ -458,13 +467,13 @@ function awards(hist, tous){
   const gp = {}, gn = {};
   h.forEach(x => { gp[x[5]] = (gp[x[5]] || 0) + (+x[4] || 0); gn[x[5]] = (gn[x[5]] || 0) + 1; });
   const gk = Object.keys(gp).sort((a, b) => gp[b] - gp[a] || gn[a] - gn[b]);
-  if(gk.length && gp[gk[0]] > 0) out.push([vary(tr(["Liseur(se) de pensées", "Télépathe officiel(le)", "Radar humain", "Antenne parabolique"], ["Mind reader", "Official telepath", "Human radar", "Satellite dish"]), seed), gk[0], SB.u.plural2(gp[gk[0]], "point", null, "point") + tr(" en devinant", " from guessing")]);
+  if(gk.length && gp[gk[0]] > 0) out.push([vary(t2(["Liseur(se) de pensées", "Télépathe officiel(le)", "Radar humain", "Antenne parabolique"], ["Mind reader", "Official telepath", "Human radar", "Satellite dish"]), seed), gk[0], pl2(gp[gk[0]], "point") + t2(" en devinant", " from guessing")]);
   const miss = h.filter(x => +x[3] > 0).sort((a, b) => Math.abs(b[2] - b[3]) - Math.abs(a[2] - a[3]))[0];
-  if(miss && Math.abs(miss[2] - miss[3]) >= 3) out.push([vary(tr(["Boussole cassée", "Complètement à l'ouest", "Lecture très créative", "Antenne débranchée"], ["Broken compass", "Totally lost", "Very creative reading", "Antenna unplugged"]), seed + 1), miss[5], tr("a dit " + miss[3] + " pour un " + miss[2], "said " + miss[3] + " when it was " + miss[2])]);
+  if(miss && Math.abs(miss[2] - miss[3]) >= 3) out.push([vary(t2(["Boussole cassée", "Complètement à l'ouest", "Lecture très créative", "Antenne débranchée"], ["Broken compass", "Totally lost", "Very creative reading", "Antenna unplugged"]), seed + 1), miss[5], t2("a dit " + miss[3] + " pour un " + miss[2], "said " + miss[3] + " when it was " + miss[2])]);
   const cp = {}, cn = {};
   h.forEach(x => A(x[7]).forEach(n => { cp[n] = (cp[n] || 0) + (+x[4] || 0); cn[n] = (cn[n] || 0) + 1; }));
   const ck = Object.keys(cp).filter(n => cn[n] >= 2).map(n => [n, cp[n] / cn[n]]).sort((a, b) => b[1] - a[1]);
-  if(ck.length > 1 && ck[0][1] > ck[ck.length - 1][1]){ const av = Math.round(ck[0][1] * 10) / 10; out.push([vary(tr(["Indice en or", "Boussole du groupe", "Traducteur(trice) officiel(le)", "Phare dans la nuit"], ["Golden clue", "The group's compass", "Official translator", "Lighthouse in the dark"]), seed + 2), ck[0][0], tr(String(av).replace(".", ",") + (av >= 2 ? " pts" : " pt") + (tous ? " en moyenne par devineur(se)" : " en moyenne par indice"), av + (av === 1 ? " pt" : " pts") + (tous ? " per guesser on average" : " per clue on average"))]); }
+  if(ck.length > 1 && ck[0][1] > ck[ck.length - 1][1]){ const av = Math.round(ck[0][1] * 10) / 10; out.push([vary(t2(["Indice en or", "Boussole du groupe", "Traducteur(trice) officiel(le)", "Phare dans la nuit"], ["Golden clue", "The group's compass", "Official translator", "Lighthouse in the dark"]), seed + 2), ck[0][0], t2(String(av).replace(".", ",") + (av >= 2 ? " pts" : " pt") + (tous ? " en moyenne par devineur(se)" : " en moyenne par indice"), av + (av === 1 ? " pt" : " pts") + (tous ? " per guesser on average" : " per clue on average"))]); }
   return out;
 }
 function awardsHTML(a){ return a.length ? '<div class="field"><span class="eyebrow">' + tr("Trophées", "Awards") + '</span><ul class="list">' + a.map(x => '<li><span class="t" style="font-size:19px">' + esc(x[0]) + '</span><span class="by">' + esc(x[1]) + " · " + esc(x[2]) + "</span></li>").join("") + "</ul></div>" : ""; }
@@ -494,7 +503,7 @@ function legendHTML(name){ return '<div class="n10-legend"><span><i class="ln"><
 function rrLabel(rr){ return rr > 0 ? tr("Changer de catégorie (" + rr + " restant" + (rr > 1 ? "s" : "") + ")", "Change category (" + rr + " left)") : tr("Plus de changement de catégorie", "No category changes left"); }
 function histTable(rows){
   return '<div class="tablewrap"><table><thead><tr><th>' + tr("Manche", "Round") + "</th><th>" + tr("Devineur", "Guesser") + '</th><th style="text-align:center">' + tr("Note", "Number") + '</th><th style="text-align:center">' + tr("Dit", "Said") + '</th><th style="text-align:center">Pts</th></tr></thead><tbody>' +
-    rows.map(h => '<tr><td>' + esc(h[0]) + '<div class="sm">' + esc(h[1]) + (TW(h[6]) ? " · " + esc(TW(h[6]).name) : "") + "</div></td><td>" + esc(h[5]) + '</td><td style="text-align:center" class="hand"><b>' + esc(h[2]) + '</b></td><td style="text-align:center" class="hand">' + esc(h[3] || "—") + '</td><td style="text-align:center">+' + esc(h[4]) + "</td></tr>").join("") + "</tbody></table></div>";
+    rows.map(h => '<tr><td>' + esc(h[0]) + '<div class="sm">' + esc(L(h[1])) + (TW(h[6]) ? " · " + esc(TW(h[6]).name) : "") + "</div></td><td>" + esc(h[5]) + '</td><td style="text-align:center" class="hand"><b>' + esc(h[2]) + '</b></td><td style="text-align:center" class="hand">' + esc(h[3] || "—") + '</td><td style="text-align:center">+' + esc(h[4]) + "</td></tr>").join("") + "</tbody></table></div>";
 }
 function reportHTML(score, max){
   const [m, a] = mention(score / max);
@@ -563,11 +572,10 @@ function givers(ctx){ return ctx.ids.filter(id => id !== ctx.s.guesser && ctx.he
 function clueOf(ctx, id){ const i = ctx.input(id); return i && typeof i.t === "string" ? clean(i.t, 60) : ""; }
 function drawCat(ctx){
   let deck = A(ctx.priv().deck).map(A).filter(c => c.length === 3);
-  const lg = ctx.s && ctx.s.lg || "fr";
-  if(!deck.length) deck = SB.u.fresh("note10:cats", buildPool(ctx.opts.packs, ctx.peers, lg));
-  const c = deck.pop() || deckOf(lg).classique[0].slice();
+  if(!deck.length) deck = SB.u.fresh("note10:cats", buildPool(ctx.opts.packs, ctx.peers, "fr"));
+  const c = deck.pop() || deckOf("fr").classique[0].slice();
   ctx.setPriv({ deck }); SB.u.saw("note10:cats", [c]);
-  return c;
+  return biCard(c);
 }
 function nextRound(ctx, reroll){
   const s = ctx.s;
@@ -591,7 +599,7 @@ function tgs(ctx){ return ctx.ids.filter(id => id !== ctx.s.ind); }
 function gOf(ctx, id){ const i = ctx.input(id); return i && Number.isInteger(i.n) && i.n >= 1 && i.n <= 10 ? i.n : 0; }
 function clList(ctx){ const i = ctx.input(ctx.s.ind); return A(i && i.cl).map(t => typeof t === "string" ? clean(t, 60) : "").filter(Boolean).slice(0, MAXCL); }
 function revealTous(ctx){
-  const s = ctx.s, iname = ctx.name(s.ind), cat = A(s.c)[0];
+  const s = ctx.s, iname = ctx.name(s.ind), cat = L(A(s.c)[0]);
   const res = tgs(ctx).map(id => [id, gOf(ctx, id)]).filter(x => x[1]).map(x => [x[0], x[1], points(s.note, x[1], s.tw)]);
   const ip = indPts(res), sc = Object.assign({}, s.sc);
   res.forEach(x => { sc[x[0]] = (sc[x[0]] || 0) + x[2]; });
@@ -621,7 +629,7 @@ function guessesHTML(res, iname, ip, tw){
 }
 function roundTable(rh){
   return '<div class="tablewrap"><table><thead><tr><th>' + tr("Manche", "Round") + "</th><th>" + tr("Indicateur", "Clue-giver") + '</th><th style="text-align:center">' + tr("Note", "Number") + "</th><th>" + tr("Propositions", "Guesses") + "</th></tr></thead><tbody>" +
-    A(rh).map(A).map(h => '<tr><td>' + esc(h[0]) + '<div class="sm">' + esc(h[1]) + (TW(h[4]) ? " · " + esc(TW(h[4]).name) : "") + "</div></td><td>" + esc(h[3]) + '<div class="sm">+' + esc(h[6]) + '</div></td><td style="text-align:center" class="hand"><b>' + esc(h[2]) + "</b></td><td>" +
+    A(rh).map(A).map(h => '<tr><td>' + esc(h[0]) + '<div class="sm">' + esc(L(h[1])) + (TW(h[4]) ? " · " + esc(TW(h[4]).name) : "") + "</div></td><td>" + esc(h[3]) + '<div class="sm">+' + esc(h[6]) + '</div></td><td style="text-align:center" class="hand"><b>' + esc(h[2]) + "</b></td><td>" +
       (A(h[5]).length ? A(h[5]).map(A).map(x => esc(x[0]) + " " + esc(x[1]) + ' <span class="sm">(+' + esc(x[2]) + ")</span>").join("<br>") : "—") + "</td></tr>").join("") + "</tbody></table></div>";
 }
 // "Alice, Bob and Chloe"
@@ -744,8 +752,9 @@ function renderTous(ctx, root){
       const b = r.querySelector("[data-back]");
       if(b) b.addEventListener("click", () => ctx.act(c2 => {
         const R = scoreRows(c2).sort((a, b2) => b2[1] - a[1]), m = R.length ? R[0][1] : 0, W = R.filter(x => x[1] === m).map(x => x[0]);
-        c2.end({ title: m > 0 ? tr(etList(W) + " en tête avec " + SB.u.plural(m, "point"), andList(W) + (W.length > 1 ? " lead" : " leads") + " with " + SB.u.plural2(m, "point", null, "point")) : tr("Personne n'a marqué", "Nobody scored"),
-          lines: R.slice(0, 5).map(x => x[0] + tr(" : ", ": ") + SB.u.plural2(x[1], "pt", null, "pt")).concat(awards(c2.s.hist, true).map(a => a[0] + tr(" : ", ": ") + a[1])),
+        const AW = inBoth(() => awards(c2.s.hist, true));
+        c2.end({ title: m > 0 ? both(etList(W) + " en tête avec " + SB.u.plural(m, "point"), andList(W) + (W.length > 1 ? " lead" : " leads") + " with " + m + " point" + (m === 1 ? "" : "s")) : both("Personne n'a marqué", "Nobody scored"),
+          lines: R.slice(0, 5).map(x => both(x[0] + " : " + x[1] + " pt" + (x[1] > 1 ? "s" : ""), x[0] + ": " + x[1] + " pt" + (x[1] === 1 ? "" : "s"))).concat(AW.fr.map((a, i) => both(a[0] + " : " + a[1], (AW.en[i] || a)[0] + ": " + (AW.en[i] || a)[1]))),
           win: m > 0 ? R.filter(x => x[1] === m).map(x => x[2]) : [] });
       }));
     });
@@ -783,10 +792,10 @@ SB.register({
     { id: "edit", type: "button", label: tr("Créer mes propres catégories", "Create my own categories"), onClick: () => openEditor() }
   ],
   start(ctx, o){
-    const lg = SB.lang(), pool = buildPool(o.packs, ctx.peers, lg);
+    const lg = SB.lang(), pool = buildPool(o.packs, ctx.peers, "fr");
     if(!pool.length) throw new Error(tr("Choisis au moins un paquet de catégories.", "Pick at least one category pack."));
-    const deck = SB.u.fresh("note10:cats", pool), c = deck.pop();
-    ctx.setPriv({ deck }); SB.u.saw("note10:cats", [c]);
+    const deck = SB.u.fresh("note10:cats", pool), c0 = deck.pop(), c = biCard(c0);
+    ctx.setPriv({ deck }); SB.u.saw("note10:cats", [c0]);
     const gi = Math.floor(Math.random() * ctx.players.length);
     if(o.mode !== "un") return { phase: "clues", lg, mode: "tous", round: 1, rounds: o.rounds || 6, gi, ind: ctx.players[gi].id, c, tw: "", dl: 0, note: rollNote(""), rr: 2, sc: {}, res: [], ip: 0, hist: [], rh: [] };
     return { phase: "clues", lg, round: 1, rounds: o.rounds || 6, gi, guesser: ctx.players[gi].id, c, tw: "", dl: 0, note: rollNote(""), rr: 2, score: 0, max: 0, guess: 0, pts: 0, hist: [] };
@@ -893,7 +902,8 @@ SB.register({
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c2 => {
           const mx = +c2.s.max || c2.s.rounds * 3, pct = c2.s.score / mx;
-          c2.end({ title: tr("Score de l'équipe : ", "Team score: ") + c2.s.score + " / " + mx, lines: [tr("Mention : ", "Grade: ") + mention(pct)[0]].concat(awards(c2.s.hist).map(a => a[0] + tr(" : ", ": ") + a[1])), win: pct >= .5 ? c2.ids : [] });
+          const AW = inBoth(() => awards(c2.s.hist)), MN = inBoth(() => mention(pct)[0]);
+          c2.end({ title: both("Score de l'équipe : " + c2.s.score + " / " + mx, "Team score: " + c2.s.score + " / " + mx), lines: [both("Mention : " + MN.fr, "Grade: " + MN.en)].concat(AW.fr.map((a, i) => both(a[0] + " : " + a[1], (AW.en[i] || a)[0] + ": " + (AW.en[i] || a)[1]))), win: pct >= .5 ? c2.ids : [] });
         }));
       });
     }

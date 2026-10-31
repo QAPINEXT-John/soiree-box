@@ -102,6 +102,9 @@ const NOIR_EN = [["Die in exactly 10 years, and know it", "Die at any moment, wi
 // Contenu des parties : langue de l'hôte (s.lg) en réseau, langue du téléphone en local.
 const LISTS = { fr: { soft: SOFT, adulte: HOT.concat(TRASH, NOIR) }, en: { soft: SOFT_EN, adulte: HOT_EN.concat(TRASH_EN, NOIR_EN) } };
 const lists = lg => LISTS[lg === "en" ? "en" : "fr"];
+// En salon, la question est rangée en [{ fr, en }, { fr, en }] : chaque téléphone la lit dans sa langue.
+const EN_OF = new Map(); ["soft", "adulte"].forEach(k => LISTS.fr[k].forEach((q, i) => { EN_OF.set(JSON.stringify(q), LISTS.en[k][i] || q); }));
+const biPair = q => { q = A(q); const e = EN_OF.get(JSON.stringify(q)) || q; return [SB.u.both(q[0], e[0]), SB.u.both(q[1], e[1])]; };
 const PACKS = [
   { v: "soft", label: tr("Classique", "Classic"), desc: tr("Pour tout le monde", "For everyone"), list: lists(SB.lang()).soft },
   { v: "adulte", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult stuff"), list: lists(SB.lang()).adulte, hot: true }
@@ -144,13 +147,14 @@ const TWL = [
   { id: "blind", name: tr("Les yeux fermés", "Eyes closed"), desc: tr("Tout le monde ferme les yeux pour voter, et on les rouvre ensemble.", "Everyone votes with their eyes closed, then you all open them together.") }
 ];
 const FL = {
-  duo: [tr("Les plus d'accord", "Most in sync"), tr("Les âmes sœurs", "Soulmates"), tr("Un cerveau pour deux", "Two bodies, one brain")],
-  anti: [tr("Les moins d'accord", "Least in sync"), tr("Chien et chat", "Cats and dogs"), tr("Jamais du même avis", "Never on the same page")],
-  rebel: [tr("Le plus à contre-courant", "Most contrarian"), tr("L'esprit rebelle", "The rebel"), tr("Seul(e) contre tous", "Alone against the world")],
-  dither: [tr("Le plus indécis(e)", "Most indecisive"), tr("La girouette", "The weathervane"), tr("Change d'avis comme de chemise", "Flip-flopper in chief")],
-  champ: [tr("Meilleur score", "Top score"), tr("Le plus fin(e) stratège", "Master strategist"), tr("Le roi (la reine) des coups de théâtre", "Twist royalty")]
+  duo: [["Les plus d'accord", "Most in sync"], ["Les âmes sœurs", "Soulmates"], ["Un cerveau pour deux", "Two bodies, one brain"]],
+  anti: [["Les moins d'accord", "Least in sync"], ["Chien et chat", "Cats and dogs"], ["Jamais du même avis", "Never on the same page"]],
+  rebel: [["Le plus à contre-courant", "Most contrarian"], ["L'esprit rebelle", "The rebel"], ["Seul(e) contre tous", "Alone against the world"]],
+  dither: [["Le plus indécis(e)", "Most indecisive"], ["La girouette", "The weathervane"], ["Change d'avis comme de chemise", "Flip-flopper in chief"]],
+  champ: [["Meilleur score", "Top score"], ["Le plus fin(e) stratège", "Master strategist"], ["Le roi (la reine) des coups de théâtre", "Twist royalty"]]
 };
-function fl(list, seed, k){ return list[((seed || 0) + k) % list.length]; }
+// Titres en [fr, en] ; t choisit la langue (tr par défaut).
+function fl(list, seed, k, t){ const x = list[((seed || 0) + k) % list.length]; return (t || tr)(x[0], x[1]); }
 function nextTw(o, round, last, n){ return o.twists !== false && round > 1 ? SB.u.twist(TW, { last, n, rate: .4 }) : null; }
 function roundExtras(c, t){
   const x = { tw: t ? t.id : "", dl: 0, tgt: {}, dev: "" };
@@ -192,7 +196,7 @@ SB.register({
   ],
   start(ctx, o){
     if(!A(o.packs).length) throw new Error(tr("Choisis au moins un paquet de questions.", "Pick at least one question pack."));
-    const lg = SB.lang(), deck = deckFor(o.packs, lg), p = deck.pop();
+    const lg = "fr", deck = deckFor(o.packs, lg), p = biPair(deck.pop());
     SB.u.saw(SEEN, [p]);
     ctx.setPriv({ deck });
     return Object.assign({ phase: "vote", p, round: 1, rounds: o.rounds || 10, a: [], b: [], hist: [], pts: {}, got: {}, chg: {}, lg }, roundExtras(ctx, null));
@@ -222,7 +226,7 @@ SB.register({
     else if(voted.length >= 2 && (!a.length || !b.length)) ctx.gage([{ ev: "unan" }], "tp" + s.k);
   },
   render(ctx, root){
-    const s = ctx.s, p = A(s.p), tw = s.tw || "", T = SB.u.byTwist(TW, tw);
+    const s = ctx.s, p = A(s.p).map(x => SB.u.L(x)), tw = s.tw || "", T = SB.u.byTwist(TW, tw);
     const lab = '<span class="eyebrow">Question ' + s.round + " / " + s.rounds + "</span>" + SB.u.twistHTML(T, TWL_LABEL);
     if(s.phase === "vote"){
       const need = tw === "predict" || tw === "tele", tgt = (s.tgt || {})[ctx.me];
@@ -262,8 +266,8 @@ SB.register({
         if(bt) bt.addEventListener("click", () => ctx.act(c => {
           const st = c.s; if(st.phase !== "res") return;
           if(st.round >= st.rounds){ c.set({ phase: "end", fl: Math.floor(Math.random() * 12) }); return; }
-          let deck = A(c.priv().deck).map(A); if(!deck.length) deck = deckFor(c.opts.packs, st.lg);
-          const np = deck.pop(); c.setPriv({ deck }); SB.u.saw(SEEN, [np]);
+          let deck = A(c.priv().deck).map(A); if(!deck.length) deck = deckFor(c.opts.packs, "fr");
+          const np0 = deck.pop(), np = biPair(np0); c.setPriv({ deck }); SB.u.saw(SEEN, [np0]);
           const t = nextTw(c.opts, st.round + 1, st.tw, c.ids.length);
           c.set(Object.assign({ phase: "vote", p: np, round: st.round + 1, a: [], b: [], got: {}, k: c.rid() }, roundExtras(c, t)));
         }));
@@ -286,9 +290,10 @@ SB.register({
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const pp = c.s.pts || {}, mx = Math.max.apply(null, c.ids.map(id => pp[id] || 0).concat([0]));
-          const lines = [fl(FL.rebel, 0, 0) + sep + c.name(st.rebel)];
-          if(mx) lines.unshift(fl(FL.champ, seed, 0) + sep + c.ids.filter(id => (pp[id] || 0) === mx).map(c.name).join(" & ") + " · " + mx + tr(" pts", mx === 1 ? " pt" : " pts"));
-          c.end({ title: fl(FL.duo, seed, 1) + sep + (ks[0] ? ks[0].split("|").map(c.name).join(" & ") : "—"), lines, win: mx ? c.ids.filter(id => (pp[id] || 0) === mx) : [] });
+          const Ff = (f, e) => f, Fe = (f, e) => e, pt = n => (n === 1 ? " pt" : " pts"), win = c.ids.filter(id => (pp[id] || 0) === mx).map(c.name).join(" & ");
+          const mk = (t, sp) => { const l = [fl(FL.rebel, 0, 0, t) + sp + c.name(st.rebel)]; if(mx) l.unshift(fl(FL.champ, seed, 0, t) + sp + win + " · " + mx + pt(mx)); return l; };
+          const lF = mk(Ff, " : "), lE = mk(Fe, ": "), duoN = ks[0] ? ks[0].split("|").map(c.name).join(" & ") : "—";
+          c.end({ title: SB.u.both(fl(FL.duo, seed, 1, Ff) + " : " + duoN, fl(FL.duo, seed, 1, Fe) + ": " + duoN), lines: lF.map((l, i) => SB.u.both(l, lE[i])), win: mx ? c.ids.filter(id => (pp[id] || 0) === mx) : [] });
         }));
       });
     }

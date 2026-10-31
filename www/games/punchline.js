@@ -1,7 +1,7 @@
 /* Punchline — une phrase à trous, chacun la complète avec une carte de sa main, le juge garde la plus drôle. */
 (function(){
 "use strict";
-const { esc, A, shuffle, screen, txt, store, persist, dock, clean, armTap, pick, buzz, tr } = SB.u;
+const { esc, A, shuffle, screen, txt, store, persist, dock, clean, armTap, pick, buzz, tr, both } = SB.u;
 
 /* Cartes : PQ = phrases à trous (___), PA = réponses. Paquets hard et noir réservés aux adultes. */
 const PQ = {
@@ -121,7 +121,8 @@ const PQ = {
   "Le combo gagnant pour un dimanche réussi : ___ et ___.",
   "Mon chef m'a pris(e) en flagrant délit avec ___.",
   "L'invention qui va changer le monde : ___, mais en version connectée.",
-  "Quand j'ai trop bu, je ne parle plus que d'une chose : ___."
+  "Quand j'ai trop bu, je ne parle plus que d'une chose : ___.",
+  "Mon proprio vient d'interdire ___ dans l'immeuble."
  ],
  "hard": [
   "Mon plan cul m'a largué(e). Sa raison : ___.",
@@ -888,6 +889,7 @@ const PQ_EN = {
   "New dating app: the only thing you match on is ___.",
   "The hottest trend in interior design: ___.",
   "I got a $500 fine for ___.",
+  "According to my therapist, it all comes down to this: ___.",
   "This weekend's plan: ___ and a lot of napping.",
   "That weird noise in the kitchen? It was ___.",
   "The show everyone's bingeing: \"___: The Untold Story.\"",
@@ -963,10 +965,6 @@ const PQ_EN = {
   "___? There's an app for that.",
   "___ is like riding a bike: you never forget how.",
   "Nothing beats ___ on a Sunday morning.",
-  "My landlord just banned ___ from the building.",
-  "My boss caught me red-handed with ___.",
-  "The invention that will change the world: ___, but with Bluetooth.",
-  "When I've had too much to drink, all I talk about is ___.",
   "I replaced ___ with ___ and nobody noticed.",
   "Summer blockbuster: \"___ vs. ___.\"",
   "The forbidden combo: ___ with ___.",
@@ -979,7 +977,11 @@ const PQ_EN = {
   "My weekend in a nutshell: ___, then ___.",
   "Recipe for the perfect night: ___, ___, and nobody ever mentions it again.",
   "Fight of the year: ___ vs. ___.",
-  "The winning combo for a lazy Sunday: ___ and ___."
+  "The winning combo for a lazy Sunday: ___ and ___.",
+  "My boss caught me red-handed with ___.",
+  "The invention that will change the world: ___, but with Bluetooth.",
+  "When I've had too much to drink, all I talk about is ___.",
+  "My landlord just banned ___ from the building."
  ],
  "hard": [
   "My hookup dumped me. Their reason: ___.",
@@ -1256,23 +1258,24 @@ const PA_EN = {
   "a reusable cup full of warm beer",
   "a farting contest",
   "hair in the shower drain",
-  "a waffle with ketchup",
+  "a cheese waffle",
   "my banker's crippling shyness",
   "old gum under the table",
   "the last slice of pizza",
   "my parents' credit card",
   "an alarm that goes off for no reason",
-  "the coworker who asks when I'm getting married",
+  "the aunt who asks when I'm getting married",
   "a plumber who writes poetry",
   "the sweat of the guy next to me on the subway",
   "a tractor on the freeway",
-  "a flip-flop to the face",
+  "a hoof kick to the face",
   "a roommate who never cleans",
   "an Uber driver who tells me his whole life story",
   "fake-fur slippers",
   "a blowout gone wrong",
   "a Christmas tree still up in March",
   "a neighbor who saw everything",
+  "my mom's voice first thing in the morning",
   "a tattoo in badly translated Chinese",
   "a diet based on potato chips",
   "a chocolate omelet",
@@ -1288,10 +1291,11 @@ const PA_EN = {
   "ice cream melting down my fingers",
   "the song of the summer on repeat",
   "a depressed clown",
-  "an amateur magician at every party",
+  "my cousin who does magic tricks",
   "snoring like a chainsaw",
   "roast-chicken-flavored chips",
   "a yoga class gone wrong",
+  "grandpa's wool hat",
   "a basket of dirty laundry",
   "an empty nightclub",
   "a neighbor who's too polite to be trusted",
@@ -1308,7 +1312,7 @@ const PA_EN = {
   "the bathroom line at a music festival",
   "a dentist appointment",
   "a skydiver who's afraid of heights",
-  "a raw Christmas roast",
+  "a raw Christmas turkey",
   "a fanny pack",
   "an exploding gas grill",
   "a washing machine that dances across the floor",
@@ -1321,30 +1325,30 @@ const PA_EN = {
   "a selfie at the edge of a volcano",
   "a bungee jump gone wrong",
   "a tense game of bocce",
-  "a crossword puzzle done in pen",
+  "grandma's crossword puzzles",
   "a passion for stamp collecting",
   "Hawaiian-print shorts",
   "a wall of sticky notes",
-  "an ex who keeps coming back",
-  "the 3 a.m. smoke detector chirp",
+  "an ex who keeps coming back like a boomerang",
+  "the 3 a.m. mosquito",
   "a leaky water bottle",
-  "a beat-up old station wagon",
+  "dad's beat-up old car",
   "a 90-square-foot apartment",
   "bowling night with coworkers",
   "turnip jam",
-  "a friend who just got into crypto",
-  "a laugh like a car alarm",
+  "my cousin who sells crypto",
+  "a laugh like a hyena",
   "a smart speaker that repeats everything",
   "a professional freeloader",
   "an empty fridge",
   "cabbage soup",
   "a sneeze in the middle of a speech",
   "a swim cap that's way too tight",
-  "a \"chill vibes\" playlist",
-  "a grumpy mall Santa",
+  "my dad's \"chill vibes\" playlist",
+  "a grumpy Santa",
   "a suitcase that rolls away on its own",
   "a zit on my nose before a date",
-  "a vegan dinner at a steakhouse",
+  "a vegan dinner with meat lovers",
   "a food fight",
   "a broom with no handle",
   "customer service hold music",
@@ -1352,7 +1356,7 @@ const PA_EN = {
   "an unread book on the nightstand",
   "a cowboy hat",
   "a stolen garden gnome",
-  "a game of Monopoly that lasted three days",
+  "a game of hide-and-seek that lasted three days",
   "a secret love of musicals",
   "a box of chocolates with only the gross ones left",
   "my roommate in a bathrobe",
@@ -1361,34 +1365,32 @@ const PA_EN = {
   "a best man's speech that won't end",
   "a space blanket",
   "a mojito with no mint",
-  "a tax accountant who does kung fu",
+  "a notary who does kung fu",
   "the neighbor who mows the lawn at 7 a.m.",
-  "a mouse pad with a motivational quote",
+  "a cat-shaped mouse pad",
   "a karaoke duet with my boss",
   "an empty Advent calendar",
-  "an inflatable T. rex costume",
+  "an inflatable dinosaur costume",
   "a video call in pajamas",
-  "a fondue night with no cheese",
+  "a cheese night with no cheese",
   "drinks that end at noon the next day",
   "a winning lottery ticket I lost",
   "the fake plant in the open-plan office",
-  "a tie with tiny tacos on it",
-  "a retiree who's ranked in online shooters",
+  "a fish-shaped tie",
+  "a grandma who plays video games",
   "a squeaky bunk bed",
   "the season finale",
   "a stadium wave in an elevator",
   "a pickle jar that won't open",
   "a pancake stuck to the ceiling",
-  "a cologne called Midlife Crisis",
+  "grandpa's cologne",
   "a snowball fight in July",
   "a smoke detector with no battery",
   "a bottle of warm rosé",
   "a belly flop",
-  "an interpretive dance about taxes",
+  "a dinosaur impression",
   "a mustache drawn on in Sharpie",
-  "a bodybuilder in a Santa costume",
-  "a gym membership I never use",
-  "a work group project where I did everything"
+  "a puppy in a Santa costume"
  ],
  "hard": [
   "an expired condom",
@@ -1679,7 +1681,7 @@ const PA_EN = {
   "a fallen angel in sweatpants",
   "Thursday night black mass",
   "a cannibal who just went vegetarian",
-  "a crystal skull from a gift shop",
+  "chicken bones worn as a necklace",
   "a pendulum that predicts my death",
   "a trunk full of human hair",
   "a haunted house at a bargain price",
@@ -1687,12 +1689,13 @@ const PA_EN = {
   "an ambulance taking its sweet time",
   "a heart attack at bingo night",
   "the crematorium's last batch of the day",
+  "the pet cemetery",
   "a pyramid-shaped mausoleum",
-  "a birthday cake shaped like a tombstone",
+  "maggots in the birthday cake",
   "a live-streamed autopsy",
   "the electric chair, now on sale",
   "a very specific prophecy",
-  "a zombie outbreak at the office",
+  "an outbreak of very polite zombies",
   "the end of humanity, but in 4K",
   "the Four Horsemen of the Apocalypse on electric scooters",
   "a serial killer who collects teeth",
@@ -1706,8 +1709,8 @@ const PA_EN = {
   "a body floating in the pool",
   "a piano that plays itself at night",
   "a serial killer who does yoga",
-  "a skull on the mantelpiece",
-  "a poltergeist with anger issues",
+  "my uncle's skull",
+  "a depressed werewolf",
   "an apocalypse canceled due to low turnout",
   "the local cemetery on Halloween night",
   "a crypt with a keypad lock",
@@ -1715,14 +1718,16 @@ const PA_EN = {
   "absolute nothingness, but with ads",
   "death, now with a subscription plan",
   "a beheading with a letter opener",
-  "an unmarked grave at the bottom of the yard",
-  "a life-size cardboard cutout of the deceased"
+  "an unmarked grave at the bottom of the yard"
  ]
 };
 
-// Contenu dans la langue de l'hôte (E.lg / s.lg) ; l'interface suit le téléphone (tr).
+// Contenu tiré en français (clé stable, gardée dans l'état) ; chaque téléphone l'affiche dans sa langue (ptx).
 const QX = { fr: PQ, en: PQ_EN }, AX = { fr: PA, en: PA_EN };
 const lgOf = lg => (lg === "en" ? "en" : "fr");
+// Carte française → carte anglaise au même rang (paquets FR et EN alignés). Les cartes blanches restent telles quelles.
+const EN_OF = {}; [[PQ, PQ_EN], [PA, PA_EN]].forEach(([F, En]) => Object.keys(F).forEach(k => A(F[k]).forEach((t, i) => { if(En[k] && En[k][i]) EN_OF[t] = En[k][i]; })));
+const ptx = t => (SB.lang() === "en" && typeof t === "string" && EN_OF[t] ? EN_OF[t] : t);
 const PACKS = [
   { v: "classique", label: tr("Classique", "Classic"), desc: tr("Absurde, gênant, sous-entendus : pour tout le monde", "Absurd, awkward, innuendo: for everyone") },
   { v: "hard", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Sexe, trash, excès et humour noir : aucune limite de bon goût", "Sex, trash, excess and dark humor: zero limits on good taste"), hot: true }
@@ -1844,6 +1849,7 @@ const ranking = E => E.order.slice().sort((a, b) => (E.pts[b] || 0) - (E.pts[a] 
 function cap(s, before){ return /(^|[.!?…:»"]\s*)$/.test(before) && s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
 // La phrase avec les trous remplis (ou soulignés s'il manque des réponses).
 function filled(q, ans){
+  q = ptx(q); ans = A(ans).map(ptx);
   const parts = String(q).split("___"); let h = "", done = "";
   parts.forEach((p, i) => {
     h += esc(p); done += p;
@@ -1851,14 +1857,16 @@ function filled(q, ans){
   });
   return h;
 }
-const FL = {
-  win: tr(["Roi (reine) de la punchline", "Champion(ne) du mauvais goût", "Plus drôle que tout le monde", "Maître(sse) de la vanne", "Légende de la soirée"], ["Punchline royalty", "Champion of bad taste", "Funnier than everyone", "Master of the zinger", "Legend of the night"]),
-  fav: tr(["Chouchou(te) du juge", "Fait toujours rire le même juge", "Dans les petits papiers du juge"], ["Judge's pet", "Always cracks up the same judge", "In the judge's good books"]),
-  blank: tr(["Plume libre", "Auteur(e) maison", "Carte blanche en or"], ["Freelance writer", "In-house author", "Golden blank card"]),
-  miss: tr(["Incompris(e)", "Trop en avance sur son temps", "Un humour venu du futur"], ["Misunderstood genius", "Ahead of their time", "Humor from the future"])
+const FLX = {
+  win: [["Roi (reine) de la punchline", "Champion(ne) du mauvais goût", "Plus drôle que tout le monde", "Maître(sse) de la vanne", "Légende de la soirée"], ["Punchline royalty", "Champion of bad taste", "Funnier than everyone", "Master of the zinger", "Legend of the night"]],
+  fav: [["Chouchou(te) du juge", "Fait toujours rire le même juge", "Dans les petits papiers du juge"], ["Judge's pet", "Always cracks up the same judge", "In the judge's good books"]],
+  blank: [["Plume libre", "Auteur(e) maison", "Carte blanche en or"], ["Freelance writer", "In-house author", "Golden blank card"]],
+  miss: [["Incompris(e)", "Trop en avance sur son temps", "Un humour venu du futur"], ["Misunderstood genius", "Ahead of their time", "Humor from the future"]]
 };
+const FL = {}; Object.keys(FLX).forEach(k => { FL[k] = tr(FLX[k][0], FLX[k][1]); });
 const fl = (list, seed, k) => list[((seed || 0) + k) % list.length];
-function awards(E, nameOf){
+function awards(E, nameOf, tr = SB.u.tr){
+  const FL = {}; Object.keys(FLX).forEach(k => { FL[k] = tr(FLX[k][0], FLX[k][1]); });
   const out = [], used = [], seed = E.fl || 0;
   const top = (m, min) => { let b = "", v = min - 1; Object.keys(m || {}).forEach(id => { if((m[id] || 0) > v && used.indexOf(id) < 0){ v = m[id]; b = id; } }); if(b) used.push(b); return b; };
   let fk = "", fv = 1; Object.keys(E.byJ || {}).forEach(k => { if(E.byJ[k] > fv){ fv = E.byJ[k]; fk = k; } });
@@ -1903,7 +1911,7 @@ function head(E, nameOf, extra){
 function handHTML(E, id, sel, blankOpen){
   const hand = A(E.hands[id]), n = needOf(E), bl = E.blanks[id] || 0;
   return '<span class="eyebrow">' + tr("Ta main · choisis " + (n === 2 ? "2 cartes" : "1 carte"), "Your hand · pick " + (n === 2 ? "2 cards" : "1 card")) + "</span>" +
-    '<div class="pl-h">' + hand.map((a, i) => { const k = sel.indexOf(String(i)); return '<button type="button" class="pl-c" data-i="' + i + '" aria-pressed="' + (k >= 0) + '">' + (k >= 0 && n > 1 ? '<span class="no">' + (k + 1) + "</span>" : "") + "<span>" + esc(a) + "</span></button>"; }).join("") +
+    '<div class="pl-h">' + hand.map((a, i) => { const k = sel.indexOf(String(i)); return '<button type="button" class="pl-c" data-i="' + i + '" aria-pressed="' + (k >= 0) + '">' + (k >= 0 && n > 1 ? '<span class="no">' + (k + 1) + "</span>" : "") + "<span>" + esc(ptx(a)) + "</span></button>"; }).join("") +
     (bl > 0 ? (blankOpen ? '<textarea class="txt pl-ta" maxlength="80" placeholder="' + tr("Écris ta propre réponse…", "Write your own answer…") + '" aria-label="' + tr("Carte blanche", "Blank card") + '"></textarea>' :
       '<button type="button" class="pl-c blank" data-blank>' + tr("Carte blanche : écris ta réponse (" + bl + " restante" + (bl > 1 ? "s" : "") + ")", "Blank card: write your own answer (" + bl + " left)") + "</button>") : "") + "</div>";
 }
@@ -2000,7 +2008,7 @@ const DEF = {
   ],
   start(ctx, o){
     if(!A(o.packs).length) throw new Error(tr("Choisis au moins un paquet de cartes.", "Pick at least one card pack."));
-    const E = newGame(shuffle(ctx.ids), Object.assign({}, o, { lg: SB.lang() }));
+    const E = newGame(shuffle(ctx.ids), Object.assign({}, o, { lg: "fr" }));
     nextRound(E, ctx.ids);
     ctx.setPriv({ qd: E.qd, ad: E.ad });
     const s = Object.assign({}, E); delete s.qd; delete s.ad;
@@ -2043,7 +2051,7 @@ const DEF = {
       } else {
         const my = sent ? check(E, me, mine.p.o) : null;
         view(root, "pw" + s.k, key, head(E, nameOf, my && E.tw !== "double" ? my.map(x => x.t) : []) +
-          (role === "sent" ? '<div class="sent"><span class="t">' + (E.tw === "double" ? esc(my.map(x => x.t).join(" / ")) : tr("Réponse envoyée", "Answer sent")) + '</span><button class="link" type="button" data-edit>' + tr("Changer", "Change") + "</button></div>"
+          (role === "sent" ? '<div class="sent"><span class="t">' + (E.tw === "double" ? esc(my.map(x => ptx(x.t)).join(" / ")) : tr("Réponse envoyée", "Answer sent")) + '</span><button class="link" type="button" data-edit>' + tr("Changer", "Change") + "</button></div>"
             : '<p class="howto">' + (me === E.judge ? tr("Tu es le (la) juge de cette manche. Les réponses arrivent en secret : tu choisiras ta préférée.", "You're the judge this round. Answers come in secretly: you'll pick your favorite.") : tr("Tu ne joues pas cette manche : regarde le duel.", "You're sitting this round out: enjoy the duel.")) + "</p>") +
           dock('<p class="wait" data-wait></p>' + (ctx.isHost ? '<button class="link" type="button" data-skip style="align-self:center" hidden>' + tr("Continuer sans les retardataires", "Continue without the stragglers") + "</button>" : "")), r => {
           const e = r.querySelector("[data-edit]"); if(e) e.addEventListener("click", () => { UI.sel = []; UI.blankOpen = false; ctx.send({ p: null }); });
@@ -2098,7 +2106,8 @@ const DEF = {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const F = fromState(c.s, {}), o2 = ranking(F), mx = F.pts[o2[0]] || 0;
-          c.end({ title: "Punchline · " + c.name(o2[0]) + tr(" gagne", " wins"), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + SB.u.plural2(F.pts[id] || 0, "pt", null, "pt")).concat(awards(F, c.name).slice(0, 2).map(a => a[0] + tr(" : ", ": ") + a[1])),
+          const awF = awards(F, c.name, f => f).slice(0, 2), awE = awards(F, c.name, (f, e) => e).slice(0, 2), pt = n => n + " pt" + (n > 1 ? "s" : ""), ptE = n => n + (n === 1 ? " pt" : " pts");
+          c.end({ title: both("Punchline · " + c.name(o2[0]) + " gagne", "Punchline · " + c.name(o2[0]) + " wins"), lines: o2.slice(0, 3).map((id, i) => both((i + 1) + ". " + c.name(id) + " · " + pt(F.pts[id] || 0), (i + 1) + ". " + c.name(id) + " · " + ptE(F.pts[id] || 0))).concat(awF.map((a, i) => both(a[0] + " : " + a[1], awE[i][0] + ": " + awE[i][1]))),
             win: mx ? o2.filter(id => (F.pts[id] || 0) === mx) : [] });
         }));
       });
@@ -2128,7 +2137,7 @@ const DEF = {
           r.querySelector("[data-tw]").addEventListener("click", () => { twOn = !twOn; persist({ plTw: twOn }); setup(); });
           r.querySelector("[data-go]").addEventListener("click", () => {
             if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet de cartes.", "Pick at least one pack.")); return; }
-            E = newGame(ids, { packs: SB.okPacks(sel, PACKS), target, twists: twOn, blank: blOn, lg: SB.lang() });
+            E = newGame(ids, { packs: SB.okPacks(sel, PACKS), target, twists: twOn, blank: blOn, lg: "fr" });
             E.judge = ids[ids.length - 1];
             round();
           });

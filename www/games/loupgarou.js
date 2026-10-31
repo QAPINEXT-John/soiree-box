@@ -449,9 +449,11 @@ const DEF = {
         dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
-          const ro = c.s.roles || {}, sd = seedOf(c.g.gid || "lg"), L = A(c.s.lov), lg = c.s.lg || "fr", sep = T(lg, " : ", ": ");
-          c.end({ title: winT(c.s.win, 2, lg), win: winIds(c.s.win, c.ids, ro, L),
-            lines: [T(lg, "Loups", "Wolves") + sep + c.ids.filter(id => ro[id] === "loup").map(c.name).join(", ")].concat(L.length === 2 ? [T(lg, "Amoureux", "Lovers") + sep + L.map(c.name).join(T(lg, " et ", " and "))] : []).concat(awards(c.s, c.ids, c.name, sd, lg).slice(0, 2).map(a => a[0] + sep + a[1])) });
+          // Titre et lignes de fin dans les deux langues : chaque téléphone affiche la sienne.
+          const ro = c.s.roles || {}, sd = seedOf(c.g.gid || "lg"), L = A(c.s.lov);
+          const lines = lg => { const sep = T(lg, " : ", ": "); return [T(lg, "Loups", "Wolves") + sep + c.ids.filter(id => ro[id] === "loup").map(c.name).join(", ")].concat(L.length === 2 ? [T(lg, "Amoureux", "Lovers") + sep + L.map(c.name).join(T(lg, " et ", " and "))] : []).concat(awards(c.s, c.ids, c.name, sd, lg).slice(0, 2).map(a => a[0] + sep + a[1])); };
+          const F = lines("fr"), En = lines("en");
+          c.end({ title: SB.u.both(winT(c.s.win, 2, "fr"), winT(c.s.win, 2, "en")), win: winIds(c.s.win, c.ids, ro, L), lines: F.map((l, i) => SB.u.both(l, En[i] || l)) });
         }));
       });
     }

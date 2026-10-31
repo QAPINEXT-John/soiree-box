@@ -36,11 +36,13 @@ const packList = () => PACKS.map(p => ({ v: p.v, label: p.label, desc: p.desc, h
 // Une carte : { k: type, t: texte } (le texte s'affiche avec sa consigne).
 function deckFor(packs){
   const out = [];
-  PACKS.forEach(p => { if(A(packs).indexOf(p.v) >= 0) listOf(p.v).forEach(t => out.push(p.kind + "|" + t)); });
+  // Catégories : on garde la référence « @paquet:index » (listes FR et EN alignées) pour qu'en salon chaque téléphone
+  // affiche la même catégorie dans SA langue. Syllabes et cartes perso : le texte tel quel.
+  PACKS.forEach(p => { if(A(packs).indexOf(p.v) >= 0) listOf(p.v).forEach((t, i) => out.push(p.kind + "|" + (p.kind === "cat" && p.v !== "perso" ? "@" + p.v + ":" + i : t))); });
   return SB.u.fresh("bombe", out);
 }
 const LEAD = { syll: tr("Un mot qui contient", "A word containing"), debut: tr("Un mot qui commence par", "A word starting with"), fin: tr("Un mot qui finit par", "A word ending in"), cat: tr("Cite", "Name") };
-function cardHTML(card){ const [k, t] = String(card || "").split("|"); return '<div class="bm-card"><span>' + esc(LEAD[k] || "") + "</span><b" + (k === "cat" ? ' class="cat"' : "") + ">" + esc(t || "") + "</b></div>"; }
+function cardHTML(card){ let [k, t] = String(card || "").split("|"); const m = /^@([a-z]+):(\d+)$/.exec(t || ""); if(m) t = listOf(m[1])[+m[2]] || ""; return '<div class="bm-card"><span>' + esc(LEAD[k] || "") + "</span><b" + (k === "cat" ? ' class="cat"' : "") + ">" + esc(t || "") + "</b></div>"; }
 function editor(){
   SB.page(tr("Nos cartes", "Our cards"), root => {
     root.innerHTML = '<div class="gs"><p class="howto">' + tr("Une catégorie par ligne, écrite comme on la dit : « un ex de Kévin », « un plat de la cantine ». Elles se jouent avec le paquet « Nos cartes ».", "One category per line, the way you'd say it: \"one of Kevin's exes\", \"a cafeteria dish\". They play with the \"Our cards\" pack.") + "</p>" +
@@ -216,7 +218,7 @@ SB.register({
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const b2 = c.s.booms || {}, m2 = Math.min(...c.s.order.map(id => b2[id] || 0)), w = c.s.order.filter(id => (b2[id] || 0) === m2);
-          c.end({ title: tr("La Bombe : ", "The Bomb: ") + w.map(c.name).join(" & "), lines: c.s.order.slice().sort((x, y) => (b2[x] || 0) - (b2[y] || 0)).slice(0, 4).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (b2[id] || 0) + tr(" explosion(s)", " blast(s)")), win: w.length < c.s.order.length ? w : [] });
+          c.end({ title: SB.u.both("La Bombe : " + w.map(c.name).join(" & "), "The Bomb: " + w.map(c.name).join(" & ")), lines: c.s.order.slice().sort((x, y) => (b2[x] || 0) - (b2[y] || 0)).slice(0, 4).map((id, i) => SB.u.both((i + 1) + ". " + c.name(id) + " · " + (b2[id] || 0) + " explosion(s)", (i + 1) + ". " + c.name(id) + " · " + (b2[id] || 0) + " blast(s)")), win: w.length < c.s.order.length ? w : [] });
         }));
       });
     }

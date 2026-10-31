@@ -29,19 +29,23 @@ const numOf = s => { const v = parseFloat(String(s || "").replace(/\s/g, "").rep
 const catName = c => (PACKS0.find(p => p[0] === c) || [0, tr("Nos questions", "Our questions")])[1];
 const typeName = t => (TYPES.find(x => x[0] === t) || [0, ""])[1];
 
-/* Prépare une question jouable : choix mélangés et index de la bonne réponse (le secret reste chez l'hôte). */
+/* Prépare une question jouable : choix mélangés et index de la bonne réponse (le secret reste chez l'hôte).
+   Textes rangés dans les deux langues ({ fr, en }) : en salon, chaque téléphone lit la question dans SA langue (locQ). */
+const B = SB.u.both;
+const TNM = { fr: { a: "Rouges", b: "Bleus", c: "Verts", d: "Jaunes" }, en: { a: "Red", b: "Blue", c: "Green", d: "Yellow" } };
+const locQ = Q => (Q ? Object.assign({}, Q, { q: SB.u.L(Q.q), ch: Q.ch ? A(Q.ch).map(c => SB.u.L(c)) : Q.ch, u: SB.u.L(Q.u), x: SB.u.L(Q.x) }) : Q);
 function prep(key){
-  const [cat, i] = key.split(":"), lg = LG();
+  const [cat, i] = key.split(":");
   if(cat === "perso"){
     const x = myQs()[+i]; if(!x) return null;
     const a = A(x.a).map(s => clean(s, 60)).filter(Boolean), ch = shuffle(a.slice());
     return { key, cat, t: "q", q: clean(x.q, 200), ch, ok: ch.indexOf(a[0]) };
   }
   const raw = A(DATA()[cat])[+i]; if(!raw) return null;
-  const L = raw[lg] || raw.fr || {};
-  if(raw.t === "q"){ const a = A(L.a).slice(0, 4), ch = shuffle(a.slice()); return { key, cat, t: "q", q: L.q, ch, ok: ch.indexOf(a[0]) }; }
-  if(raw.t === "vf") return { key, cat, t: "vf", q: L.q, ch: VF(), ok: raw.v ? 0 : 1, x: L.x || "" };
-  if(raw.t === "n") return { key, cat, t: "n", q: L.q, n: +raw.n, u: L.u || "" };
+  const F = raw.fr || {}, E = raw.en || F;
+  if(raw.t === "q"){ const fa = A(F.a).slice(0, 4), ea = A(E.a), order = shuffle(fa.map((x, j) => j)); return { key, cat, t: "q", q: B(F.q, E.q), ch: order.map(j => B(fa[j], ea[j] || fa[j])), ok: order.indexOf(0) }; }
+  if(raw.t === "vf") return { key, cat, t: "vf", q: B(F.q, E.q), ch: [B("Vrai", "True"), B("Faux", "False")], ok: raw.v ? 0 : 1, x: B(F.x || "", E.x || F.x || "") };
+  if(raw.t === "n") return { key, cat, t: "n", q: B(F.q, E.q), n: +raw.n, u: B(F.u || "", E.u || F.u || "") };
   return null;
 }
 function deckFor(packs, types, kid){
@@ -193,7 +197,7 @@ SB.register({
     }
   },
   render(ctx, root){
-    const s = ctx.s, me = ctx.me, T = SB.u.byTwist(TW, s.tw || ""), Q = s.Q || {}, inp = ctx.mine() || {}, live = ctx.ids.filter(id => ctx.here(id));
+    const s = ctx.s, me = ctx.me, T = SB.u.byTwist(TW, s.tw || ""), Q = locQ(s.Q || {}), inp = ctx.mine() || {}, live = ctx.ids.filter(id => ctx.here(id));
     if(s.phase === "teams"){
       const ok = SB.teams.ok(s.tm, s.tmn, ctx.ids);
       screen(root, "tm" + JSON.stringify(s.tm) + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Les équipes", "The teams") + "</span>" + SB.teams.grid(s.tm, s.tmn, ctx.ids, ctx.name, ctx.isHost) +
@@ -247,7 +251,7 @@ SB.register({
       const mine = s.tmn ? (R.ans || {})[cap] : inp, est = s.tmn && Q.t === "n" ? '<p class="sm" style="text-align:center; margin:0">' + esc(SB.teams.ids(s.tmn).map(t => { const c2 = (s.caps || {})[t], a = c2 && (R.ans || {})[c2]; return SB.teams.name(t) + " : " + (a ? fmt(a.a) : "—"); }).join(" · ")) + "</p>" : "";
       const ch = Q.t !== "n" ? '<div class="qz-ch' + (Q.t === "vf" ? " vf" : "") + '">' + A(Q.ch).map((c, i) => '<button type="button" disabled class="' + (i === R.ok ? "ok" : mine && mine.a != null && +mine.a === i ? "ko" : "") + '">' + esc(c) + "</button>").join("") + "</div>" : "";
       screen(root, "rs" + s.k + ctx.isHost, H + '<p class="qz-q' + qCls(Q.q) + '" style="font-size:17px">' + esc(Q.q) + "</p>" +
-        '<div class="qz-ans"><span>' + tr("Réponse", "Answer") + "</span><b>" + esc(ansText(Qr)) + "</b>" + (R.x ? "<span>" + esc(R.x) + "</span>" : "") + "</div>" + ch +
+        '<div class="qz-ans"><span>' + tr("Réponse", "Answer") + "</span><b>" + esc(ansText(Qr)) + "</b>" + (R.x ? "<span>" + esc(SB.u.L(R.x)) + "</span>" : "") + "</div>" + ch +
         est + (s.tmn ? SB.teams.board(s.tm, s.tmn, s.tp || {}, ctx.ids, ctx.name, R.tg) : board(ctx.ids, s.pts, ctx.name, R.got, Q.t === "n" ? extra : null)) +
         SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>' + (last ? tr("Voir le classement", "See the standings") : tr("Question suivante", "Next question")) + "</button>" : '<p class="wait">' + tr("L'hôte passe à la suite…", "Waiting for the host…") + "</p>"), r => {
         const b = r.querySelector("[data-next]"); if(b) b.addEventListener("click", () => ctx.act(c => { if(c.s.phase !== "res") return; if(c.s.n >= c.s.rounds) c.set({ phase: "end" }); else nextQ(c); }));
@@ -263,11 +267,11 @@ SB.register({
         if(b) b.addEventListener("click", () => ctx.act(c => {
           if(c.s.tmn){
             const B = SB.teams.best(c.s.tp || {}, c.s.tmn);
-            c.end({ title: tr("Quiz : les ", "Quiz: ") + B.win.map(SB.teams.name).join(" & "), lines: SB.teams.ids(c.s.tmn).sort((x, y) => ((c.s.tp || {})[y] || 0) - ((c.s.tp || {})[x] || 0)).map((t, i) => (i + 1) + ". " + SB.teams.name(t) + " · " + ((c.s.tp || {})[t] || 0) + " pts"), win: B.mx > 0 ? c.ids.filter(id => B.win.indexOf(c.s.tm[id]) >= 0) : [] });
+            c.end({ title: SB.u.both("Quiz : les " + B.win.map(t => TNM.fr[t]).join(" & "), "Quiz: " + B.win.map(t => TNM.en[t]).join(" & ")), lines: SB.teams.ids(c.s.tmn).sort((x, y) => ((c.s.tp || {})[y] || 0) - ((c.s.tp || {})[x] || 0)).map((t, i) => SB.u.both((i + 1) + ". " + TNM.fr[t] + " · " + ((c.s.tp || {})[t] || 0) + " pts", (i + 1) + ". " + TNM.en[t] + " · " + ((c.s.tp || {})[t] || 0) + " pts")), win: B.mx > 0 ? c.ids.filter(id => B.win.indexOf(c.s.tm[id]) >= 0) : [] });
             return;
           }
           const pp = c.s.pts || {}, o2 = c.ids.slice().sort((a, b2) => (pp[b2] || 0) - (pp[a] || 0)), mx = pp[o2[0]] || 0;
-          c.end({ title: tr("Quiz : ", "Quiz: ") + c.name(o2[0]), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (pp[id] || 0) + " pts"), win: mx > 0 ? o2.filter(id => (pp[id] || 0) === mx) : [] });
+          c.end({ title: SB.u.both("Quiz : " + c.name(o2[0]), "Quiz: " + c.name(o2[0])), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (pp[id] || 0) + " pts"), win: mx > 0 ? o2.filter(id => (pp[id] || 0) === mx) : [] });
         }));
       });
     }
@@ -317,6 +321,7 @@ SB.register({
         if(n >= rounds || !deck.length){ end(); return; }
         let key; do { key = deck.pop(); Q = prep(key); } while(!Q && deck.length);
         if(!Q){ end(); return; }
+        Q = locQ(Q);
         SB.u.saw(SEEN, key); n++; picked = [];
         tw = twOn && n > 1 ? SB.u.twist(TW.filter(t => t.id !== "tapis"), { last: tw ? tw.id : "", rate: .25 }) : null;
         const body = Q.t === "n" ? '<p class="howto" style="text-align:center">' + tr("Chacun annonce un nombre à voix haute.", "Everyone says a number out loud.") + (Q.u ? " (" + esc(Q.u) + ")" : "") + "</p>" : '<div class="qz-ch' + (Q.t === "vf" ? " vf" : "") + '">' + A(Q.ch).map(c => "<button type=\"button\" disabled>" + esc(c) + "</button>").join("") + "</div>";

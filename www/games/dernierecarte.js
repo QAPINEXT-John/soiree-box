@@ -3,8 +3,12 @@
 (function(){
 "use strict";
 const { esc, A, shuffle, screen, store, persist, dock, buzz, tr } = SB.u;
-// Textes du moteur (journal de la partie) : dans la langue de la partie (E.lg = langue de l'hôte, ou du téléphone en solo).
-const L = (E, fr, en) => E && E.lg === "en" ? en : fr;
+// Textes du moteur (journal de la partie) : rangés en { fr, en } (L), chaque téléphone les lit dans sa langue (LG).
+// Le journal est rangé en { fr, en } dans l'état : chaque téléphone le lit dans sa langue (SB.u.L).
+const L = (E, fr, en) => SB.u.both(fr, en);
+const LF = x => (x == null ? "" : typeof x === "string" ? x : x.fr || ""), LE = x => (x == null ? "" : typeof x === "string" ? x : x.en || x.fr || "");
+const cat = (...a) => SB.u.both(a.map(LF).join(""), a.map(LE).join(""));
+const LG = x => SB.u.L(x || "");
 
 /* ---------- Cartes ----------
    Une carte = couleur + valeur : "r7", "gS" (passe), "bR" (inversion), "yD" (+2), "wW" (joker), "wF" (+4). */
@@ -12,7 +16,7 @@ const COLS = ["r", "y", "g", "b"];
 const CN_FR = { r: "rouge", y: "jaune", g: "vert", b: "bleu" }, CN_EN = { r: "red", y: "yellow", g: "green", b: "blue" };
 const CNAME = tr(CN_FR, CN_EN); // langue du téléphone (interface)
 const CNAME_F = { r: "rouge", y: "jaune", g: "verte", b: "bleue" }; // accord avec « Inversion »
-const cname = (E, k) => L(E, CN_FR, CN_EN)[k]; // langue de la partie (journal)
+const cname = (E, k) => (SB.lang() === "en" ? CN_EN : CN_FR)[k];
 const CHEX = { r: "#e0393e", y: "#f2a900", g: "#22964a", b: "#1f6fd6" };
 const col = c => c[0], val = c => c.slice(1), wild = c => c[0] === "w";
 function newDeck(){
@@ -146,7 +150,7 @@ function tick(E){
 }
 /* Fin d'une action : on passe la main (sauf double tour), puis on regarde si un coup de théâtre tombe. */
 function advance(E, steps, nameOf){
-  if(E.extra && E.extra === E.turn && !E.pend){ E.extra = ""; E.log += L(E, " · " + nameOf(E.turn) + " rejoue (double tour)", " · " + nameOf(E.turn) + " goes again (double turn)"); }
+  if(E.extra && E.extra === E.turn && !E.pend){ E.extra = ""; E.log = cat(E.log, L(E, " · " + nameOf(E.turn) + " rejoue (double tour)", " · " + nameOf(E.turn) + " goes again (double turn)")); }
   else E.turn = nextOf(E, steps);
   E.tc = (E.tc || 0) + 1;
   tick(E);
@@ -154,22 +158,23 @@ function advance(E, steps, nameOf){
 
 /* ---------- Trophées de fin de partie ---------- */
 const AWARDS = {
-  pl: { t: tr(["Mitraillette à cartes", "Distributeur automatique", "Le bras le plus rapide"], ["Card machine gun", "Vending machine", "Fastest arm in the room"]), d: v => tr(v + " cartes posées", v + (v === 1 ? " card played" : " cards played")), min: 3 },
-  dr: { t: tr(["Aspirateur à cartes", "Collectionneur(se) malgré lui (elle)", "Éventail géant"], ["Card vacuum", "Reluctant collector", "Giant fan of cards"]), d: v => tr(v + " cartes piochées", v + (v === 1 ? " card drawn" : " cards drawn")), min: 4 },
-  pen: { t: tr(["Cible préférée des +4", "Punching-ball de la table", "Victime désignée"], ["Favorite +4 target", "The table's punching bag", "Designated victim"]), d: v => tr(v + " cartes de pénalité", v + (v === 1 ? " penalty card" : " penalty cards")), min: 2 },
-  ct: { t: tr(["Œil de lynx", "Gendarme de la table", "Radar à « Dernière ! »"], ["Eagle eye", "Table cop", "“Last card!” radar"]), d: v => tr(v + " oubli" + (v > 1 ? "s" : "") + " attrapé" + (v > 1 ? "s" : ""), v + (v === 1 ? " slip caught" : " slips caught")), min: 1 },
-  jp: { t: tr(["Intercepteur(trice)", "Voleur(se) de tour", "Sniper de la défausse"], ["Interceptor", "Turn thief", "Discard pile sniper"]), d: v => tr(v + " interception" + (v > 1 ? "s" : ""), v + (v === 1 ? " jump-in" : " jump-ins")), min: 1 },
-  sw: { t: tr(["Roi (reine) du troc", "Pickpocket", "As de l'échange"], ["King of trading", "Pickpocket", "Swap master"]), d: v => tr(v + " main" + (v > 1 ? "s" : "") + " échangée" + (v > 1 ? "s" : ""), v + (v === 1 ? " hand swapped" : " hands swapped")), min: 1 }
+  pl: { t: { fr: ["Mitraillette à cartes", "Distributeur automatique", "Le bras le plus rapide"], en: ["Card machine gun", "Vending machine", "Fastest arm in the room"] }, d: (v, t) => (t || tr)(v + " cartes posées", v + (v === 1 ? " card played" : " cards played")), min: 3 },
+  dr: { t: { fr: ["Aspirateur à cartes", "Collectionneur(se) malgré lui (elle)", "Éventail géant"], en: ["Card vacuum", "Reluctant collector", "Giant fan of cards"] }, d: (v, t) => (t || tr)(v + " cartes piochées", v + (v === 1 ? " card drawn" : " cards drawn")), min: 4 },
+  pen: { t: { fr: ["Cible préférée des +4", "Punching-ball de la table", "Victime désignée"], en: ["Favorite +4 target", "The table's punching bag", "Designated victim"] }, d: (v, t) => (t || tr)(v + " cartes de pénalité", v + (v === 1 ? " penalty card" : " penalty cards")), min: 2 },
+  ct: { t: { fr: ["Œil de lynx", "Gendarme de la table", "Radar à « Dernière ! »"], en: ["Eagle eye", "Table cop", "“Last card!” radar"] }, d: (v, t) => (t || tr)(v + " oubli" + (v > 1 ? "s" : "") + " attrapé" + (v > 1 ? "s" : ""), v + (v === 1 ? " slip caught" : " slips caught")), min: 1 },
+  jp: { t: { fr: ["Intercepteur(trice)", "Voleur(se) de tour", "Sniper de la défausse"], en: ["Interceptor", "Turn thief", "Discard pile sniper"] }, d: (v, t) => (t || tr)(v + " interception" + (v > 1 ? "s" : ""), v + (v === 1 ? " jump-in" : " jump-ins")), min: 1 },
+  sw: { t: { fr: ["Roi (reine) du troc", "Pickpocket", "As de l'échange"], en: ["King of trading", "Pickpocket", "Swap master"] }, d: (v, t) => (t || tr)(v + " main" + (v > 1 ? "s" : "") + " échangée" + (v > 1 ? "s" : ""), v + (v === 1 ? " hand swapped" : " hands swapped")), min: 1 }
 };
 function awards(E){
   const S = E.st || {}, out = [];
   shuffle(Object.keys(AWARDS)).forEach(k => {
     const best = E.order.slice().sort((a, b) => ((S[b] || {})[k] || 0) - ((S[a] || {})[k] || 0))[0], v = (S[best] || {})[k] || 0;
-    if(v >= AWARDS[k].min && out.length < 3) out.push([k, best, v, rnd(AWARDS[k].t.length)]);
+    if(v >= AWARDS[k].min && out.length < 3) out.push([k, best, v, rnd(AWARDS[k].t.fr.length)]);
   });
   return out;
 }
-function awardLines(E, nameOf){ return A(E.aw).map(A).filter(x => AWARDS[x[0]]).map(x => [AWARDS[x[0]].t[x[3]] || AWARDS[x[0]].t[0], nameOf(x[1]), AWARDS[x[0]].d(x[2])]); }
+// lg : "fr" / "en" pour le résumé de fin (rangé dans les deux langues) ; sans lg, langue du téléphone.
+function awardLines(E, nameOf, lg){ lg = lg || SB.lang(); const t = lg === "en" ? (f, e) => e : (f, e) => f; return A(E.aw).map(A).filter(x => AWARDS[x[0]]).map(x => { const T = AWARDS[x[0]].t[lg === "en" ? "en" : "fr"]; return [T[x[3]] || T[0], nameOf(x[1]), AWARDS[x[0]].d(x[2], t)]; }); }
 
 function roundEnd(E, w, nameOf){
   let pts = 0;
@@ -189,8 +194,8 @@ function sevenZero(E, id, v, to, nameOf){
     const t = E.order.indexOf(to) >= 0 && to !== id ? to : bestSwap(E, id);
     const a = E.hands[id]; E.hands[id] = E.hands[t]; E.hands[t] = a;
     grace(E, [id, t]); stat(E, id, "sw"); E.sw = (E.sw || 0) + 1;
-    E.log += L(E, " · échange sa main avec " + nameOf(t), " · swaps hands with " + nameOf(t));
-  } else { rotate(E); grace(E, E.order); E.sw = (E.sw || 0) + 1; E.log += L(E, " · toutes les mains tournent", " · all hands rotate"); }
+    E.log = cat(E.log, L(E, " · échange sa main avec " + nameOf(t), " · swaps hands with " + nameOf(t)));
+  } else { rotate(E); grace(E, E.order); E.sw = (E.sw || 0) + 1; E.log = cat(E.log, L(E, " · toutes les mains tournent", " · all hands rotate")); }
 }
 function apply(E, id, i, chosen, nameOf, to, jump){
   const h = E.hands[id], c = h[i];
@@ -201,14 +206,14 @@ function apply(E, id, i, chosen, nameOf, to, jump){
   E.drew = false;
   const v = val(c), n = E.order.length;
   let steps = 1;
-  E.log = L(E, nameOf(id) + (jump ? " intercepte avec " : " joue ") + (val(c) === "R" ? "une " : "un ") + label(c, "fr").replace(/^(Passe-tour|Inversion|Joker)/, m => m.toLowerCase()) + (wild(c) ? " et choisit le " + cname(E, E.color) : ""),
-    nameOf(id) + (jump ? " jumps in with a " : " plays a ") + label(c, "en") + (wild(c) ? " and picks " + cname(E, E.color) : ""));
-  if(v === "S"){ steps = 2; E.log += L(E, " · " + nameOf(nextOf(E, 1)) + " passe son tour", " · " + nameOf(nextOf(E, 1)) + " is skipped"); }
-  if(v === "R"){ E.dir *= -1; steps = n === 2 ? 2 : 1; E.log += n === 2 ? L(E, " · et rejoue", " · and goes again") : L(E, " · le sens change", " · direction reverses"); }
+  E.log = L(E, nameOf(id) + (jump ? " intercepte avec " : " joue ") + (val(c) === "R" ? "une " : "un ") + label(c, "fr").replace(/^(Passe-tour|Inversion|Joker)/, m => m.toLowerCase()) + (wild(c) ? " et choisit le " + CN_FR[E.color] : ""),
+    nameOf(id) + (jump ? " jumps in with a " : " plays a ") + label(c, "en") + (wild(c) ? " and picks " + CN_EN[E.color] : ""));
+  if(v === "S"){ steps = 2; E.log = cat(E.log, L(E, " · " + nameOf(nextOf(E, 1)) + " passe son tour", " · " + nameOf(nextOf(E, 1)) + " is skipped")); }
+  if(v === "R"){ E.dir *= -1; steps = n === 2 ? 2 : 1; E.log = cat(E.log, n === 2 ? L(E, " · et rejoue", " · and goes again") : L(E, " · le sens change", " · direction reverses")); }
   if(v === "D" || v === "F"){
     const k = (v === "D" ? 2 : 4) * (E.dbl ? 2 : 1);
-    if(E.stack){ E.pend += k; E.log += L(E, " · " + nameOf(nextOf(E, 1)) + " doit encaisser " + E.pend + " ou renchérir", " · " + nameOf(nextOf(E, 1)) + " must take " + E.pend + " or stack on top"); }
-    else { const vic = nextOf(E, 1); give(E, vic, k, true); steps = 2; E.log += L(E, " · " + nameOf(vic) + " pioche " + k + " cartes et passe son tour", " · " + nameOf(vic) + " draws " + k + " cards and is skipped"); }
+    if(E.stack){ E.pend += k; E.log = cat(E.log, L(E, " · " + nameOf(nextOf(E, 1)) + " doit encaisser " + E.pend + " ou renchérir", " · " + nameOf(nextOf(E, 1)) + " must take " + E.pend + " or stack on top")); }
+    else { const vic = nextOf(E, 1); give(E, vic, k, true); steps = 2; E.log = cat(E.log, L(E, " · " + nameOf(vic) + " pioche " + k + " cartes et passe son tour", " · " + nameOf(vic) + " draws " + k + " cards and is skipped")); }
   }
   if(!h.length){ roundEnd(E, id, nameOf); return true; }
   if(E.sz && (v === "7" || v === "0")) sevenZero(E, id, v, to, nameOf);
@@ -249,8 +254,8 @@ function doDraw(E, id, nameOf){
   E.called[id] = false;
   E.dc = (E.dc || 0) + 1; E.dby = id; E.dn = got; stat(E, id, "dr", got);
   const what = got > 1 ? L(E, " pioche " + got + " cartes", " draws " + got + " cards") : L(E, " pioche", " draws");
-  if(canPlay(E, c)){ E.drew = true; E.log = nameOf(id) + what + (got > 1 ? L(E, "… et peut jouer la dernière", "… and can play the last one") : L(E, "… et peut la jouer", "… and can play it")); }
-  else { E.drew = false; E.log = nameOf(id) + what + L(E, " et passe", " and passes"); advance(E, 1, nameOf); }
+  if(canPlay(E, c)){ E.drew = true; E.log = cat(nameOf(id), what, got > 1 ? L(E, "… et peut jouer la dernière", "… and can play the last one") : L(E, "… et peut la jouer", "… and can play it")); }
+  else { E.drew = false; E.log = cat(nameOf(id), what, L(E, " et passe", " and passes")); advance(E, 1, nameOf); }
   return true;
 }
 function doPass(E, id, nameOf){
@@ -335,7 +340,7 @@ function tableHTML(E, me, nameOf, ui){
   h += '<div class="dc-turn">' + (E.phase !== "play" ? "" : myTurn ? tr("À toi !", "Your turn!") : tr("Au tour de " + esc(nameOf(E.turn)), esc(nameOf(E.turn)) + "'s turn")) + " " + (E.dir === 1 ? "↻" : "↺") + "</div>";
   h += '<div class="dc-table"><span class="dc-top" style="--tc:' + CHEX[E.color] + '">' + cardHTML(E.top, "big", " disabled") + "</span>" +
     '<button type="button" class="dc-back" data-draw' + (myTurn && !E.drew ? "" : " disabled") + "><b>" + (E.pend > 0 ? "+" + E.pend : tr("Pioche", "Draw")) + "</b>" + (E.left != null ? E.left : E.draw.length) + (((E.left != null ? E.left : E.draw.length) > 1) ? tr(" cartes", " cards") : tr(" carte", " card")) + "</button></div>";
-  h += '<p class="dc-log">' + esc(E.log || "") + (E.pend > 0 ? ' <span class="dc-pend">+' + E.pend + tr(" en attente", " pending") + "</span>" : "") + "</p>";
+  h += '<p class="dc-log">' + esc(LG(E.log)) + (E.pend > 0 ? ' <span class="dc-pend">+' + E.pend + tr(" en attente", " pending") + "</span>" : "") + "</p>";
   if(me){
     const mine = E.hands[me] || [], ok = myTurn ? playable(E, me) : jumpable(E, me);
     h += '<span class="eyebrow">' + tr("Ta main · " + mine.length + " carte" + (mine.length > 1 ? "s" : ""), "Your hand · " + mine.length + (mine.length === 1 ? " card" : " cards")) + (ui.sel == null && ok.some(Boolean) ? (myTurn ? tr(" · touche une carte pour la choisir", " · tap a card to pick it") : tr(" · interception possible !", " · you can jump in!")) : "") + '</span><div class="dc-hand">' +
@@ -575,7 +580,7 @@ const DEF = {
     const again = () => { root.dataset.key = "dc:"; DEF.render(SB.ctx(), root); };
     const n = f => (((ctx.mine() || {})[f] || {}).n || 0) + 1;
     // Coup envoyé, en attente de l'hôte : la carte est déjà partie de la main.
-    if(UI.pend && (E.phase !== "play" || (E.pc || 0) !== UI.pend.pc || E.log !== UI.pend.log || Date.now() - UI.pend.at > 5800)) UI.pend = null;
+    if(UI.pend && (E.phase !== "play" || (E.pc || 0) !== UI.pend.pc || JSON.stringify(E.log) !== UI.pend.log || Date.now() - UI.pend.at > 5800)) UI.pend = null;
     const gone = UI.pend ? UI.pend.i : null;
     if(s.phase === "play"){
       const key = JSON.stringify([s.k, E.hands, E.top, E.color, E.turn, E.dir, E.pend, E.drew, E.called, E.log, UI.sel, s.left, E.ban, E.dbl, E.extra, E.evn, evActive(E), gone]);
@@ -590,7 +595,7 @@ const DEF = {
           r.querySelectorAll("[data-ok],[data-col],[data-to]").forEach(x => { x.disabled = true; });
           const dk = r.querySelector(".dock"); if(dk) dk.style.visibility = "hidden";
           optFly(r, el, (E.hands[me] || [])[i]);
-          UI.pend = { i, pc: E.pc || 0, log: E.log, at: Date.now() };
+          UI.pend = { i, pc: E.pc || 0, log: JSON.stringify(E.log), at: Date.now() };
           UI.sel = null; UI.prev = null; ctx.send({ p: { n: n("p"), t: E.turn === me ? "play" : "jump", i, c: (E.hands[me] || [])[i], col, to: to || "" } });
         };
         const okb = r.querySelector("[data-ok]"); if(okb) okb.addEventListener("click", () => send(""));
@@ -619,16 +624,16 @@ const DEF = {
     } else {
       const last = s.phase === "end", champ = last ? bestOf(E) : s.winner;
       screen(root, "e" + s.k + s.phase + s.round + ctx.isHost, CSS + '<span class="eyebrow">' + (last ? (s.rounds > 1 ? tr("Vainqueur(e) de la partie", "Game winner") : tr("Vainqueur(e)", "Winner")) : tr("Manche " + s.round + " gagnée par", "Round " + s.round + " won by")) + '</span><div class="who">' + esc(ctx.name(champ)) + "</div>" +
-        '<p class="dc-log">' + esc(s.log) + "</p>" + (s.rounds > 1 ? '<div class="field"><span class="eyebrow">' + tr("Scores", "Scores") + "</span>" + scoresHTML(E, ctx.name) + "</div>" : "") + (last ? awardsHTML(E, ctx.name) : "") +
+        '<p class="dc-log">' + esc(LG(s.log)) + "</p>" + (s.rounds > 1 ? '<div class="field"><span class="eyebrow">' + tr("Scores", "Scores") + "</span>" + scoresHTML(E, ctx.name) + "</div>" : "") + (last ? awardsHTML(E, ctx.name) : "") +
         dock(ctx.isHost ? (last ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<button class="btn acc" type="button" data-next>' + tr("Manche suivante", "Next round") + "</button>") : '<p class="wait">' + tr("L'hôte passe à la suite…", "The host is moving on…") + "</p>"), r => {
         const nx = r.querySelector("[data-next]");
         if(nx) nx.addEventListener("click", () => ctx.act(c => { const F = fromState(c.s, c.priv()); if(F.phase !== "roundend") return; F.round++; newRound(F); publish(c, F); }));
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const F = tableView(c.s), w = c.s.rounds > 1 ? bestOf(F) : c.s.winner;
-          const lines = (c.s.rounds > 1 ? F.order.slice().sort((a, b2) => (F.score[b2] || 0) - (F.score[a] || 0)).slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (F.score[id] || 0) + " pts") : [])
-            .concat(awardLines(F, c.name).map(x => x[0] + L(c.s, " : ", ": ") + x[1]));
-          c.end({ title: L(c.s, "Dernière carte : " + c.name(w) + " gagne", "Last Card: " + c.name(w) + " wins"), lines, win: [w] });
+          const top = (c.s.rounds > 1 ? F.order.slice().sort((a, b2) => (F.score[b2] || 0) - (F.score[a] || 0)).slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (F.score[id] || 0) + " pts") : []);
+          const lF = top.concat(awardLines(F, c.name, "fr").map(x => x[0] + " : " + x[1])), lE = top.concat(awardLines(F, c.name, "en").map(x => x[0] + ": " + x[1]));
+          c.end({ title: SB.u.both("Dernière carte : " + c.name(w) + " gagne", "Last Card: " + c.name(w) + " wins"), lines: lF.map((l, i) => SB.u.both(l, lE[i])), win: [w] });
         }));
       });
     }
@@ -708,7 +713,7 @@ const DEF = {
         }
         if(viewer !== cur && humans().length > 1){
           clearTimeout(timer);
-          screen(root, "pass" + cur + E.log + Math.random(), CSS + '<p class="dc-log">' + esc(E.log) + '</p><div class="pass"><span class="eyebrow">' + tr("Passe le téléphone à", "Pass the phone to") + '</span><div class="who">' + esc(nameOf(cur)) + "</div><p>" + tr("Les autres, ne regardez pas sa main.", "Everyone else, don't peek at their hand.") + "</p></div>" +
+          screen(root, "pass" + cur + E.log + Math.random(), CSS + '<p class="dc-log">' + esc(LG(E.log)) + '</p><div class="pass"><span class="eyebrow">' + tr("Passe le téléphone à", "Pass the phone to") + '</span><div class="who">' + esc(nameOf(cur)) + "</div><p>" + tr("Les autres, ne regardez pas sa main.", "Everyone else, don't peek at their hand.") + "</p></div>" +
             dock('<button class="btn acc" type="button" data-n>' + tr("C'est moi", "It's me") + "</button>"), r => r.querySelector("[data-n]").addEventListener("click", () => { viewer = cur; step(); }));
           return;
         }
@@ -750,7 +755,7 @@ const DEF = {
         const last = E.phase === "end", champ = last && E.rounds > 1 ? bestOf(E) : E.winner;
         if(last && api.win) api.win([nameOf(champ)]);
         screen(root, "end" + E.round + E.phase, CSS + '<span class="eyebrow">' + (last ? (E.rounds > 1 ? tr("Vainqueur(e) de la partie", "Game winner") : tr("Vainqueur(e)", "Winner")) : tr("Manche " + E.round + " gagnée par", "Round " + E.round + " won by")) + '</span><div class="who">' + esc(nameOf(champ)) + "</div>" +
-          '<p class="dc-log">' + esc(E.log) + "</p>" + (E.rounds > 1 ? '<div class="field"><span class="eyebrow">' + tr("Scores", "Scores") + "</span>" + scoresHTML(E, nameOf) + "</div>" : "") + (last ? awardsHTML(E, nameOf) : "") +
+          '<p class="dc-log">' + esc(LG(E.log)) + "</p>" + (E.rounds > 1 ? '<div class="field"><span class="eyebrow">' + tr("Scores", "Scores") + "</span>" + scoresHTML(E, nameOf) + "</div>" : "") + (last ? awardsHTML(E, nameOf) : "") +
           dock(last ? '<button class="btn acc" type="button" data-a>' + tr("Rejouer", "Play again") + '</button><button class="btn ghost" type="button" data-q>' + tr("Choisir un autre jeu", "Pick another game") + "</button>" : '<button class="btn acc" type="button" data-n>' + tr("Manche suivante", "Next round") + "</button>"), r => {
           const nx = r.querySelector("[data-n]"); if(nx) nx.addEventListener("click", () => { E.round++; newRound(E); viewer = humans().length === 1 ? humans()[0] : ""; step(); });
           const a = r.querySelector("[data-a]"); if(a) a.addEventListener("click", api.again);

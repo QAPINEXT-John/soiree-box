@@ -1,7 +1,7 @@
 /* Mots interdits — faire deviner un mot à son équipe sans dire les mots interdits. */
 (function(){
 "use strict";
-const { esc, A, shuffle, screen, txt, store, persist, tr } = SB.u;
+const { esc, A, shuffle, screen, txt, store, persist, tr, both } = SB.u;
 
 // [mot à faire deviner, [5 mots interdits]]
 const CARDS = [
@@ -173,7 +173,7 @@ const HARD_CARDS_EN = [
   ["Gravedigger",["Shovel","Tomb","Cemetery","Hole","Dead"]],["Breakup",["Couple","Dump","Tears","Ex","Split"]],
   ["One-night stand",["Hookup","Morning after","Stranger","Sleep with","Once"]]
 ];
-// Contenu par langue : en réseau, c'est la langue de l'hôte (s.lg) qui compte.
+// Contenu par langue : en réseau, l'hôte tire la carte en français (clé stable) et chaque téléphone l'affiche dans sa langue.
 const DECK = { fr: { base: CARDS, hard: HARD_CARDS }, en: { base: CARDS_EN, hard: HARD_CARDS_EN } };
 const deckOf = lg => DECK[lg === "en" ? "en" : "fr"];
 const BYW = { fr: {}, en: {} };
@@ -182,8 +182,12 @@ const BYW = { fr: {}, en: {} };
 const kidF = l => { if(!(SB.kid && SB.kid())) return l; const k = l.filter(x => SB.kidOk(x)); return k.length ? k : l; }; // mode Enfant : jamais de pool vide
 function newDeck(hard, lg){ const d = deckOf(lg); return SB.u.fresh("motsint:cards", kidF(hard ? d.base.concat(d.hard) : d.base).map(c => c[0])); }
 function cardOf(w, lg){ const l = lg === "en" ? "en" : "fr"; return BYW[l][w] || DECK[l].base[0]; }
+// Mot français → carte anglaise au même rang (les paquets FR et EN sont alignés).
+const EN_C = {}; ["base", "hard"].forEach(k => DECK.fr[k].forEach((c, i) => { if(DECK.en[k][i]) EN_C[c[0]] = DECK.en[k][i]; }));
+const locW = w => (SB.lang() === "en" && EN_C[w] ? EN_C[w][0] : w);
+const locT = (w, t) => (SB.lang() === "en" && EN_C[w] ? EN_C[w][1] : t);
 let lastLeft = 99;
-const TEAMS = [{ n: tr("Équipe Rouge", "Red Team"), c: "#d23b3b" }, { n: tr("Équipe Bleue", "Blue Team"), c: "#2f6fd6" }];
+const TEAMS = [{ n: tr("Équipe Rouge", "Red Team"), b: both("Équipe Rouge", "Red Team"), c: "#d23b3b" }, { n: tr("Équipe Bleue", "Blue Team"), b: both("Équipe Bleue", "Blue Team"), c: "#2f6fd6" }];
 
 /* ---------- Coups de théâtre : un tour sur trois environ ---------- */
 const TWISTS = [
@@ -211,19 +215,19 @@ function fx(e){ return e[1] ? "+1 adverse" : (e[0] > 0 ? "+" : e[0] < 0 ? "−" 
 function scoreHTML(score, tt){
   return '<div class="score2">' + TEAMS.map((t, i) => '<div class="' + (i === tt ? "on" : "") + '"><span style="color:' + t.c + '">' + esc(t.n) + "</span><b>" + (A(score)[i] || 0) + "</b></div>").join("") + "</div>";
 }
-function cardHTML(c){ return '<div class="taboo"><div class="w">' + esc(c.w) + "</div><ul>" + A(c.t).map(x => "<li>" + esc(x) + "</li>").join("") + "</ul></div>"; }
+function cardHTML(c){ return '<div class="taboo"><div class="w">' + esc(locW(c.w)) + "</div><ul>" + A(locT(c.w, c.t)).map(x => "<li>" + esc(x) + "</li>").join("") + "</ul></div>"; }
 function logHTML(log){
   const l = A(log).map(A);
   if(!l.length) return '<p class="sm">' + tr("Aucune carte jouée.", "No cards played.") + "</p>";
   // x[2] vient de fx() (stocké dans l'état) : « +1 adverse » est traduit à l'affichage.
-  return '<ul class="list">' + l.map(x => '<li><span class="t" style="font-size:24px">' + esc(x[0]) + '</span><span class="by">' + (x[1] === "f" ? tr("Trouvé", "Got it") : x[1] === "b" ? tr("Mot interdit", "Forbidden word") : tr("Passé", "Passed")) + (x[2] && x[2] !== "0" ? " · " + esc(x[2] === "+1 adverse" ? tr("+1 adverse", "+1 other team") : x[2]) : x[1] === "f" ? " · +1" : x[1] === "b" ? " · −1" : "") + "</span></li>").join("") + "</ul>";
+  return '<ul class="list">' + l.map(x => '<li><span class="t" style="font-size:24px">' + esc(locW(x[0])) + '</span><span class="by">' + (x[1] === "f" ? tr("Trouvé", "Got it") : x[1] === "b" ? tr("Mot interdit", "Forbidden word") : tr("Passé", "Passed")) + (x[2] && x[2] !== "0" ? " · " + esc(x[2] === "+1 adverse" ? tr("+1 adverse", "+1 other team") : x[2]) : x[1] === "f" ? " · +1" : x[1] === "b" ? " · −1" : "") + "</span></li>").join("") + "</ul>";
 }
 const miniTwist = tw => { const t = TW(tw); return t ? SB.u.twistHTML({ name: t.name }) : ""; };
 function turnSum(log){ const l = A(log).map(A); return [l.filter(x => x[1] === "f").length, l.filter(x => x[1] === "b").length, l.filter(x => x[1] === "p").length]; }
 
 /* ---------- Trophées : tl = [[qui, équipe, trouvés, buzz, passes]] ---------- */
 function vary(list, seed){ return list[Math.abs(seed) % list.length]; }
-function awards(tl, name, who){
+function awards(tl, name, who, tr = SB.u.tr){
   who = who || name;
   const t = A(tl).map(A), out = [], seed = t.reduce((a, x) => a + (+x[2] || 0) * 3 + (+x[3] || 0), 0);
   const best = t.slice().sort((a, b) => b[2] - a[2])[0];
@@ -264,8 +268,8 @@ SB.register({
   start(ctx, o){
     const ids = shuffle(ctx.ids), teams = [[], []];
     ids.forEach((id, i) => teams[i % 2].push(id));
-    ctx.setPriv({ deck: newDeck(o.hard, SB.lang()) });
-    return { phase: "ready", lg: SB.lang(), teams, score: [0, 0], tt: 0, sp: [0, 0], turnNo: 0, turns: o.turns || 3, dur: o.dur || 60, card: null, endAt: 0, log: [], seen: {}, tw: "", tl: [] };
+    ctx.setPriv({ deck: newDeck(o.hard, "fr") });
+    return { phase: "ready", lg: "fr", teams, score: [0, 0], tt: 0, sp: [0, 0], turnNo: 0, turns: o.turns || 3, dur: o.dur || 60, card: null, endAt: 0, log: [], seen: {}, tw: "", tl: [] };
   },
   host(ctx){
     const s = ctx.s, teams = A(s.teams).map(A);
@@ -353,8 +357,9 @@ SB.register({
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const s2 = A(c.s.score), w = s2[0] === s2[1] ? -1 : s2[0] > s2[1] ? 0 : 1, tm = A(c.s.teams).map(A);
-          c.end({ title: w < 0 ? tr("Égalité, " + s2[0] + " à " + s2[1], "Tie, " + s2[0] + " to " + s2[1]) : tr(TEAMS[w].n + " gagne " + s2[w] + " à " + s2[1 - w], TEAMS[w].n + " wins " + s2[w] + " to " + s2[1 - w]),
-            lines: tm.map((t, i) => TEAMS[i].n + tr(" : ", ": ") + t.map(c.name).join(", ")).concat(awards(c.s.tl, x => c.name(x[0])).map(a => a[0] + tr(" : ", ": ") + a[1])), win: w < 0 ? [] : tm[w] });
+          const awF = awards(c.s.tl, x => c.name(x[0]), null, f => f), awE = awards(c.s.tl, x => c.name(x[0]), null, (f, e) => e);
+          c.end({ title: w < 0 ? both("Égalité, " + s2[0] + " à " + s2[1], "Tie, " + s2[0] + " to " + s2[1]) : both(TEAMS[w].b.fr + " gagne " + s2[w] + " à " + s2[1 - w], TEAMS[w].b.en + " wins " + s2[w] + " to " + s2[1 - w]),
+            lines: tm.map((t, i) => both(TEAMS[i].b.fr + " : " + t.map(c.name).join(", "), TEAMS[i].b.en + ": " + t.map(c.name).join(", "))).concat(awF.map((a, i) => both(a[0] + " : " + a[1], awE[i][0] + ": " + awE[i][1]))), win: w < 0 ? [] : tm[w] });
         }));
       });
     }
@@ -437,7 +442,7 @@ function currentSpeaker(ctx){
 }
 function draw(ctx){
   let deck = A(ctx.priv().deck).filter(w => typeof w === "string");
-  const lg = ctx.s && ctx.s.lg || "fr";
+  const lg = "fr";
   if(!deck.length) deck = newDeck(ctx.opts.hard, lg);
   const c = cardOf(deck.pop(), lg); ctx.setPriv({ deck }); SB.u.saw("motsint:cards", c[0]);
   return { id: ctx.rid(), w: c[0], t: c[1] };

@@ -219,8 +219,9 @@ SB.register({
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const sc = c.s.sc, w2 = (sc[1] || 0) > (sc[2] || 0) ? 1 : (sc[2] || 0) > (sc[1] || 0) ? 2 : 0;
-          const nm = side => (c.s.sides[side].length > 1 ? SIDE[side].name : c.name(c.s.sides[side][0]));
-          c.end({ title: tr("Puissance 4 : ", "Connect Four: ") + (w2 ? nm(w2) : tr("égalité", "tie")), lines: [nm(1) + " " + (sc[1] || 0) + " – " + (sc[2] || 0) + " " + nm(2)], win: w2 ? c.s.sides[w2].slice() : [] });
+          const SN = { fr: { 1: "Rouges", 2: "Jaunes" }, en: { 1: "Red", 2: "Yellow" } };
+          const nm = (side, lg) => (c.s.sides[side].length > 1 ? SN[lg][side] : c.name(c.s.sides[side][0]));
+          c.end({ title: SB.u.both("Puissance 4 : " + (w2 ? nm(w2, "fr") : "égalité"), "Connect Four: " + (w2 ? nm(w2, "en") : "tie")), lines: [SB.u.both(nm(1, "fr") + " " + (sc[1] || 0) + " – " + (sc[2] || 0) + " " + nm(2, "fr"), nm(1, "en") + " " + (sc[1] || 0) + " – " + (sc[2] || 0) + " " + nm(2, "en"))], win: w2 ? c.s.sides[w2].slice() : [] });
         }));
       });
     }

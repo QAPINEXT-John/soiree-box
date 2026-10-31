@@ -4,7 +4,9 @@
 (function(){
 "use strict";
 const { esc, A, shuffle, screen, txt, store, persist, tr, buzz, clean } = SB.u;
-const L = list => list.map(x => tr(x[0], x[1]));
+// Défis rangés en { fr, en } : en salon, chaque téléphone lit le défi dans SA langue (SB.u.L à l'affichage).
+const L = list => list.map(x => SB.u.both(x[0], x[1]));
+const DT = d => SB.u.L(d);
 const PACKS = [
   { v: "objets", label: tr("Chasse aux objets", "Scavenger hunt"), desc: tr("Ramenez vite le bon objet", "Bring back the right thing, fast"), list: L([
     ["Ramenez une chaussette (pas la vôtre).", "Bring back a sock (not your own)."],
@@ -187,7 +189,7 @@ function deckFor(packs, perso){
   const all = [];
   const want = normPacks(packs); PACKS.forEach(p => { if(want.indexOf(p.v) >= 0) p.list.forEach(t => all.push(t)); });
   if(perso) myDefis().forEach(t => all.push(t));
-  return SB.u.fresh("course", SB.kid() ? all.filter(t => SB.kidOk(t)) : all);
+  return SB.u.fresh("course", SB.kid() ? all.filter(t => SB.kidOk(t && typeof t === "object" ? [t.fr, t.en] : t)) : all);
 }
 function editor(){
   SB.page(tr("Nos défis", "Our challenges"), root => {
@@ -314,7 +316,7 @@ SB.register({
       if(root.dataset.gob !== s.k){ root.dataset.gob = s.k; buzz([60, 40, 60]); }
       const left = Math.max(0, Math.ceil((s.startAt + dur - now) / 1000)), out = A(s.out), iamOut = out.indexOf(myU) >= 0, claimed = !!inp.got;
       const cl = s.phase === "claim" ? s.claim : null;
-      screen(root, "go" + s.k + s.phase + (cl ? cl.by : "") + out.join() + claimed + ctx.isHost, head + SB.u.twistHTML(T) + '<p class="cd-def' + dCls(s.def) + '">' + esc(s.def) + "</p>" + '<div class="cd-t" data-t>' + left + "</div>" +
+      screen(root, "go" + s.k + s.phase + (cl ? cl.by : "") + out.join() + claimed + ctx.isHost, head + SB.u.twistHTML(T) + '<p class="cd-def' + dCls(DT(s.def)) + '">' + esc(DT(s.def)) + "</p>" + '<div class="cd-t" data-t>' + left + "</div>" +
         (cl ? '<div class="who" style="text-align:center' + (s.tmn ? "; color:" + SB.teams.color(cl.u) : "") + '">' + esc(uName(s, cl.u, ctx.name)) + '</div><p class="howto" style="text-align:center">' + (ctx.isHost ? tr(ctx.name(cl.by) + " dit que c'est réussi. Tu valides ?", ctx.name(cl.by) + " says it's done. Do you approve?") : tr("L'hôte vérifie…", "The host is checking…")) + "</p>"
           : ctx.playing ? '<button type="button" class="cd-go" data-got' + (iamOut || claimed ? " disabled" : "") + ">" + (iamOut ? tr("Raté pour ce défi", "Out for this one") : claimed ? tr("Envoyé !", "Sent!") : tr("On l'a !", "Got it!")) + "</button>" : "") +
         SB.u.dock(ctx.isHost ? (cl ? '<div class="row"><button class="btn ghost" type="button" data-no>' + tr("Refusé", "Rejected") + '</button><button class="btn acc" type="button" data-yes>' + tr("Validé !", "Approved!") + "</button></div>" : '<button class="btn ghost" type="button" data-skip>' + tr("Personne n'y arrive : on passe", "Nobody can do it: skip") + "</button>") : '<p class="wait"></p>'), r => {
@@ -335,7 +337,7 @@ SB.register({
     }
     if(s.phase === "res"){
       const R = s.res || {}, last = s.n >= s.rounds;
-      screen(root, "rs" + s.k + ctx.isHost, head + '<p class="cd-def' + dCls(s.def) + '" style="font-size:18px">' + esc(s.def) + "</p>" +
+      screen(root, "rs" + s.k + ctx.isHost, head + '<p class="cd-def' + dCls(DT(s.def)) + '" style="font-size:18px">' + esc(DT(s.def)) + "</p>" +
         (R.none ? '<p class="howto" style="text-align:center">' + tr("Personne n'a réussi : tout le monde a un gage !", "Nobody made it: everyone gets a forfeit!") + "</p>"
           : '<span class="eyebrow" style="text-align:center">' + tr("Défi gagné par", "Won by") + '</span><div class="who" style="text-align:center' + (s.tmn ? "; color:" + SB.teams.color(R.u) : "") + '">' + esc(uName(s, R.u, ctx.name)) + "</div>") +
         standings(s, ctx.ids, ctx.name, R.got) +
@@ -351,7 +353,7 @@ SB.register({
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const t2 = c.s.tp || {}, U2 = unitsOf(c.s, c.ids), m2 = Math.max(0, ...U2.map(u => t2[u] || 0)), b2 = U2.filter(u => (t2[u] || 0) === m2);
-          c.end({ title: tr("Course de défis : ", "Challenge Race: ") + b2.map(u => uName(c.s, u, c.name)).join(" & "), lines: U2.slice().sort((x, y) => (t2[y] || 0) - (t2[x] || 0)).slice(0, 4).map((u, i) => (i + 1) + ". " + uName(c.s, u, c.name) + " · " + (t2[u] || 0) + " pts"), win: m2 > 0 ? [].concat(...b2.map(u => membersOf(c.s, u, c.ids))) : [] });
+          const TNM = { fr: { a: "Rouges", b: "Bleus", c: "Verts", d: "Jaunes" }, en: { a: "Red", b: "Blue", c: "Green", d: "Yellow" } }, un = (u, lg) => (c.s.tmn ? TNM[lg][u] : c.name(u)); c.end({ title: SB.u.both("Course de défis : " + b2.map(u => un(u, "fr")).join(" & "), "Challenge Race: " + b2.map(u => un(u, "en")).join(" & ")), lines: U2.slice().sort((x, y) => (t2[y] || 0) - (t2[x] || 0)).slice(0, 4).map((u, i) => SB.u.both((i + 1) + ". " + un(u, "fr") + " · " + (t2[u] || 0) + " pts", (i + 1) + ". " + un(u, "en") + " · " + (t2[u] || 0) + " pts")), win: m2 > 0 ? [].concat(...b2.map(u => membersOf(c.s, u, c.ids))) : [] });
         }));
       });
     }
@@ -419,7 +421,7 @@ SB.register({
       function go(){
         buzz([60, 40, 60]);
         const dur = (tw && tw.id === "express" ? sec / 2 : sec) * 1000, t0 = Date.now();
-        screen(root, "go" + gno + ":" + n, head() + '<p class="cd-def' + dCls(def) + '">' + esc(def) + '</p><div class="cd-t" data-t>' + Math.round(dur / 1000) + "</div>" +
+        screen(root, "go" + gno + ":" + n, head() + '<p class="cd-def' + dCls(DT(def)) + '">' + esc(DT(def)) + '</p><div class="cd-t" data-t>' + Math.round(dur / 1000) + "</div>" +
           '<p class="howto" style="text-align:center; margin:0">' + tr("Qui a réussi en premier ?", "Who made it first?") + '</p><div class="cd-units">' + units().map(u => '<button type="button" data-u="' + esc(u) + '"' + (tmn ? ' style="border-color:' + SB.teams.color(u) + '"' : "") + ">" + esc(uname(u)) + "</button>").join("") + "</div>" +
           SB.u.dock('<button class="btn ghost" type="button" data-none>' + tr("Personne", "Nobody") + "</button>"), r => {
           r.querySelectorAll("[data-u]").forEach(b => b.addEventListener("click", () => win(b.dataset.u)));

@@ -1,7 +1,7 @@
 /* Priorités — un joueur classe 5 trucs au hasard en secret, les autres devinent son ordre. */
 (function(){
 "use strict";
-const { esc, A, shuffle, screen, txt, store, persist, dock, buzz } = SB.u;
+const { esc, A, shuffle, screen, txt, store, persist, dock, buzz, both } = SB.u;
 const tr = SB.u.tr, TWLABEL = tr("Coup de théâtre", "Plot twist");
 
 // Tout et n'importe quoi : objets, gens, situations, petits plaisirs et grosses galères
@@ -90,7 +90,7 @@ const ADULTE_EN = [
   "Drinking games that get out of hand","Strip poker","Kisses on the neck","Breakfast after a steamy night","Sweet nothings on the phone","Getting hit on at the supermarket",
   "Sexts full of typos","Meeting the in-laws for the first time","Mirrors on the ceiling"
 ];
-// Contenu des parties : langue de l'hôte (s.lg) en réseau, langue du téléphone en local.
+// Contenu des parties : tiré en français (clé stable, gardée dans l'état) ; chaque téléphone l'affiche dans sa langue (tx).
 const LISTS = { fr: { classique: CLASSIQUE, adulte: ADULTE }, en: { classique: CLASSIQUE_EN, adulte: ADULTE_EN } };
 const lists = lg => LISTS[lg === "en" ? "en" : "fr"];
 const PACKS = [
@@ -99,10 +99,12 @@ const PACKS = [
 ];
 const SEEN = "priorites:t";
 const kidF = l => { if(!(SB.kid && SB.kid())) return l; const k = l.filter(x => SB.kidOk(x)); return k.length ? k : l; }; // mode Enfant : jamais de pool vide
-function pool(packs, lg){ const L = lists(lg), sel = A(packs); const p = PACKS.filter(x => sel.indexOf(x.v) >= 0).flatMap(x => L[x.v]); return kidF(p.length ? p : L.classique); }
+const EN_OF = {}; Object.keys(LISTS.fr).forEach(k => A(LISTS.fr[k]).forEach((t, i) => { if(LISTS.en[k][i]) EN_OF[t] = LISTS.en[k][i]; }));
+const tx = t => (SB.lang() === "en" && EN_OF[t] ? EN_OF[t] : t);
+function pool(packs){ const L = LISTS.fr, sel = A(packs); const p = PACKS.filter(x => sel.indexOf(x.v) >= 0).flatMap(x => L[x.v]); return kidF(p.length ? p : L.classique); }
 // Tire n trucs en tête de paquet (les jamais vus d'abord).
 function drawN(deck, packs, n, lg){
-  let d = A(deck).slice(); if(d.length < n) d = SB.u.fresh(SEEN, pool(packs, lg), true);
+  let d = A(deck).slice(); if(d.length < n) d = SB.u.fresh(SEEN, pool(packs), true);
   const five = d.splice(0, n); SB.u.saw(SEEN, five); return { five, deck: d };
 }
 function correct(a, b){ let c = 0; for(let i = 0; i < a.length; i++) if(a[i] !== undefined && a[i] === b[i]) c++; return c; }
@@ -210,7 +212,7 @@ SB.register({
   start(ctx, o){
     if(!A(o.packs).length) throw new Error(tr("Choisis au moins un paquet.", "Pick at least one pack."));
     const lg = SB.lang();
-    ctx.setPriv({ deck: SB.u.fresh(SEEN, pool(o.packs, lg), true) });
+    ctx.setPriv({ deck: SB.u.fresh(SEEN, pool(o.packs), true) });
     const ri = Math.floor(Math.random() * ctx.players.length);
     return Object.assign(roundOf(ctx, 1, ri, "", lg), { rounds: ctx.players.length * (o.laps || 1), scores: {}, known: {}, sf: {}, lg });
   },
@@ -237,7 +239,7 @@ SB.register({
     ctx.set({ phase: "reveal", order: r.o, guesses, pts, scores, known, sf });
   },
   render(ctx, root){
-    const s = ctx.s, items = A(s.items), n = items.length, isR = s.ranker === ctx.me, rn = ctx.name(s.ranker), tw = s.tw || "";
+    const s = ctx.s, items = A(s.items).map(tx), n = items.length, isR = s.ranker === ctx.me, rn = ctx.name(s.ranker), tw = s.tw || "";
     const lab = '<span class="eyebrow">' + tr("Manche ", "Round ") + s.round + " / " + s.rounds + " · " + esc(rn) + tr(" classe", " is ranking") + "</span>" + SB.u.twistHTML(SB.u.byTwist(TW, tw), TWLABEL);
     const nextRound = c => {
       const st = c.s;
@@ -288,7 +290,7 @@ SB.register({
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const s2 = c.s.scores || {}, o2 = c.ids.slice().sort((a, b2) => (s2[b2] || 0) - (s2[a] || 0)), mx = s2[o2[0]] || 0;
-          c.end({ title: tr("Priorités · " + c.name(o2[0]) + " gagne", "Priorities · " + c.name(o2[0]) + " wins"), lines: o2.map(id => c.name(id) + " · " + (s2[id] || 0) + ((s2[id] || 0) === 1 ? " pt" : " pts")), win: mx ? o2.filter(id => (s2[id] || 0) === mx) : [] });
+          c.end({ title: both("Priorités · " + c.name(o2[0]) + " gagne", "Priorities · " + c.name(o2[0]) + " wins"), lines: o2.map(id => c.name(id) + " · " + (s2[id] || 0) + ((s2[id] || 0) === 1 ? " pt" : " pts")), win: mx ? o2.filter(id => (s2[id] || 0) === mx) : [] });
         }));
       });
     }
@@ -304,7 +306,7 @@ SB.register({
       let L = { phase: "setup", ri: 0, round: 0, rounds: names.length, deck: [], items: [], order: "", guess: "", score: 0, max: 0, tw: null, gain: 0 };
       const newItems = () => {
         L.tw = twOn && L.round > 1 ? SB.u.twist(TWL, { last: L.tw ? L.tw.id : "", n: names.length, rate: .4 }) : null;
-        const d = itemsFor(SB.okPacks(sel, PACKS), L.deck, L.tw ? L.tw.id : "", names.filter((_, i) => i !== L.ri), SB.lang()); L.items = d.five; L.deck = d.deck;
+        const d = itemsFor(SB.okPacks(sel, PACKS), L.deck, L.tw ? L.tw.id : "", names.filter((_, i) => i !== L.ri), SB.lang()); L.items = d.five.map(tx); L.deck = d.deck;
       };
       const go = () => {
         const rn = names[L.ri], tw = L.tw ? L.tw.id : "", n = L.items.length;
@@ -319,7 +321,7 @@ SB.register({
             r.querySelector("[data-tw]").addEventListener("click", () => { twOn = !twOn; persist({ prTw: twOn }); go(); });
             r.querySelector("[data-go]").addEventListener("click", () => {
               if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet", "Pick at least one pack")); return; }
-              L.deck = SB.u.fresh(SEEN, pool(SB.okPacks(sel, PACKS), SB.lang()), true); L.round = 1; L.score = 0; L.max = 0; L.tw = null; L.ri = Math.floor(Math.random() * names.length);
+              L.deck = SB.u.fresh(SEEN, pool(SB.okPacks(sel, PACKS)), true); L.round = 1; L.score = 0; L.max = 0; L.tw = null; L.ri = Math.floor(Math.random() * names.length);
               newItems(); L.phase = "pass"; go();
             });
           });

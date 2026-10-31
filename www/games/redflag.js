@@ -127,6 +127,15 @@ const PERKS_EN = [
   "writes you poems","is always in a good mood","has a cabin in the mountains","can fix anything","has a smile that melts everyone",
   "backs you in everything you do","knows the best restaurants in town","dances like a dream","remembers everything that matters to you"
 ];
+// En salon, l'hôte tire toujours les cartes en français (clé stable) ; chaque téléphone les affiche dans SA langue.
+const TL = { en: {}, fr: {} };
+[[FLAGS, FLAGS_EN], [ADULTE, ADULTE_EN], [PERKS, PERKS_EN]].forEach(([f, e]) => f.forEach((x, i) => { if(e[i]){ TL.en[x] = e[i]; TL.fr[e[i]] = x; } }));
+function tl(x){
+  x = String(x == null ? "" : x); const m = TL[SB.lang() === "en" ? "en" : "fr"];
+  if(m[x]) return m[x];
+  const sep = / et | and /; if(sep.test(x)){ const parts = x.split(sep); if(parts.every(p => m[p] || TL.en[p] || TL.fr[p])) return parts.map(p => m[p] || p).join(SB.lang() === "en" ? " and " : " et "); }
+  return x;
+}
 const DECK = { fr: { classique: FLAGS, adulte: ADULTE, perks: PERKS }, en: { classique: FLAGS_EN, adulte: ADULTE_EN, perks: PERKS_EN } };
 const deck = lg => DECK[lg === "en" ? "en" : "fr"];
 const perksOf = lg => deck(lg).perks;
@@ -225,7 +234,7 @@ function closeDate(ids, st){
   });
   return { total, full, first };
 }
-const PH = tr({
+const PHS = [{
   strict: ["Le (la) plus exigeant(e)", "Tolérance zéro", "Juge impitoyable"],
   cool: ["Le plus cool", "Cœur d'artichaut", "Prêt(e) à tout pardonner"],
   duo: ["Le duo le plus compatible", "Les âmes sœurs du jugement", "Même cerveau, deux corps"],
@@ -243,7 +252,8 @@ const PH = tr({
   desp: ["Most desperate", "Would do anything for love", "Hooked on lost causes"],
   full: ["Loyal to the end", "Never gives up", "The rock"],
   first: ["Speed exit", "Shoes always laced", "First one out the door"]
-});
+}];
+const PH = SB.lang() === "en" ? PHS[1] : PHS[0];
 // Gages. Vote : ceux dont la couleur ne marque pas (si quelqu'un marque). Date : le premier à fuir boit, ceux qui tiennent jusqu'au bout distribuent (si quelqu'un a fui).
 function voteGages(v, tw, ids){
   const win = scorers(v, tw); if(!win.length) return [];
@@ -256,6 +266,8 @@ function dateGages(ids, outAt){
 }
 const PL = SB.u.plural2;
 const ph = (k, seed) => PH[k][(+seed || 0) % PH[k].length];
+// Même récompense dans les deux langues, pour l'état partagé (fin de partie).
+const phB = (k, seed) => { const i = (+seed || 0) % PHS[0][k].length; return SB.u.both(PHS[0][k][i], PHS[1][k][i]); };
 function awardCard(title, who, sub){ return '<div class="card"><span class="eyebrow">' + esc(title) + '</span><div class="big">' + esc(who) + "</div>" + (sub ? '<span class="sm">' + esc(sub) + "</span>" : "") + "</div>"; }
 function voteEndHTML(st, nameAt, n, seed, hl){
   return (st.pts[st.top] ? '<div class="card acc"><span class="eyebrow">' + esc(ph("sync", seed)) + '</span><div class="big">' + esc(st.winners.map(nameAt).join(" & ")) + '</div><span class="sm">' + PL(st.pts[st.top] || 0, "point", "points", "point") + "</span></div>" : "") +
@@ -284,11 +296,11 @@ const CSS = '<style>.rf-card{background:var(--card); border-radius:18px; padding
 function flagSVG(){ return '<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="M5 3v18" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><path d="M6 4h11l-2.5 4L17 12H6z" fill="#fff" opacity=".95"/></svg>'; }
 const kinds = tw => tw === "nobeige" ? ["r", "g"] : ["r", "b", "g"];
 function voteBtns(sel, tw){ const ks = kinds(tw); return '<div class="rf-3' + (ks.length === 2 ? " two" : "") + '">' + ks.map(k => '<button type="button" data-v="' + k + '" style="background:' + KIND[k][1] + '" aria-pressed="' + (k === sel) + '"><span class="f">' + flagSVG() + "</span>" + KIND[k][0] + "</button>").join("") + "</div>"; }
-// Liaisons des cartes : dans la langue du contenu (o.lg = langue de l'hôte).
+// Cartes : affichées dans la langue de ce téléphone (tl).
 function flagCard(o, small){
-  return '<div class="rf-card">' + (small ? "" : '<span class="eyebrow">' + tr("Red flag ou green flag ?", "Red flag or green flag?") + "</span>") + '<div class="rf-t"' + (small ? ' style="font-size:22px"' : "") + ">" + esc(o.f) + "</div>" +
-    (o.f2 ? '<div class="rf-plus">' + ltr(o.lg, "et en plus, ", "and on top of that, ") + "<b>" + esc(unDate(o.f2)) + "</b></div>" : "") +
-    (o.pk ? '<div class="rf-plus">' + ltr(o.lg, "… mais ton date ", "… but your date ") + "<b>" + esc(o.pk) + "</b></div>" : "") + "</div>";
+  return '<div class="rf-card">' + (small ? "" : '<span class="eyebrow">' + tr("Red flag ou green flag ?", "Red flag or green flag?") + "</span>") + '<div class="rf-t"' + (small ? ' style="font-size:22px"' : "") + ">" + esc(tl(o.f)) + "</div>" +
+    (o.f2 ? '<div class="rf-plus">' + tr("et en plus, ", "and on top of that, ") + "<b>" + esc(unDate(tl(o.f2))) + "</b></div>" : "") +
+    (o.pk ? '<div class="rf-plus">' + tr("… mais ton date ", "… but your date ") + "<b>" + esc(tl(o.pk)) + "</b></div>" : "") + "</div>";
 }
 function resBars(ids, votes, nameOf, blind){
   const by = { r: [], b: [], g: [] }; ids.forEach((id, i) => { const v = votes[i]; if(by[v]) by[v].push(id); });
@@ -301,7 +313,7 @@ function resHTML(o, ids, nameOf){
   return flagCard(o, true) + (vd ? '<div class="verdict" style="color:' + KIND[vd][1] + '">' + KIND[vd][0] + tr(" !", "!") + "</div>" : '<div class="verdict">' + tr("Avis partagés", "Split decision") + "</div>") + resBars(ids, v, nameOf, tw === "blind") +
     '<p class="rf-pts">' + (who.length ? (tw === "blind" ? PL(who.length, "joueur marque", "joueurs marquent", "player scores", "players score") : tr("Marquent : ", "Scoring: ") + "<b>" + esc(who.map(nameOf).join(", ")) + "</b>") + " · +" + mult : tr("Personne ne marque cette fois", "Nobody scores this time")) + "</p>";
 }
-function storyHTML(perk, flags, upto, lg){ return '<ul class="rf-steps"><li class="perk">' + ltr(lg, "Ton date ", "Your date ") + esc(perk) + "…</li>" + A(flags).slice(0, upto).map(f => "<li>" + ltr(lg, "… mais ", "… but ") + esc(unDate(f)) + "</li>").join("") + "</ul>"; }
+function storyHTML(perk, flags, upto){ return '<ul class="rf-steps"><li class="perk">' + tr("Ton date ", "Your date ") + esc(tl(perk)) + "…</li>" + A(flags).slice(0, upto).map(f => "<li>" + tr("… mais ", "… but ") + esc(unDate(tl(f))) + "</li>").join("") + "</ul>"; }
 
 SB.register({
   id: "redflag", name: "Red Flag", glyph: "Flag", pitch: tr("Red, beige ou green flag pour ton date ?", "Red, beige or green flag for your date?"), hot: true,
@@ -334,7 +346,7 @@ SB.register({
   ],
   start(ctx, o){
     if(!A(o.packs).length) throw new Error(tr("Choisis au moins un paquet.", "Pick at least one pack."));
-    const D = { deck: [], perks: [] }, seed = Math.floor(Math.random() * 999), lg = SB.lang();
+    const D = { deck: [], perks: [] }, seed = Math.floor(Math.random() * 999), lg = "fr"; // cartes tirées en français, traduites à l'affichage
     if(o.mode === "date"){
       const r = dateRound(D, o.packs, "-", lg); ctx.setPriv(D);
       return { mode: "date", phase: "step", round: 1, rounds: Math.min(o.rounds || 10, 8), seed, lg, perk: r.perk, flags: r.flags, tw: "-", step: 0, stay: ctx.ids.slice(), outAt: {}, total: {}, full: {}, first: {} };
@@ -362,7 +374,7 @@ SB.register({
   },
   render(ctx, root){
     const s = ctx.s, me = ctx.me, tw = s.tw || "-";
-    const lab = '<span class="eyebrow">' + tr("Manche ", "Round ") + s.round + " / " + s.rounds + "</span>", lg = s.lg || "fr";
+    const lab = '<span class="eyebrow">' + tr("Manche ", "Round ") + s.round + " / " + s.rounds + "</span>", lg = SB.lang();
     const back = (title, lines, win) => ctx.act(c => c.end({ title, lines, win }));
     /* ===== Mode Red ou green ===== */
     if(s.mode === "vote"){
@@ -370,7 +382,7 @@ SB.register({
       const nextVote = c => {
         const st = c.s; if(st.round >= st.rounds){ c.set({ phase: "end" }); return; }
         const D = { deck: A(c.priv().deck), perks: A(c.priv().perks) };
-        const t = pickTw(TW_V, c.opts.twists !== false, st.round + 1, st.tw), r = voteRound(D, c.opts.packs, t, st.lg); c.setPriv(D);
+        const t = pickTw(TW_V, c.opts.twists !== false, st.round + 1, st.tw), r = voteRound(D, c.opts.packs, t, "fr"); c.setPriv(D);
         c.set({ phase: "vote", round: st.round + 1, f: r.f, f2: r.f2, pk: r.pk, tw: t, votes: "", k: c.rid() });
       };
       if(s.phase === "vote"){
@@ -390,8 +402,9 @@ SB.register({
           (ctx.isHost ? dock('<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>") : dock('<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>")), r => {
           const b = r.querySelector("[data-back]");
           const SEP = tr(" : ", ": ");
-          if(b) b.addEventListener("click", () => back(st.pts[st.top] ? ph("sync", s.seed) + SEP + st.winners.map(nm).join(" & ") : "Red Flag · " + hist.length + " flags",
-            [ph("strict", s.seed) + SEP + nm(st.strict), ph("cool", s.seed + 1) + SEP + nm(st.cool)].concat(st.duo && ids.length > 2 ? [ph("duo", s.seed + 2) + SEP + nm(st.duo[0]) + " & " + nm(st.duo[1])] : []),
+          const B = (k, sd, who) => { const o = phB(k, sd); return SB.u.both(o.fr + " : " + who, o.en + ": " + who); };
+          if(b) b.addEventListener("click", () => back(st.pts[st.top] ? B("sync", s.seed, st.winners.map(nm).join(" & ")) : "Red Flag · " + hist.length + " flags",
+            [B("strict", s.seed, nm(st.strict)), B("cool", s.seed + 1, nm(st.cool))].concat(st.duo && ids.length > 2 ? [B("duo", s.seed + 2, nm(st.duo[0]) + " & " + nm(st.duo[1]))] : []),
             st.winners.map(i => ids[i])));
         });
       }
@@ -404,12 +417,12 @@ SB.register({
       const st = c.s, sums = closeDate(c.ids, st);
       if(st.round >= st.rounds){ c.set(Object.assign({ phase: "end" }, sums)); return; }
       const D = { deck: A(c.priv().deck), perks: A(c.priv().perks) };
-      const t = pickTw(TW_D, c.opts.twists !== false, st.round + 1, st.tw), r = dateRound(D, c.opts.packs, t, st.lg); c.setPriv(D);
+      const t = pickTw(TW_D, c.opts.twists !== false, st.round + 1, st.tw), r = dateRound(D, c.opts.packs, t, "fr"); c.setPriv(D);
       c.set(Object.assign({ phase: "step", round: st.round + 1, perk: r.perk, flags: r.flags, tw: t, step: 0, stay: c.ids.filter(id => c.here(id)), outAt: {}, left: [], k: c.rid() }, sums));
     };
     if(s.phase === "step"){
-      screen(root, "s" + s.k + "|" + step + inGame, CSS + lab + banner + '<span class="eyebrow">Red flag ' + (step + 1) + " / " + nf + "</span>" + storyHTML(s.perk, flags, step, lg) +
-        '<div class="rf-card"><span class="eyebrow">' + ltr(lg, "… mais", "… but") + '</span><div class="rf-t">' + esc(flags[step]) + "</div></div>" +
+      screen(root, "s" + s.k + "|" + step + inGame, CSS + lab + banner + '<span class="eyebrow">Red flag ' + (step + 1) + " / " + nf + "</span>" + storyHTML(s.perk, flags, step) +
+        '<div class="rf-card"><span class="eyebrow">' + tr("… mais", "… but") + '</span><div class="rf-t">' + esc(tl(flags[step])) + "</div></div>" +
         (inGame ? dock((crush ? '<p class="wait">' + tr("Coup de foudre : personne ne peut partir maintenant.", "Love at first sight: nobody can leave right now.") + '</p><button class="btn ok" type="button" data-d="s">' + tr("Je reste, évidemment", "I'm staying, obviously") + "</button>" : '<div class="rf-2"><button class="btn ok" type="button" data-d="s">' + tr("Je reste", "I'm staying") + '</button><button class="btn bad" type="button" data-d="l">' + tr("Je pars", "I'm out") + "</button></div>") + '<p class="wait" data-wait></p>')
           : dock('<p class="wait">' + tr("Tu as déjà fui. Regarde qui tient encore…", "You already ran. Watch who's still hanging on…") + '</p><p class="wait" data-wait></p>')), r => {
         r.querySelectorAll("[data-d]").forEach(b => b.addEventListener("click", () => { ctx.send({ d: b.dataset.d, st: step }); r.querySelectorAll("[data-d]").forEach(x => { x.disabled = true; }); b.textContent = b.dataset.d === "s" ? tr("Tu restes…", "You're staying…") : tr("Tu fuis !", "You're running!"); }));
@@ -418,7 +431,7 @@ SB.register({
       txt(root, "[data-wait]", done + " / " + live.length + tr(" ont décidé", " decided") + (blind ? "" : tr(" · encore là : ", " · still here: ") + stay.map(ctx.name).join(", ")));
     } else if(s.phase === "stepres"){
       const left = A(s.left), last = step >= nf - 1 || !stay.length;
-      screen(root, "sr" + s.k + "|" + step + ctx.isHost, CSS + lab + banner + storyHTML(s.perk, flags, step + 1, lg) +
+      screen(root, "sr" + s.k + "|" + step + ctx.isHost, CSS + lab + banner + storyHTML(s.perk, flags, step + 1) +
         (blind ? '<div class="card"><span class="eyebrow">' + tr("Fuite discrète", "Quiet exit") + '</span><div class="big">' + (left.length ? tr(left.length + " départ" + (left.length > 1 ? "s" : "") + " en douce", left.length + " slipped away") : tr("Personne ne bouge", "Nobody moves")) + '</div><span class="sm">' + tr("Les noms seront révélés à la fin du date.", "Names will be revealed at the end of the date.") + "</span></div>"
           : '<div class="card"><span class="eyebrow">' + (left.length ? tr("Ont pris la fuite", "Ran for it") : tr("Personne ne part", "Nobody leaves")) + '</span><div class="big">' + esc(left.map(ctx.name).join(", ") || tr("Ils tiennent bon…", "They're hanging in there…")) + "</div>" +
           '<span class="sm">' + tr("Encore là : ", "Still here: ") + esc(stay.map(ctx.name).join(", ") || tr("plus personne", "nobody left")) + "</span></div>") +
@@ -432,7 +445,7 @@ SB.register({
       });
     } else if(s.phase === "roundend"){
       const outAt = s.outAt || {}, gone = ctx.ids.filter(id => outAt[id] !== undefined);
-      screen(root, "re" + s.k + ctx.isHost, CSS + lab + banner + storyHTML(s.perk, flags, Math.min(nf, step + 1), lg) +
+      screen(root, "re" + s.k + ctx.isHost, CSS + lab + banner + storyHTML(s.perk, flags, Math.min(nf, step + 1)) +
         '<div class="card"><span class="eyebrow">' + (stay.length ? tr("Restent jusqu'au bout", "Stayed to the very end") : tr("Tout le monde a fui", "Everyone ran")) + '</span><div class="big">' + esc(stay.map(ctx.name).join(", ") || tr("Ce date finira seul(e)", "This date will die alone")) + "</div>" +
         (gone.length ? '<span class="sm">' + esc(gone.map(id => ctx.name(id) + " (flag " + (+outAt[id] + 1) + ")").join(", ")) + "</span>" : "") + "</div>" +
         (ctx.isHost ? dock('<button class="btn acc" type="button" data-next>' + (s.round >= s.rounds ? tr("Voir le bilan", "See the results") : tr("Date suivant", "Next date")) + "</button>") : dock('<p class="wait">' + tr("L'hôte lance le date suivant…", "The host is starting the next date…") + "</p>")), r => {
@@ -443,7 +456,8 @@ SB.register({
       screen(root, "end" + ctx.isHost, CSS + dateEndHTML(ctx.ids, t, s.full || {}, s.first || {}, ctx.name, s.seed, Math.max(1, top)) +
         (ctx.isHost ? dock('<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>") : dock('<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>")), r => {
         const b = r.querySelector("[data-back]"), SEP = tr(" : ", ": ");
-        if(b) b.addEventListener("click", () => back(ph("desp", s.seed) + SEP + ctx.name(ids[0]), [ph("strict", s.seed) + SEP + ctx.name(ids[ids.length - 1])], ids.filter(id => (t[id] || 0) === top && top > 0)));
+        const B = (k, sd, who) => { const o = phB(k, sd); return SB.u.both(o.fr + " : " + who, o.en + ": " + who); };
+        if(b) b.addEventListener("click", () => back(B("desp", s.seed, ctx.name(ids[0])), [B("strict", s.seed, ctx.name(ids[ids.length - 1]))], ids.filter(id => (t[id] || 0) === top && top > 0)));
       });
     }
   },
@@ -518,8 +532,8 @@ SB.register({
         } else if(ph2 === "step"){
           const crush = L.tw === "crush" && !L.step;
           if(crush) L.left = [];
-          screen(root, "s" + L.round + "|" + L.step, CSS + ROWCSS + lab() + banner() + '<span class="eyebrow">Red flag ' + (L.step + 1) + " / " + L.flags.length + "</span>" + storyHTML(L.perk, L.flags, L.step, L.lg) +
-            '<div class="rf-card"><span class="eyebrow">' + ltr(L.lg, "… mais", "… but") + '</span><div class="rf-t">' + esc(L.flags[L.step]) + "</div></div>" +
+          screen(root, "s" + L.round + "|" + L.step, CSS + ROWCSS + lab() + banner() + '<span class="eyebrow">Red flag ' + (L.step + 1) + " / " + L.flags.length + "</span>" + storyHTML(L.perk, L.flags, L.step) +
+            '<div class="rf-card"><span class="eyebrow">' + tr("… mais", "… but") + '</span><div class="rf-t">' + esc(tl(L.flags[L.step])) + "</div></div>" +
             (crush ? '<p class="howto">' + tr("Coup de foudre : personne ne peut partir sur ce premier red flag.", "Love at first sight: nobody can leave on this first red flag.") + "</p>" : '<span class="eyebrow">' + tr("Qui part ?", "Who's leaving?") + "</span>" + rowsHTML(L.stay, "date")) + dock('<button class="btn acc" type="button" data-ok>' + tr("Valider", "Confirm") + "</button>"), r => {
             r.querySelectorAll("[data-p]").forEach(b => b.addEventListener("click", () => {
               buzz(8); const p = b.dataset.p, i = L.left.indexOf(p); if(i >= 0) L.left.splice(i, 1); else L.left.push(p);
@@ -529,7 +543,7 @@ SB.register({
           });
         } else if(ph2 === "stepres"){
           const last = L.step >= L.flags.length - 1 || !L.stay.length, blind = L.tw === "blind";
-          screen(root, "sr" + L.round + "|" + L.step, CSS + lab() + banner() + storyHTML(L.perk, L.flags, L.step + 1, L.lg) +
+          screen(root, "sr" + L.round + "|" + L.step, CSS + lab() + banner() + storyHTML(L.perk, L.flags, L.step + 1) +
             (blind ? '<div class="card"><span class="eyebrow">' + tr("Fuite discrète", "Quiet exit") + '</span><div class="big">' + (L.left.length ? tr(L.left.length + " départ" + (L.left.length > 1 ? "s" : "") + " en douce", L.left.length + " slipped away") : tr("Personne ne bouge", "Nobody moves")) + '</div><span class="sm">' + tr("Les noms seront révélés à la fin du date.", "Names will be revealed at the end of the date.") + "</span></div>"
               : '<div class="card"><span class="eyebrow">' + (L.left.length ? tr("Ont pris la fuite", "Ran for it") : tr("Personne ne part", "Nobody leaves")) + '</span><div class="big">' + esc(L.left.map(nameOf).join(", ") || tr("Ils tiennent bon…", "They're hanging in there…")) + '</div><span class="sm">' + tr("Encore là : ", "Still here: ") + esc(L.stay.map(nameOf).join(", ") || tr("plus personne", "nobody left")) + "</span></div>") +
             dock('<button class="btn acc" type="button" data-n>' + (last ? tr("Fin du date", "End of the date") : tr("Red flag suivant", "Next red flag")) + "</button>"), r => {
@@ -542,7 +556,7 @@ SB.register({
           });
         } else if(ph2 === "roundend"){
           const gone = ids.filter(id => L.outAt[id] !== undefined), fin = L.round >= Math.min(rounds, 8);
-          screen(root, "re" + L.round, CSS + lab() + banner() + storyHTML(L.perk, L.flags, Math.min(L.flags.length, L.step + 1), L.lg) + '<div class="card"><span class="eyebrow">' + (L.stay.length ? tr("Restent jusqu'au bout", "Stayed to the very end") : tr("Tout le monde a fui", "Everyone ran")) + '</span><div class="big">' + esc(L.stay.map(nameOf).join(", ") || tr("Ce date finira seul(e)", "This date will die alone")) + "</div>" +
+          screen(root, "re" + L.round, CSS + lab() + banner() + storyHTML(L.perk, L.flags, Math.min(L.flags.length, L.step + 1)) + '<div class="card"><span class="eyebrow">' + (L.stay.length ? tr("Restent jusqu'au bout", "Stayed to the very end") : tr("Tout le monde a fui", "Everyone ran")) + '</span><div class="big">' + esc(L.stay.map(nameOf).join(", ") || tr("Ce date finira seul(e)", "This date will die alone")) + "</div>" +
             (gone.length ? '<span class="sm">' + esc(gone.map(id => nameOf(id) + " (flag " + (L.outAt[id] + 1) + ")").join(", ")) + "</span>" : "") + "</div>" +
             dock('<button class="btn acc" type="button" data-n>' + (fin ? tr("Voir le bilan", "See the results") : tr("Date suivant", "Next date")) + "</button>"), r => { r.querySelector("[data-n]").addEventListener("click", () => { if(fin) go("dend"); else nextDate(); }); });
         } else if(ph2 === "dend"){

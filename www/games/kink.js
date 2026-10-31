@@ -183,7 +183,7 @@ SB.register({
     if(live.length && live.every(id => { const i = ctx.input(id); return i && i.done; })) ctx.set({ phase: "res" });
   },
   render(ctx, root){
-    const s = ctx.s, qi = A(s.qi), lg = s.lg || "fr", my = ctx.mine() || {};
+    const s = ctx.s, qi = A(s.qi), lg = SB.lang(), my = ctx.mine() || {};
     const live = ctx.ids.filter(id => ctx.here(id)), doneN = live.filter(id => { const i = ctx.input(id); return i && i.done; }).length;
     const share = (p, on) => ctx.send({ done: 1, share: on ? 1 : 0, r: on ? top3(p) : null }); // seulement le top 3, comme annoncé
     if(s.phase === "play" && ctx.playing && !my.done){
@@ -208,7 +208,7 @@ SB.register({
       const bk = r.querySelector("[data-back]");
       if(bk) bk.addEventListener("click", () => ctx.act(c => {
         const n = c.ids.filter(id => { const i = c.input(id); return i && i.share && i.r; }).length;
-        c.end({ title: tr("Test kink", "Kink Test") + " · " + (n ? tr(n + (n > 1 ? " profils partagés" : " profil partagé"), n + (n > 1 ? " profiles shared" : " profile shared")) : tr("profils gardés secrets", "profiles kept private")), lines: [] });
+        c.end({ title: SB.u.both("Test kink · " + (n ? n + (n > 1 ? " profils partagés" : " profil partagé") : "profils gardés secrets"), "Kink Test · " + (n ? n + (n > 1 ? " profiles shared" : " profile shared") : "profiles kept private")), lines: [] });
       }));
     });
     if(!end) txt(root, "[data-wait]", tr(doneN + " / " + live.length + " ont terminé", doneN + " / " + live.length + " done"));

@@ -2,7 +2,12 @@
 (function(){
 "use strict";
 const { esc, A, shuffle, screen, txt, store, persist, dock, clean, armTap, pick } = SB.u;
-const tr = SB.tr, PL = SB.u.plural2;
+// FORCE : pour les textes que l'hôte range dans l'état (fin de partie), on les calcule en français puis en anglais.
+let FORCE = null;
+const tr = (fr, en) => (FORCE === "fr" ? fr : FORCE === "en" ? (en == null ? fr : en) : SB.tr(fr, en));
+const PL = (n, a, b, c, d) => (FORCE === "en" ? n + " " + (n === 1 ? c : (d || c + "s")) : FORCE === "fr" ? n + " " + (n > 1 ? (b || a + "s") : a) : SB.u.plural2(n, a, b, c, d));
+const inBoth = fn => { FORCE = "fr"; let f; try{ f = fn(); } finally{ FORCE = null; } FORCE = "en"; let e; try{ e = fn(); } finally{ FORCE = null; } return { fr: f, en: e }; };
+const L = SB.u.L, both = SB.u.both;
 
 const SOFT = [
   "Ton pire rencard en 5 mots","Le métier dont tu as toujours rêvé","Ce que tu ne dirais jamais à ta mère","Ta pire honte au collège",
@@ -124,6 +129,9 @@ const PACKS = [
   { v: "adulte", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Sexe, fantasmes, tabous, humour noir", "Sex, fantasies, taboos, dark humor"), list: deck(SB.lang()).adulte, hot: true }
 ];
 const SEEN = "quiadit:q", SEENF = "quiadit:fake", BOT = "bot";
+// Question / fausse réponse d'une partie en réseau : rangées en { fr, en } (listes alignées, même ordre).
+const BIQ = (() => { const m = {}; ["soft", "adulte", "fake", "fakeHot"].forEach(k => DECK.fr[k].forEach((t, i) => { m[t] = both(t, DECK.en[k][i] || t); })); return m; })();
+const bi = t => (typeof t === "string" && BIQ[t] ? Object.assign({}, BIQ[t]) : t);
 function deckFor(packs, lg){
   const sel = A(packs), d = deck(lg), pool = PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(p => d[p.v]);
   return SB.u.fresh(SEEN, pool.length ? pool : d.soft);
@@ -163,7 +171,7 @@ function qdGages(aid, voters, right){
   return [];
 }
 function merge(base, d){ const o = {}; Object.keys(d).forEach(k => { o[k] = Object.assign({}, base[k] || {}); Object.keys(d[k]).forEach(id => { o[k][id] = (o[k][id] || 0) + d[k][id]; }); }); return o; }
-const FL = tr({
+const FLX = [{
   win: ["Vainqueur(e)", "Le cerveau de la soirée", "Imbattable", "Le plus fin limier"],
   det: ["Meilleur(e) détective", "Œil de lynx", "Rien ne lui échappe"],
   fool: ["Le plus imprévisible", "Maître du bluff", "Insaisissable"],
@@ -175,7 +183,9 @@ const FL = tr({
   fool: ["Most unpredictable", "Master bluffer", "Impossible to read"],
   fnd: ["The open book", "Way too easy to read", "Cards on the table"],
   bot: ["Impostor hunter", "Human lie detector", "Not fooled for a second"]
-});
+}];
+// Titres des trophées dans la langue en cours (ou forcée).
+const FL = new Proxy({}, { get: (_, k) => tr(FLX[0][k], FLX[1][k]) });
 function fl(list, seed, k){ return list[((seed || 0) + k) % list.length]; }
 function awards(ids, s, nameOf){
   const out = [], seed = s.fl || 0, used = [];
@@ -201,10 +211,10 @@ function best(ids, m){ let b = "", v = 0; ids.forEach(id => { if((m[id] || 0) > 
 // lg : langue du contenu (celle de l'hôte, gardée dans s.lg).
 function roundState(c, round, last, lg){
   lg = lg === "en" ? "en" : "fr";
-  let deck = A(c.priv().deck).slice(); if(!deck.length) deck = deckFor(c.opts.packs, lg);
+  let deck = A(c.priv().deck).slice(); if(!deck.length) deck = deckFor(c.opts.packs, "fr");
   const q = deck.pop(); c.setPriv({ deck }); SB.u.saw(SEEN, q);
   const t = pickTw(c.opts.twists !== false, round, last), tw = t ? t.id : "";
-  return { phase: "write", lg, q, p: pick(c.ids), round, tw, fk: tw === "fake" ? fakeFor(c.opts.packs, lg) : "", disg: tw === "disg" ? derange(c.ids) : {}, ans: [], i: 0, votes: {}, gain: {}, k: c.rid() };
+  return { phase: "write", lg, q: bi(q), p: pick(c.ids), round, tw, fk: tw === "fake" ? bi(fakeFor(c.opts.packs, "fr")) : "", disg: tw === "disg" ? derange(c.ids) : {}, ans: [], i: 0, votes: {}, gain: {}, k: c.rid() };
 }
 function toGuess(c){
   const tw = c.s.tw || "";
@@ -255,7 +265,7 @@ const DEF = {
   start(ctx, o){
     if(!A(o.packs).length) throw new Error(tr("Choisis au moins un paquet de questions.", "Pick at least one question pack."));
     const lg = SB.lang();
-    ctx.setPriv({ deck: deckFor(o.packs, lg) });
+    ctx.setPriv({ deck: deckFor(o.packs, "fr") });
     return Object.assign(roundState(ctx, 1, "", lg), { lg, rounds: o.rounds || 3, pts: {}, det: {}, fool: {}, fnd: {}, bot: {}, perf: {} });
   },
   host(ctx){
@@ -270,11 +280,11 @@ const DEF = {
   render(ctx, root){
     const s = ctx.s, me = ctx.me, live = ctx.ids.filter(id => ctx.here(id)), tw = s.tw || "", T = SB.u.byTwist(TW, tw);
     const nameOf = id => id === BOT ? tr("L'imposteur", "The Impostor") : ctx.name(id);
-    const q = fill(s.q || "", nameOf(s.p));
+    const q = fill(L(s.q) || "", nameOf(s.p));
     const lab = '<span class="eyebrow">Question ' + s.round + " / " + s.rounds + "</span>" + twBanner(T);
     if(s.phase === "write"){
       const mine = ctx.mine(), sent = !!(mine && clip(mine.a, tw)), dg = (s.disg || {})[me];
-      screen(root, "w" + s.k + sent, CSS + lab + '<div class="card acc"><div class="big">' + esc(q) + "</div>" + (s.p === me && /\{p\}/.test(s.q) ? '<span class="sm">' + tr("Oui, la question parle de toi : réponds quand même !", "Yes, this question is about you: answer anyway!") + "</span>" : "") + "</div>" +
+      screen(root, "w" + s.k + sent, CSS + lab + '<div class="card acc"><div class="big">' + esc(q) + "</div>" + (s.p === me && /\{p\}/.test(L(s.q)) ? '<span class="sm">' + tr("Oui, la question parle de toi : réponds quand même !", "Yes, this question is about you: answer anyway!") + "</span>" : "") + "</div>" +
         (dg ? '<p class="note-box">' + tr("Déguisement : réponds comme le ferait ", "Disguise: answer the way this player would: ") + "<b>" + esc(nameOf(dg)) + "</b>.</p>" : "") +
         (sent ? '<div class="sent"><span class="t">' + esc(clip(mine.a, tw)) + '</span><button class="link" type="button" data-edit>' + tr("Modifier", "Edit") + "</button></div>"
           : '<textarea class="txt qd-in" maxlength="140" placeholder="' + (tw === "short" ? tr("5 mots maximum…", "5 words max…") : tr("Ta réponse, en secret…", "Your answer, in secret…")) + '" aria-label="' + tr("Ta réponse", "Your answer") + '"></textarea>' + (tw === "short" ? '<p class="sm" data-wc>' + tr("0 / 5 mots", "0 / 5 words") + "</p>" : "")) +
@@ -298,7 +308,7 @@ const DEF = {
       const sk = root.querySelector("[data-skip]"); if(sk) sk.hidden = done < 2 || done >= live.length;
     } else if(s.phase === "guess" || s.phase === "rev"){
       const ans = A(s.ans), a = ans[s.i] || { id: "", t: "" }, authors = ans.map(x => x.id);
-      const head = lab + '<p class="qd-q">' + esc(q) + '</p><span class="eyebrow">' + tr("Réponse ", "Answer ") + (s.i + 1) + " / " + ans.length + '</span><div class="card acc"><div class="qd-a">' + tr("« ", "“") + esc(a.t) + tr(" »", "”") + "</div></div>";
+      const head = lab + '<p class="qd-q">' + esc(q) + '</p><span class="eyebrow">' + tr("Réponse ", "Answer ") + (s.i + 1) + " / " + ans.length + '</span><div class="card acc"><div class="qd-a">' + tr("« ", "“") + esc(L(a.t)) + tr(" »", "”") + "</div></div>";
       if(s.phase === "guess"){
         const mine = ctx.mine(), voted = mine && mine.g;
         screen(root, "g" + s.k + (voted || ""), CSS + head + (a.id === me ? '<p class="note-box">' + tr("C'est ta réponse ! Vote quand même pour quelqu'un d'autre, pour brouiller les pistes.", "That's your answer! Vote for someone else anyway, to throw people off.") + "</p>" : '<span class="eyebrow">' + tr("Qui a écrit ça ?", "Who wrote this?") + "</span>") +
@@ -342,7 +352,8 @@ const DEF = {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const p = c.s.pts || {}, o2 = c.ids.slice().sort((x, y) => (p[y] || 0) - (p[x] || 0)), mx = p[o2[0]] || 0;
-          c.end({ title: tr("Qui a dit ça ? · " + c.name(o2[0]) + " gagne", "Who Said It? · " + c.name(o2[0]) + " wins"), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (p[id] || 0) + " pts").concat(awards(c.ids, c.s, c.name).slice(0, 2).map(a => a[0] + tr(" : ", ": ") + a[1])),
+          const AW = inBoth(() => awards(c.ids, c.s, c.name).slice(0, 2));
+          c.end({ title: both("Qui a dit ça ? · " + c.name(o2[0]) + " gagne", "Who Said It? · " + c.name(o2[0]) + " wins"), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (p[id] || 0) + " pts").concat(AW.fr.map((a, i) => both(a[0] + " : " + a[1], (AW.en[i] || a)[0] + ": " + (AW.en[i] || a)[1]))),
             win: mx ? o2.filter(id => (p[id] || 0) === mx) : [] });
         }));
       });
@@ -400,7 +411,7 @@ const DEF = {
           });
         } else if(ph === "guess" || ph === "rev"){
           const a = ans[i];
-          const head = '<span class="eyebrow">Question ' + round + " / " + rounds + "</span>" + twBanner(tw) + '<p class="qd-q">' + esc(qOf()) + '</p><span class="eyebrow">' + tr("Réponse ", "Answer ") + (i + 1) + " / " + ans.length + '</span><div class="card acc"><div class="qd-a">' + tr("« ", "“") + esc(a.t) + tr(" »", "”") + "</div></div>";
+          const head = '<span class="eyebrow">Question ' + round + " / " + rounds + "</span>" + twBanner(tw) + '<p class="qd-q">' + esc(qOf()) + '</p><span class="eyebrow">' + tr("Réponse ", "Answer ") + (i + 1) + " / " + ans.length + '</span><div class="card acc"><div class="qd-a">' + tr("« ", "“") + esc(L(a.t)) + tr(" »", "”") + "</div></div>";
           if(ph === "guess"){
             screen(root, "gu" + round + "-" + i, CSS + head + '<p class="howto">' + tr("Débattez : qui a écrit ça ?", "Debate: who wrote this?") + (fk ? tr(" Attention, l'une des réponses a été écrite par le jeu.", " Careful, one of the answers was written by the game.") : "") + tr(" Chacun annonce son suspect à voix haute, puis on révèle.", " Everyone names their suspect out loud, then reveal.") + "</p>" + dock('<button class="btn acc" type="button" data-n>' + tr("Révéler l'auteur(e)", "Reveal the author") + "</button>"), r => {
               r.querySelector("[data-n]").addEventListener("click", () => { found = []; go("rev"); });

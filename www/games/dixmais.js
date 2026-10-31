@@ -2,7 +2,7 @@
    On marque des points en étant proche de la moyenne du groupe (ou de la note du juge). */
 (function(){
 "use strict";
-const { esc, A, shuffle, screen, txt, store, persist, pick, tr, buzz, clean } = SB.u;
+const { esc, A, shuffle, screen, txt, store, persist, pick, tr, buzz, clean, both, L } = SB.u;
 
 /* ---------- Les défauts (phrases qui suivent « C'est un(e) 10 mais… ») ---------- */
 const CL = [
@@ -75,48 +75,156 @@ const HOT = [
   "garde ses lunettes de soleil au lit", "veut un mot de sécurité dès le premier soir", "est accro au porno, plusieurs heures par jour"
 ];
 const CL_EN = [
-  "chews with their mouth open", "wears socks with sandals", "replies “k” to all your texts", "calls their mom six times a day",
-  "puts mayo on pasta", "falls asleep during every movie", "talks about crypto at every meal", "laughs like a seal",
-  "hangs the toilet paper the wrong way", "watches your stories but never answers your texts", "puts the empty milk carton back in the fridge",
-  "sends seven-minute voice notes", "plays their phone on speaker on the train", "has way too long toenails", "claps when the plane lands",
-  "walks painfully slowly on the sidewalk", "misspells every other word", "can't cook pasta", "sleeps with the TV on", "has 14,000 unread emails",
-  "ends every sentence with “lol”", "doesn't like animals", "brings up their ex in every conversation", "is scared of butterflies",
-  "does yoga at 5 a.m. and wants you to join", "has named their car", "uses the clown emoji everywhere", "is cold even in July",
-  "has a figurine collection taking over the living room", "won't share their fries", "watches videos without headphones on the subway",
-  "reads the last page of a book first", "interrupts you constantly", "says “I'm not like other people”", "never has any battery",
-  "is always at least an hour late", "does impressions… terrible ones", "sings off-key, all the time, really loud", "has their own photo as a wallpaper",
-  "snores like a tractor", "photographs every meal", "keeps the tags on clothes so they can return them", "can't swim",
-  "bites their nails in front of you", "never tidies anything", "answers “we'll see” to everything", "thinks the Earth is flat",
-  "has never read a book", "coaches the TV during every game", "licks their knife at the table", "splits the bill down to the cent",
-  "snoozes their alarm twelve times every morning", "baby-talks to their dog in public", "posts a motivational LinkedIn post every morning",
-  "puts ketchup on everything", "spoils every show for you", "does push-ups whenever there's a mirror", "puts cold feet on you",
-  "drives 25 mph on the highway", "honks at every red light"
+  "chews with their mouth open",
+  "wears socks with sandals",
+  "replies “k” to all your texts",
+  "calls their mom six times a day",
+  "puts mayo on pasta",
+  "falls asleep during every movie",
+  "talks about crypto at every meal",
+  "laughs like a seal",
+  "says “at this moment in time” instead of “now”",
+  "hangs the toilet paper the wrong way",
+  "watches your stories but never answers your texts",
+  "puts the empty milk carton back in the fridge",
+  "sends seven-minute voice notes",
+  "plays their phone on speaker on the train",
+  "has way too long toenails",
+  "claps when the plane lands",
+  "walks painfully slowly on the sidewalk",
+  "misspells every other word",
+  "can't cook pasta",
+  "sleeps with the TV on",
+  "has 14,000 unread emails",
+  "ends every sentence with “lol”",
+  "doesn't like animals",
+  "brings up their ex in every conversation",
+  "starts every story with “so, like, basically”",
+  "is scared of butterflies",
+  "does yoga at 5 a.m. and wants you to join",
+  "has named their car",
+  "uses the clown emoji everywhere",
+  "is cold even in July",
+  "has a figurine collection taking over the living room",
+  "won't share their fries",
+  "watches videos without headphones on the subway",
+  "reads the last page of a book first",
+  "interrupts you constantly",
+  "says “I'm not like other people”",
+  "never has any battery",
+  "is always at least an hour late",
+  "does impressions… terrible ones",
+  "sings off-key, all the time, really loud",
+  "has their own photo as a wallpaper",
+  "snores like a tractor",
+  "photographs every meal",
+  "keeps the tags on clothes so they can return them",
+  "can't swim",
+  "bites their nails in front of you",
+  "never tidies anything",
+  "answers “we'll see” to everything",
+  "thinks the Earth is flat",
+  "has never read a book",
+  "coaches the TV during every game",
+  "licks their knife at the table",
+  "splits the bill down to the cent",
+  "snoozes their alarm twelve times every morning",
+  "baby-talks to their dog in public",
+  "posts a motivational LinkedIn post every morning",
+  "puts ketchup on everything",
+  "spoils every show for you",
+  "doesn't know a single song by heart",
+  "does push-ups whenever there's a mirror",
+  "has a laugh that scares children",
+  "puts cold feet on you",
+  "has holes in every single pair of socks",
+  "drives 25 mph on the highway",
+  "honks at every red light",
+  "sucks their thumb while sleeping"
 ];
 const KID_EN = [
-  "cheats at Uno", "eats all the candy without sharing", "spoils the end of movies", "sulks for an hour after every loss",
-  "sticks their fingers in the chocolate spread", "never lends their video games", "talks really loud on the phone", "never passes the ball in soccer",
-  "has stinky feet", "laughs at their own jokes before the end", "makes noises while eating", "can't keep a secret", "always wants to pick the game",
-  "eats the last cookie without asking", "always says “I know you are but what am I”", "says “let's start over” after every loss",
-  "tells you their dreams for twenty minutes", "always takes the best spot on the couch", "sings cartoon theme songs nonstop",
-  "says “I knew it” after every answer", "tells really unfunny jokes", "can't lose at Mario Kart", "always has sticky hands",
-  "always forgets your birthday", "still sleeps with their stuffed animal", "wears mismatched socks", "wakes you up at 6 a.m. on Saturday",
-  "never cleans their room", "chews on every pencil", "copies all your drawings", "always says “me first!”", "talks to their plants",
-  "is scared of pigeons", "pulls faces in every class photo"
+  "cheats at Uno",
+  "eats all the candy without sharing",
+  "spoils the end of movies",
+  "sulks for an hour after every loss",
+  "sticks their fingers in the chocolate spread",
+  "never lends their video games",
+  "talks really loud on the phone",
+  "never passes the ball in soccer",
+  "has stinky feet",
+  "laughs at their own jokes before the end",
+  "makes noises while eating",
+  "can't keep a secret",
+  "always wants to pick the game",
+  "eats the last cookie without asking",
+  "always says “I know you are but what am I”",
+  "says “let's start over” after every loss",
+  "tells you their dreams for twenty minutes",
+  "always takes the best spot on the couch",
+  "sings cartoon theme songs nonstop",
+  "says “I knew it” after every answer",
+  "tells really unfunny jokes",
+  "can't lose at Mario Kart",
+  "always has sticky hands",
+  "always forgets your birthday",
+  "still sleeps with their stuffed animal",
+  "wears mismatched socks",
+  "wakes you up at 6 a.m. on Saturday",
+  "never cleans their room",
+  "chews on every pencil",
+  "copies all your drawings",
+  "always says “me first!”",
+  "puts tomato sauce on their crêpes",
+  "talks to their plants",
+  "is scared of pigeons",
+  "pulls faces in every class photo"
 ];
 const LOVE_EN = [
-  "still likes their ex's photos", "replies “lol” to your “I love you”", "saved you under a fake name in their phone", "still has a dating app “just to look”",
-  "introduces you to their parents on the second date", "posts about you two every single day", "never posts about you two",
-  "says “we're not really together” after a year", "has a best friend who sleeps at your place", "calls everyone “babe”", "compares everything to their ex",
-  "goes through your phone while you sleep", "never pays at restaurants", "splits the bill to the cent on the first date",
-  "sends screenshots of your fights to their friends", "gave your Netflix password to their ex", "has three exes who still text them",
-  "says “I love you” on the first date", "wants six kids", "watches your show ahead without you", "still lives with their parents at 35",
-  "calls you by their ex's name", "never apologizes", "takes three days to answer texts", "ghosted you once “by accident”",
-  "has a profile picture from 2015", "hit on you with a line copied from the internet", "is best friends with their ex",
-  "invites their mom on your vacations", "gets jealous over a like", "is very vague about where they were last night",
-  "has their ex's name tattooed on their arm", "plans your wedding by the third date", "hasn't said “I love you” in three years",
-  "keeps a list of your flaws in an app", "says “we'll talk about it later” and never does", "forgets your birthday every year",
-  "asked your star sign before your name", "won't introduce you to their friends", "keeps every gift from their exes",
-  "baby-talks when you're alone", "wants matching outfits"
+  "still likes their ex's photos",
+  "replies “lol” to your “I love you”",
+  "saved you under a fake name in their phone",
+  "still has a dating app “just to look”",
+  "introduces you to their parents on the second date",
+  "posts about you two every single day",
+  "never posts about you two",
+  "says “we're not really together” after a year",
+  "has a best friend who sleeps at your place",
+  "calls everyone “babe”",
+  "compares everything to their ex",
+  "goes through your phone while you sleep",
+  "never pays at restaurants",
+  "splits the bill to the cent on the first date",
+  "sends screenshots of your fights to their friends",
+  "gave your Netflix password to their ex",
+  "has three exes who still text them",
+  "says “I love you” on the first date",
+  "wants six kids",
+  "watches your show ahead without you",
+  "still lives with their parents at 35",
+  "calls you by their ex's name",
+  "never apologizes",
+  "takes three days to answer texts",
+  "ghosted you once “by accident”",
+  "has a profile picture from 2015",
+  "hit on you with a line copied from the internet",
+  "is best friends with their ex",
+  "invites their mom on your vacations",
+  "gets jealous over a like",
+  "is very vague about where they were last night",
+  "has their ex's name tattooed on their arm",
+  "plans your wedding by the third date",
+  "hasn't said “I love you” in three years",
+  "keeps a list of your flaws in an app",
+  "says “we'll talk about it later” and never does",
+  "forgets your birthday every year",
+  "asked your star sign before your name",
+  "won't introduce you to their friends",
+  "keeps every gift from their exes",
+  "always picks the restaurant, and always the same one",
+  "reads your texts over your shoulder",
+  "baby-talks when you're alone",
+  "lets their exes comment on all their photos",
+  "wants matching outfits"
 ];
 const HOT_EN = [
   "fakes orgasms every time", "calls their mom right after sex", "wants to lick your feet every time you cuddle",
@@ -232,11 +340,14 @@ const PACKS = [
 ];
 const SEEN = "dixmais:q";
 const kidF = l => { if(!(SB.kid && SB.kid())) return l; const k = l.filter(x => SB.kidOk(x)); return k.length ? k : l; };
-function deckFor(packs, lg){
-  const sel = PK(packs), L = lists(lg); const pool = PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(p => L[p.v]);
-  return SB.u.fresh(SEEN, kidF(pool.length ? pool : L.cl));
+// Le paquet est tiré en français (clé stable, gardée dans l'état) ; chaque téléphone affiche le défaut dans sa langue.
+function deckFor(packs){
+  const sel = PK(packs), F = LISTS.fr; const pool = PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(p => F[p.v]);
+  return SB.u.fresh(SEEN, kidF(pool.length ? pool : F.cl));
 }
-const PREFIX = lg => (lg === "en" ? "They're a 10 but…" : "C'est un(e) 10 mais…");
+const EN_OF = {}; Object.keys(LISTS.fr).forEach(k => A(LISTS.fr[k]).forEach((t, i) => { if(LISTS.en[k] && LISTS.en[k][i]) EN_OF[t] = LISTS.en[k][i]; }));
+const qTxt = q => L(typeof q === "string" && EN_OF[q] ? both(q, EN_OF[q]) : q);
+const PREFIX = () => tr("C'est un(e) 10 mais…", "They're a 10 but…");
 
 /* ---------- Coups de théâtre ---------- */
 const TW = [
@@ -271,7 +382,7 @@ function scoreRound(notes, judge, x2){
   if(ids.length >= 3 && ids.every(id => notes[id] <= 2)) gl.push({ id: ids[0], ev: "zero" });
   return { avg, target, pts, gl, d };
 }
-const num = v => String(v).replace(".", tr(",", "."));
+const num = (v, t = tr) => String(v).replace(".", t(",", "."));
 const ptsTxt = n => tr("+" + n + " pt" + (n > 1 ? "s" : ""), "+" + n + (n === 1 ? " pt" : " pts"));
 function verdict(avg){
   if(avg >= 9) return tr("Rien à faire, ça reste un 10.", "Nothing to be done, still a 10.");
@@ -308,13 +419,13 @@ function resHTML(R, ids, nameOf, notes, judge, hide){
   return h;
 }
 // Trophées de fin : le plus indulgent, le plus sévère, le plus rédhibitoire.
-function awards(ids, s, nameOf){
+function awards(ids, s, nameOf, tr = SB.u.tr){
   const out = [], sum = s.sum || {}, cnt = s.cnt || {}, z = s.zero || {};
   const avgOf = id => (cnt[id] ? sum[id] / cnt[id] : null), withN = ids.filter(id => cnt[id]);
   if(withN.length > 1){
     const hi = withN.slice().sort((a, b) => avgOf(b) - avgOf(a))[0], lo = withN.slice().sort((a, b) => avgOf(a) - avgOf(b))[0];
-    out.push([tr("Le cœur d'artichaut", "The softie"), nameOf(hi), tr("Note moyenne : ", "Average rating: ") + num(Math.round(avgOf(hi) * 10) / 10)]);
-    if(lo !== hi) out.push([tr("Le jury impitoyable", "The ruthless judge"), nameOf(lo), tr("Note moyenne : ", "Average rating: ") + num(Math.round(avgOf(lo) * 10) / 10)]);
+    out.push([tr("Le cœur d'artichaut", "The softie"), nameOf(hi), tr("Note moyenne : ", "Average rating: ") + num(Math.round(avgOf(hi) * 10) / 10, tr)]);
+    if(lo !== hi) out.push([tr("Le jury impitoyable", "The ruthless judge"), nameOf(lo), tr("Note moyenne : ", "Average rating: ") + num(Math.round(avgOf(lo) * 10) / 10, tr)]);
   }
   const zz = ids.filter(id => z[id]).sort((a, b) => z[b] - z[a])[0];
   if(zz) out.push([tr("Tolérance zéro", "Zero tolerance"), nameOf(zz), tr(z[zz] + " fois 0/10", z[zz] + (z[zz] === 1 ? " zero" : " zeros"))]);
@@ -329,7 +440,7 @@ function addTotals(s, notes){
 function packButtons(sel){
   return '<div class="packs">' + PACKS.filter(SB.packOk).map(p => '<button type="button" class="pack' + (p.hot ? " hot" : "") + '" data-p="' + p.v + '" aria-pressed="' + (sel.indexOf(p.v) >= 0) + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(p.label) + (p.hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(p.desc) + '</span></span><span class="ct">' + p.list.length + "</span></button>").join("") + "</div>";
 }
-const qCard = (q, lg, own) => '<div class="card acc"><span class="eyebrow">' + esc(PREFIX(lg)) + '</span><div class="big">… ' + esc(q) + "</div>" + (own ? '<span class="sm">' + tr("Défaut inventé par ", "Flaw made up by ") + esc(own) + "</span>" : "") + "</div>";
+const qCard = (q, lg, own) => '<div class="card acc"><span class="eyebrow">' + esc(PREFIX()) + '</span><div class="big">… ' + esc(qTxt(q)) + "</div>" + (own ? '<span class="sm">' + tr("Défaut inventé par ", "Flaw made up by ") + esc(own) + "</span>" : "") + "</div>";
 
 SB.register({
   id: "dixmais", name: tr("C'est un 10 mais…", "They're a 10 but…"), glyph: tr("10 mais", "10 but"), pitch: tr("Un 10/10 avec un gros défaut : quelle note tu lui redonnes ?", "A perfect 10 with one big flaw: what's the new rating?"), hot: true,
@@ -363,7 +474,7 @@ SB.register({
   ],
   start(ctx, o){
     if(!A(o.packs).length) throw new Error(tr("Choisis au moins un paquet.", "Pick at least one pack."));
-    const lg = SB.lang(), deck = deckFor(o.packs, lg), q = deck.pop();
+    const lg = SB.lang(), deck = deckFor(o.packs), q = deck.pop();
     SB.u.saw(SEEN, q); ctx.setPriv({ deck });
     return { lg, phase: "vote", q, own: "", tw: "", ju: "", au: "", round: 1, rounds: o.rounds || 10, notes: {}, res: null, pts: {}, sum: {}, cnt: {}, zero: {}, ch: [], by: "" };
   },
@@ -372,7 +483,7 @@ SB.register({
     if(s.phase === "write"){
       const au = s.au, i = ctx.input(au), w = i && typeof i.w === "string" ? clean(i.w, 90).replace(/^(c'est un\(?e?\)? 10 mais|mais)\s*…?\s*/i, "") : "";
       if(w) ctx.set({ phase: "vote", q: w, own: au });
-      else if(!ctx.here(au)){ let deck = A(ctx.priv().deck); if(!deck.length) deck = deckFor(ctx.opts.packs, s.lg); const q = deck.pop(); ctx.setPriv({ deck }); ctx.set({ phase: "vote", q, own: "", tw: "" }); }
+      else if(!ctx.here(au)){ let deck = A(ctx.priv().deck); if(!deck.length) deck = deckFor(ctx.opts.packs); const q = deck.pop(); ctx.setPriv({ deck }); ctx.set({ phase: "vote", q, own: "", tw: "" }); }
       return;
     }
     if(s.phase !== "vote") return;
@@ -386,7 +497,7 @@ SB.register({
     const patch = Object.assign({ phase: "res", notes, res: { avg: R.avg, target: R.target, pts: R.pts }, pts }, addTotals(s, notes));
     if(s.tw === "pick" && s.round < s.rounds){
       const lo = Math.min.apply(null, Object.keys(notes).map(id => notes[id]));
-      let deck = A(ctx.priv().deck); if(deck.length < 3) deck = deckFor(ctx.opts.packs, s.lg).concat(deck);
+      let deck = A(ctx.priv().deck); if(deck.length < 3) deck = deckFor(ctx.opts.packs).concat(deck);
       patch.ch = [deck.pop(), deck.pop(), deck.pop()]; patch.by = pick(Object.keys(notes).filter(id => notes[id] === lo)); ctx.setPriv({ deck });
     }
     ctx.set(patch);
@@ -397,7 +508,7 @@ SB.register({
     if(s.phase === "write"){
       const mine = s.au === me;
       screen(root, "w" + s.k + mine, lab + (mine
-        ? '<div class="card acc"><span class="eyebrow">' + esc(PREFIX(s.lg)) + '</span><textarea class="txt" id="dm-w" maxlength="90" rows="3" placeholder="' + tr("… ronfle comme un camion", "… snores like a truck") + '"></textarea></div><p class="sm">' + tr("Invente le défaut de cette manche. Les autres vont redonner une note.", "Make up this round's flaw. Everyone else will re-rate.") + "</p>" +
+        ? '<div class="card acc"><span class="eyebrow">' + esc(PREFIX()) + '</span><textarea class="txt" id="dm-w" maxlength="90" rows="3" placeholder="' + tr("… ronfle comme un camion", "… snores like a truck") + '"></textarea></div><p class="sm">' + tr("Invente le défaut de cette manche. Les autres vont redonner une note.", "Make up this round's flaw. Everyone else will re-rate.") + "</p>" +
           SB.u.dock('<button class="btn acc" type="button" data-w>' + tr("Envoyer", "Send") + "</button>")
         : '<div class="pass"><span class="eyebrow">' + tr("La plume", "The pen") + '</span><div class="who">' + esc(ctx.name(s.au)) + '</div><p class="wait">' + tr("invente le défaut de cette manche…", "is making up this round's flaw…") + "</p></div>"), r => {
         const b = r.querySelector("[data-w]"); if(!b) return;
@@ -420,7 +531,7 @@ SB.register({
       let extra = "";
       if(s.tw === "x2") extra += '<p class="sm" style="text-align:center">' + tr("Manche en or : points doublés.", "Golden round: double points.") + "</p>";
       if(ch.length) extra += '<div class="field"><span class="eyebrow">' + (by === me ? tr("Tu as été le plus sévère : choisis la prochaine phrase", "You were the harshest: pick the next line") : tr(esc(ctx.name(by)) + " (le plus sévère) choisit la prochaine phrase", esc(ctx.name(by)) + " (the harshest) picks the next line")) + '</span><div class="choices">' +
-        ch.map((x, i) => '<button type="button" class="opt" data-pk="' + i + '" aria-pressed="' + (pk === i) + '"' + (by === me ? "" : " disabled") + ">… " + esc(x) + "</button>").join("") + "</div></div>";
+        ch.map((x, i) => '<button type="button" class="opt" data-pk="' + i + '" aria-pressed="' + (pk === i) + '"' + (by === me ? "" : " disabled") + ">… " + esc(qTxt(x)) + "</button>").join("") + "</div></div>";
       screen(root, "r" + s.k + ctx.isHost + pk, lab + qCard(s.q, s.lg, s.own ? ctx.name(s.own) : "") + resHTML(R, ctx.ids, ctx.name, notes, ju, s.tw === "cache") + extra +
         SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-next>' + (s.round >= s.rounds ? tr("Voir le classement", "See the standings") : tr("Manche suivante", "Next round")) + "</button>" : '<p class="wait">' + tr("L'hôte passe à la suite…", "Waiting for the host…") + "</p>"), r => {
         r.querySelectorAll("[data-pk]").forEach(b => b.addEventListener("click", () => ctx.send({ pk: +b.dataset.pk })));
@@ -430,7 +541,7 @@ SB.register({
           if(st.round >= st.rounds){ c.set({ phase: "end" }); return; }
           let deck = A(c.priv().deck), q; const cs = A(st.ch);
           if(cs.length){ const sel = st.by ? c.input(st.by) : null, i = sel && sel.pk != null && cs[+sel.pk] ? +sel.pk : Math.floor(Math.random() * cs.length); q = cs[i]; deck = cs.filter((_, j) => j !== i).concat(deck); }
-          else { if(!deck.length) deck = deckFor(c.opts.packs, st.lg); q = deck.pop(); }
+          else { if(!deck.length) deck = deckFor(c.opts.packs); q = deck.pop(); }
           SB.u.saw(SEEN, q); c.setPriv({ deck });
           const live = c.ids.filter(id => c.here(id)), t = nextTw(c.opts.twists !== false, st.round + 1, st.tw, live.length);
           const base = { notes: {}, res: null, ch: [], by: "", own: "", ju: "", au: "", round: st.round + 1, k: c.rid() };
@@ -447,8 +558,9 @@ SB.register({
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const pp = c.s.pts || {}, o2 = c.ids.slice().sort((a, b2) => (pp[b2] || 0) - (pp[a] || 0)), mx = pp[o2[0]] || 0, w = mx ? o2.filter(id => (pp[id] || 0) === mx) : [];
-          c.end({ title: tr("C'est un 10 mais… : ", "They're a 10 but…: ") + (w.length ? w.map(c.name).join(" & ") : tr("égalité", "tie")),
-            lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (pp[id] || 0) + " pts").concat(awards(c.ids, c.s, c.name).map(a => a[0] + tr(" : ", ": ") + a[1])), win: w });
+          const FRt = f => f, ENt = (f, e) => e, awF = awards(c.ids, c.s, c.name, FRt), awE = awards(c.ids, c.s, c.name, ENt);
+          c.end({ title: both("C'est un 10 mais… : " + (w.length ? w.map(c.name).join(" & ") : "égalité"), "They're a 10 but…: " + (w.length ? w.map(c.name).join(" & ") : "tie")),
+            lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (pp[id] || 0) + " pts").concat(awF.map((a, i) => both(a[0] + " : " + a[1], awE[i][0] + ": " + awE[i][1]))), win: w });
         }));
       });
     }
@@ -477,12 +589,12 @@ SB.register({
           r.querySelector("[data-tw]").addEventListener("click", () => { twOn = !twOn; persist({ dmTw: twOn }); setup(); });
           r.querySelector("[data-go]").addEventListener("click", () => {
             if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet", "Pick at least one pack")); return; }
-            E.deck = deckFor(SB.okPacks(sel, PACKS), SB.lang()); E.round = 0; E.tw = null; E.pts = {}; E.sum = {}; E.cnt = {}; E.zero = {}; E.gno++;
+            E.deck = deckFor(SB.okPacks(sel, PACKS)); E.round = 0; E.tw = null; E.pts = {}; E.sum = {}; E.cnt = {}; E.zero = {}; E.gno++;
             next();
           });
         });
       }
-      const draw1 = () => { if(!E.deck.length) E.deck = deckFor(SB.okPacks(sel, PACKS), SB.lang()); const q = E.deck.pop(); SB.u.saw(SEEN, q); return q; };
+      const draw1 = () => { if(!E.deck.length) E.deck = deckFor(SB.okPacks(sel, PACKS)); const q = E.deck.pop(); SB.u.saw(SEEN, q); return q; };
       function next(){
         E.round++; E.notes = {}; E.ju = ""; E.au = "";
         E.tw = twOn && E.round > 1 ? SB.u.twist(mode === "tour" ? TWL : TWL.filter(t => t.id === "juge" || t.id === "plume"), { last: E.tw ? E.tw.id : "", n: ids.length, rate: .35 }) : null;
@@ -506,7 +618,7 @@ SB.register({
       }
       function plume(){
         screen(root, "pl" + E.round, lab() + '<div class="pass"><span class="eyebrow">' + tr("Passe le téléphone à", "Pass the phone to") + '</span><div class="who">' + esc(nameOf(E.au)) + "</div></div>" +
-          '<div class="card acc"><span class="eyebrow">' + esc(PREFIX(SB.lang())) + '</span><textarea class="txt" id="dm-w" maxlength="90" rows="3" placeholder="' + tr("… ronfle comme un camion", "… snores like a truck") + '"></textarea></div>' +
+          '<div class="card acc"><span class="eyebrow">' + esc(PREFIX()) + '</span><textarea class="txt" id="dm-w" maxlength="90" rows="3" placeholder="' + tr("… ronfle comme un camion", "… snores like a truck") + '"></textarea></div>' +
           SB.u.dock('<button class="btn acc" type="button" data-w>' + tr("Valider le défaut", "Lock in the flaw") + "</button>"), r => {
           r.querySelector("[data-w]").addEventListener("click", () => { const v = clean(r.querySelector("#dm-w").value, 90); if(v.length < 3){ SB.u.toast(tr("Écris un défaut", "Write a flaw")); return; } E.q = v; buzz(10); turn(0); });
         });

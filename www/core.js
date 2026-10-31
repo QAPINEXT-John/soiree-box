@@ -46,8 +46,8 @@ try{ localStorage.removeItem("soiree-stats"); localStorage.removeItem("soiree-st
    La langue est choisie sur l'accueil et gardée sur le téléphone ; changer de langue recharge l'appli.
    - tr("texte français", "English text") : la bonne version selon la langue du téléphone.
    - Textes fixes de index.html : traduits par le dictionnaire EN_HTML (texte exact → anglais).
-   - En réseau, le contenu des parties (cartes, questions) suit la langue de l'hôte (ctx.s.lg),
-     l'interface suit la langue de chaque téléphone. */
+   - En réseau, chaque téléphone garde sa langue : le contenu des parties est rangé en { fr, en }
+     dans l'état (SB.both) et affiché avec SB.L. */
 const LANG = (() => {
   const l = store().lang;
   if(l === "fr" || l === "en") return l;
@@ -276,7 +276,14 @@ function pop(el, delay, shake){
 }
 SB.fx = { fly, flyTo, ghost, flip, pop, thud, ripple };
 
-SB.u = { $, $$, esc, clean, A, shuffle, rid, pick, fix, store, persist, armTap, screen, txt, plural, plural2, tr, shareText, copyText, buzz, toast, dock, fresh, saw, twist, byTwist, twistHTML };
+/* Langue en réseau : chaque téléphone garde SA langue. Le contenu d'une partie (cartes, questions, messages
+   écrits par l'hôte) est rangé dans l'état sous les deux langues, { fr, en }, et chacun l'affiche dans la sienne.
+   - both(fr, en) : à utiliser côté hôte à la place de tr() pour tout texte qui va dans l'état partagé.
+   - L(x) : à l'affichage ; x peut être { fr, en } (on prend la langue du téléphone) ou une simple chaîne. */
+function both(fr, en){ return { fr: fr == null ? "" : String(fr), en: en == null ? String(fr == null ? "" : fr) : String(en) }; }
+function inLang(x){ if(x && typeof x === "object" && !Array.isArray(x) && ("fr" in x || "en" in x)) return String((LANG === "en" ? x.en : x.fr) ?? x.fr ?? x.en ?? ""); return x == null ? "" : String(x); }
+SB.both = both; SB.L = inLang;
+SB.u = { $, $$, esc, clean, A, shuffle, rid, pick, fix, store, persist, armTap, screen, txt, plural, plural2, tr, both, L: inLang, shareText, copyText, buzz, toast, dock, fresh, saw, twist, byTwist, twistHTML };
 
 /* ---------- Écran toujours allumé ---------- */
 let wakeLock = null, wantWake = false;
@@ -415,11 +422,24 @@ function relayBus(code, key, onMsg, onUp){
     close(){ return q.then(() => new Promise(r => setTimeout(r, 120))).then(() => conns.forEach(c => c.close())); }
   };
 }
+// Identité gardée par salon : en revenant dans le même salon (appli relancée, réseau coupé), on retrouve sa place
+// dans la partie en cours au lieu d'arriver comme un nouveau joueur.
+function relayId(code){
+  let m = {}; try{ m = JSON.parse(localStorage.getItem("soiree-rid") || "{}") || {}; }catch(e){}
+  const now = Date.now(); Object.keys(m).forEach(k => { if(!m[k] || now - (+m[k].at || 0) > 12 * 3600 * 1000) delete m[k]; });
+  const id = m[code] && /^r[a-z0-9]{8,20}$/.test(m[code].id) ? m[code].id : "r" + rid() + rid();
+  m[code] = { id, at: now }; try{ localStorage.setItem("soiree-rid", JSON.stringify(m)); }catch(e){}
+  return id;
+}
 async function relayRoom(code, asHost){
-  const me = "r" + rid() + rid(), key = await relayKey(code);
+  const me = relayId(code), key = await relayKey(code);
   const ph = listeners(), ch = listeners(), hh = listeners(), seen = {};
   let bus = null, host = false, ep = 0, hid = null, hostSeen = Date.now(), gone = false, hb = null;
-  let self = {}, game = null, priv = {}, list = [], snap = [], offset = 0, n = 0;
+  // « En pause » : téléphone verrouillé ou appli en arrière-plan. On le signale aux autres pour qu'ils patientent
+  // bien plus longtemps avant de considérer le joueur (ou l'hôte) comme parti.
+  let away = false, hostAway = false;
+  const AWAY_KEEP = 600000, AWAY_HOST = 600000, DROP = 30000, TAKE = 15000;
+  let self = {}, game = null, priv = {}, list = [], snap = [], offset = 0, n = Date.now();
   let roster = new Map(), gT = null, pT = null, cT = null, tick = Date.now(), liveSeen = false, lastC = 0;
   // Pièces jointes (photos) : découpées en morceaux, jamais retenues par les serveurs, assemblées à l'arrivée.
   const bh = listeners(), bparts = {}, bdone = {};
@@ -443,7 +463,7 @@ async function relayRoom(code, asHost){
       arr = [{ peer: me, sameTab: true, presence: Object.freeze(Object.assign({}, self)) }];
       roster.forEach((r, id) => arr.push({ peer: id, sameTab: false, presence: r.p }));
     } else {
-      const quiet = Date.now() - hostSeen > 7000;
+      const quiet = Date.now() - hostSeen > (hostAway ? AWAY_HOST : 7000);
       arr = list.filter(x => x && typeof x.peer === "string" && !(quiet && x.peer === hid)).map(x => ({
         peer: x.peer, sameTab: x.peer === me,
         presence: Object.freeze(Object.assign({}, x.presence && typeof x.presence === "object" ? x.presence : {}, x.peer === me ? self : {}))
@@ -456,8 +476,8 @@ async function relayRoom(code, asHost){
   const msg = (t, extra) => Object.assign({ t, f: me, n: ++n, ep, hid }, extra);
   function pubG(){ clearTimeout(gT); gT = setTimeout(() => { if(host) bus.pub("g", msg("g", { g: game, list: snap.map(p => ({ peer: p.peer, presence: p.presence })), ts: Date.now() }), true); }, 16); }
   function pubP(){ clearTimeout(pT); pT = setTimeout(() => { if(host) bus.pub("p", msg("p", { pv: priv }), true); }, 16); }
-  function pubH(x){ bus.pub("h", msg("h", Object.assign({ ts: Date.now() }, x || {})), true); }
-  function pubC(){ clearTimeout(cT); cT = setTimeout(() => { if(!host){ lastC = Date.now(); bus.pub("c/" + me, msg("c", { p: self }), false); } }, 16); }
+  function pubH(x){ bus.pub("h", msg("h", Object.assign({ ts: Date.now(), a: away ? 1 : 0 }, x || {})), true); }
+  function pubC(){ clearTimeout(cT); cT = setTimeout(() => { if(!host){ lastC = Date.now(); bus.pub("c/" + me, msg("c", { p: self, a: away ? 1 : 0 }), false); } }, 16); }
   function changed(){ emit(); pubG(); }
   function demote(){ host = false; bus.forget(); roster = new Map(); hostSeen = Date.now(); hh.fire(false, null); pubC(); }
   function onMsg(t, o, ret){
@@ -472,7 +492,7 @@ async function relayRoom(code, asHost){
       if(pj.length > 8000) return;
       const r = roster.get(o.f);
       if(!r && roster.size >= 16) return;
-      roster.set(o.f, { p: Object.freeze(p), pj, last: Date.now() });
+      roster.set(o.f, { p: Object.freeze(p), pj, last: Date.now(), away: !!o.a });
       if(!r || r.pj !== pj) changed();
       return;
     }
@@ -483,12 +503,15 @@ async function relayRoom(code, asHost){
       if(host && hid !== me) demote();
     } else if(o.ep < ep) return;
     if(top === "h"){
-      const fresh = !ret || Math.abs(Date.now() - (+o.ts || 0)) < 12000;
+      // Un hôte « en pause » (téléphone verrouillé) reste joignable : son dernier signal compte pendant AWAY_HOST.
+      const fresh = !ret || Math.abs(Date.now() - (+o.ts || 0)) < (o.a ? AWAY_HOST : 12000);
+      if(!o.gone && (!ret || fresh)) hostAway = !!o.a;
       if(fresh && !o.gone){ hostSeen = Date.now(); gone = false; liveSeen = true; if(typeof o.ts === "number" && !ret) offset = o.ts - Date.now(); }
       if(o.gone && !ret && hid !== me){ gone = true; hostSeen = Math.min(hostSeen, Date.now() - 8500); }
       if(o.gone && ret){ gone = true; }
       emit();
-    } else if(hid !== me){
+    } else if(hid !== me || !host){
+      // (hid === me sans être hôte : on revient après avoir été l'hôte ; on récupère la partie avant de la reprendre.)
       if(!ret){ hostSeen = Date.now(); liveSeen = true; gone = false; }
       if(top === "g" && o.g && typeof o.g === "object"){ game = o.g; list = A(o.list); emit(); }
       else if(top === "p") priv = o.pv && typeof o.pv === "object" ? o.pv : {};
@@ -511,19 +534,27 @@ async function relayRoom(code, asHost){
     if(!bus.up()) return;
     if(host){
       if(!hb || now - hb > 2500){ hb = now; pubH(); }
-      let drop = false; roster.forEach((r, id) => { if(now - r.last > 20000){ roster.delete(id); drop = true; } });
+      let drop = false; roster.forEach((r, id) => { if(now - r.last > (r.away ? AWAY_KEEP : DROP)){ roster.delete(id); drop = true; } });
       if(drop) changed();
       return;
     }
+    if(hid === me && game){ takeOver(); return; } // on était l'hôte de ce salon : on reprend la main
     if(now - lastC > 4000) pubC();
     if(!hid || !liveSeen && !gone) return;
     const order = A(game && fix(game).players).map(r => String(A(r)[0]));
     const alive = list.map(x => x && x.peer).filter(id => id && id !== hid);
     const cand = order.filter(id => alive.indexOf(id) >= 0).concat(alive.filter(id => order.indexOf(id) < 0).sort());
     let rank = cand.indexOf(me); if(rank < 0) rank = cand.length;
-    if(now - hostSeen > 10000 + rank * 6000) takeOver();
+    if(now - hostSeen > (hostAway ? AWAY_HOST : TAKE) + rank * 6000) takeOver();
   }, 1000);
-  const onVis = () => { if(document.visibilityState === "visible") hostSeen = Math.max(hostSeen, Date.now()); };
+  const onVis = () => {
+    const vis = document.visibilityState === "visible";
+    if(vis) hostSeen = Math.max(hostSeen, Date.now());
+    if(away === !vis) return;
+    away = !vis;
+    try{ if(bus && bus.up()){ if(host){ hb = Date.now(); pubH(); } else { clearTimeout(cT); lastC = Date.now(); bus.pub("c/" + me, msg("c", { p: self, a: away ? 1 : 0 }), false); } } }catch(e){}
+  };
+  window.addEventListener("pagehide", () => { if(!away){ away = true; try{ if(bus && bus.up()){ if(host) pubH(); else bus.pub("c/" + me, msg("c", { p: self, a: 1 }), false); } }catch(e){} } });
   document.addEventListener("visibilitychange", onVis);
   const room = {
     kind: "relay", me: () => me, isHost: () => host, hostId: () => hid,
@@ -830,7 +861,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.41.1";
+const VERSION = "4.42.0";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -969,7 +1000,7 @@ const pinHash = p => { let h = 5381; String(p).split("").forEach(c => { h = ((h 
 const KID_RX = new RegExp("(?<![\\p{L}])(alcool|alcools|alcohol|bière|bières|beer|vin|vins|wine|champagne|vodka|whisky|tequila|rhum|rum|cocktail|cocktails|apéro|apéros|shot|shots|shooter|cuite|ivre|ivresse|drunk|soûl|saoul|bourré|bourrée|gueule de bois|hangover|sexe|sex|sexy|bisou|bisous|kiss|nu|nue|nus|nude|naked|strip|strip-tease|porno|porn|préservatif|capote|condom|drogue|drogues|drug|drugs|joint|cannabis|weed|clope|clopes|cigarette|cigarettes|ex|plan cul|coquin|coquine|érotique|erotic|seins|boobs|fesses|lingerie|string|tinder|draguer|drague|flirt|flirter|cocu|tromper|infidèle|bar|boîte de nuit|nightclub|casino|pari|paris|bet|gamble)(?![\\p{L}])", "iu");
 SB.kid = () => roomKid();
 // Pour les jeux : ce texte (ou tableau de textes) est-il tout public ?
-SB.kidOk = x => !KID_RX.test(Array.isArray(x) ? x.flat(Infinity).join(" | ") : String(x == null ? "" : x));
+SB.kidOk = x => { const flat = v => (Array.isArray(v) ? v.map(flat).join(" | ") : v && typeof v === "object" ? [v.fr, v.en].filter(s => s != null).join(" | ") : String(v == null ? "" : v)); return !KID_RX.test(flat(x)); };
 const gameOk = (d, kid, hard) => (kid ? KID_GAMES.indexOf(d.id) >= 0 : !d.adult || hard);
 const myHard = () => !myKid() && store().hard !== false;
 const roomHard = () => { const g = N.nr ? G() : null; return g ? g.hd !== false : myHard(); };
@@ -1196,6 +1227,11 @@ function renderHome(){
   else if(N.joining){ info.hidden = false; }
   else if(!$("#h-err").hidden){ info.hidden = true; }
   else info.hidden = true;
+  // Revenir dans le dernier salon (appli fermée, téléphone redémarré, réseau coupé) : on y retrouve sa place.
+  { const lr = store().lastRoom, ok = lr && /^[A-Z]{4}$/.test(lr.code || "") && Date.now() - (+lr.at || 0) < 12 * 3600 * 1000 && !N.nr && netReady;
+    let rb = $("#h-resume");
+    if(ok && !rb){ rb = document.createElement("button"); rb.type = "button"; rb.id = "h-resume"; rb.className = "btn acc"; $("#h-err").after(rb); rb.addEventListener("click", () => { const c = (store().lastRoom || {}).code; if(c) netEnter(c, false); }); }
+    if(rb){ rb.hidden = !ok; rb.disabled = N.joining; if(ok) rb.textContent = tr("Revenir dans le salon " + lr.code, "Back to room " + lr.code); } }
 }
 function goHome(){ accent(""); keepAwake(false); const gs0 = document.getElementById("gage-sheet"); if(gs0) gs0.remove(); show("home"); renderHome(); }
 
@@ -1339,7 +1375,9 @@ async function netEnter(code, asHost){
       }
     } else nr = FB_ON ? await fbJoin(code) : ROOM ? await roomJoin(code) : await relayRoom(code, false);
   }catch(e){
-    N.joining = false; renderHome();
+    N.joining = false;
+    if(e && e.code === "not_found" && (store().lastRoom || {}).code === code) persist({ lastRoom: null });
+    renderHome();
     homeErr(e && e.code === "not_found" ? tr("Aucun salon ouvert avec le code " + code + ". Vérifie le code et que l'hôte a toujours l'appli ouverte.", "No open room with code " + code + ". Check the code, and make sure the host still has the app open.") :
       e && e.code === "full" ? tr("Ce salon est complet.", "This room is full.") :
       e && e.code === "auth_off" ? tr("Firebase refuse la connexion : active la connexion anonyme dans la console Firebase (voir le guide).", "Firebase refused the connection: enable anonymous sign-in in the Firebase console (see the guide).") :
@@ -1349,7 +1387,7 @@ async function netEnter(code, asHost){
       tr("Connexion impossible. Vérifie ta connexion internet et réessaie.", "Couldn't connect. Check your internet connection and try again."));
     return;
   }
-  N.joining = false; hashCode = null;
+  N.joining = false; hashCode = null; persist({ lastRoom: { code, at: Date.now() } });
   Object.assign(N, { nr, code, host: nr.isHost(), peers: nr.peers(), seenHost: false, g: null });
   if(N.host) N.g = freshSalon();
   N.unsubs.push(nr.onHostChange((h, g) => becomeHost(h, g)));
@@ -1401,7 +1439,7 @@ async function netLeave(){
   N.unsubs.forEach(u => { try{ u(); }catch(e){} }); N.unsubs = [];
   clearTimeout(N.lostTimer); N.lostTimer = null;
   if(N.nr){ try{ await N.nr.leave(); }catch(e){} }
-  Object.assign(N, { nr: null, host: false, g: null, peers: [], code: "", seenHost: false });
+  Object.assign(N, { nr: null, host: false, g: null, peers: [], code: "", seenHost: false }); persist({ lastRoom: null });
   $("#game-root").dataset.gid = ""; $("#game-root").dataset.key = ""; $("#game-root").innerHTML = "";
   try{ history.replaceState(null, "", location.pathname + location.search); }catch(e){}
   goHome();
@@ -1481,7 +1519,7 @@ function runHost(fn){
   if(pendingEnd){
     const sum = pendingEnd; pendingEnd = null; pending = null;
     if(N.g.game && (SB.byId[N.g.game] || {}).gagesEnd !== false){ const w = A(sum.win).map(String), ids = A(N.g.players).map(A).map(r => String(r[0])); if(w.length) gHostApply(N.g.game, w.map(id => ({ id, ev: "_win" })).concat(ids.filter(id => w.indexOf(id) < 0).map(id => ({ id, ev: "_lose" }))), "end" + (N.g.gid || "")); }
-    trail("Fin de partie : " + clean(sum.title, 80));
+    trail("Fin de partie : " + clean(inLang(sum.title), 80));
     const who = {}; A(N.g.players).map(A).forEach(p => { who[p[0]] = p[1]; });
     const tally = addTally(N.g.tally, A(sum.win).map(id => who[id]));
     const last = Object.assign({ game: N.g.game }, plain(sum)); delete last.win;
@@ -1668,7 +1706,7 @@ function renderSalon(g){
     last.hidden = false;
     const d = SB.byId[g.last.game];
     const n = np.length, canRe = N.host && d && n >= d.min && (!d.max || n <= d.max);
-    const lh = '<span class="eyebrow">' + tr("Dernière partie", "Last game") + (d ? " · " + esc(d.name) : "") + "</span><b>" + esc(clean(g.last.title, 120)) + "</b>" + A(g.last.lines).slice(0, 6).map(l => '<span class="sm">' + esc(clean(l, 160)) + "</span>").join("") +
+    const lh = '<span class="eyebrow">' + tr("Dernière partie", "Last game") + (d ? " · " + esc(d.name) : "") + "</span><b>" + esc(clean(inLang(g.last.title), 120)) + "</b>" + A(g.last.lines).slice(0, 6).map(l => '<span class="sm">' + esc(clean(inLang(l), 160)) + "</span>").join("") +
       tallyHTML(g.tally, g.played) +
       (canRe ? '<button class="btn acc acc-' + esc(d.id) + ' again" type="button" data-revanche>' + tr("Revanche · ", "Rematch · ") + esc(d.name) + "</button>" : "");
     if(last.innerHTML !== lh){
@@ -1909,12 +1947,16 @@ function gBase(S, gameId, ev){ const k = gameId + ":" + ev; if(S.trig[k] != null
 // Niveau d'un jeu : le sien s'il en a un (« off » = aucun gage), sinon le niveau choisi pour tous les jeux.
 const gLevel = (S, gameId) => ((S.glv || {})[gameId] || S.level || "classique");
 function gAmount(S, gameId, ev){ const lv = gLevel(S, gameId); if(lv === "off") return 0; const b = gBase(S, gameId, ev); return b > 0 ? Math.max(1, Math.round(b * (GMULT[lv] || 1))) : 0; }
+// Gage sans alcool tiré au hasard. Les gages de l'appli sont rangés en { fr, en } : chacun les lit dans sa langue.
 function gTask(S){
-  const base = A(S.custom).length ? A(S.custom) : GTASKS[LANG === "en" ? "en" : "fr"];
+  const custom = A(S.custom).length > 0;
+  const base = custom ? A(S.custom).map(t => ({ k: t, v: t })) : GTASKS.fr.map((t, i) => ({ k: t, v: both(t, GTASKS.en[i] || t) }));
   // Mode Enfant : pas de gages autour du téléphone, des contacts ou de la honte.
-  const kid = roomKid() ? base.filter(t => SB.kidOk(t) && !/photo|contact|galerie|gallery|text|envoie|honte|embarrass|moutarde|mustard|piquante|hot sauce/i.test(t)) : base;
-  const pool = kid.length ? kid : base; return pool[Math.floor(Math.random() * pool.length)] || "…";
+  const kid = roomKid() ? base.filter(o => SB.kidOk(o.k) && !/photo|contact|galerie|gallery|text|envoie|honte|embarrass|moutarde|mustard|piquante|hot sauce/i.test(o.k)) : base;
+  const pool = kid.length ? kid : base, o = pool[Math.floor(Math.random() * pool.length)]; return o ? o.v : "…";
 }
+// Raison d'un gage : un texte du jeu ({ fr, en } ou chaîne), ou la référence d'un déclencheur, lue dans la langue du téléphone.
+function gWhy(w){ if(w && typeof w === "object" && w.ev){ const ed = gEvents(w.g).find(x => x.ev === w.ev); return ed ? ed.label : ""; } return inLang(w); }
 const gT = (t, name) => { t = Object.assign({}, t || {}); t[name] = Object.assign({ s: 0, g: 0, t: 0, w: 0, v: 0 }, t[name] || {}); return t; };
 // Calcule les gages d'une liste d'événements. players : [{ id, name, alc, cap }] ; tally : { nom: { s, g, t, w } }.
 function gCompute(S, gameId, list, players, tally){
@@ -1935,7 +1977,7 @@ function gCompute(S, gameId, list, players, tally){
     const times = e.x != null ? Math.max(0, Math.floor(+e.x || 0)) : 1;
     const lv = gLevel(S, gameId);
     const n = (e.n != null ? (lv === "off" ? 0 : Math.max(0, Math.round(+e.n * (GMULT[lv] || 1)))) : gAmount(S, gameId, e.ev)) * times; if(!n) return;
-    const why = e.why || ed.label;
+    const why = e.why || { ev: e.ev, g: gameId };
     if(ed.kind === "tous") players.forEach(p => drink(p, n, why));
     else if(ed.kind === "distribue"){ const p = P(e.id); if(p && players.length > 1 && players.some(x => x.alc && x.id !== p.id)) items.push({ t: "give", who: p.id, name: p.name, n, why, done: 0 }); }
     else drink(P(e.id), n, why);
@@ -1950,7 +1992,7 @@ function gGive(S, gameId, q, giverId, to, players, tally){
   if(sum !== it.n) return null;
   const r = gCompute(Object.assign({}, S, { level: "perso", glv: {} }), gameId, [], players, tally); let T = r.tally;
   const items = A(q.items).map(x => (x === it ? Object.assign({}, x, { done: 1 }) : x));
-  list.forEach(([id, k]) => { const c = gCompute(Object.assign({}, S, { level: "perso", glv: {}, trig: Object.assign({}, S.trig, { [gameId + ":_give"]: k }) }), gameId, [{ id, ev: "_give", n: k, why: tr("de la part de ", "from ") + it.name }], players, T); T = c.tally; c.items.forEach(x => items.push(x)); });
+  list.forEach(([id, k]) => { const c = gCompute(Object.assign({}, S, { level: "perso", glv: {}, trig: Object.assign({}, S.trig, { [gameId + ":_give"]: k }) }), gameId, [{ id, ev: "_give", n: k, why: both("de la part de " + it.name, "from " + it.name) }], players, T); T = c.tally; c.items.forEach(x => items.push(x)); });
   T = gT(T, it.name); T[it.name].g += it.n;
   return { items, tally: T };
 }
@@ -1971,9 +2013,9 @@ function gageSheet(q, opts){
   el.dataset.key = key;
   const line = x => {
     const mine = me != null && x.who === me;
-    let t = "", sub = esc(x.why || "");
+    let t = "", sub = esc(gWhy(x.why));
     if(x.t === "drink") t = tr(esc(x.name) + " boit " + gUnit(S, x.n), esc(x.name) + " drinks " + gUnit(S, x.n));
-    else if(x.t === "task"){ t = esc(x.name) + " : " + esc(x.txt); sub = (roomHard() ? tr("Gage sans alcool", "No-alcohol forfeit") : tr("Gage", "Forfeit")) + (x.why ? " · " + esc(x.why) : ""); }
+    else if(x.t === "task"){ t = esc(x.name) + " : " + esc(inLang(x.txt)); sub = (roomHard() ? tr("Gage sans alcool", "No-alcohol forfeit") : tr("Gage", "Forfeit")) + (x.why ? " · " + esc(gWhy(x.why)) : ""); }
     else if(x.t === "give") t = x.done ? tr(esc(x.name) + " a distribué " + gUnit(S, x.n), esc(x.name) + " handed out " + gUnit(S, x.n)) : tr(esc(x.name) + " distribue " + gUnit(S, x.n), esc(x.name) + " hands out " + gUnit(S, x.n));
     else if(x.t === "water"){ t = tr(esc(x.name) + " : petit verre d'eau ?", esc(x.name) + ": time for a glass of water?"); sub = tr("Rappel", "Reminder"); }
     else if(x.t === "joker"){ t = tr(esc(x.name) + " utilise son joker : un verre d'eau", esc(x.name) + " uses their joker: a glass of water"); sub = ""; }

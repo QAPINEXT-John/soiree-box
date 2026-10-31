@@ -105,13 +105,19 @@ function cast(n, imp, white){
   return { imp: Math.max(1, Math.min(imp, cap)), white: 0 };
 }
 const kidF = l => { if(!(SB.kid && SB.kid())) return l; const k = l.filter(x => SB.kidOk(x)); return k.length ? k : l; }; // mode Enfant : jamais de pool vide
-function pickPair(hard, lg){
-  const D = deck(lg), pool = kidF(hard ? D.n.concat(D.h) : D.n);
-  const pair = SB.u.fresh("undercover:pairs", pool).pop();
+// Tire une paire de mots. Les listes FR et EN sont alignées : on renvoie chaque mot en { fr, en },
+// pour que chaque téléphone affiche le mot dans SA langue (SB.u.L).
+function pickPair(hard){
+  const F = hard ? DECK.fr.n.concat(DECK.fr.h) : DECK.fr.n, E = hard ? DECK.en.n.concat(DECK.en.h) : DECK.en.n;
+  const pair = SB.u.fresh("undercover:pairs", kidF(F)).pop();
   SB.u.saw("undercover:pairs", [pair]);
-  const flip = Math.random() < .5;
-  return { civ: flip ? pair[1] : pair[0], und: flip ? pair[0] : pair[1] };
+  const pj = JSON.stringify(A(pair)), i = F.findIndex(x => JSON.stringify(x) === pj), en = E[i] || pair, flip = Math.random() < .5, a = flip ? 1 : 0, b = flip ? 0 : 1;
+  return { civ: SB.u.both(pair[a], en[a]), und: SB.u.both(pair[b], en[b]) };
 }
+// Le mot proposé par Mister White est accepté dans les deux langues.
+const sameWord = (g, w) => !!norm(g) && [w && w.fr, w && w.en, typeof w === "string" ? w : ""].some(x => x && norm(x) === norm(g));
+const W = x => SB.u.L(x);
+const plEN = (n, w) => n + " " + w + (n === 1 ? "" : "s");
 // Mister White ne parle jamais en premier.
 function firstNotWhite(order, roles){
   order = order.slice();
@@ -151,21 +157,22 @@ function clueErr(t, tw, tp, lg){
 /* ---------- Trophées ---------- */
 function vary(list, seed){ return list[Math.abs(seed) % list.length]; }
 // vh : [[tour, votant, cible]], outAt : {id: tour d'élimination}, last : dernier tour joué
-function awards(ids, roles, vh, outAt, last, name){
+function awards(ids, roles, vh, outAt, last, name, t){
+  t = t || tr;
   const out = [], seed = A(vh).length * 3 + ids.length + last;
   const bad = id => roles[id] === "u" || roles[id] === "w";
   const hit = {}, got = {};
   A(vh).map(A).forEach(v => { if(!bad(v[1]) && bad(v[2])) hit[v[1]] = (hit[v[1]] || 0) + 1; if(!bad(v[2])) got[v[2]] = (got[v[2]] || 0) + 1; });
   const h = Object.keys(hit).sort((a, b) => hit[b] - hit[a])[0];
-  if(h) out.push([vary(tr(["Flair de limier", "Œil de lynx", "Détecteur de mensonges", "Inspecteur en chef"], ["Bloodhound", "Eagle Eye", "Human Lie Detector", "Chief Inspector"]), seed), name(h), tr(SB.u.plural(hit[h], "vote") + " contre les intrus", SB.u.plural2(hit[h], "", "", "vote") + " against the impostors")]);
+  if(h) out.push([vary(t(["Flair de limier", "Œil de lynx", "Détecteur de mensonges", "Inspecteur en chef"], ["Bloodhound", "Eagle Eye", "Human Lie Detector", "Chief Inspector"]), seed), name(h), t(SB.u.plural(hit[h], "vote") + " contre les intrus", plEN(hit[h], "vote") + " against the impostors")]);
   const g = Object.keys(got).sort((a, b) => got[b] - got[a])[0];
-  if(g && got[g] >= 2) out.push([vary(tr(["Tête de suspect", "Coupable idéal(e)", "Paratonnerre", "Bouc émissaire"], ["Usual Suspect", "Perfect Fall Guy", "Lightning Rod", "Scapegoat"]), seed + 1), name(g), tr(SB.u.plural(got[g], "vote") + " reçus sans être coupable", "took " + SB.u.plural2(got[g], "", "", "vote") + " while innocent")]);
+  if(g && got[g] >= 2) out.push([vary(t(["Tête de suspect", "Coupable idéal(e)", "Paratonnerre", "Bouc émissaire"], ["Usual Suspect", "Perfect Fall Guy", "Lightning Rod", "Scapegoat"]), seed + 1), name(g), t(SB.u.plural(got[g], "vote") + " reçus sans être coupable", "took " + plEN(got[g], "vote") + " while innocent")]);
   const b = ids.filter(bad).map(id => [id, outAt[id] || last + 1]).sort((x, y) => y[1] - x[1])[0];
-  if(b && b[1] >= 2) out.push([vary(tr(["Caméléon", "Agent dormant", "Maître du bluff", "Visage de marbre"], ["Chameleon", "Sleeper Agent", "Master of Bluff", "Poker Face"]), seed + 2), name(b[0]), outAt[b[0]] ? tr("a tenu " + SB.u.plural(b[1] - 1, "tour") + " avant d'être démasqué(e)", "lasted " + SB.u.plural2(b[1] - 1, "", "", "round") + " before getting caught") : tr("jamais démasqué(e)", "never caught")]);
+  if(b && b[1] >= 2) out.push([vary(t(["Caméléon", "Agent dormant", "Maître du bluff", "Visage de marbre"], ["Chameleon", "Sleeper Agent", "Master of Bluff", "Poker Face"]), seed + 2), name(b[0]), outAt[b[0]] ? t("a tenu " + SB.u.plural(b[1] - 1, "tour") + " avant d'être démasqué(e)", "lasted " + plEN(b[1] - 1, "round") + " before getting caught") : t("jamais démasqué(e)", "never caught")]);
   return out;
 }
 function awardsHTML(a){ return a.length ? '<div class="field"><span class="eyebrow">' + tr("Trophées", "Awards") + '</span><ul class="list">' + a.map(x => '<li><span class="t" style="font-size:19px">' + esc(x[0]) + '</span><span class="by">' + esc(x[1]) + " · " + esc(x[2]) + "</span></li>").join("") + "</ul></div>" : ""; }
-function winTitle(w){ return w === "c" ? tr("Victoire des civils", "The Civilians win") : w === "w" ? tr("Mister White a deviné !", "Mister White guessed it!") : tr("Victoire des intrus", "The impostors win"); }
+function winTitle(w, t){ t = t || tr; return w === "c" ? t("Victoire des civils", "The Civilians win") : w === "w" ? t("Mister White a deviné !", "Mister White guessed it!") : t("Victoire des intrus", "The impostors win"); }
 function winners(ids, roles, w){ return ids.filter(id => w === "c" ? roles[id] === "c" : w === "w" ? roles[id] === "w" : roles[id] !== "c"); }
 function packBtn(attr, on, name, desc, hot){ return '<button type="button" class="pack' + (hot ? " hot" : "") + '" ' + attr + ' aria-pressed="' + on + '"><span class="box">✓</span><span class="tx"><span class="nm">' + esc(name) + (hot ? '<span class="pill hot">18+</span>' : "") + '</span><span class="ds">' + esc(desc) + "</span></span></button>"; }
 
@@ -202,7 +209,7 @@ SB.register({
   ],
   start(ctx, o){
     const ids = ctx.ids, n = ids.length, cs = cast(n, o.imp, !!o.white), lg = SB.lang();
-    const { civ, und } = pickPair(o.hard, lg);
+    const { civ, und } = pickPair(o.hard);
     const sh = shuffle(ids), imps = sh.slice(0, cs.imp), wh = cs.white ? sh[cs.imp] : "", roles = {}, words = {};
     ids.forEach(id => { const r = id === wh ? "w" : imps.indexOf(id) >= 0 ? "u" : "c"; roles[id] = r; words[id] = r === "w" ? "" : r === "u" ? und : civ; });
     return { phase: "reveal", lg, roles, words, civ, und, alive: ids.slice(), order: [], turn: 0, clues: [], round: 1, out: "", tie: false, tally: {}, winner: "", tw: "", tp: "", vl: [], vh: [], outAt: {}, wg: "" };
@@ -241,13 +248,13 @@ SB.register({
       if(roles[out] !== "w") ctx.gage([{ id: out, ev: roles[out] === "u" ? "demasque" : "innocent" }], "uc" + s.k + ":" + s.round);
     } else if(s.phase === "wguess"){
       const i = ctx.input(s.out), g = i ? clean(i.g, 30) : "";
-      if(g){ if(norm(g) && norm(g) === norm(s.civ)) ctx.set({ phase: "end", winner: "w", wg: g }); else { ctx.set({ phase: "out", wg: g }); ctx.gage([{ id: s.out, ev: "demasque" }], "uc" + s.k + ":w"); } }
+      if(g){ if(sameWord(g, s.civ)) ctx.set({ phase: "end", winner: "w", wg: g }); else { ctx.set({ phase: "out", wg: g }); ctx.gage([{ id: s.out, ev: "demasque" }], "uc" + s.k + ":w"); } }
       else if(!ctx.here(s.out)){ ctx.set({ phase: "out", wg: "" }); ctx.gage([{ id: s.out, ev: "demasque" }], "uc" + s.k + ":w"); }
     }
   },
   render(ctx, root){
     const s = ctx.s, me = ctx.me, roles = s.roles || {}, words = s.words || {}, alive = A(s.alive);
-    const isAlive = alive.indexOf(me) >= 0, myWord = words[me] || "", amW = roles[me] === "w";
+    const isAlive = alive.indexOf(me) >= 0, myWord = W(words[me] || ""), amW = roles[me] === "w";
     const lab = '<span class="eyebrow">' + tr("Tour " + s.round + " · " + SB.u.plural(alive.length, "joueur") + " en jeu", "Round " + s.round + " · " + SB.u.plural2(alive.length, "", "", "player") + " left") + "</span>" + (s.phase === "clues" || s.phase === "vote" ? twBanner(s.tw, s.tp) : "");
     const reminder = isAlive ? '<details><summary>' + tr("Revoir mon mot", "Show my word again") + '</summary><p class="huge" style="margin-top:6px">' + (amW ? tr("Aucun mot", "No word") : esc(myWord)) + "</p>" + (amW ? '<p class="sm">' + tr("Tu es Mister White : bluffe.", "You're Mister White: bluff!") + "</p>" : "") + "</details>" : '<p class="note-box">' + tr("Tu es éliminé(e) : regarde la suite sans rien dévoiler.", "You're out: keep watching without giving anything away.") + "</p>";
     const cluesHTML = hide => { const cl = A(s.clues).map(A); if(hide) return '<li><span class="by">' + tr("Indices à l'aveugle : ils seront révélés au moment du vote. " + SB.u.plural(cl.length, "indice") + " donné" + (cl.length > 1 ? "s" : "") + ".", "Blind clues: they'll be revealed at vote time. " + SB.u.plural2(cl.length, "", "", "clue") + " given.") + "</span></li>"; return cl.length ? cl.map(c => '<li><span class="t">' + esc(c[1]) + '</span><span class="by">' + esc(ctx.name(c[0])) + "</span></li>").join("") : '<li><span class="by">' + tr("Pas encore d'indice.", "No clues yet.") + "</span></li>"; };
@@ -277,7 +284,7 @@ SB.register({
             const t = clean(inp.value, 30);
             if(!t){ err.textContent = tr("Écris un indice avant d'envoyer.", "Type a clue before sending."); err.hidden = false; return; }
             if(myWord && norm(t) === norm(myWord)){ err.textContent = tr("Tu ne peux pas donner ton propre mot.", "You can't give your own word."); err.hidden = false; return; }
-            const e = clueErr(t, s.tw, s.tp, s.lg); if(e){ err.textContent = e; err.hidden = false; return; }
+            const e = clueErr(t, s.tw, s.tp, SB.lang()); if(e){ err.textContent = e; err.hidden = false; return; }
             err.hidden = true; b.disabled = true; ctx.send({ t });
           };
           b.addEventListener("click", go); inp.addEventListener("keydown", e => { if(e.key === "Enter") go(); });
@@ -325,16 +332,18 @@ SB.register({
       });
     } else if(s.phase === "end"){
       const aw = awards(ctx.ids, roles, s.vh, s.outAt || {}, s.round, ctx.name);
-      screen(root, "end" + ctx.isHost, '<span class="eyebrow">' + tr("Fin de la partie", "Game over") + '</span><div class="verdict">' + winTitle(s.winner) + "</div>" + (s.winner === "w" ? '<p style="font-size:17px">' + tr(esc(ctx.name(s.out)) + " a trouvé « " + esc(s.civ) + " ».", esc(ctx.name(s.out)) + " found “" + esc(s.civ) + "”.") + "</p>" : "") +
-        '<div class="card"><div class="scale"><span>' + tr("Mot des civils", "Civilians' word") + "</span><span>" + tr("Mot des intrus", "Undercover word") + '</span></div><div class="scale" style="color:var(--ink); font-size:22px; font-weight:800"><span>' + esc(s.civ) + "</span><span>" + esc(s.und) + "</span></div></div>" +
+      screen(root, "end" + ctx.isHost, '<span class="eyebrow">' + tr("Fin de la partie", "Game over") + '</span><div class="verdict">' + winTitle(s.winner) + "</div>" + (s.winner === "w" ? '<p style="font-size:17px">' + tr(esc(ctx.name(s.out)) + " a trouvé « " + esc(W(s.civ)) + " ».", esc(ctx.name(s.out)) + " found “" + esc(W(s.civ)) + "”.") + "</p>" : "") +
+        '<div class="card"><div class="scale"><span>' + tr("Mot des civils", "Civilians' word") + "</span><span>" + tr("Mot des intrus", "Undercover word") + '</span></div><div class="scale" style="color:var(--ink); font-size:22px; font-weight:800"><span>' + esc(W(s.civ)) + "</span><span>" + esc(W(s.und)) + "</span></div></div>" +
         awardsHTML(aw) +
         '<ul class="list">' + ctx.ids.map(id => '<li><span class="t">' + esc(ctx.name(id)) + '</span><span class="by">' + roleName(roles[id]) + (alive.indexOf(id) >= 0 ? tr(" · encore en jeu", " · still in") : tr(" · éliminé(e)", " · out")) + "</span></li>").join("") + "</ul>" +
         SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const ro = c.s.roles || {}, bads = c.ids.filter(id => ro[id] !== "c").map(id => c.name(id) + (ro[id] === "w" ? " (Mister White)" : ""));
-          const aw2 = awards(c.ids, ro, c.s.vh, c.s.outAt || {}, c.s.round, c.name);
-          c.end({ title: winTitle(c.s.winner), lines: tr(["Camp des intrus : " + bads.join(", "), "Civils : « " + c.s.civ + " » · Intrus : « " + c.s.und + " »"].concat(aw2.map(a => a[0] + " : " + a[1])), ["Impostors: " + bads.join(", "), "Civilians: “" + c.s.civ + "” · Undercover: “" + c.s.und + "”"].concat(aw2.map(a => a[0] + ": " + a[1]))), win: winners(c.ids, ro, c.s.winner) });
+          const F = (f, e) => f, E = (f, e) => e, awF = awards(c.ids, ro, c.s.vh, c.s.outAt || {}, c.s.round, c.name, F), awE = awards(c.ids, ro, c.s.vh, c.s.outAt || {}, c.s.round, c.name, E);
+          const cv = c.s.civ || {}, ud = c.s.und || {}, wf = x => (typeof x === "string" ? x : x.fr || ""), we = x => (typeof x === "string" ? x : x.en || x.fr || "");
+          const linesF = ["Camp des intrus : " + bads.join(", "), "Civils : « " + wf(cv) + " » · Intrus : « " + wf(ud) + " »"].concat(awF.map(a => a[0] + " : " + a[1])), linesE = ["Impostors: " + bads.join(", "), "Civilians: “" + we(cv) + "” · Undercover: “" + we(ud) + "”"].concat(awE.map(a => a[0] + ": " + a[1]));
+          c.end({ title: SB.u.both(winTitle(c.s.winner, F), winTitle(c.s.winner, E)), lines: linesF.map((l, i) => SB.u.both(l, linesE[i] || l)), win: winners(c.ids, ro, c.s.winner) });
         }));
       });
     }
@@ -348,7 +357,7 @@ SB.register({
       let L;
       function deal(){
         const st = SB.u.store(), cs = cast(n, 0, !!st.ucWhite);
-        const { civ, und } = pickPair(!!st.ucHard && SB.hard(), SB.lang());
+        const pp = pickPair(!!st.ucHard && SB.hard()), civ = W(pp.civ), und = W(pp.und);
         const sh = shuffle(names.map((_, i) => i)), imps = sh.slice(0, cs.imp), wh = cs.white ? sh[cs.imp] : -1;
         L = { phase: "deal", i: 0, seen: false, civ, und, roles: names.map((_, i) => i === wh ? "w" : imps.indexOf(i) >= 0 ? "u" : "c"), alive: names.map((_, i) => i), out: -1, round: 1, winner: "", tw: "", tp: "", first: -1, outAt: {}, wg: "", twOn: st.ucTw !== false, gk: Math.random().toString(36).slice(2, 8) };
       }

@@ -1,7 +1,7 @@
 /* Qui est le plus… — chacun vote pour le joueur qui correspond le mieux. */
 (function(){
 "use strict";
-const { esc, A, shuffle, screen, txt, store, persist, pick, tr } = SB.u;
+const { esc, A, shuffle, screen, txt, store, persist, pick, tr, both } = SB.u;
 
 const SOFT = [
   "finir en garde à vue","devenir célèbre","oublier l'anniversaire de sa mère","se perdre même avec un GPS","pleurer devant un dessin animé",
@@ -72,7 +72,7 @@ const HOT_EN = [
 ];
 const TRASH_EN = ["have watched porn at work", "have a very full secret folder on their computer", "have had sex in a fitting room", "have slept with someone in this group", "have slept with two people on the same day", "have faked it", "send nudes tonight", "pay for a porn site subscription", "have had group sex", "end up at a swingers' club this weekend", "have the weirdest fetish", "have been caught pleasuring themselves", "sleep with someone on the first date", "sleep with their boss for a promotion", "own a sex toy collection", "film an amateur porno", "have had sex at the office", "forget the name of the person they just slept with", "have sex to a ridiculous song", "keep handcuffs in their nightstand", "have had a legendary failure to perform", "have a friends-with-benefits thing with a neighbor", "sleep with a friend's ex", "make the first move on a dating app at 3 a.m.", "have the most cringe dirty talk", "have a ridiculous safe word", "have sex knowing the roommate can hear everything", "have played strip poker", "have a written list of fantasies somewhere", "moan the wrong name at the worst moment", "have tried a naughty costume", "buy lingerie for a night that never happened", "have had sex in someone else's bed", "have been turned down in the middle of foreplay", "have a regular hookup nobody knows about", "suggest a naughty game at the end of this party", "turn an innocent massage into something else entirely"];
 const NOIR_EN = ["die in the dumbest way possible", "end up in the crime section of the news", "forget their own grandma's funeral", "laugh during a minute of silence", "get cut out of the will", "have been a serial killer in a past life", "sell their soul to the devil for a new phone", "crack a joke at someone's deathbed", "get eaten by their own cats", "turn their own funeral into a theme party", "sell out their friends to zombies to survive", "leave their debts to their friends", "get fired from a funeral home", "fall in love with an undertaker", "take a selfie in front of a coffin", "haunt their exes after they die", "die stupidly going to check where that noise came from", "write their own eulogy in advance", "get kicked out of a funeral for giggling", "die trying to film a viral video", "leave their sock collection to a museum", "ask to be buried with a fully charged phone", "outlive everyone in this group", "come back as a ghost who makes doors creak", "write a will full of payback", "pick a ridiculous song for their funeral", "be reincarnated as a houseplant"];
-// Contenu dans la langue de l'hôte (s.lg) ; l'interface suit le téléphone (tr).
+// Contenu tiré en français (clé stable, gardée dans l'état) ; chaque téléphone l'affiche dans sa langue (qx).
 const LISTS = { fr: { soft: SOFT, mechant: MECHANT, adulte: HOT.concat(TRASH, NOIR) }, en: { soft: SOFT_EN, mechant: MECHANT_EN, adulte: HOT_EN.concat(TRASH_EN, NOIR_EN) } };
 const lists = lg => LISTS[lg === "en" ? "en" : "fr"];
 const PREFIX = "Qui est le plus susceptible de…";
@@ -82,8 +82,10 @@ const PACKS = [
   { v: "adulte", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Sexe, porno, tabous, humour noir : tout le contenu adulte", "Sex, porn, taboos, dark humor: all the adult stuff"), list: lists(SB.lang()).adulte, hot: true }
 ];
 const SEEN = "quiplus:q";
-function deckFor(packs, lg){
-  const sel = A(packs), L = lists(lg); const pool = PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(p => L[p.v]);
+const EN_OF = {}; Object.keys(LISTS.fr).forEach(k => A(LISTS.fr[k]).forEach((t, i) => { if(LISTS.en[k][i]) EN_OF[t] = LISTS.en[k][i]; }));
+const qx = q => (SB.lang() === "en" && EN_OF[q] ? EN_OF[q] : q);
+function deckFor(packs){
+  const sel = A(packs), L = LISTS.fr; const pool = PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(p => L[p.v]);
   return SB.u.fresh(SEEN, pool.length ? pool : L.soft);
 }
 function packButtons(sel){
@@ -122,14 +124,16 @@ const PREFIX_MOINS = "Qui est le MOINS susceptible de…";
 const elide = q => { const t = String(q || "").trim(); return /^[aeiouyàâäéèêëîïôöùûüœ]/i.test(t) || /^h(abit|abill|ésit|érit|umili|allucin|onor|ospital)/i.test(t); };
 // Le préfixe fait partie de la phrase : il suit la langue du contenu (lg = s.lg en réseau).
 const prefixFor = (moins, q, lg) => lg === "en" ? (moins ? "Who's LEAST likely to…" : "Who's most likely to…") : (moins ? PREFIX_MOINS : PREFIX).replace(/de…$/, elide(q) ? "d'…" : "de…");
-const FL = {
-  champ: tr(["Titre de la soirée", "Élu(e) par le peuple", "La star du groupe", "Suspect(e) numéro un"], ["Title of the night", "Elected by the people", "Star of the group", "Prime suspect"]),
-  mav: tr(["L'électron libre", "Le (la) franc-tireur(se)", "Jamais d'accord avec personne"], ["The free spirit", "The lone wolf", "Never agrees with anyone"]),
-  self: tr(["Assume tout", "Lucide sur soi-même", "Autocritique en chef"], ["Owns it all", "Brutally self-aware", "Chief self-critic"]),
-  saint: tr(["L'insoupçonnable", "Passé(e) sous les radars", "Le saint (la sainte) du groupe"], ["Above suspicion", "Flew under the radar", "The group's saint"])
+const FLX = {
+  champ: [["Titre de la soirée", "Élu(e) par le peuple", "La star du groupe", "Suspect(e) numéro un"], ["Title of the night", "Elected by the people", "Star of the group", "Prime suspect"]],
+  mav: [["L'électron libre", "Le (la) franc-tireur(se)", "Jamais d'accord avec personne"], ["The free spirit", "The lone wolf", "Never agrees with anyone"]],
+  self: [["Assume tout", "Lucide sur soi-même", "Autocritique en chef"], ["Owns it all", "Brutally self-aware", "Chief self-critic"]],
+  saint: [["L'insoupçonnable", "Passé(e) sous les radars", "Le saint (la sainte) du groupe"], ["Above suspicion", "Flew under the radar", "The group's saint"]]
 };
+const FL = {}; Object.keys(FLX).forEach(k => { FL[k] = tr(FLX[k][0], FLX[k][1]); });
 function fl(list, seed, k){ return list[((seed || 0) + k) % list.length]; }
-function awards(ids, s, nameOf){
+function awards(ids, s, nameOf, tr = SB.u.tr){
+  const FL = {}; Object.keys(FLX).forEach(k => { FL[k] = tr(FLX[k][0], FLX[k][1]); });
   const t = s.total || {}, mv = s.mav || {}, sf = s.self || {}, seed = s.fl || 0, out = [];
   const used = [], top = m => { const by = l => l.filter(id => m[id]).sort((a, b) => m[b] - m[a])[0]; const r = by(ids.filter(id => used.indexOf(id) < 0)) || by(ids); if(r) used.push(r); return r; };
   const m = top(mv); if(m) out.push([fl(FL.mav, seed, 1), nameOf(m), tr("À contre-courant du groupe " + mv[m] + " fois", "Went against the group " + mv[m] + (mv[m] === 1 ? " time" : " times"))]);
@@ -167,7 +171,7 @@ SB.register({
   ],
   start(ctx, o){
     if(!A(o.packs).length) throw new Error(tr("Choisis au moins un paquet de questions.", "Pick at least one question pack."));
-    const lg = SB.lang(), deck = deckFor(o.packs, lg), q = deck.pop();
+    const lg = SB.lang(), deck = deckFor(o.packs), q = deck.pop();
     SB.u.saw(SEEN, q);
     ctx.setPriv({ deck });
     return { lg, phase: "vote", q, tw: "", round: 1, rounds: o.rounds || 10, anon: o.anon !== false, counts: {}, voters: {}, total: {}, mav: {}, self: {} };
@@ -190,7 +194,7 @@ SB.register({
     const patch = { phase: "res", counts, voters: s.anon && tw !== "open" ? {} : voters, total, mav, self, jack: "" };
     if(tw === "jackpot" && top.length === 1 && Object.keys(votes).length >= 3 && counts[top[0]] === Object.keys(votes).length){ total[top[0]] += 3; patch.jack = top[0]; }
     if(tw === "pick" && s.round < s.rounds){
-      let deck = A(ctx.priv().deck); if(deck.length < 3) deck = deckFor(ctx.opts.packs, s.lg).concat(deck);
+      let deck = A(ctx.priv().deck); if(deck.length < 3) deck = deckFor(ctx.opts.packs).concat(deck);
       patch.ch = [deck.pop(), deck.pop(), deck.pop()]; patch.by = pick(top); ctx.setPriv({ deck });
     }
     ctx.set(patch);
@@ -198,7 +202,7 @@ SB.register({
   render(ctx, root){
     const s = ctx.s, me = ctx.me, tw = s.tw || "", T = SB.u.byTwist(TW, tw);
     const lab = '<span class="eyebrow">Question ' + s.round + " / " + s.rounds + "</span>" + SB.u.twistHTML(T);
-    const qCard = '<div class="card acc"><span class="eyebrow">' + prefixFor(tw === "moins", s.q, s.lg) + '</span><div class="big">… ' + esc(s.q) + "</div></div>";
+    const qCard = '<div class="card acc"><span class="eyebrow">' + prefixFor(tw === "moins", s.q, SB.lang()) + '</span><div class="big">… ' + esc(qx(s.q)) + "</div></div>";
     if(s.phase === "vote"){
       const duo = tw === "duo", noself = tw === "noself";
       screen(root, "v" + s.k, lab + qCard + (duo ? '<p class="sm">' + tr("Choisis deux joueurs.", "Pick two players.") + '</p>' : "") + '<div class="choices">' + ctx.players.map(p => '<button type="button" class="opt" data-v="' + esc(p.id) + '"' + (noself && p.id === me ? " disabled" : "") + ">" + esc(p.name) + (p.id === me ? ' <span class="pill me">' + tr("Moi", "Me") + "</span>" : "") + "</button>").join("") +
@@ -225,7 +229,7 @@ SB.register({
       if(tw === "moins") extra += '<p class="sm">' + tr("Le monde à l'envers : ces votes ne comptent pas pour le titre.", "Upside down: these votes don't count toward the title.") + "</p>";
       if(ch.length){
         extra += '<div class="field"><span class="eyebrow">' + (by === me ? tr("À toi de choisir la prochaine question", "Your turn to pick the next question") : tr(esc(ctx.name(by)) + " choisit la prochaine question", esc(ctx.name(by)) + " picks the next question")) + '</span><div class="choices">' +
-          ch.map((x, i) => '<button type="button" class="opt" data-pk="' + i + '" aria-pressed="' + (pk === i) + '"' + (by === me ? "" : " disabled") + ">… " + esc(x) + "</button>").join("") + "</div></div>";
+          ch.map((x, i) => '<button type="button" class="opt" data-pk="' + i + '" aria-pressed="' + (pk === i) + '"' + (by === me ? "" : " disabled") + ">… " + esc(qx(x)) + "</button>").join("") + "</div></div>";
       }
       screen(root, "r" + s.k + ctx.isHost + pk, lab + qCard + '<span class="eyebrow">' + (top.length > 1 ? tr("Égalité", "It's a tie") : tr("Le groupe a parlé", "The group has spoken")) + '</span><div class="who">' + esc(top.join(" & ")) + "</div>" +
         bars(ctx.ids, counts, ctx.name, s.voters && Object.keys(s.voters).length ? s.voters : null) + extra +
@@ -240,7 +244,7 @@ SB.register({
           if(cs.length){
             const sel = st.by ? c.input(st.by) : null, i = sel && sel.pk != null && cs[+sel.pk] ? +sel.pk : Math.floor(Math.random() * cs.length);
             q = cs[i]; deck = cs.filter((_, j) => j !== i).concat(deck);
-          } else { if(!deck.length) deck = deckFor(c.opts.packs, st.lg); q = deck.pop(); }
+          } else { if(!deck.length) deck = deckFor(c.opts.packs); q = deck.pop(); }
           SB.u.saw(SEEN, q); c.setPriv({ deck });
           const t = nextTw(c.opts, st.round + 1, st.tw, c.ids.length);
           c.set({ phase: "vote", q, tw: t ? t.id : "", round: st.round + 1, counts: {}, voters: {}, ch: [], by: "", jack: "", k: c.rid() });
@@ -256,7 +260,8 @@ SB.register({
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const tt = c.s.total || {}, o2 = c.ids.slice().sort((a, b2) => (tt[b2] || 0) - (tt[a] || 0)), mx = tt[o2[0]] || 0;
-          c.end({ title: fl(FL.champ, c.s.fl, 0) + tr(" : ", ": ") + c.name(o2[0]), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (tt[id] || 0) + tr(" votes", (tt[id] || 0) === 1 ? " vote" : " votes")).concat(awards(c.ids, c.s, c.name).map(a => a[0] + tr(" : ", ": ") + a[1])),
+          const awF = awards(c.ids, c.s, c.name, f => f), awE = awards(c.ids, c.s, c.name, (f, e) => e);
+          c.end({ title: both(fl(FLX.champ[0], c.s.fl, 0) + " : " + c.name(o2[0]), fl(FLX.champ[1], c.s.fl, 0) + ": " + c.name(o2[0])), lines: o2.slice(0, 3).map((id, i) => both((i + 1) + ". " + c.name(id) + " · " + (tt[id] || 0) + " votes", (i + 1) + ". " + c.name(id) + " · " + (tt[id] || 0) + ((tt[id] || 0) === 1 ? " vote" : " votes"))).concat(awF.map((a, i) => both(a[0] + " : " + a[1], awE[i][0] + ": " + awE[i][1]))),
             win: mx ? o2.filter(id => (tt[id] || 0) === mx) : [] });
         }));
       });
@@ -273,14 +278,14 @@ SB.register({
             '<div class="dock"><button class="btn acc" type="button" data-go>' + tr("Commencer", "Start") + "</button></div>", r => {
             r.querySelectorAll("[data-p]").forEach(b => b.addEventListener("click", () => { const i = sel.indexOf(b.dataset.p); if(i >= 0) sel.splice(i, 1); else sel.push(b.dataset.p); persist({ qpPacks: sel }); go("setup"); }));
             r.querySelector("[data-tw]").addEventListener("click", () => { twOn = !twOn; persist({ qpTw: twOn }); go("setup"); });
-            r.querySelector("[data-go]").addEventListener("click", () => { if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet", "Pick at least one pack")); return; } deck = deckFor(SB.okPacks(sel, PACKS), SB.lang()); n = 0; tw = null; next(); });
+            r.querySelector("[data-go]").addEventListener("click", () => { if(!sel.length){ SB.u.toast(tr("Choisis au moins un paquet", "Pick at least one pack")); return; } deck = deckFor(SB.okPacks(sel, PACKS)); n = 0; tw = null; next(); });
           });
         } else {
           const t = tw ? tw.id : "";
           const foot = t === "pick"
-            ? '<span class="eyebrow">' + tr("Le plus désigné(e) choisit la suite", "The most-pointed-at picks what's next") + '</span><div class="choices">' + ch.map((x, i) => '<button type="button" class="opt" data-ch="' + i + '">… ' + esc(x) + "</button>").join("") + "</div>"
+            ? '<span class="eyebrow">' + tr("Le plus désigné(e) choisit la suite", "The most-pointed-at picks what's next") + '</span><div class="choices">' + ch.map((x, i) => '<button type="button" class="opt" data-ch="' + i + '">… ' + esc(qx(x)) + "</button>").join("") + "</div>"
             : "";
-          screen(root, "q" + n, '<span class="eyebrow">Question ' + n + "</span>" + SB.u.twistHTML(tw) + '<div class="card acc"><span class="eyebrow">' + prefixFor(t === "moins", q, SB.lang()) + '</span><div class="big">… ' + esc(q) + '</div></div><div class="pass" style="min-height:' + (foot ? "10" : "20") + 'vh"><div class="who">' + (t === "eyes" ? tr("Yeux fermés… 3, 2, 1, pointez !", "Eyes closed… 3, 2, 1, point!") : tr("3, 2, 1… pointez !", "3, 2, 1… point!")) + "</div></div>" + foot +
+          screen(root, "q" + n, '<span class="eyebrow">Question ' + n + "</span>" + SB.u.twistHTML(tw) + '<div class="card acc"><span class="eyebrow">' + prefixFor(t === "moins", q, SB.lang()) + '</span><div class="big">… ' + esc(qx(q)) + '</div></div><div class="pass" style="min-height:' + (foot ? "10" : "20") + 'vh"><div class="who">' + (t === "eyes" ? tr("Yeux fermés… 3, 2, 1, pointez !", "Eyes closed… 3, 2, 1, point!") : tr("3, 2, 1… pointez !", "3, 2, 1… point!")) + "</div></div>" + foot +
             '<div class="dock">' + (foot ? "" : '<button class="btn acc" type="button" data-n>' + tr("Question suivante", "Next question") + "</button>") + '<button class="link" type="button" data-q style="align-self:center">' + tr("Choisir un autre jeu", "Choose another game") + "</button></div>", r => {
             const nb = r.querySelector("[data-n]"); if(nb) nb.addEventListener("click", () => next());
             r.querySelectorAll("[data-ch]").forEach(b => b.addEventListener("click", () => next(+b.dataset.ch)));
@@ -290,10 +295,10 @@ SB.register({
       };
       function next(ci){
         if(ch.length && ci != null){ q = ch[ci]; deck = ch.filter((_, j) => j !== ci).concat(deck); }
-        else { if(!deck.length) deck = deckFor(SB.okPacks(sel, PACKS), SB.lang()); q = deck.pop(); }
+        else { if(!deck.length) deck = deckFor(SB.okPacks(sel, PACKS)); q = deck.pop(); }
         ch = []; n++; SB.u.saw(SEEN, q);
         tw = twOn && n > 1 ? SB.u.twist(TWL, { last: tw ? tw.id : "", rate: .35 }) : null;
-        if(tw && tw.id === "pick"){ if(deck.length < 3) deck = deckFor(SB.okPacks(sel, PACKS), SB.lang()).concat(deck); ch = [deck.pop(), deck.pop(), deck.pop()]; }
+        if(tw && tw.id === "pick"){ if(deck.length < 3) deck = deckFor(SB.okPacks(sel, PACKS)).concat(deck); ch = [deck.pop(), deck.pop(), deck.pop()]; }
         go("q");
       }
       go("setup");

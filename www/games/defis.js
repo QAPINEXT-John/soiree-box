@@ -303,6 +303,10 @@ const HOT_RULES_EN = [
 const DECK = { fr: { classique: { list: CARDS, rules: RULES }, adulte: { list: HOT, rules: HOT_RULES } },
   en: { classique: { list: CARDS_EN, rules: RULES_EN }, adulte: { list: HOT_EN, rules: HOT_RULES_EN } } };
 const deck = lg => DECK[lg === "en" ? "en" : "fr"];
+// En salon, chaque téléphone garde sa langue : la partie est fabriquée sur les cartes françaises (texte de référence)
+// et chaque carte est rangée dans l'état en { fr, en } (listes alignées, même ordre). lg === "both" active ce mode.
+const TO_EN = (() => { const m = {}; ["classique", "adulte"].forEach(k => { DECK.fr[k].list.forEach((t, i) => { m[t] = DECK.en[k].list[i]; }); DECK.fr[k].rules.forEach((r, i) => { const e = DECK.en[k].rules[i] || r; m[r[0]] = e[0]; m[r[1]] = e[1]; }); }); return m; })();
+const L = SB.u.L, both = SB.u.both;
 const PACKS = [
   { v: "classique", label: tr("Classique", "Classic"), desc: tr("Défis, votes, mini-jeux et règles", "Dares, votes, mini-games and rules"), list: deck(SB.lang()).classique.list, rules: deck(SB.lang()).classique.rules },
   { v: "adulte", label: tr("Hot & Hard", "Hot & Hard"), desc: tr("Sexe, confessions, humour noir", "Sex, confessions, dark humor"), list: deck(SB.lang()).adulte.list, rules: deck(SB.lang()).adulte.rules, hot: true }
@@ -345,6 +349,10 @@ function render(t, who, mode, mult, lg){
 /* Fabrique toute la partie : n cartes, avec des règles de durée variable et, de temps en temps, une carte chaos.
    Les cartes déjà jouées sur ce téléphone sont gardées pour la fin (anti-répétition). */
 function build(names, packs, mode, n, deck, twists, lg){
+  const bi = lg === "both";
+  // Texte d'une carte : une langue (un seul téléphone) ou les deux (salon).
+  const txt = (t, w, mult) => (bi ? both(render(t, w, mode, mult, "fr"), render(TO_EN[t] || t, w, mode, mult, "en")) : render(t, w, mode, mult, lg));
+  const LT = (fr, en) => (bi ? both(fr, en) : ltr(lg, fr, en));
   const sel = A(packs).length ? A(packs) : ["classique"], DK = DECK[lg === "en" ? "en" : "fr"], P = PACKS.filter(p => sel.indexOf(p.v) >= 0).map(p => DK[p.v]);
   const np = names.length, ok = t => need(t) <= np, th = deck || "classique";
   const cardPool = () => P.flatMap(p => p.list).filter(ok);
@@ -371,8 +379,8 @@ function build(names, packs, mode, n, deck, twists, lg){
   const pushRule = () => {
     const r = rules.pop(); if(!rules.length) rules = rulePool();
     const w = who(need(r[0])), id = "r" + (rid++), long = Math.random() < .7;
-    out.push({ t: render(r[0], w, mode, 1, lg), kind: "rule", r: id, w, src: r[0], sk: "defis:r" });
-    ends.push({ at: out.length + (long ? 5 + Math.floor(Math.random() * 8) : 3 + Math.floor(Math.random() * 3)), t: render(r[1], w, mode, 1, lg), r: id }); active++;
+    out.push({ t: txt(r[0], w, 1), kind: "rule", r: id, w, src: r[0], sk: "defis:r" });
+    ends.push({ at: out.length + (long ? 5 + Math.floor(Math.random() * 8) : 3 + Math.floor(Math.random() * 3)), t: txt(r[1], w, 1), r: id }); active++;
   };
   const duels = cardPool().filter(t => kindOf(t) === "duel" && need(t) <= np).length;
   while(out.length < n){
@@ -383,13 +391,13 @@ function build(names, packs, mode, n, deck, twists, lg){
     if(twists && out.length >= 3 && out.length < n - 4 && out.length - lastChaos > 5){
       const t = SB.u.twist(CHAOS, { rate: crate, last: lastTw, active, np, duels, rules: rules.length });
       if(t){
-        const w = /\{A\}/.test(t.t) ? who(1) : [], ci = out.length, c = { t: render(ltr(lg, t.t, t.te), w, mode, 1, lg), kind: "chaos", tw: t.id, w };
+        const w = /\{A\}/.test(t.t) ? who(1) : [], ci = out.length, c = { t: bi ? both(render(t.t, w, mode, 1, "fr"), render(t.te, w, mode, 1, "en")) : render(ltr(lg, t.t, t.te), w, mode, 1, lg), kind: "chaos", tw: t.id, w };
         lastChaos = ci; lastTw = t.id;
         if(t.id === "cancel"){ c.cancel = 1; ends.length = 0; active = 0; }
         if(t.id === "overtime") ends.forEach(e => { e.at += 5; });
-        if(t.id === "double"){ dbl = ci + 3; c.add = [{ r: "x" + ci, t: ltr(lg, "Sanctions doublées", "Penalties doubled"), u: ci + 4 }]; }
-        if(t.id === "immune"){ imm = { name: w[0], until: ci + 6 }; c.add = [{ r: "x" + ci, t: w[0] + ltr(lg, " est intouchable", " is untouchable"), u: ci + 7 }]; }
-        if(t.id === "target"){ tgt = { name: w[0], until: ci + 4 }; c.add = [{ r: "x" + ci, t: w[0] + ltr(lg, " est dans le viseur", " is in the crosshairs"), u: ci + 5 }]; }
+        if(t.id === "double"){ dbl = ci + 3; c.add = [{ r: "x" + ci, t: LT("Sanctions doublées", "Penalties doubled"), u: ci + 4 }]; }
+        if(t.id === "immune"){ imm = { name: w[0], until: ci + 6 }; c.add = [{ r: "x" + ci, t: LT(w[0] + " est intouchable", w[0] + " is untouchable"), u: ci + 7 }]; }
+        if(t.id === "target"){ tgt = { name: w[0], until: ci + 4 }; c.add = [{ r: "x" + ci, t: LT(w[0] + " est dans le viseur", w[0] + " is in the crosshairs"), u: ci + 5 }]; }
         if(t.id === "rush") rush = { until: ci + 3 };
         if(t.id === "avalanche") force = 2;
         out.push(c); continue;
@@ -401,7 +409,7 @@ function build(names, packs, mode, n, deck, twists, lg){
     const want = rush && out.length <= rush.until ? "duel" : th === "duels" && Math.random() < .5 ? "duel" : th === "confessions" && Math.random() < .55 ? "conf" : "";
     const needA = tgt && out.length <= tgt.until;
     const c = take(want || needA ? x => (!want || kindOf(x) === want) && (!needA || need(x) > 0) : null), w = who(need(c));
-    out.push({ t: render(c, w, mode, out.length <= dbl ? 2 : 1, lg), kind: kindOf(c), w, src: c, sk: "defis:c" });
+    out.push({ t: txt(c, w, out.length <= dbl ? 2 : 1), kind: kindOf(c), w, src: c, sk: "defis:c" });
   }
   // Les règles encore en cours se terminent avant la dernière carte.
   ends.forEach(e => out.splice(out.length - 1, 0, { t: e.t, kind: "end", r: e.r }));
@@ -419,8 +427,8 @@ const CSS = '<style>.df-card{flex:1; min-height:44vh; background:var(--acc); col
   '.df-aw{display:flex; flex-direction:column; gap:10px; margin-top:6px}</style>';
 function cardHTML(c, i, n, rules){
   const r = A(rules), tw = c.kind === "chaos" ? SB.u.byTwist(CHAOS, c.tw) : null;
-  return CSS + '<span class="eyebrow">' + tr("Carte ", "Card ") + (i + 1) + " / " + n + "</span>" + (tw ? SB.u.twistHTML({ name: tw.name }, tr("Carte chaos", "Chaos card")) : "") + '<div class="df-card ' + esc(c.kind) + '"><span class="k">' + esc(LABEL[c.kind] || LABEL.card) + '</span><span class="t">' + esc(c.t) + "</span></div>" +
-    (r.length ? '<div class="field"><span class="eyebrow">' + tr("Règles en cours", "Active rules") + '</span><div class="df-rules">' + r.map(x => "<span><b>" + esc(x.t) + "</b>" + (x.u != null && +x.u > i ? "<em>" + tr("encore " + (+x.u - i), (+x.u - i) + " left") + "</em>" : "") + "</span>").join("") + "</div></div>" : "");
+  return CSS + '<span class="eyebrow">' + tr("Carte ", "Card ") + (i + 1) + " / " + n + "</span>" + (tw ? SB.u.twistHTML({ name: tw.name }, tr("Carte chaos", "Chaos card")) : "") + '<div class="df-card ' + esc(c.kind) + '"><span class="k">' + esc(LABEL[c.kind] || LABEL.card) + '</span><span class="t">' + esc(L(c.t)) + "</span></div>" +
+    (r.length ? '<div class="field"><span class="eyebrow">' + tr("Règles en cours", "Active rules") + '</span><div class="df-rules">' + r.map(x => "<span><b>" + esc(L(x.t)) + "</b>" + (x.u != null && +x.u > i ? "<em>" + tr("encore " + (+x.u - i), (+x.u - i) + " left") + "</em>" : "") + "</span>").join("") + "</div></div>" : "");
 }
 function applyRules(rules, c, i){
   let r = A(rules).filter(x => x.u == null || +x.u > i);
@@ -445,7 +453,10 @@ const AWT_EN = {
 };
 // Trophées calculés par l'hôte et copiés dans l'état : dans la langue du contenu (lg).
 function stats(seq, names, upto, lg){
-  const AW = lg === "en" ? AWT_EN : AWT, x2 = (n, w) => n + " " + w + (n === 1 ? "" : "s");
+  const x2 = (n, w) => n + " " + w + (n === 1 ? "" : "s");
+  // Salon : trophées rangés en { fr, en } pour que chacun les lise dans sa langue.
+  const ltr = (l, fr, en) => (lg === "both" ? both(fr, en) : (l === "en" ? en : fr));
+  const AW = lg === "both" ? { star: AWT.star.map((t, i) => both(t, AWT_EN.star[i])), ghost: AWT.ghost.map((t, i) => both(t, AWT_EN.ghost[i])), glad: AWT.glad.map((t, i) => both(t, AWT_EN.glad[i])) } : lg === "en" ? AWT_EN : AWT;
   const cite = {}, duel = {}; names.forEach(x => { cite[x] = 0; duel[x] = 0; });
   A(seq).slice(0, upto).forEach(c => { A(c.w).forEach(x => { if(cite[x] != null){ cite[x]++; if(c.kind === "duel") duel[x]++; } }); });
   const o = names.slice().sort((a, b) => cite[b] - cite[a]), d = names.slice().sort((a, b) => duel[b] - duel[a])[0], seed = Math.floor(Math.random() * 3);
@@ -454,7 +465,7 @@ function stats(seq, names, upto, lg){
   if(duel[d]) res.push([AW.glad[seed], d, ltr(lg, duel[d] + " duel" + (duel[d] > 1 ? "s" : ""), x2(duel[d], "duel"))]);
   return res;
 }
-function awardsHTML(aw){ return A(aw).length ? '<div class="df-aw">' + A(aw).map(A).map(x => '<div class="card"><span class="eyebrow">' + esc(x[0]) + '</span><div class="big">' + esc(x[1]) + '</div><span class="sm">' + esc(x[2]) + "</span></div>").join("") + "</div>" : ""; }
+function awardsHTML(aw){ return A(aw).length ? '<div class="df-aw">' + A(aw).map(A).map(x => '<div class="card"><span class="eyebrow">' + esc(L(x[0])) + '</span><div class="big">' + esc(x[1]) + '</div><span class="sm">' + esc(L(x[2])) + "</span></div>").join("") + "</div>" : ""; }
 
 const DEF = {
   id: "defis", name: tr("Défis en chaîne", "Challenges"), glyph: tr("Défi !", "Dare!"), pitch: tr("Des défis et des règles qui vous citent par vos prénoms.", "Challenges and rules that call you out by name."), hot: true,
@@ -490,7 +501,7 @@ const DEF = {
   // lg : langue du contenu (celle de l'hôte), gardée dans l'état pour les parties suivantes.
   deal(c, o, lg){
     lg = lg === "en" ? "en" : "fr";
-    const seq = build(c.players.map(p => p.name), o.packs, o.mode, o.len || 50, o.deck, o.twists !== false, lg);
+    const seq = build(c.players.map(p => p.name), o.packs, o.mode, o.len || 50, o.deck, o.twists !== false, "both");
     c.setPriv({ seq }); sawCard(seq[0]);
     return { phase: "play", lg, i: 0, n: seq.length, c: plainCard(seq[0]), rules: applyRules([], seq[0], 0), aw: [] };
   },
@@ -499,7 +510,7 @@ const DEF = {
     if(s.phase !== "play") return;
     if(!ctx.ids.some(id => { const x = ctx.input(id); return x && x.nx === s.i + 1; })) return;
     const seq = A(ctx.priv().seq), i = s.i + 1;
-    if(i >= seq.length){ ctx.set({ phase: "end", aw: stats(seq, ctx.players.map(p => p.name), seq.length, s.lg), k: ctx.rid() }); return; }
+    if(i >= seq.length){ ctx.set({ phase: "end", aw: stats(seq, ctx.players.map(p => p.name), seq.length, "both"), k: ctx.rid() }); return; }
     sawCard(seq[i]);
     ctx.set({ i, c: plainCard(seq[i]), rules: applyRules(s.rules, seq[i], i), k: ctx.rid() });
   },
@@ -518,7 +529,7 @@ const DEF = {
         const a = r.querySelector("[data-again]");
         if(a) a.addEventListener("click", () => ctx.act(c => { if(c.s.phase === "end") c.set(Object.assign(DEF.deal(c, c.opts, c.s.lg), { k: c.rid() })); }));
         const b = r.querySelector("[data-back]");
-        if(b) b.addEventListener("click", () => ctx.act(c => c.end({ title: tr("Défis en chaîne · " + c.s.n + " cartes", "Challenges · " + c.s.n + " cards"), lines: A(c.s.aw).map(A).map(x => x[0] + tr(" : ", ": ") + x[1]) })));
+        if(b) b.addEventListener("click", () => ctx.act(c => c.end({ title: both("Défis en chaîne · " + c.s.n + " cartes", "Challenges · " + c.s.n + " cards"), lines: A(c.s.aw).map(A).map(x => { const o = x[0] && typeof x[0] === "object" ? x[0] : { fr: x[0], en: x[0] }; return both(o.fr + " : " + x[1], o.en + ": " + x[1]); }) })));
       });
     }
   },

@@ -7,6 +7,8 @@ const { esc, A, shuffle, screen, txt, store, persist, pick, tr, buzz } = SB.u;
 
 const SU = ["h", "d", "s", "c"], SYM = { h: "♥", d: "♦", s: "♠", c: "♣" };
 const SUN = { h: tr("Cœur", "Hearts"), d: tr("Carreau", "Diamonds"), s: tr("Pique", "Spades"), c: tr("Trèfle", "Clubs") };
+// Messages de course : rangés en { fr, en } avec « §h » (nom du cheval) et « §lh » (en minuscules), remplacés à l'affichage dans la langue du téléphone.
+const msgText = m => SB.u.L(m).replace(/§l([hdsc])/g, (x, k) => SUN[k].toLowerCase()).replace(/§([hdsc])/g, (x, k) => SUN[k]);
 const red = su => su === "h" || su === "d";
 const rank = v => (v <= 10 ? String(v) : tr({ 11: "V", 12: "D", 13: "R" }[v], { 11: "J", 12: "Q", 13: "K" }[v]));
 // Paquet sans les as (les as sont les chevaux).
@@ -21,24 +23,24 @@ function simulate(L, tw){
   if(tw === "dope"){ dope = pick(SU); pos[dope] = 1; }
   const lead = () => SU.slice().sort((a, b) => pos[b] - pos[a])[0];
   let leader = "", fell = false, win = "";
-  ev.push({ c: "", su: dope, pos: Object.assign({}, pos), trap: 0, msg: dope ? tr(SUN[dope] + " est dopé : il part avec une case d'avance !", SUN[dope] + " is doped: starts one step ahead!") : tr("Et c'est parti !", "And they're off!") });
+  ev.push({ c: "", su: dope, pos: Object.assign({}, pos), trap: 0, msg: dope ? SB.u.both("§" + dope + " est dopé : il part avec une case d'avance !", "§" + dope + " is doped: starts one step ahead!") : SB.u.both("Et c'est parti !", "And they're off!") });
   for(let guard = 0; guard < 200 && !win; guard++){
     if(!deck.length) deck.push(...deck48().filter(c => traps.indexOf(c) < 0));
     const c = deck.pop(), su = cs(c);
     pos[su]++;
-    let msg = tr(SUN[su] + " avance.", SUN[su] + " moves up.");
-    if(pos[su] > L){ win = su; msg = tr(SUN[su] + " franchit la ligne ! Victoire !", SUN[su] + " crosses the line! Victory!"); }
-    else { const l = lead(); if(pos[l] > 0 && l !== leader && SU.filter(x => pos[x] === pos[l]).length === 1){ leader = l; msg = tr(SUN[l] + " prend la tête !", SUN[l] + " takes the lead!"); } }
+    let msg = SB.u.both("§" + su + " avance.", "§" + su + " moves up.");
+    if(pos[su] > L){ win = su; msg = SB.u.both("§" + su + " franchit la ligne ! Victoire !", "§" + su + " crosses the line! Victory!"); }
+    else { const l = lead(); if(pos[l] > 0 && l !== leader && SU.filter(x => pos[x] === pos[l]).length === 1){ leader = l; msg = SB.u.both("§" + l + " prend la tête !", "§" + l + " takes the lead!"); } }
     ev.push({ c, su, pos: Object.assign({}, pos), trap: 0, msg });
     if(win) break;
     // Chute générale (coup de théâtre) : la première fois qu'un cheval atteint la mi-course.
-    if(tw === "chute" && !fell && pos[su] >= Math.ceil(L / 2)){ fell = true; SU.forEach(x => { pos[x] = Math.max(0, pos[x] - 1); }); ev.push({ c: "", su: "", pos: Object.assign({}, pos), trap: 0, fall: 1, msg: tr("Chute générale ! Tout le monde recule d'une case.", "Pile-up! Everyone moves back one step.") }); }
+    if(tw === "chute" && !fell && pos[su] >= Math.ceil(L / 2)){ fell = true; SU.forEach(x => { pos[x] = Math.max(0, pos[x] - 1); }); ev.push({ c: "", su: "", pos: Object.assign({}, pos), trap: 0, fall: 1, msg: SB.u.both("Chute générale ! Tout le monde recule d'une case.", "Pile-up! Everyone moves back one step.") }); }
     // Étapes passées par tous les chevaux : on retourne la carte piège.
     for(let k = 1; k <= L; k++){
       if(rev[k] || !SU.every(x => pos[x] >= k)) continue;
       rev[k] = true; const t = traps[k - 1], ts = cs(t);
       pos[ts] = Math.max(0, pos[ts] - 1);
-      ev.push({ c: t, su: ts, pos: Object.assign({}, pos), trap: k, msg: tr("Étape " + k + " : la carte piège est un " + SUN[ts].toLowerCase() + " : " + SUN[ts] + " recule !", "Step " + k + ": the trap card is " + SUN[ts] + ", who moves back!") });
+      ev.push({ c: t, su: ts, pos: Object.assign({}, pos), trap: k, msg: SB.u.both("Étape " + k + " : la carte piège est un " + "§l" + ts + " : " + "§" + ts + " recule !", "Step " + k + ": the trap card is " + "§" + ts + ", who moves back!") });
     }
   }
   return { ev, win, traps };
@@ -93,7 +95,7 @@ function paintRace(root, L, race, i, prev){
   }
   if(prev !== i){
     const cc = root.querySelector("[data-cc]"); if(cc) cc.innerHTML = e.c ? '<span class="pm-card ' + (red(cs(e.c)) ? "r" : "k") + '"><i>' + esc(rank(cv(e.c))) + "</i><b>" + SYM[cs(e.c)] + "</b></span>" : "";
-    const m = root.querySelector("[data-msg]"); if(m) m.textContent = e.msg;
+    const m = root.querySelector("[data-msg]"); if(m) m.textContent = msgText(e.msg);
   }
 }
 function betsHTML(bets, nameOf, gain){
@@ -213,7 +215,7 @@ SB.register({
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const pp = c.s.pts || {}, o2 = c.ids.slice().sort((a, b2) => (pp[b2] || 0) - (pp[a] || 0)), mx = pp[o2[0]] || 0;
-          c.end({ title: tr("Le PMU : ", "Horse Race: ") + c.name(o2[0]) + tr(", roi (reine) du turf", ", king of the track"), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (pp[id] || 0)), win: mx > 0 ? o2.filter(id => (pp[id] || 0) === mx) : [] });
+          c.end({ title: SB.u.both("Le PMU : " + c.name(o2[0]) + ", roi (reine) du turf", "Horse Race: " + c.name(o2[0]) + ", king of the track"), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (pp[id] || 0)), win: mx > 0 ? o2.filter(id => (pp[id] || 0) === mx) : [] });
         }));
       });
     }

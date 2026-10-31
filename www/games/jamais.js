@@ -2,7 +2,7 @@
    Un seul téléphone : la version aux doigts (chacun a 5 doigts, on en baisse un quand on l'a déjà fait). */
 (function(){
 "use strict";
-const { esc, A, shuffle, screen, txt, store, persist, pick, tr, buzz, clean } = SB.u;
+const { esc, A, shuffle, screen, txt, store, persist, pick, tr, buzz, clean, both, L } = SB.u;
 
 /* ---------- Les phrases (elles suivent « Je n'ai jamais… ») ---------- */
 const P = s => s.split("|");
@@ -15,11 +15,11 @@ const FR = {
   kid: P("mangé un crayon|caché des légumes sous mon assiette|eu 20 sur 20|cassé quelque chose et accusé mon frère ou ma sœur|regardé un film qui fait peur|fait un gâteau tout(e) seul(e)|grimpé tout en haut d'un arbre|fait du cheval|dormi chez un copain|perdu une dent à l'école|vu la mer|pris l'avion|fait semblant d'être malade pour rater l'école|mangé des escargots|construit une cabane avec des coussins|chanté devant toute la classe|parlé à un animal comme à une personne|fait une bataille de boules de neige|vu une étoile filante|gagné une médaille|eu un plâtre|eu peur d'un clown|mangé une glace en plein hiver|fait un tour de magie|construit un château de sable géant|dormi sous une tente|fait de la trottinette dans la maison|oublié mon cartable|mis mes chaussures à l'envers|eu le hoquet pendant une heure|fait rire toute la classe|joué à cache-cache dans un magasin|rêvé que je volais|mangé tout un paquet de bonbons d'un coup|appelé la maîtresse « maman »")
 };
 const EN = {
-  cl: P("slept in a train station|missed a flight|lied about my age|sung in the shower at full volume|forgotten a close friend's birthday|faked being sick to skip work or school|been kicked out of class|lost my keys three times in one year|cried at a cartoon|talked to myself in the street|eaten something that fell on the floor|binged a whole season in one night|taken a nap longer than three hours|texted the wrong person|stalked someone on social media for hours|pretended to know a song|laughed at a funeral|cracked my phone screen|been in a fight|taken a selfie in a bathroom|lied on my résumé|cheated on a test|stolen something from a store|ridden public transport without a ticket|gotten a fine|called a teacher “mom” or “dad”|peed in a pool|forgotten a name right after hearing it|fake-laughed at a bad joke|gone through someone's stuff|read someone's diary|eavesdropped on a conversation|made up a fake excuse to cancel plans|had a laughing fit at a serious moment|slept more than 14 hours straight|eaten a whole jar of chocolate spread|thrown up in public|been stuck in an elevator|had a hair dye disaster|cut my own hair|won on a scratch card|called the police or firefighters|ended up in the ER for something dumb|snuck out at night|lied to my parents about where I was|regifted a present|talked trash about someone in this room|faked being asleep to avoid a conversation"),
+  cl: P("slept in a train station|missed a flight|lied about my age|sung in the shower at full volume|forgotten a close friend's birthday|faked being sick to skip work or school|been kicked out of class|lost my keys three times in one year|cried at a cartoon|talked to myself in the street|eaten something that fell on the floor|binged a whole season in one night|taken a nap longer than three hours|texted the wrong person|stalked someone on social media for hours|pretended to know a song|laughed at a funeral|cracked my phone screen|been in a fight|taken a selfie in a bathroom|lied on my résumé|cheated on a test|stolen something from a store|ridden public transport without a ticket|gotten a fine|called a teacher “mom” or “dad”|peed in a pool|forgotten a name right after hearing it|fake-laughed at a bad joke|gone through someone's stuff|read someone's diary|eavesdropped on a conversation|made up a fake excuse to cancel plans|had a laughing fit at a serious moment|slept more than 14 hours straight|eaten a whole jar of chocolate spread|thrown up in public|been stuck in an elevator|had a hair dye disaster|cut my own hair|won on a scratch card|called the police or firefighters|ended up in the ER for something dumb|snuck out at night|lied to my parents about where I was|regifted a present|talked trash about someone in this room|read someone's messages behind their back|faked being asleep to avoid a conversation|left someone behind somewhere"),
   soir: P("danced on a table|ended a party in pajamas at someone's place|sung karaoke in front of strangers|been kicked out of a party|been turned away at a club|lied to get into a club|eaten a kebab at 5 a.m.|woken up the whole building coming home|thrown a party at my parents' place without telling them|had a party end with the police|lost my phone at a party|lost a shoe at a party|posted a story I regretted the next day|danced with a stranger until morning|hit three parties in one night|been the last one to leave a party|slept on the floor after a party|cried at a party for no reason|given an embarrassing birthday speech|been drunk before noon|thrown up from drinking too much|blacked out a whole night|drunk-texted my ex|drunk straight from the bottle|had a two-day hangover|snuck a bottle in my bag|taken a shot without knowing what was in it|slept in a bathtub after a party|kissed someone without knowing their name|called someone at 4 a.m.|slept in a car after a party|brought someone home after a party|partied two days straight without sleeping"),
-  love: P("had a crush on a teacher|been in a relationship for over three years|cheated on someone|been cheated on|broken up over text|ghosted someone|been ghosted|said “I love you” first|fallen in love at first sight|been in love with two people at once|gone through my partner's phone|stalked my ex's new partner|texted my ex in the middle of the night|gotten back with an ex|been in a long-distance relationship|had a crush on a friend's partner|kissed someone on the first date|used a dating app|had a disastrous date|dated a coworker|lied about my job to impress someone|made a public declaration of love|written a love letter|cried over a breakup for more than a month|kept a photo of my ex|had a crush on someone in this room|been someone's plan B|hit on someone who was taken|had two dates on the same day|turned someone down with a fake excuse|blocked an ex everywhere|been in love with a friend|kissed a friend “as a joke”|waited all night for a text|pretended to be single|hidden a relationship from my friends"),
-  hot: P("slept with someone on the first night|had sex in a car|had sex in a public place|sent a nude|received an unsolicited nude|sexted|watched porn with someone|faked an orgasm|had a one-night stand|slept with an ex again|had a regular hookup|used a sex toy|had sex in the shower|been caught in the act|had sex at my parents' place|slept with someone more than ten years older|done a striptease|played strip poker|kissed someone of the same sex|fantasized about a coworker|slept with a coworker|had sex under the stars|failed a Kama Sutra position|had sex at work|had a threesome|used handcuffs|been tied to the bed|had sex more than three times in one night|forgotten the name of someone I slept with|had a performance problem in bed|bought lingerie for a special occasion|had sex on a plane or train|slept with someone I met that same night|had sex knowing someone could hear|filmed an intimate moment|had a vacation fling|slept with two different people the same week|been spanked in bed|said the wrong name in bed|watched porn at work|had sex in a fitting room|had a friend with benefits|bought something at a sex shop"),
-  trash: P("had anal sex|deep-throated|swallowed|done a 69|come in under a minute|been to an orgy|set foot in a swingers' club|slept with someone without knowing their name|made a sex tape|paid for a porn subscription|sold photos of myself in my underwear|slept with two people the same night|slept with someone in this group|had period sex|used a butt plug|done BDSM|been dominated in bed|dominated someone in bed|had sex in someone else's bed|slept with a friend's ex|slept with my ex's friend|had group sex with strangers|licked someone's feet|watched a couple have sex in real life|been watched during sex|slept with someone to get something|sent a nude to the wrong person|fooled around in a movie theater|used food in bed|had sex more than five times in one night|slept with an ex just for revenge|hooked up with someone less than an hour after matching|had a fetish nobody knows about|said dirty talk that made me cringe|had phone sex|had sex in an elevator"),
+  love: P("had a crush on a teacher|been in a relationship for over three years|cheated on someone|been cheated on|broken up over text|ghosted someone|been ghosted|said “I love you” first|fallen in love at first sight|been in love with two people at once|gone through my partner's phone|stalked my ex's new partner|texted my ex in the middle of the night|gotten back with an ex|been in a long-distance relationship|had a crush on a friend's partner|kissed someone on the first date|used a dating app|had a disastrous date|dated a coworker|lied about my job to impress someone|made a public declaration of love|written a love letter|cried over a breakup for more than a month|kept a photo of my ex|had a crush on someone in this room|been someone's plan B|hit on someone who was taken|had two dates on the same day|turned someone down with a fake excuse|blocked an ex everywhere|been in love with a friend|kissed a friend “as a joke”|waited all night for a text|pretended to be single|hidden a relationship from my friends|introduced someone to my parents way too early|had my heart broken by someone who never knew"),
+  hot: P("slept with someone on the first night|had sex in a car|had sex in a public place|sent a nude|received an unsolicited nude|sexted|watched porn with someone|faked an orgasm|had a one-night stand|slept with an ex again|had a regular hookup|used a sex toy|had sex in the shower|been caught in the act|had sex at my parents' place|slept with someone more than ten years older|done a striptease|played strip poker|kissed someone of the same sex|fantasized about a coworker|slept with a coworker|had sex under the stars|failed a Kama Sutra position|had sex at work|had a threesome|used handcuffs|been tied to the bed|had sex more than three times in one night|forgotten the name of someone I slept with|had a performance problem in bed|bought lingerie for a special occasion|had sex on a plane or train|slept with someone I met that same night|had sex knowing someone could hear|filmed an intimate moment|had a vacation fling|slept with two different people the same week|been spanked in bed|said the wrong name in bed|watched porn at work|had sex in a fitting room|had sex on a beach|bought something at a sex shop"),
+  trash: P("had anal sex|deep-throated|swallowed|done a 69|come in under a minute|been to an orgy|set foot in a swingers' club|slept with someone without knowing their name|made a sex tape|paid for a porn subscription|sold photos of myself in my underwear|slept with two people the same night|slept with someone in this group|had period sex|used a butt plug|done BDSM|been dominated in bed|dominated someone in bed|had sex in someone else's bed|slept with a friend's ex|slept with my ex's friend|had group sex with strangers|licked someone's feet|watched a couple have sex in real life|been watched during sex|slept with someone to get something|sent a nude to the wrong person|fooled around in a movie theater|used food in bed|had sex more than five times in one night|slept with an ex just for revenge|hooked up with someone less than an hour after matching|had a fetish nobody knows about|said dirty talk that made me cringe|had phone sex|had an orgasm just from kissing|tried tantric sex|had sex in an elevator|been spanked hard enough to leave marks"),
   kid: P("eaten a crayon|hidden vegetables under my plate|gotten a perfect score|broken something and blamed my brother or sister|watched a scary movie|baked a cake all by myself|climbed to the top of a tree|ridden a horse|had a sleepover|lost a tooth at school|seen the ocean|been on a plane|faked being sick to skip school|eaten snails|built a pillow fort|sung in front of the whole class|talked to an animal like a person|had a snowball fight|seen a shooting star|won a medal|had a cast|been scared of a clown|eaten ice cream in winter|done a magic trick|built a giant sandcastle|slept in a tent|ridden a scooter inside the house|forgotten my backpack|put my shoes on the wrong feet|had hiccups for an hour|made the whole class laugh|played hide-and-seek in a store|dreamed I could fly|eaten a whole bag of candy at once|called my teacher “mom”")
 };
 // 18+ : Hot, Trash (et Sans filtre) ne font plus qu'un paquet « Hot & Hard » (id « hot »). Les anciens ids valent « hot ».
@@ -43,13 +43,16 @@ const PACKS = [
 ];
 const SEEN = "jamais:q";
 const kidF = l => { if(!(SB.kid && SB.kid())) return l; const k = l.filter(x => SB.kidOk(x)); return k.length ? k : l; };
-function deckFor(packs, lg){
-  const sel = PK(packs), L = LL(lg);
-  let pool = PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(p => L[p.v]);
+// Le paquet est tiré en français (clé stable) ; chaque téléphone affiche la phrase dans sa langue.
+const EN_OF = {}; Object.keys(FR).forEach(k => A(FR[k]).forEach((t, i) => { if(EN[k] && EN[k][i]) EN_OF[t] = EN[k][i]; }));
+const qOf = t => (typeof t === "string" && EN_OF[t] ? both(t, EN_OF[t]) : t);
+function deckFor(packs){
+  const sel = PK(packs), F = FR;
+  let pool = PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(p => F[p.v]);
   if(!SB.hard()) pool = pool.filter(x => !ALC.test(x));
-  return SB.u.fresh(SEEN, kidF(pool.length ? pool : L.cl));
+  return SB.u.fresh(SEEN, kidF(pool.length ? pool : F.cl));
 }
-const PRE = lg => (lg === "en" ? "Never have I ever…" : "Je n'ai jamais…");
+const PRE = () => tr("Je n'ai jamais…", "Never have I ever…");
 
 /* ---------- Coups de théâtre ---------- */
 const TW = [
@@ -71,16 +74,16 @@ const CSS = '<style data-jm>' +
   '.jm-p{display:flex; align-items:center; gap:10px; width:100%; min-height:56px; padding:8px 14px; border-radius:16px; border:2px solid var(--line); background:var(--card); color:var(--ink); font-weight:800; font-size:17px; text-align:left}' +
   '.jm-p[aria-pressed="true"]{border-color:#e8414e; background:rgba(232,65,78,.18)}.jm-p:disabled{opacity:.4}.jm-p .f{margin-left:auto; letter-spacing:2px; font-size:14px; color:var(--acc)}.jm-p .f s{color:var(--muted); text-decoration:none; opacity:.4}' +
   '.jm-list{display:flex; flex-direction:column; gap:6px}</style>';
-const qCard = (q, lg, own) => '<div class="card acc"><span class="eyebrow">' + esc(PRE(lg)) + '</span><div class="big">… ' + esc(q) + "</div>" + (own ? '<span class="sm">' + tr("Phrase écrite par ", "Line written by ") + esc(own) + "</span>" : "") + "</div>";
+const qCard = (q, lg, own) => '<div class="card acc"><span class="eyebrow">' + esc(PRE()) + '</span><div class="big">… ' + esc(L(qOf(q))) + "</div>" + (own ? '<span class="sm">' + tr("Phrase écrite par ", "Line written by ") + esc(own) + "</span>" : "") + "</div>";
 function awards(ids, s, nameOf){
   const out = [], t = s.tot || {}, f = s.fl || {}, n = s.round || 1;
   if(ids.length > 1){
     const hi = ids.slice().sort((a, b) => (t[b] || 0) - (t[a] || 0))[0], lo = ids.slice().sort((a, b) => (t[a] || 0) - (t[b] || 0))[0];
-    out.push([tr("Le plus expérimenté(e)", "Most experienced"), nameOf(hi), tr((t[hi] || 0) + " « déjà fait » sur " + n, (t[hi] || 0) + " “done it” out of " + n)]);
-    if(lo !== hi) out.push([tr("L'ange du groupe", "The group's angel"), nameOf(lo), tr((t[lo] || 0) + " « déjà fait » seulement", "only " + (t[lo] || 0) + " “done it”")]);
+    out.push([both("Le plus expérimenté(e)", "Most experienced"), nameOf(hi), both((t[hi] || 0) + " « déjà fait » sur " + n, (t[hi] || 0) + " “done it” out of " + n)]);
+    if(lo !== hi) out.push([both("L'ange du groupe", "The group's angel"), nameOf(lo), both((t[lo] || 0) + " « déjà fait » seulement", "only " + (t[lo] || 0) + " “done it”")]);
   }
   const fx = ids.filter(id => f[id]).sort((a, b) => f[b] - f[a])[0];
-  if(fx) out.push([tr("Le flair", "The sixth sense"), nameOf(fx), tr(f[fx] + " bon" + (f[fx] > 1 ? "s" : "") + " pari" + (f[fx] > 1 ? "s" : ""), f[fx] + (f[fx] === 1 ? " right guess" : " right guesses"))]);
+  if(fx) out.push([both("Le flair", "The sixth sense"), nameOf(fx), both(f[fx] + " bon" + (f[fx] > 1 ? "s" : "") + " pari" + (f[fx] > 1 ? "s" : ""), f[fx] + (f[fx] === 1 ? " right guess" : " right guesses"))]);
   return out;
 }
 
@@ -117,15 +120,15 @@ SB.register({
   ],
   start(ctx, o){
     if(!A(o.packs).length) throw new Error(tr("Choisis au moins un paquet.", "Pick at least one pack."));
-    const lg = SB.lang(), deck = deckFor(o.packs, lg), q = deck.pop(); SB.u.saw(SEEN, q); ctx.setPriv({ deck });
-    return { lg, phase: "q", q, own: "", round: 1, rounds: o.rounds || 15, anon: !!o.anon, tw: "", rd: pick(ctx.ids), au: "", yes: [], no: [], g: {}, story: "", tot: {}, fl: {} };
+    const lg = SB.lang(), deck = deckFor(o.packs), q = deck.pop(); SB.u.saw(SEEN, q); ctx.setPriv({ deck });
+    return { lg, phase: "q", q: qOf(q), own: "", round: 1, rounds: o.rounds || 15, anon: !!o.anon, tw: "", rd: pick(ctx.ids), au: "", yes: [], no: [], g: {}, story: "", tot: {}, fl: {} };
   },
   host(ctx){
     const s = ctx.s, live = ctx.ids.filter(id => ctx.here(id));
     if(s.phase === "write"){
       const i = ctx.input(s.au), w = i && typeof i.w === "string" ? clean(i.w, 100).replace(/^(je n'ai jamais|never have i ever)\s*…?\s*/i, "") : "";
       if(w) ctx.set({ phase: "q", q: w, own: s.au });
-      else if(!ctx.here(s.au)){ let deck = A(ctx.priv().deck); if(!deck.length) deck = deckFor(ctx.opts.packs, s.lg); const q = deck.pop(); ctx.setPriv({ deck }); ctx.set({ phase: "q", q, own: "", tw: "" }); }
+      else if(!ctx.here(s.au)){ let deck = A(ctx.priv().deck); if(!deck.length) deck = deckFor(ctx.opts.packs); const q = deck.pop(); ctx.setPriv({ deck }); ctx.set({ phase: "q", q: qOf(q), own: "", tw: "" }); }
       return;
     }
     if(s.phase === "guess"){
@@ -153,7 +156,7 @@ SB.register({
     if(s.phase === "write"){
       const mineW = s.au === me;
       screen(root, "w" + s.k + mineW, lab + (mineW
-        ? '<div class="card acc"><span class="eyebrow">' + esc(PRE(s.lg)) + '</span><textarea class="txt" id="jm-w" maxlength="100" rows="3" placeholder="' + tr("… dormi dans un aéroport", "… slept in an airport") + '"></textarea></div><p class="sm">' + tr("Écris la phrase de cette manche. Astuce : vise quelque chose que tu sais sur quelqu'un !", "Write this round's line. Pro tip: aim at something you know about someone!") + "</p>" + SB.u.dock('<button class="btn acc" type="button" data-w>' + tr("Envoyer", "Send") + "</button>")
+        ? '<div class="card acc"><span class="eyebrow">' + esc(PRE()) + '</span><textarea class="txt" id="jm-w" maxlength="100" rows="3" placeholder="' + tr("… dormi dans un aéroport", "… slept in an airport") + '"></textarea></div><p class="sm">' + tr("Écris la phrase de cette manche. Astuce : vise quelque chose que tu sais sur quelqu'un !", "Write this round's line. Pro tip: aim at something you know about someone!") + "</p>" + SB.u.dock('<button class="btn acc" type="button" data-w>' + tr("Envoyer", "Send") + "</button>")
         : '<div class="pass"><span class="eyebrow">' + tr("La plume", "The pen") + '</span><div class="who">' + esc(ctx.name(s.au)) + '</div><p class="wait">' + tr("écrit la phrase de cette manche…", "is writing this round's line…") + "</p></div>"), r => {
         const b = r.querySelector("[data-w]"); if(!b) return;
         b.addEventListener("click", () => { const v = clean(r.querySelector("#jm-w").value, 100); if(v.length < 3){ SB.u.toast(tr("Écris une phrase", "Write a line")); return; } buzz(10); ctx.send({ w: v }); b.disabled = true; b.textContent = tr("Envoyé", "Sent"); });
@@ -166,7 +169,7 @@ SB.register({
       });
       txt(root, "[data-wait]", live.filter(id => { const i = ctx.input(id); return i && i.gu; }).length + " / " + live.length + tr(" paris", " bets"));
     } else if(s.phase === "q"){
-      screen(root, "q" + s.k + s.q + (mine.r || ""), lab + qCard(s.q, s.lg, s.own ? ctx.name(s.own) : "") + (s.rd === me ? '<p class="note-box">' + tr("Tu es le (la) lecteur(trice) : lis la phrase à voix haute !", "You're the reader: read the line out loud!") + "</p>" : "") +
+      screen(root, "q" + s.k + JSON.stringify(s.q) + (mine.r || ""), lab + qCard(s.q, s.lg, s.own ? ctx.name(s.own) : "") + (s.rd === me ? '<p class="note-box">' + tr("Tu es le (la) lecteur(trice) : lis la phrase à voix haute !", "You're the reader: read the line out loud!") + "</p>" : "") +
         '<div class="jm-ab"><button type="button" class="y" data-r="y" aria-pressed="' + (mine.r === "y") + '">' + tr("Déjà fait", "Done it") + '</button><button type="button" class="n" data-r="n" aria-pressed="' + (mine.r === "n") + '">' + tr("Jamais", "Never") + "</button></div>" +
         '<p class="sm" style="text-align:center">' + tr("Réponse secrète, tu peux changer d'avis jusqu'à la fin.", "Secret answer, you can change it until everyone's in.") + "</p>" + SB.u.dock('<p class="wait" data-wait></p>'), r => {
         r.querySelectorAll("[data-r]").forEach(b => b.addEventListener("click", () => { buzz(10); ctx.send({ r: b.dataset.r }); }));
@@ -187,7 +190,7 @@ SB.register({
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const st = c.s; if(st.phase !== "res") return;
           if(st.round >= st.rounds){ c.set({ phase: "end" }); return; }
-          let deck = A(c.priv().deck); if(!deck.length) deck = deckFor(c.opts.packs, st.lg); const q = deck.pop(); SB.u.saw(SEEN, q); c.setPriv({ deck });
+          let deck = A(c.priv().deck); if(!deck.length) deck = deckFor(c.opts.packs); const q = qOf(deck.pop()); SB.u.saw(SEEN, q.fr || q); c.setPriv({ deck });
           const lv = c.ids.filter(id => c.here(id)), t = c.opts.twists !== false ? SB.u.twist(TW, { last: st.tw, n: lv.length, rate: .3 }) : null, tw = t ? t.id : "";
           const rd = lv.length ? lv[(lv.indexOf(st.rd) + 1) % lv.length] : st.rd;
           const base = { round: st.round + 1, tw, rd, yes: [], no: [], g: {}, story: "", own: "", au: "", k: c.rid() };
@@ -198,12 +201,12 @@ SB.register({
     } else if(s.phase === "end"){
       const t = s.tot || {}, order = ctx.ids.slice().sort((a, b) => (t[b] || 0) - (t[a] || 0)), aw = awards(ctx.ids, s, ctx.name);
       screen(root, "end" + ctx.isHost, CSS + '<span class="eyebrow">' + tr("Le bilan", "The results") + '</span><div class="jm-list">' + order.map(id => '<div class="jm-p"><span>' + esc(ctx.name(id)) + '</span><span class="f">' + (t[id] || 0) + tr(" déjà fait", " done") + "</span></div>").join("") + "</div>" +
-        (aw.length ? '<ul class="list">' + aw.map(a => '<li><span class="t">' + esc(a[1]) + '</span><span class="by">' + esc(a[0]) + " · " + esc(a[2]) + "</span></li>").join("") + "</ul>" : "") +
+        (aw.length ? '<ul class="list">' + aw.map(a => '<li><span class="t">' + esc(a[1]) + '</span><span class="by">' + esc(L(a[0])) + " · " + esc(L(a[2])) + "</span></li>").join("") + "</ul>" : "") +
         SB.u.dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const tt = c.s.tot || {}, o2 = c.ids.slice().sort((a, b2) => (tt[b2] || 0) - (tt[a] || 0));
-          c.end({ title: tr("Je n'ai jamais… : " + c.name(o2[0]) + " a tout fait", "Never Have I Ever: " + c.name(o2[0]) + " has done it all"), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (tt[id] || 0) + tr(" déjà fait", " done")).concat(awards(c.ids, c.s, c.name).map(a => a[0] + tr(" : ", ": ") + a[1])), win: [] });
+          c.end({ title: both("Je n'ai jamais… : " + c.name(o2[0]) + " a tout fait", "Never Have I Ever: " + c.name(o2[0]) + " has done it all"), lines: o2.slice(0, 3).map((id, i) => both((i + 1) + ". " + c.name(id) + " · " + (tt[id] || 0) + " déjà fait", (i + 1) + ". " + c.name(id) + " · " + (tt[id] || 0) + " done")).concat(awards(c.ids, c.s, c.name).map(a => both(a[0].fr + " : " + a[1], a[0].en + ": " + a[1]))), win: [] });
         }));
       });
     }

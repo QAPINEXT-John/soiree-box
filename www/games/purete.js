@@ -1,7 +1,7 @@
 /* Test de pureté — questionnaire secret, score en pourcentage, puis les aveux du groupe. */
 (function(){
 "use strict";
-const { esc, A, shuffle, screen, txt, store, persist, dock, buzz, tr } = SB.u;
+const { esc, A, shuffle, screen, txt, store, persist, dock, buzz, tr, both, L } = SB.u;
 
 const SOIREE = [
   "été ivre au point de ne plus te souvenir de ta soirée","vomi en soirée","vomi sur quelqu'un","dormi dehors après une soirée","fait un black-out complet",
@@ -97,9 +97,9 @@ const SOIREE_EN = [
   "drunk alcohol at work or in class","driven after drinking too much","been kicked out of a bar or a club","ended a night out in the ER",
   "sent a text you regretted the next morning","drunk-dialed your ex","lied to your parents about where you were sleeping",
   "missed an exam or an important meeting because of a hangover","danced on a table","ended a party completely naked","been woken up by the cops",
-  "spent a night in a police cell","shoplifted","skipped paying for public transit more than ten times","peed in a public place",
+  "pulled an all-nighter right before an exam","stolen a glass or something from a bar","skipped paying for public transit more than ten times","peed in a public place",
   "taken a cab without being able to tell the driver your address","partied for more than 24 hours straight","blown more than 200 bucks in a single night",
-  "lied about your age to get in somewhere","called in sick to work when you weren't","been fired from a job",
+  "lied about your age to get in somewhere","faked being sick to get out of a party","been kicked out of a party by the host",
   "gotten a tattoo on a whim","been tagged in a compromising photo","ended a night out at total strangers' place","drunk out of a shoe",
   "done two nights out back to back without sleeping","forgotten where you parked after a night out","lost your phone at a party","finished a whole bottle by yourself",
   "mixed every drink at the party into one glass","slept in a bathtub","missed the last train and slept at the station","found out what you did last night from other people's photos",
@@ -107,7 +107,7 @@ const SOIREE_EN = [
 ];
 const SEXE_EN = [
   "kissed someone without knowing their name","kissed more than three people in the same night","kissed someone of the same sex",
-  "slept with someone on the first night","had a one-night stand","had a regular booty call","slept with your ex after the breakup",
+  "slept with someone the same day you first messaged","had a one-night stand","had a regular booty call","slept with your ex after the breakup",
   "slept with someone in this group","slept with a friend's ex","slept with a coworker","slept with someone who was in a relationship",
   "cheated on someone","found out your partner was cheating on you","had sex in a public place","had sex in a car","had sex at work",
   "had sex in a bar or club bathroom","had a threesome","set foot in a swingers' club","sent nudes",
@@ -252,13 +252,15 @@ const pre = lg => PREFIX[LG(lg)];
 const qfull = (lg, q) => LG(lg) === "en" ? "Have you ever " + q + "?" : PREFIX.fr + " " + q + " ?";
 const pct = p => tr(p + "\u202f%", p + "%");
 const TITLES = [
-  [90, [[tr("Ange tombé du ciel", "Heaven-sent angel"), tr("Pur(e) comme de l'eau de roche. Personne ne te croit.", "Pure as the driven snow. Nobody believes you.")], [tr("Auréole certifiée", "Certified halo"), tr("Tu as forcément menti au moins une fois. Non ?", "You must have lied at least once. Right?")], [tr("Page blanche", "Blank page"), tr("Ta vie est un livre blanc. Très, très blanc.", "Your life is a blank book. Very, very blank.")]]],
-  [75, [[tr("Plutôt sage", "Pretty tame"), tr("Quelques écarts, rien de grave. Pour l'instant.", "A few slip-ups, nothing serious. For now.")], [tr("Enfant de chœur repenti(e)", "Reformed goody two-shoes"), tr("Tu as goûté au vice, du bout des lèvres.", "You've had a taste of sin. Just a tiny sip.")], [tr("Sage avec options", "Well-behaved, mostly"), tr("Un dossier léger, mais un dossier quand même.", "A thin file, but a file all the same.")]]],
-  [55, [[tr("Bien vécu", "Well lived"), tr("Tu as des histoires à raconter, et tu les racontes.", "You've got stories to tell, and you tell them.")], [tr("Vie bien remplie", "Full life"), tr("Tes souvenirs valent un podcast.", "Your memories could fill a podcast.")], [tr("Équilibriste", "Tightrope walker"), tr("Un pied dans la sagesse, l'autre dans le chaos.", "One foot in good behavior, the other in chaos.")]]],
-  [35, [[tr("Sulfureux(se)", "Scandalous"), tr("Ta réputation te précède. Tes parents ne savent pas tout.", "Your reputation precedes you. Your parents don't know the half of it.")], [tr("Dossier épais", "Thick file"), tr("Ton casier moral mérite deux classeurs.", "Your moral rap sheet needs two binders.")], [tr("Tentation ambulante", "Walking temptation"), tr("Les ennuis te trouvent, et tu leur ouvres la porte.", "Trouble finds you, and you hold the door open.")]]],
-  [-1, [[tr("Démon certifié", "Certified demon"), tr("Il n'y a plus rien de pur chez toi. Respect.", "There's nothing pure left in you. Respect.")], [tr("Légende noire", "Dark legend"), tr("On racontera tes exploits pendant des générations.", "Your exploits will be told for generations.")], [tr("Chaos incarné", "Chaos incarnate"), tr("Même le diable prend des notes.", "Even the devil takes notes.")]]]
+  [90, [[both("Ange tombé du ciel", "Heaven-sent angel"), both("Pur(e) comme de l'eau de roche. Personne ne te croit.", "Pure as the driven snow. Nobody believes you.")], [both("Auréole certifiée", "Certified halo"), both("Tu as forcément menti au moins une fois. Non ?", "You must have lied at least once. Right?")], [both("Page blanche", "Blank page"), both("Ta vie est un livre blanc. Très, très blanc.", "Your life is a blank book. Very, very blank.")]]],
+  [75, [[both("Plutôt sage", "Pretty tame"), both("Quelques écarts, rien de grave. Pour l'instant.", "A few slip-ups, nothing serious. For now.")], [both("Enfant de chœur repenti(e)", "Reformed goody two-shoes"), both("Tu as goûté au vice, du bout des lèvres.", "You've had a taste of sin. Just a tiny sip.")], [both("Sage avec options", "Well-behaved, mostly"), both("Un dossier léger, mais un dossier quand même.", "A thin file, but a file all the same.")]]],
+  [55, [[both("Bien vécu", "Well lived"), both("Tu as des histoires à raconter, et tu les racontes.", "You've got stories to tell, and you tell them.")], [both("Vie bien remplie", "Full life"), both("Tes souvenirs valent un podcast.", "Your memories could fill a podcast.")], [both("Équilibriste", "Tightrope walker"), both("Un pied dans la sagesse, l'autre dans le chaos.", "One foot in good behavior, the other in chaos.")]]],
+  [35, [[both("Sulfureux(se)", "Scandalous"), both("Ta réputation te précède. Tes parents ne savent pas tout.", "Your reputation precedes you. Your parents don't know the half of it.")], [both("Dossier épais", "Thick file"), both("Ton casier moral mérite deux classeurs.", "Your moral rap sheet needs two binders.")], [both("Tentation ambulante", "Walking temptation"), both("Les ennuis te trouvent, et tu leur ouvres la porte.", "Trouble finds you, and you hold the door open.")]]],
+  [-1, [[both("Démon certifié", "Certified demon"), both("Il n'y a plus rien de pur chez toi. Respect.", "There's nothing pure left in you. Respect.")], [both("Légende noire", "Dark legend"), both("On racontera tes exploits pendant des générations.", "Your exploits will be told for generations.")], [both("Chaos incarné", "Chaos incarnate"), both("Même le diable prend des notes.", "Even the devil takes notes.")]]]
 ];
-function title(pct, seed){ const b = TITLES.find(t => pct >= t[0]) || TITLES[TITLES.length - 1]; return b[1][(+seed || 0) % b[1].length]; }
+// Titres rangés en { fr, en } : titleB pour l'état partagé (fin de partie), title pour l'affichage dans la langue du téléphone.
+function titleB(pct, seed){ const b = TITLES.find(t => pct >= t[0]) || TITLES[TITLES.length - 1]; return b[1][(+seed || 0) % b[1].length]; }
+function title(pct, seed){ return titleB(pct, seed).map(L); }
 // Questions choisies parmi les thèmes, en commençant par celles jamais vues sur ce téléphone.
 function pickQuestions(packs, n, lg){
   const sel = A(packs).length ? expandU(packs) : PACKS.map(p => p.v);
@@ -401,12 +403,12 @@ function puGages(rows, tw){
 }
 function hsh(x){ let h = 7; String(x).split("").forEach(c => { h = (h * 31 + c.charCodeAt(0)) >>> 0; }); return h; }
 const AW = {
-  pure: [tr("Le plus pur(e)", "The purest"), tr("L'ange de la bande", "The group's angel"), tr("Casier vierge", "Spotless record")],
-  demon: [tr("Le démon de la bande", "The group's demon"), tr("Le diable en personne", "The devil in person"), tr("Mauvaise influence officielle", "Official bad influence")],
-  solo: [tr("Seul(e) au monde", "All alone"), tr("L'aveu en solitaire", "The lone confession"), tr("Le (la) seul(e) à avoir osé", "The only one who dared")],
-  trap: [tr("Tombé(e) dans tous les pièges", "Fell for every trap"), tr("Roi (reine) des questions pièges", "Trick question champion"), tr("Aimant à embrouilles", "Trouble magnet")]
+  pure: [both("Le plus pur(e)", "The purest"), both("L'ange de la bande", "The group's angel"), both("Casier vierge", "Spotless record")],
+  demon: [both("Le démon de la bande", "The group's demon"), both("Le diable en personne", "The devil in person"), both("Mauvaise influence officielle", "Official bad influence")],
+  solo: [both("Seul(e) au monde", "All alone"), both("L'aveu en solitaire", "The lone confession"), both("Le (la) seul(e) à avoir osé", "The only one who dared")],
+  trap: [both("Tombé(e) dans tous les pièges", "Fell for every trap"), both("Roi (reine) des questions pièges", "Trick question champion"), both("Aimant à embrouilles", "Trouble magnet")]
 };
-const aw = (k, seed) => AW[k][(+seed || 0) % AW[k].length];
+const awB = (k, seed) => AW[k][(+seed || 0) % AW[k].length], aw = (k, seed) => L(awB(k, seed));
 const CSS = '<style>.pu-q{font-size:28px; font-weight:800; line-height:1.2; overflow-wrap:anywhere}' +
   '.pu-bar{height:8px; border-radius:99px; background:var(--soft); overflow:hidden}.pu-bar i{display:block; height:100%; background:var(--acc); transition:width .2s}' +
   '.pu-yn{display:grid; grid-template-columns:1fr 1fr; gap:10px}.pu-yn .btn{min-height:84px; font-size:22px}' +
@@ -521,7 +523,7 @@ SB.register({
     ctx.set({ phase: "res", res });
   },
   render(ctx, root){
-    const s = ctx.s, qi = A(s.qi), lg = s.lg || "fr";
+    const s = ctx.s, qi = A(s.qi), lg = SB.lang(); // chaque téléphone lit les questions dans SA langue (listes FR/EN alignées)
     if(s.phase === "play"){
       const mine = ctx.mine();
       if(mine && typeof mine.a === "string" && mine.a.length === qi.length){
@@ -550,7 +552,7 @@ SB.register({
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const rr = A(c.s.res).map(A).map(x => ({ id: x[0], n: c.name(x[0]), p: score(x[1], c.s.tw) })).sort((a, b2) => b2.p - a.p);
-          c.end({ title: rr.length ? tr(aw("pure", c.s.seed) + " : " + rr[0].n + " (" + rr[0].p + " %)", aw("pure", c.s.seed) + ": " + rr[0].n + " (" + rr[0].p + "%)") : tr("Test de pureté", "Purity Test"), lines: rr.map(x => x.n + " · " + pct(x.p) + " · " + title(x.p, c.s.seed)[0]),
+          c.end({ title: rr.length ? both(awB("pure", c.s.seed).fr + " : " + rr[0].n + " (" + rr[0].p + "\u202f%)", awB("pure", c.s.seed).en + ": " + rr[0].n + " (" + rr[0].p + "%)") : both("Test de pureté", "Purity Test"), lines: rr.map(x => both(x.n + " · " + x.p + "\u202f% · " + titleB(x.p, c.s.seed)[0].fr, x.n + " · " + x.p + "% · " + titleB(x.p, c.s.seed)[0].en)),
             win: rr.length > 1 ? rr.filter(x => x.p === rr[0].p).map(x => x.id) : [] });
         }));
       });

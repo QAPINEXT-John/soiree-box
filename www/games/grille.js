@@ -4,8 +4,10 @@
 (function(){
 "use strict";
 const { esc, A, shuffle, screen, store, persist, dock, buzz, tr } = SB.u;
-// Textes du moteur (journal) : dans la langue de la partie (E.lg = langue de l'hôte, ou du téléphone en solo).
-const L = (E, fr, en) => E && E.lg === "en" ? en : fr;
+// Textes du moteur (journal) : rangés dans les deux langues ({ fr, en }) ; chaque téléphone les lit dans la sienne.
+const L = (E, fr, en) => SB.u.both(fr, en);
+const lfr = x => (x && typeof x === "object" ? x.fr : String(x == null ? "" : x)), len = x => (x && typeof x === "object" ? x.en : String(x == null ? "" : x));
+const cat = (a, b) => SB.u.both(lfr(a) + lfr(b), len(a) + len(b));
 const rnd = n => Math.floor(Math.random() * n);
 
 /* ---------- Cartes ----------
@@ -154,10 +156,10 @@ function doToss(E, id, i, nameOf){
 function afterMove(E, id, nameOf){
   const cols = clearCols(E.vals[id], E.up[id], E.disc);
   cols.forEach(() => GX.push({ id, ev: "col" }));
-  if(cols.length) E.log += L(E, " · colonne éliminée !", " · column cleared!");
+  if(cols.length) E.log = cat(E.log, L(E, " · colonne éliminée !", " · column cleared!"));
   // Le coup est joué : le joueur le regarde, puis touche « Fin du tour » (doEnd) pour passer la main.
   E.step = "done"; E.mv++;
-  if(!E.closer && allUp(E.up[id])){ E.closer = id; E.log += L(E, " · " + nameOf(id) + " a tout retourné : dernier tour pour les autres !", " · " + nameOf(id) + " has flipped everything: last turn for everyone else!"); }
+  if(!E.closer && allUp(E.up[id])){ E.closer = id; E.log = cat(E.log, L(E, " · " + nameOf(id) + " a tout retourné : dernier tour pour les autres !", " · " + nameOf(id) + " has flipped everything: last turn for everyone else!")); }
   return true;
 }
 // Fin du tour : on passe au joueur suivant (ou on termine la manche après le dernier tour).
@@ -187,7 +189,7 @@ function endRound(E, nameOf){
     E.order.filter(id => E.rs[id] === lo).forEach(id => GX.push({ id, ev: "min" }));
   }
   E.prev = E.closer; E.turn = ""; E.held = ""; E.step = "pick"; E.mv++;
-  E.log = L(E, nameOf(E.closer) + " a fini la manche", nameOf(E.closer) + " finished the round") + (r.doubled ? L(E, " sans le plus petit score : ses points sont " + (E.twi === "filet" ? "triplés" : "doublés") + " !", " without the lowest score: their points are " + (E.twi === "filet" ? "tripled" : "doubled") + "!") : ".");
+  E.log = cat(L(E, nameOf(E.closer) + " a fini la manche", nameOf(E.closer) + " finished the round"), r.doubled ? L(E, " sans le plus petit score : ses points sont " + (E.twi === "filet" ? "triplés" : "doublés") + " !", " without the lowest score: their points are " + (E.twi === "filet" ? "tripled" : "doubled") + "!") : ".");
 }
 
 /* ---------- Robots : une stratégie simple et raisonnable ---------- */
@@ -327,7 +329,7 @@ function tableHTML(V, me, nameOf, ui){
   const canToss = myTurn && V.step === "held";
   h += '<button type="button" class="gr-pile' + (ui.take || (canToss && ui.toss) ? " on" : "") + '" ' + (canToss ? "data-toss" : "data-take" + (canPick && V.top !== "" ? "" : " disabled")) + ">" + (V.top !== "" ? cardHTML(V.top, ui.take ? "sel" : "", "", "span") : cardHTML("x", "", "", "span")) + tr("Défausse", "Discard") + "</button></div>";
   const hint = hintTxt(V, me, ui);
-  h += hint ? '<p class="gr-log gr-hint">' + esc(hint) + "</p></div>" : '<p class="gr-log">' + esc(V.log || "") + "</p></div>";
+  h += hint ? '<p class="gr-log gr-hint">' + esc(hint) + "</p></div>" : '<p class="gr-log">' + esc(SB.u.L(V.log)) + "</p></div>";
   if(me && V.cells[me]){
     const cells = V.cells[me], fr = ui.fresh || [];
     const can = i => {
@@ -395,7 +397,7 @@ function endHTML(V, nameOf){
     '<li class="' + (last && w.indexOf(id) >= 0 ? "w" : "") + '"><span>' + esc(nameOf(id)) + '<br><span class="r">' + tr("Manche : ", "Round: ") + (V.dbl === id ? (V.raw || {})[id] + ' <span class="x2">' + (V.twi === "filet" ? "×3" : "×2") + "</span> = " : "") + (V.rs[id] || 0) + "</span></span><b>" + ptsTxt(V.score[id] || 0) + "</b></li>").join("");
   return CSS + '<span class="eyebrow">' + (last ? (w.length > 1 ? tr("Égalité !", "It's a tie!") : tr("Vainqueur(e)", "Winner")) : tr("Fin de la manche " + V.round, "End of round " + V.round)) + "</span>" +
     (last ? '<div class="who">' + esc(w.map(nameOf).join(" & ")) + "</div>" : "") +
-    '<p class="gr-log">' + esc(V.log) + "</p>" +
+    '<p class="gr-log">' + esc(SB.u.L(V.log)) + "</p>" +
     '<div class="field"><span class="eyebrow">' + (V.goal === 1 ? tr("Scores", "Scores") : tr("Scores · objectif " + V.goal, "Scores · target " + V.goal)) + '</span><ul class="gr-sc">' + rows + "</ul></div>" +
     '<div class="gr-ends">' + V.order.map(id => '<div class="gr-o big"><div class="nm"><span>' + esc(nameOf(id)) + "</span><i>" + (V.rs[id] || 0) + "</i></div>" + miniHTML(V.cells[id]) + "</div>").join("") + "</div>";
 }
@@ -634,7 +636,7 @@ const DEF = {
       }
       function passTo(id){
         clearTimeout(timer);
-        screen(root, "pass" + id + E.mv, CSS + '<p class="gr-log">' + esc(E.log) + '</p><div class="pass"><span class="eyebrow">' + tr("Passe le téléphone à", "Pass the phone to") + '</span><div class="who">' + esc(nameOf(id)) + "</div></div>" +
+        screen(root, "pass" + id + E.mv, CSS + '<p class="gr-log">' + esc(SB.u.L(E.log)) + '</p><div class="pass"><span class="eyebrow">' + tr("Passe le téléphone à", "Pass the phone to") + '</span><div class="who">' + esc(nameOf(id)) + "</div></div>" +
           dock('<button class="btn acc" type="button" data-n>' + tr("C'est moi", "It's me") + "</button>"), r => r.querySelector("[data-n]").addEventListener("click", () => { viewer = id; step(); }));
       }
       function act(fn){ clearTimeout(timer); take = false; toss = false; if(fn()) buzz(10); step(); }

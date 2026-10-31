@@ -5,12 +5,16 @@
 const { esc, A, shuffle, screen, store, persist, dock, buzz, armTap, tr } = SB.u;
 
 /* Cartes : "K" roi, "Q" dame, "A" as, "J" joker (vaut n'importe quelle carte). */
-const KIND = tr({ K: "Roi", Q: "Dame", A: "As", J: "Joker" }, { K: "King", Q: "Queen", A: "Ace", J: "Joker" });
-const PLUR = tr({ K: "Rois", Q: "Dames", A: "As", J: "Jokers" }, { K: "Kings", Q: "Queens", A: "Aces", J: "Jokers" });
+// Noms des cartes dans les deux langues : le journal de la partie est rangé en { fr, en } (chaque téléphone lit sa langue).
+const KINDS = { fr: { K: "Roi", Q: "Dame", A: "As", J: "Joker" }, en: { K: "King", Q: "Queen", A: "Ace", J: "Joker" } };
+const PLURS = { fr: { K: "Rois", Q: "Dames", A: "As", J: "Jokers" }, en: { K: "Kings", Q: "Queens", A: "Aces", J: "Jokers" } };
+const LG = () => (SB.lang() === "en" ? "en" : "fr");
+const KIND = KINDS[LG()], PLUR = PLURS[LG()];
+const both = SB.u.both, pe = (n, w) => n + " " + w + (n === 1 ? "" : "s");
 const SYM = { K: "♚", Q: "♛", A: "A", J: "★" };
 const TABLES = ["K", "Q", "A"];
-function many(n, t){ return n + " " + (tr(n > 1, n !== 1) ? PLUR[t] : KIND[t]); }
-function claim(E, n){ return E.t2 ? tr(n + " carte" + (n > 1 ? "s" : "") + " de la table", n + " table card" + (n !== 1 ? "s" : "")) : many(n, E.table); }
+function many(n, t, lg){ lg = lg || LG(); return n + " " + ((lg === "en" ? n !== 1 : n > 1) ? PLURS[lg][t] : KINDS[lg][t]); }
+function claim(E, n, lg){ lg = lg || LG(); return E.t2 ? (lg === "en" ? n + " table card" + (n !== 1 ? "s" : "") : n + " carte" + (n > 1 ? "s" : "") + " de la table") : many(n, E.table, lg); }
 
 /* ---------- Moteur commun ----------
    E = { order, alive, hands, table, t2, turn, dir, last, phase, pulls, loser, truth, reveal, caller, boom, winner, round, start, log,
@@ -48,9 +52,9 @@ function deal(E, forced){
   if(E.ev === "recharge") E.order.forEach(id => { E.pulls[id] = 0; });
   E.last = null; E.phase = "play"; E.loser = ""; E.truth = false; E.reveal = []; E.caller = ""; E.boom = false;
   E.turn = E.alive[E.start] ? E.start : nextAlive(E, E.start);
-  E.log = tr("Manche " + E.round + " : table des " + tableName(E) + ".", "Round " + E.round + ": " + tableName(E) + " on the table.");
+  E.log = both("Manche " + E.round + " : table des " + tableName(E, "fr") + ".", "Round " + E.round + ": " + tableName(E, "en") + " on the table.");
 }
-function tableName(E){ return PLUR[E.table] + (E.t2 ? tr(" et des ", " and ") + PLUR[E.t2] : ""); }
+function tableName(E, lg){ lg = lg || LG(); return PLURS[lg][E.table] + (E.t2 ? (lg === "en" ? " and " : " et des ") + PLURS[lg][E.t2] : ""); }
 function nextAlive(E, from){
   const n = E.order.length, i = E.order.indexOf(from), d = E.dir || 1;
   for(let k = 1; k <= n; k++){ const id = E.order[(((i + d * k) % n) + n) % n]; if(E.alive[id]) return id; }
@@ -72,7 +76,7 @@ function doPlay(E, id, idx, nameOf){
   E.last = { by: id, cards, n: cards.length };
   E.pc = (E.pc || 0) + 1; // pour l'animation
   stat(E, id, "pl", cards.length); const lies = cards.filter(c => !good(E, c)).length; if(lies) stat(E, id, "bl", lies);
-  E.log = tr(nameOf(id) + " pose " + claim(E, cards.length) + (E.hands[id].length ? "" : " · plus de cartes !"), nameOf(id) + " plays " + claim(E, cards.length) + (E.hands[id].length ? "" : " · out of cards!"));
+  E.log = both(nameOf(id) + " pose " + claim(E, cards.length, "fr") + (E.hands[id].length ? "" : " · plus de cartes !"), nameOf(id) + " plays " + claim(E, cards.length, "en") + (E.hands[id].length ? "" : " · out of cards!"));
   E.turn = nextTurn(E, id);
   return true;
 }
@@ -82,7 +86,7 @@ function doCall(E, id, nameOf){
   E.phase = "reveal"; E.reveal = L.cards; E.truth = truth; E.caller = id;
   E.loser = truth ? id : L.by; E.more = E.ev === "nerveux" ? 1 : 0;
   if(!truth){ stat(E, id, "gc"); stat(E, L.by, "cg"); }
-  E.log = tr(nameOf(id) + " crie « Menteur ! » à " + nameOf(L.by) + ". " + (truth ? "Raté : c'était la vérité." : "Bien vu : c'était du bluff !"), nameOf(id) + " calls " + nameOf(L.by) + " a liar! " + (truth ? "Wrong: it was the truth." : "Nice catch: it was a bluff!"));
+  E.log = both(nameOf(id) + " crie « Menteur ! » à " + nameOf(L.by) + ". " + (truth ? "Raté : c'était la vérité." : "Bien vu : c'était du bluff !"), nameOf(id) + " calls " + nameOf(L.by) + " a liar! " + (truth ? "Wrong: it was the truth." : "Nice catch: it was a bluff!"));
   return true;
 }
 function canShoot(E, id){ return E.loser === id && (E.phase === "reveal" || (E.phase === "shot" && E.more > 0 && !E.boom)); }
@@ -95,7 +99,7 @@ function doShoot(E, id, bullets, nameOf){
   E.phase = "shot";
   const left = E.order.filter(x => E.alive[x]);
   E.winner = left.length === 1 ? left[0] : "";
-  E.log = E.boom ? tr("PAN ! " + nameOf(id) + " est hors jeu.", "BANG! " + nameOf(id) + " is out.") : tr("Clic… " + nameOf(id) + " survit (" + E.pulls[id] + "/6)." + (E.more > 0 ? " Barillet nerveux : encore un coup !" : ""), "Click… " + nameOf(id) + " survives (" + E.pulls[id] + "/6)." + (E.more > 0 ? " Hair trigger: one more shot!" : ""));
+  E.log = E.boom ? both("PAN ! " + nameOf(id) + " est hors jeu.", "BANG! " + nameOf(id) + " is out.") : both("Clic… " + nameOf(id) + " survit (" + E.pulls[id] + "/6)." + (E.more > 0 ? " Barillet nerveux : encore un coup !" : ""), "Click… " + nameOf(id) + " survives (" + E.pulls[id] + "/6)." + (E.more > 0 ? " Hair trigger: one more shot!" : ""));
   return true;
 }
 function nextRound(E){
@@ -111,21 +115,22 @@ function newBullets(ids){ const b = {}; ids.forEach(id => { b[id] = 1 + rnd(6); 
 
 /* ---------- Trophées de fin de partie ---------- */
 const AWARDS = {
-  bl: { t: tr(["Menteur(se) professionnel(le)", "Visage de marbre", "Bluffeur(se) en chef"], ["Professional Liar", "Poker Face", "Chief Bluffer"]), d: v => tr(v + " fausse" + (v > 1 ? "s" : "") + " carte" + (v > 1 ? "s" : "") + " posée" + (v > 1 ? "s" : ""), SB.u.plural2(v, "", "", "fake card") + " played"), min: 2 },
-  cg: { t: tr(["Nez de Pinocchio", "Pris(e) la main dans le sac", "Mauvais(e) menteur(se)"], ["Pinocchio Nose", "Caught Red-Handed", "Terrible Liar"]), d: v => tr("démasqué(e) " + v + " fois", "caught " + (v === 1 ? "once" : v + " times")), min: 1 },
-  gc: { t: tr(["Détecteur de mensonges", "Flair infaillible", "Inspecteur(trice) du bar"], ["Lie Detector", "Infallible Instinct", "Bar Inspector"]), d: v => tr(v + " menteur" + (v > 1 ? "s" : "") + " démasqué" + (v > 1 ? "s" : ""), SB.u.plural2(v, "", "", "liar") + " caught"), min: 1 },
-  cl: { t: tr(["Survivant(e) chanceux(se)", "Chat à neuf vies", "Trompe-la-mort"], ["Lucky Survivor", "Nine Lives", "Daredevil"]), d: v => tr(v + " clic" + (v > 1 ? "s" : "") + " à vide", SB.u.plural2(v, "", "", "empty click") + " survived"), min: 2 },
-  pl: { t: tr(["Mitraillette à cartes", "Poseur(se) compulsif(ve)", "Croupier(ère) du bar"], ["Card Machine Gun", "Compulsive Dealer", "Bar Croupier"]), d: v => tr(v + " cartes posées", v + " cards played"), min: 4 }
+  bl: { t: { fr: ["Menteur(se) professionnel(le)", "Visage de marbre", "Bluffeur(se) en chef"], en: ["Professional Liar", "Poker Face", "Chief Bluffer"] }, d: v => both(v + " fausse" + (v > 1 ? "s" : "") + " carte" + (v > 1 ? "s" : "") + " posée" + (v > 1 ? "s" : ""), pe(v, "fake card") + " played"), min: 2 },
+  cg: { t: { fr: ["Nez de Pinocchio", "Pris(e) la main dans le sac", "Mauvais(e) menteur(se)"], en: ["Pinocchio Nose", "Caught Red-Handed", "Terrible Liar"] }, d: v => both("démasqué(e) " + v + " fois", "caught " + (v === 1 ? "once" : v + " times")), min: 1 },
+  gc: { t: { fr: ["Détecteur de mensonges", "Flair infaillible", "Inspecteur(trice) du bar"], en: ["Lie Detector", "Infallible Instinct", "Bar Inspector"] }, d: v => both(v + " menteur" + (v > 1 ? "s" : "") + " démasqué" + (v > 1 ? "s" : ""), pe(v, "liar") + " caught"), min: 1 },
+  cl: { t: { fr: ["Survivant(e) chanceux(se)", "Chat à neuf vies", "Trompe-la-mort"], en: ["Lucky Survivor", "Nine Lives", "Daredevil"] }, d: v => both(v + " clic" + (v > 1 ? "s" : "") + " à vide", pe(v, "empty click") + " survived"), min: 2 },
+  pl: { t: { fr: ["Mitraillette à cartes", "Poseur(se) compulsif(ve)", "Croupier(ère) du bar"], en: ["Card Machine Gun", "Compulsive Dealer", "Bar Croupier"] }, d: v => both(v + " cartes posées", v + " cards played"), min: 4 }
 };
 function awards(E){
   const S = E.st || {}, out = [];
   shuffle(Object.keys(AWARDS)).forEach(k => {
     const best = E.order.slice().sort((a, b) => ((S[b] || {})[k] || 0) - ((S[a] || {})[k] || 0))[0], v = (S[best] || {})[k] || 0;
-    if(v >= AWARDS[k].min && out.length < 3) out.push([k, best, v, rnd(AWARDS[k].t.length)]);
+    if(v >= AWARDS[k].min && out.length < 3) out.push([k, best, v, rnd(AWARDS[k].t.fr.length)]);
   });
   return out;
 }
-function awardLines(E, nameOf){ return A(E.aw).map(A).filter(x => AWARDS[x[0]]).map(x => [AWARDS[x[0]].t[x[3]] || AWARDS[x[0]].t[0], nameOf(x[1]), AWARDS[x[0]].d(x[2])]); }
+// [titre, nom, détail] ; titre et détail dans la langue lg (celle du téléphone par défaut).
+function awardLines(E, nameOf, lg){ lg = lg || LG(); return A(E.aw).map(A).filter(x => AWARDS[x[0]]).map(x => { const T = AWARDS[x[0]].t[lg]; return [T[x[3]] || T[0], nameOf(x[1]), AWARDS[x[0]].d(x[2])[lg]]; }); }
 
 /* ---------- Robots ---------- */
 function botTurn(E, id, nameOf){
@@ -176,7 +181,7 @@ function playersHTML(E, nameOf, me){
 }
 function tableHTML(E){ return '<div class="lb-table"><span style="white-space:nowrap">' + tr("Table des", "Table:") + '</span><span class="t">' + PLUR[E.table] + (E.t2 ? " + " + PLUR[E.t2] : "") + "</span><span class=\"sm\" style=\"flex-basis:100%; color:#c9b89a\">" + tr("Les jokers valent n'importe quelle carte", "Jokers are wild") + (E.maxc === 1 ? tr(" · une carte par tour", " · one card per turn") : "") + "</span></div>"; }
 function lastHTML(E, nameOf){
-  if(!E.last) return '<p class="lb-log">' + esc(E.log) + "</p>";
+  if(!E.last) return '<p class="lb-log">' + esc(SB.u.L(E.log)) + "</p>";
   return '<p class="lb-log">' + tr(esc(nameOf(E.last.by)) + " jure avoir posé " + esc(claim(E, E.last.n)), esc(nameOf(E.last.by)) + " swears they played " + esc(claim(E, E.last.n))) + '</p><div class="lb-row">' + E.last.cards.map(() => '<span class="lb-back"></span>').join("") + "</div>";
 }
 /* Écran de la phase de jeu pour `me` ; sel = cartes sélectionnées */
@@ -199,7 +204,7 @@ function playDock(E, me, sel){
   return dock(b.length > 1 ? '<div class="row">' + b.join("") + "</div>" : b.join(""));
 }
 function revealHTML(E, me, nameOf){
-  return CSS + tableHTML(E) + '<p class="lb-log">' + esc(E.log) + '</p><span class="eyebrow">' + tr("Les cartes de " + esc(nameOf(E.last.by)), esc(nameOf(E.last.by)) + "'s cards") + '</span><div class="lb-row">' + E.reveal.map(c => cardHTML(c, " disabled", good(E, c) ? "tb" : "")).join("") + "</div>" +
+  return CSS + tableHTML(E) + '<p class="lb-log">' + esc(SB.u.L(E.log)) + '</p><span class="eyebrow">' + tr("Les cartes de " + esc(nameOf(E.last.by)), esc(nameOf(E.last.by)) + "'s cards") + '</span><div class="lb-row">' + E.reveal.map(c => cardHTML(c, " disabled", good(E, c) ? "tb" : "")).join("") + "</div>" +
     '<div class="lb-big' + (E.truth ? "" : " boom") + '">' + (E.truth ? tr("Vérité", "Truth") : tr("Bluff !", "Bluff!")) + "</div>" +
     '<div class="pass" style="min-height:0"><span class="eyebrow">' + (E.loser === me ? tr("C'est toi qui tires", "You pull the trigger") : tr("Le revolver passe à", "The revolver goes to")) + '</span><div class="who">' + esc(nameOf(E.loser)) + "</div><p>" + tr("Coups déjà tirés : " + (E.pulls[E.loser] || 0) + " · risque : 1 sur " + (6 - (E.pulls[E.loser] || 0)) + "." + (E.more > 0 ? " Barillet nerveux : il faudra tirer deux fois." : ""), "Shots taken: " + (E.pulls[E.loser] || 0) + " · risk: 1 in " + (6 - (E.pulls[E.loser] || 0)) + "." + (E.more > 0 ? " Hair trigger: two shots this time." : "")) + "</p></div>";
 }
@@ -390,7 +395,7 @@ const DEF = {
       });
     } else {
       screen(root, "end" + s.k + ctx.isHost, endHTML(E, nameOf) + dock(ctx.isHost ? '<button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button>" : '<p class="wait">' + tr("L'hôte va vous ramener au salon.", "The host will take you back to the room.") + "</p>"), r => {
-        const b = r.querySelector("[data-back]"); if(b) b.addEventListener("click", () => ctx.act(c => { const F = fromState(c.s); c.end({ title: tr("Roulette des menteurs : " + c.name(c.s.winner) + " survit", "Liars: " + c.name(c.s.winner) + " survives"), lines: [tr(c.s.round + (c.s.round > 1 ? " manches" : " manche"), SB.u.plural2(c.s.round, "", "", "round"))].concat(awardLines(F, c.name).map(x => tr(x[0] + " : " + x[1], x[0] + ": " + x[1]))), win: [c.s.winner] }); }));
+        const b = r.querySelector("[data-back]"); if(b) b.addEventListener("click", () => ctx.act(c => { const F = fromState(c.s); const fr = awardLines(F, c.name, "fr"), en = awardLines(F, c.name, "en"); c.end({ title: both("Roulette des menteurs : " + c.name(c.s.winner) + " survit", "Liars: " + c.name(c.s.winner) + " survives"), lines: [both(c.s.round + (c.s.round > 1 ? " manches" : " manche"), pe(c.s.round, "round"))].concat(fr.map((x, i) => both(x[0] + " : " + x[1], en[i][0] + ": " + en[i][1]))), win: [c.s.winner] }); }));
       });
     }
   },
@@ -439,7 +444,7 @@ const DEF = {
         if(isBot(cur)){ draw(viewer); later(() => { botTurn(E, cur, nameOf); step(); }, 1900); return; }
         if(viewer !== cur && liveHumans().length > 1){
           clearTimeout(timer);
-          screen(root, "pass" + cur + E.log + Math.random(), CSS + '<p class="lb-log">' + esc(E.log) + '</p><div class="pass"><span class="eyebrow">' + tr("Passe le téléphone à", "Pass the phone to") + '</span><div class="who">' + esc(nameOf(cur)) + "</div><p>" + tr("Les autres, ne regardez pas sa main.", "Everyone else, don't look at their hand.") + "</p></div>" +
+          screen(root, "pass" + cur + E.log + Math.random(), CSS + '<p class="lb-log">' + esc(SB.u.L(E.log)) + '</p><div class="pass"><span class="eyebrow">' + tr("Passe le téléphone à", "Pass the phone to") + '</span><div class="who">' + esc(nameOf(cur)) + "</div><p>" + tr("Les autres, ne regardez pas sa main.", "Everyone else, don't look at their hand.") + "</p></div>" +
             dock('<button class="btn acc" type="button" data-n>' + tr("C'est moi", "It's me") + "</button>"), r => r.querySelector("[data-n]").addEventListener("click", () => { viewer = cur; step(); }));
           return;
         }

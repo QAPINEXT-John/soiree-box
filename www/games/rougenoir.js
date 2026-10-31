@@ -105,15 +105,16 @@ function verdictHTML(E, nameOf){
   return h;
 }
 function standings(ids, pts, nameOf){ return '<div class="rn-list">' + ids.slice().sort((a, b) => (pts[b] || 0) - (pts[a] || 0)).map((id, i) => '<div class="rn-row2"><b>' + (i + 1) + ". " + esc(nameOf(id)) + '</b><span class="n">' + (pts[id] || 0) + "</span></div>").join("") + "</div>"; }
-function awards(ids, E, nameOf){
+function awards(ids, E, nameOf, lg){
+  const T = (fr, en) => (lg === "en" ? en : lg === "fr" ? fr : tr(fr, en));
   const out = [], ok = E.okc || {}, ko = E.koc || {};
   const rate = id => { const t = (ok[id] || 0) + (ko[id] || 0); return t ? (ok[id] || 0) / t : 0; };
   const best = ids.filter(id => (ok[id] || 0) + (ko[id] || 0)).sort((a, b) => rate(b) - rate(a))[0];
-  if(best) out.push([tr("La voyante", "The psychic"), nameOf(best), tr(Math.round(rate(best) * 100) + " % de bons paris", Math.round(rate(best) * 100) + "% right")]);
+  if(best) out.push([T("La voyante", "The psychic"), nameOf(best), T(Math.round(rate(best) * 100) + " % de bons paris", Math.round(rate(best) * 100) + "% right")]);
   const bad = ids.filter(id => ko[id]).sort((a, b) => (ko[b] || 0) - (ko[a] || 0))[0];
-  if(bad && bad !== best) out.push([tr("Le chat noir", "The black cat"), nameOf(bad), tr(ko[bad] + (ko[bad] > 1 ? " paris ratés" : " pari raté"), ko[bad] + " wrong bets")]);
+  if(bad && bad !== best) out.push([T("Le chat noir", "The black cat"), nameOf(bad), T(ko[bad] + (ko[bad] > 1 ? " paris ratés" : " pari raté"), ko[bad] + " wrong bets")]);
   const v = E.vio || {}, vi = ids.filter(id => v[id]).sort((a, b) => v[b] - v[a])[0];
-  if(vi) out.push([tr("Accro au violet", "Purple addict"), nameOf(vi), tr(v[vi] + (v[vi] > 1 ? " paris violets" : " pari violet"), v[vi] + " purple bets")]);
+  if(vi) out.push([T("Accro au violet", "Purple addict"), nameOf(vi), T(v[vi] + (v[vi] > 1 ? " paris violets" : " pari violet"), v[vi] + " purple bets")]);
   return out;
 }
 // Applique un pari : points, stats, et la liste des gages ({ id, ev, x }).
@@ -205,7 +206,7 @@ SB.register({
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const pp = c.s.pts || {}, o2 = c.ids.slice().sort((a, b2) => (pp[b2] || 0) - (pp[a] || 0)), mx = pp[o2[0]] || 0;
-          c.end({ title: tr("Rouge, noir ou violet : ", "Red, Black or Purple: ") + c.name(o2[0]), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (pp[id] || 0) + " pts").concat(awards(c.ids, c.s, c.name).map(a => a[0] + tr(" : ", ": ") + a[1])), win: mx ? o2.filter(id => (pp[id] || 0) === mx) : [] });
+          const aF = awards(c.ids, c.s, c.name, "fr"), aE = awards(c.ids, c.s, c.name, "en"); c.end({ title: SB.u.both("Rouge, noir ou violet : " + c.name(o2[0]), "Red, Black or Purple: " + c.name(o2[0])), lines: o2.slice(0, 3).map((id, i) => (i + 1) + ". " + c.name(id) + " · " + (pp[id] || 0) + " pts").concat(aF.map((a, i) => SB.u.both(a[0] + " : " + a[1], aE[i][0] + ": " + aE[i][1]))), win: mx ? o2.filter(id => (pp[id] || 0) === mx) : [] });
         }));
       });
       return;

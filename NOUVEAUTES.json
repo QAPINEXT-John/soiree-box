@@ -1,4 +1,10 @@
 {
+  "4.42.0": [
+    "En salon, chacun garde sa langue : un joueur en anglais voit tout en anglais (cartes, questions, mots, messages, fin de partie) même si l'hôte est en français, et inversement",
+    "Téléphone verrouillé ou appli en arrière-plan : le salon te garde ta place pendant 10 minutes (l'hôte aussi) au lieu de quelques secondes",
+    "Reconnexion : si l'appli se ferme ou que le réseau coupe, le bouton « Revenir dans le salon » sur l'accueil te remet dans la partie en cours, à ta place. L'hôte qui revient reprend la main",
+    "Listes anglaises réalignées dans plusieurs jeux (Agents secrets, Débat, 7 secondes, Je n'ai jamais, Punchline…) pour que tout le monde voie la même carte"
+  ],
   "4.41.1": [
     "Course de défis : l'ancien thème « Soirée » rejoint « Hot & Hard ». Chaque jeu n'a plus qu'une seule catégorie 18+"
   ],

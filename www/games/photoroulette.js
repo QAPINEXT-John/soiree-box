@@ -378,7 +378,7 @@ SB.register({
         const b = r.querySelector("[data-back]");
         if(b) b.addEventListener("click", () => ctx.act(c => {
           const scc = c.s.sc || {}, win = topOf(scc), mx = win.length ? scc[win[0]] : 0;
-          c.end({ title: tr("Photo roulette · " + (win.length ? win.map(c.name).join(" & ") + " · " + mx + " pts" : "égalité"), "Photo Roulette · " + (win.length ? win.map(c.name).join(" & ") + " · " + mx + " pts" : "tie")), lines: mys ? [tr("Galerie la plus mystérieuse : " + c.name(mys), "Most mysterious gallery: " + c.name(mys))] : [], win });
+          c.end({ title: SB.u.both("Photo roulette · " + (win.length ? win.map(c.name).join(" & ") + " · " + mx + " pts" : "égalité"), "Photo Roulette · " + (win.length ? win.map(c.name).join(" & ") + " · " + mx + " pts" : "tie")), lines: mys ? [SB.u.both("Galerie la plus mystérieuse : " + c.name(mys), "Most mysterious gallery: " + c.name(mys))] : [], win });
         }));
       });
     }

@@ -17,13 +17,13 @@ const FR = {
   trash: W("Pipe|Cunni|Sodomie|Branlette|Éjaculation|Sperme|Partouze|Échangisme|Club libertin|Gang bang|Sextape|Porno|OnlyFans|Plan cul|Gorge profonde|Soixante-neuf|Fellation|Anulingus|Squirt|Godemiché|Plug anal|Bite|Chatte|Couilles|Clito|Point G|Nichons|Cul|Doigté|Masturbation|Éjac précoce|Érection|Viagra|Panne|Quickie|Domination|Soumission|Fessée|Bondage|Martinet|Collier|Laisse|Trio|Dark room|Glory hole|Strip-club|Camgirl|Gode-ceinture|Sex toy|Vaginal|Anal|Cyprine|Gland|Prépuce|Capote|Pénétration|Lèche-cul|Exhib|Voyeur|Dirty talk")
 };
 const EN = {
-  cl: W("Plane|Bank|Beach|Moon|Sun|Star|Heart|Hand|Foot|Eye|Tooth|Nose|Head|Book|Feather|Key|Door|Window|Wall|Bridge|Tower|Castle|King|Queen|Prince|Knight|Dragon|Ghost|Witch|Vampire|Robot|Spy|Pirate|Ninja|Cowboy|Sheriff|Police|Firefighter|Doctor|Lawyer|Judge|Prison|School|Board|Pencil|Paper|Map|Plan|Bottle|Knife|Fork|Plate|Table|Chair|Bed|Couch|Lamp|Candle|Fire|Ice|Snow|Rain|Storm|Wind|Cloud|Sea|River|Lake|Mountain|Forest|Tree|Leaf|Flower|Rose|Root|Apple|Orange|Lemon|Banana|Strawberry|Cherry|Peach|Grape|Bread|Cheese|Butter|Chocolate|Sugar|Salt|Egg|Milk|Coffee|Tea|Cat|Dog|Lion|Tiger|Bear|Wolf|Fox|Rabbit|Mouse|Horse|Cow|Pig|Chicken|Eagle|Owl|Shark|Whale|Dolphin|Snake|Spider|Bee|Butterfly|Ant|Train|Car|Bus|Bike|Boat|Rocket|Subway|Station|Hotel|Hospital|Museum|Cinema|Theater|Circus|Zoo|Stadium|Ball|Cup|Medal|Gold|Silver|Diamond|Ring|Crown|Treasure|Coin|Ticket|Code|Message|Letter|Stamp|Phone|Screen|Keyboard|Internet|Virus|Bomb|Laser|Shield|Sword|Arrow|Target|Trap|Cage|Chain|Rope|Knot|Bag|Box|Suitcase|Watch|Clock|Day|Night|Winter|Summer|Christmas|Party|Gift|Cake|Angel|Devil|Heaven|Hell|Dream|Nightmare|Shadow|Light|Mirror|Photo|Movie|Piano|Guitar|Drum|Dance|Opera|Jazz|Rock|Hero|Genius|Magic|Wand|Hat|Mask|Glove|Boot|Belt|Dress|Tie|Glasses|Umbrella|Mars|Planet|Satellite|Alien|Pyramid|Mummy|Desert|Island|Volcano|Cave|Mine|Farm|Tractor|Mill|Factory|Office|Boss|Vacation|Bench|Bell|Anchor|Lighthouse|Mermaid|Wave|Sand|Shell|Pearl|Hammer|Nail|Saw|Ladder|Roof|Chimney|Garden|Lawn|Trash|Sewer|Tunnel|Radar|Submarine|Helicopter|Parachute|Mustache|Beard|Hair|Wig|Soap|Brush|Comb|Towel"),
+  cl: W("Plane|Bank|Beach|Moon|Sun|Star|Heart|Hand|Foot|Eye|Tooth|Nose|Head|Book|Feather|Key|Door|Window|Wall|Bridge|Tower|Castle|King|Queen|Prince|Knight|Dragon|Ghost|Witch|Vampire|Robot|Spy|Pirate|Ninja|Cowboy|Sheriff|Police|Firefighter|Doctor|Lawyer|Judge|Prison|School|Board|Pencil|Paper|Map|Plan|Bottle|Knife|Fork|Plate|Table|Chair|Bed|Couch|Lamp|Candle|Fire|Ice|Snow|Rain|Storm|Wind|Cloud|Sea|River|Lake|Mountain|Forest|Tree|Leaf|Flower|Rose|Root|Apple|Orange|Lemon|Banana|Strawberry|Cherry|Peach|Grape|Bread|Cheese|Butter|Chocolate|Sugar|Salt|Egg|Milk|Coffee|Tea|Cat|Dog|Lion|Tiger|Bear|Wolf|Fox|Rabbit|Mouse|Horse|Cow|Pig|Chicken|Eagle|Owl|Shark|Whale|Dolphin|Snake|Spider|Bee|Butterfly|Ant|Train|Car|Bus|Bike|Boat|Rocket|Subway|Station|Hotel|Hospital|Museum|Cinema|Theater|Circus|Zoo|Stadium|Ball|Cup|Medal|Gold|Silver|Diamond|Ring|Crown|Treasure|Coin|Ticket|Code|Message|Letter|Stamp|Phone|Screen|Keyboard|Internet|Virus|Bomb|Laser|Shield|Sword|Arrow|Target|Trap|Cage|Chain|Rope|Knot|Bag|Box|Suitcase|Watch|Clock|Day|Night|Winter|Summer|Christmas|Party|Gift|Cake|Angel|Devil|Heaven|Hell|Dream|Nightmare|Shadow|Light|Mirror|Photo|Movie|Piano|Guitar|Drum|Dance|Opera|Jazz|Rock|Hero|Genius|Magic|Wand|Hat|Mask|Glove|Boot|Belt|Dress|Tie|Glasses|Umbrella|Mars|Planet|Satellite|Alien|Pyramid|Mummy|Desert|Island|Volcano|Cave|Mine|Farm|Tractor|Mill|Factory|Office|Boss|Vacation|Bench|Bell|Anchor|Lighthouse|Mermaid|Wave|Sand|Shell|Pearl|Hammer|Nail|Saw|Ladder|Roof|Chimney|Garden|Lawn|Trash|Sewer|Tunnel|Radar|Submarine|Helicopter|Parachute|Ticket|Mustache|Beard|Hair|Wig|Soap|Brush|Comb|Towel"),
   kid: W("Candy|Ice cream|Cake|Teddy|Ball|Slide|Swing|Treehouse|Trampoline|Pool|Bike|Scooter|Pirate|Princess|Unicorn|Dinosaur|Dragon|Rocket|Astronaut|Robot|Puzzle|Doll|Plushie|Crayon|Backpack|Recess|Lunchroom|Teacher|Snack|Pancake|Fries|Pizza|Pasta|Yogurt|Chocolate|Hug|Pajamas|Bath|Bubbles|Toothpaste|Story|Circus|Clown|Magician|Fairy|Wizard|Castle|Knight|Ogre|Giant|Elf|Christmas tree|Snow|Snowman|Sled|Beach|Sand|Seashell|Crab|Fish|Shark|Whale|Turtle|Bunny|Kitten|Puppy|Pony|Pig|Cow|Chicken|Duck|Frog|Snail|Butterfly|Ladybug|Bee|Drawing|Paint|Glitter|Rainbow|Sun|Moon|Star|Cloud|Rain|Boots|Umbrella|Hide-and-seek|Soccer|Song|Drum|Whistle|Treasure|Map|Compass|Cape|Mask|Superhero|Monster|Ghost|Skeleton|Pumpkin|Candle|Train|Plane|Boat|Tractor|Truck|Firefighter|Police|Farm|Zoo|Lion|Giraffe|Elephant|Monkey|Zebra|Bear|Wolf|Fox|Owl"),
-  pop: W("Netflix|YouTube|TikTok|Instagram|Selfie|Emoji|Meme|Influencer|Podcast|Playlist|Zombie|Jedi|Lightsaber|Hogwarts|Pokémon|Mario|Zelda|Minecraft|Fortnite|Controller|Superman|Batman|Spider-Man|Avengers|Hulk|Joker|Titanic|Terminator|Matrix|Shrek|Disney|Pixar|Star Wars|Harry Potter|Gandalf|Hobbit|Game of Thrones|Squid Game|Stranger Things|Money Heist|Rap|Karaoke|Eurovision|Reality TV|Survivor|Bake Off|Super Bowl|Olympics|World Cup|Barbie|Tamagotchi|Rubik's cube|iPhone|Wi-Fi|Bluetooth|Hashtag|Filter|Story|Like|Tinder|Uber|Airbnb|Amazon|Google|Wikipedia|Bitcoin|AI|Drone|Fast food|Burger|Sushi|Kebab|Tacos|Unicorn|Darth Vader|Pikachu|Simpsons|SpongeBob|The Lion King|Frozen|James Bond|Rocky|Godzilla|King Kong|Dracula|Frankenstein|Sherlock|Zorro|Indiana Jones|Minions|Toy Story|Nemo|Marvel"),
-  soir: W("Snacks|Ice cube|Straw|Lime|Afterparty|Nightclub|Bouncer|Coat check|DJ|Dance floor|Playlist|Karaoke|Speaker|Neighbors|Police|Taxi|Kebab|Chips|Peanuts|Pizza|Couch|Counter|Tip|Toast|Cup|Deck of cards|Dice|Selfie|Blurry photo|Story|Ex|Crush|Slow dance|Kiss|Shoes|Heels|Alarm|Brunch|Morning after|Candle|Balloon|Confetti|Cake|Birthday|Guests|Sound system|Black light|Disco ball|Costume|Wig|Mask|Limbo|Conga line|Macarena|Mic|Dance battle|Giggles|Secret|Prank|Promise"),
-  alc: W("Beer|Vodka|Rum|Tequila|Shot|Cocktail|Mojito|Champagne|Wine|Rosé|Hangover|Bar|Bartender|Round|Cheers|Cork|Corkscrew|Beer pong|Drinking game|Aspirin|Sangria|Whiskey|Gin|Pint|Happy hour|Drunk|Chug"),
-  hot: W("Handcuffs|Thong|Lingerie|Condom|Tongue|Hickey|Foreplay|Striptease|Massage|Oil|Feather|Blindfold|Whip|Leather|Latex|Garter belt|Nightie|Sheets|Hot tub|Shower|Bathtub|Threesome|One-night stand|Nudes|Sexting|Fantasy|Orgasm|Moan|Butt|Boobs|Nipples|Neck|Ear|Lips|Hips|Thighs|Missionary|Doggy style|Spooning|Sex shop|Vibrator|Lube|Kama Sutra|Hotel room|Back seat|Nude beach|Sauna|Lap dance|Bodysuit|Tattoo|Piercing|Mouth|Whipped cream|Strawberry|Ice cube|Mirror|Camera"),
-  trash: W("Blowjob|Cunnilingus|Anal|Handjob|Cumshot|Cum|Orgy|Swinging|Swingers club|Gangbang|Sex tape|Porn|OnlyFans|Fuck buddy|Deepthroat|Sixty-nine|Rimming|Squirt|Dildo|Butt plug|Dick|Pussy|Balls|Clit|G-spot|Tits|Ass|Fingering|Masturbation|Premature|Boner|Viagra|Quickie|Domination|Submission|Spanking|Bondage|Collar|Leash|Dark room|Glory hole|Strip club|Camgirl|Strap-on|Sex toy|Penetration|Exhibitionist|Voyeur|Dirty talk|Facial|Creampie|Edging|Booty call|Hand cuffs|Pegging|Kinky|Safe word")
+  pop: W("Netflix|YouTube|TikTok|Instagram|Selfie|Emoji|Meme|Influencer|Podcast|Playlist|Zombie|Jedi|Lightsaber|Hogwarts|Pokémon|Mario|Zelda|Minecraft|Fortnite|Controller|Superman|Batman|Spider-Man|Avengers|Hulk|Joker|Titanic|Terminator|Matrix|Shrek|Disney|Pixar|Star Wars|Harry Potter|Gandalf|Hobbit|Game of Thrones|Squid Game|Stranger Things|Money Heist|Rap|Karaoke|Eurovision|Reality TV|Survivor|Bake Off|Tour de France|Olympics|World Cup|Barbie|Tamagotchi|Rubik's cube|iPhone|Wi-Fi|Bluetooth|Hashtag|Filter|Story|Like|Tinder|Uber|Airbnb|Amazon|Google|Wikipedia|Bitcoin|AI|Drone|Fast food|Burger|Sushi|Kebab|Tacos|Unicorn|Darth Vader|Pikachu|Simpsons|SpongeBob|The Lion King|Frozen|Asterix|Tintin|James Bond|Rocky|Godzilla|King Kong|Dracula|Frankenstein|Sherlock|Zorro|Indiana Jones|Minions|Toy Story|Nemo|Marvel"),
+  soir: W("Snacks|Ice cube|Straw|Lime|Afterparty|Nightclub|Bouncer|Coat check|DJ|Dance floor|Playlist|Karaoke|Speaker|Neighbors|Police|Taxi|Kebab|Chips|Peanuts|Pizza|Couch|Counter|Tip|Toast|Cup|Deck of cards|Dice|Selfie|Blurry photo|Story|Ex|Crush|Slow dance|Kiss|Shoes|Heels|Alarm|Brunch|Morning after|Candle|Balloon|Confetti|Cake|Birthday|Guests|Sound system|Black light|Disco ball|Costume|Wig|Mask|Limbo|Conga line|Bunny hop|Macarena|Mic|Dance battle|Giggles|Secret|Prank|Promise"),
+  alc: W("Beer|Vodka|Rum|Tequila|Shot|Cocktail|Mojito|Champagne|Wine|Rosé|Pastis|Hangover|Bar|Bartender|Round|Cheers|Cork|Corkscrew|Beer pong|Drinking game|Last sip|Aspirin|Sangria|Whiskey|Gin|Pint|Half pint|Happy hour|Drunk|Chug"),
+  hot: W("Handcuffs|Thong|Lingerie|Condom|Tongue|Hickey|Foreplay|Striptease|Massage|Oil|Feather|Blindfold|Whip|Leather|Latex|Garter belt|Nightie|Sheets|Hot tub|Shower|Bathtub|Threesome|One-night stand|Nudes|Sexting|Fantasy|Orgasm|Moan|Butt|Boobs|Nipples|Neck|Ear|Lips|Hips|Thighs|Missionary|Doggy style|Spooning|Sex shop|Vibrator|Lube|Kama Sutra|Hotel room|Back seat|Nude beach|Sauna|Lap dance|Bodysuit|Tattoo|Piercing|Mouth|Nape|Whipped cream|Strawberry|Ice cube|Mirror|Camera"),
+  trash: W("Blowjob|Cunnilingus|Sodomy|Handjob|Cumshot|Cum|Orgy|Swinging|Swingers club|Gangbang|Sex tape|Porn|OnlyFans|Fuck buddy|Deepthroat|Sixty-nine|Fellatio|Rimming|Squirt|Dildo|Butt plug|Dick|Pussy|Balls|Clit|G-spot|Tits|Ass|Fingering|Masturbation|Premature|Boner|Viagra|Limp|Quickie|Domination|Submission|Spanking|Bondage|Flogger|Collar|Leash|Threesome|Dark room|Glory hole|Strip club|Camgirl|Strap-on|Sex toy|Vaginal|Anal|Wetness|Glans|Foreskin|Rubber|Penetration|Ass-kisser|Exhibitionist|Voyeur|Dirty talk")
 };
 // 18+ : Hot, Trash (et Sans filtre) ne font plus qu'un paquet « Hot & Hard » (id « hot »). Les anciens ids valent « hot ».
 const PK = p => Array.from(new Set(A(p).map(v => (v === "trash" || v === "hard" ? "hot" : v))));
@@ -33,9 +33,10 @@ try{
   if(O && A(O.packs).some(old)) persist({ opts: Object.assign({}, st.opts, { agents: Object.assign({}, O, { packs: PK(O.packs) }) }) });
   if(A(st.agPacks).some(old)) persist({ agPacks: PK(st.agPacks) });
 }catch(e){}
-[FR, EN].forEach(X => { X.hot = uniq(A(X.hot).concat(A(X.trash))); });
-const LISTS = { fr: FR, en: EN };
-const L = lg => LISTS[lg === "en" ? "en" : "fr"];
+// Listes FR et EN alignées mot à mot : chaque mot devient { fr, en } (chacun voit la grille dans SA langue).
+const PAIRS = {}; Object.keys(FR).forEach(k => { PAIRS[k] = FR[k].map((w, i) => SB.u.both(w, (EN[k] || [])[i] || w)); });
+{ const seen = new Set(); PAIRS.hot = PAIRS.hot.concat(PAIRS.trash).filter(p => { const x = p.fr.toLowerCase(); if(seen.has(x)) return false; seen.add(x); return true; }); }
+const L = lg => PAIRS; // listes pour les compteurs (paires { fr, en })
 const PACKS = [
   { v: "cl", label: tr("Classique", "Classic"), desc: tr("Des mots de tous les jours", "Everyday words"), list: L(SB.lang()).cl },
   { v: "kid", label: tr("Copains", "Buddies"), desc: tr("Tout public, parfait avec des enfants", "For everyone, great with kids"), list: L(SB.lang()).kid, kid: true },
@@ -46,16 +47,18 @@ const PACKS = [
 const kidF = l => { if(!(SB.kid && SB.kid())) return l; const k = l.filter(x => SB.kidOk(x)); return k.length ? k : l; };
 const myWords = () => A(store().agWords).map(w => clean(w, 24)).filter(Boolean).slice(0, 80);
 // 25 mots : d'abord les mots perso (8 maximum, prénoms compris), puis les paquets, sans doublon.
+// Renvoie 25 mots { fr, en }. Les mots perso et les prénoms sont les mêmes dans les deux langues.
 function pickWords(packs, lg, extra){
-  const LL = L(lg), sel = PK(packs);
-  let pool = PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(p => LL[p.v].concat(p.v === "soir" && SB.hard() ? LL.alc : []));
-  if(!pool.length) pool = LL.cl.slice();
-  pool = kidF(pool);
-  const seen = new Set(), out = [], push = w => { const k = String(w).toLowerCase(); if(w && !seen.has(k) && out.length < 25){ seen.add(k); out.push(w); } };
+  const sel = PK(packs), P = x => (typeof x === "string" ? SB.u.both(x, x) : x);
+  let pool = PACKS.filter(p => sel.indexOf(p.v) >= 0).flatMap(p => PAIRS[p.v].concat(p.v === "soir" && SB.hard() ? PAIRS.alc : []));
+  if(!pool.length) pool = PAIRS.cl.slice();
+  if(SB.kid && SB.kid()){ const k = pool.filter(x => SB.kidOk(x.fr)); if(k.length) pool = k; }
+  const byFr = {}; pool.forEach(x => { byFr[x.fr] = x; });
+  const seen = new Set(), out = [], push = x => { x = P(x); const k = String(x.fr).toLowerCase(); if(x.fr && !seen.has(k) && out.length < 25){ seen.add(k); out.push(x); } };
   shuffle(A(extra)).slice(0, 8).forEach(push);
-  const fr = SB.u.fresh("agents:w", pool); while(out.length < 25 && fr.length) push(fr.pop());
-  if(out.length < 25) shuffle(LL.cl).forEach(push);
-  out.forEach(w => SB.u.saw("agents:w", w));
+  const fr = SB.u.fresh("agents:w", pool.map(x => x.fr)); while(out.length < 25 && fr.length) push(byFr[fr.pop()]);
+  if(out.length < 25) shuffle(PAIRS.cl).forEach(push);
+  out.forEach(x => SB.u.saw("agents:w", x.fr));
   return shuffle(out);
 }
 
@@ -72,31 +75,34 @@ const other = t => (t === "r" ? "b" : "r");
 const left = (G, t) => G.key.filter((k, i) => k === t && !G.rev[i]).length;
 const TN = t => (t === "r" ? tr("Rouges", "Red") : tr("Bleus", "Blue"));
 const TN1 = t => (t === "r" ? tr("rouge", "red") : tr("bleu", "blue"));
+// Textes écrits par l'hôte dans l'état : en { fr, en } pour que chaque téléphone les lise dans sa langue.
+const B = SB.u.both, LF = x => (x == null ? "" : typeof x === "string" ? x : x.fr || ""), LE = x => (x == null ? "" : typeof x === "string" ? x : x.en || x.fr || "");
+const TNf = t => (t === "r" ? "Rouges" : "Bleus"), TNe = t => (t === "r" ? "Red" : "Blue"), TN1f = t => (t === "r" ? "rouge" : "bleu"), TN1e = t => (t === "r" ? "red" : "blue");
 // Retourne un mot. Renvoie ce qui s'est passé : "own" | "other" | "n" | "p" | "a" | "" (rien).
 function teamReveal(G, i){
   if(G.step !== "guess" || G.win || i < 0 || i > 24 || G.rev[i]) return "";
   const k = G.key[i], t = G.turn; G.rev[i] = k;
   const W2 = G.w[i];
-  if(k === "a"){ G.win = other(t); G.why = "a"; G.log = tr(W2 + " : l'assassin ! Les " + TN(t) + " perdent.", W2 + ": the assassin! " + TN(t) + " lose."); return "a"; }
+  if(k === "a"){ G.win = other(t); G.why = "a"; G.log = B(LF(W2) + " : l'assassin ! Les " + TNf(t) + " perdent.", LE(W2) + ": the assassin! " + TNe(t) + " lose."); return "a"; }
   if(k === t){
     G.got++; G.ok++;
-    if(!left(G, t)){ G.win = t; G.why = "all"; G.log = tr(W2 + " : les " + TN(t) + " ont trouvé tous leurs agents !", W2 + ": " + TN(t) + " found all their agents!"); return "own"; }
+    if(!left(G, t)){ G.win = t; G.why = "all"; G.log = B(LF(W2) + " : les " + TNf(t) + " ont trouvé tous leurs agents !", LE(W2) + ": " + TNe(t) + " found all their agents!"); return "own"; }
     const n = G.clue ? G.clue.n : 0;
-    if(n > 0 && n < 10 && G.got >= n + 1){ G.log = tr(W2 + " : bien joué ! Plus d'essai pour ce tour.", W2 + ": nice! No more guesses this turn."); endTurn(G); }
-    else G.log = tr(W2 + " : bien joué ! Vous pouvez continuer.", W2 + ": nice! Keep going.");
+    if(n > 0 && n < 10 && G.got >= n + 1){ G.log = B(LF(W2) + " : bien joué ! Plus d'essai pour ce tour.", LE(W2) + ": nice! No more guesses this turn."); endTurn(G); }
+    else G.log = B(LF(W2) + " : bien joué ! Vous pouvez continuer.", LE(W2) + ": nice! Keep going.");
     return "own";
   }
   if(k === other(t)){
-    if(!left(G, other(t))){ G.win = other(t); G.why = "all"; G.log = tr(W2 + " était aux " + TN(other(t)) + " : c'était leur dernier, ils gagnent !", W2 + " was " + TN1(other(t)) + ": their last one, they win!"); return "other"; }
-    G.log = tr(W2 + " : raté, c'est un agent " + TN1(other(t)) + ".", W2 + ": miss, that's a " + TN1(other(t)) + " agent."); endTurn(G); return "other";
+    if(!left(G, other(t))){ G.win = other(t); G.why = "all"; G.log = B(LF(W2) + " était aux " + TNf(other(t)) + " : c'était leur dernier, ils gagnent !", LE(W2) + " was " + TN1e(other(t)) + ": their last one, they win!"); return "other"; }
+    G.log = B(LF(W2) + " : raté, c'est un agent " + TN1f(other(t)) + ".", LE(W2) + ": miss, that's a " + TN1e(other(t)) + " agent."); endTurn(G); return "other";
   }
-  if(k === "p"){ G.skip[t] = 1; G.log = tr(W2 + " : mot piégé ! Les " + TN(t) + " passeront leur prochain tour.", W2 + ": booby-trapped! " + TN(t) + " skip their next turn."); endTurn(G); return "p"; }
-  G.log = tr(W2 + " : un simple passant. Fin du tour.", W2 + ": just a bystander. Turn over."); endTurn(G); return "n";
+  if(k === "p"){ G.skip[t] = 1; G.log = B(LF(W2) + " : mot piégé ! Les " + TNf(t) + " passeront leur prochain tour.", LE(W2) + ": booby-trapped! " + TNe(t) + " skip their next turn."); endTurn(G); return "p"; }
+  G.log = B(LF(W2) + " : un simple passant. Fin du tour.", LE(W2) + ": just a bystander. Turn over."); endTurn(G); return "n";
 }
 function endTurn(G){
   if(G.win) return;
   let nx = other(G.turn);
-  if(G.skip[nx]){ G.skip[nx] = 0; nx = G.turn; G.log += tr(" Les " + TN(other(nx)) + " passent leur tour.", " " + TN(other(nx)) + " skip their turn."); }
+  if(G.skip[nx]){ G.skip[nx] = 0; nx = G.turn; G.log = B(LF(G.log) + " Les " + TNf(other(nx)) + " passent leur tour.", LE(G.log) + " " + TNe(other(nx)) + " skip their turn."); }
   G.turn = nx; G.step = "clue"; G.clue = null; G.got = 0;
 }
 /* Duo : deux cartes. ka[i] / kb[i] = "g" (agent) | "n" | "a". found[i] = 1 quand l'agent est trouvé.
@@ -115,18 +121,18 @@ function duoReveal(G, i){
   if(G.step !== "guess" || G.win || i < 0 || i > 24 || G.found[i]) return "";
   const side = G.giver, k = duoKey(G, side)[i], nn = side === "A" ? G.na : G.nb, W2 = G.w[i];
   if(nn[i]) return "";
-  if(k === "a"){ G.win = "lose"; G.why = "a"; G.log = tr(W2 + " : un assassin ! Mission ratée.", W2 + ": an assassin! Mission failed."); return "a"; }
+  if(k === "a"){ G.win = "lose"; G.why = "a"; G.log = B(LF(W2) + " : un assassin ! Mission ratée.", LE(W2) + ": an assassin! Mission failed."); return "a"; }
   if(k === "g"){
     G.found[i] = 1; G.got++; G.ok++;
-    if(duoLeft(G) <= 0){ G.win = "win"; G.why = "all"; G.log = tr("Les 15 agents sont trouvés : mission réussie !", "All 15 agents found: mission accomplished!"); return "own"; }
-    G.log = tr(W2 + " : agent trouvé ! Continue ou arrête-toi.", W2 + ": agent found! Keep going or stop."); return "own";
+    if(duoLeft(G) <= 0){ G.win = "win"; G.why = "all"; G.log = B("Les 15 agents sont trouvés : mission réussie !", "All 15 agents found: mission accomplished!"); return "own"; }
+    G.log = B(LF(W2) + " : agent trouvé ! Continue ou arrête-toi.", LE(W2) + ": agent found! Keep going or stop."); return "own";
   }
-  nn[i] = 1; G.log = tr(W2 + " : un passant. Fin du tour.", W2 + ": a bystander. Turn over."); duoEnd(G); return "n";
+  nn[i] = 1; G.log = B(LF(W2) + " : un passant. Fin du tour.", LE(W2) + ": a bystander. Turn over."); duoEnd(G); return "n";
 }
 function duoEnd(G){
   if(G.win) return;
   G.turns--; G.clue = null; G.got = 0; G.step = "clue";
-  if(G.turns <= 0){ G.win = "lose"; G.why = "time"; G.log += tr(" Plus de tours : mission ratée.", " Out of turns: mission failed."); return; }
+  if(G.turns <= 0){ G.win = "lose"; G.why = "time"; G.log = B(LF(G.log) + " Plus de tours : mission ratée.", LE(G.log) + " Out of turns: mission failed."); return; }
   // On alterne ; celui dont tous les agents sont trouvés ne donne plus d'indice.
   const nx = G.giver === "A" ? "B" : "A";
   G.giver = duoLeftFor(G, nx) > 0 ? nx : G.giver;
@@ -162,7 +168,8 @@ const CSS = '<style data-ag>' +
 const KC = { r: "kr", b: "kb", a: "ka", p: "kp", n: "", g: "kg" };
 // Grille. view : { key (tableau de couleurs à montrer en indice, ou null), votes: {i: n}, sel: i, can: i => bool }
 function gridHTML(G, view){
-  return '<div class="ag-grid">' + G.w.map((w, i) => {
+  return '<div class="ag-grid">' + G.w.map((w0, i) => {
+    const w = SB.u.L(w0);
     let cls = "ag-c", rv = "";
     if(G.mode === "duo"){ if(G.found[i]) rv = "g"; else if(view.side && (view.side === "A" ? G.na : G.nb)[i]) rv = "n"; else if(G.na[i] || G.nb[i]) cls += " dim"; }
     else rv = G.rev[i];
@@ -193,7 +200,7 @@ function readClue(r, G, mime, n){
   const w = clean((r.querySelector("#ag-cw") || {}).value || "", 24).trim();
   if(!w) return err(tr("Écris ton indice.", "Type your clue."));
   if(/\s/.test(w.replace(/[-']/g, ""))) return err(tr("Un seul mot !", "Just one word!"));
-  const lw = w.toLowerCase(), hit = G.w.some((x, i) => { const open = G.mode === "duo" ? !G.found[i] : !G.rev[i]; return open && String(x).toLowerCase() === lw; });
+  const lw = w.toLowerCase(), hit = G.w.some((x, i) => { const open = G.mode === "duo" ? !G.found[i] : !G.rev[i]; return open && [LF(x), LE(x)].some(y => String(y).toLowerCase() === lw); });
   if(hit) return err(tr("Ce mot est dans la grille : interdit !", "That word is on the grid: not allowed!"));
   return { w, n, m: 0 };
 }
@@ -278,7 +285,7 @@ SB.register({
       if(g && g.g != null){
         const before = G.found.filter(Boolean).length;
         let res = "";
-        if(+g.g === -1){ if(G.got > 0){ G.log = tr("Tour terminé.", "Turn over."); duoEnd(G); res = "stop"; } }
+        if(+g.g === -1){ if(G.got > 0){ G.log = B("Tour terminé.", "Turn over."); duoEnd(G); res = "stop"; } }
         else res = duoReveal(G, +g.g);
         if(res === "a") ctx.gage([{ id: gid, ev: "assassin" }], s.k + ":a");
         if((res === "n" || res === "stop" || (G.win && res === "own")) && G.ok >= 3) ctx.gage([{ id: giverId, ev: "indice" }], s.k + ":i");
@@ -300,7 +307,7 @@ SB.register({
         G.clue = { w: clean(i.c.w || "", 24), n: Math.max(0, Math.min(10, +i.c.n || 0)), m: i.c.m ? 1 : 0 }; G.step = "guess"; G.log = "";
         ctx.set(Object.assign(G, { k: ctx.rid(), endAt: G.tw === "chrono" ? ctx.now() + 60000 : 0 }));
       } else if(G.tw === "flash" && G.endAt && ctx.now() > G.endAt){
-        G.log = tr("Trop tard ! Les " + TN(t) + " passent leur tour.", "Too late! " + TN(t) + " lose their turn."); endTurn(G); afterTurn(ctx, G, s);
+        G.log = B("Trop tard ! Les " + TNf(t) + " passent leur tour.", "Too late! " + TNe(t) + " lose their turn."); endTurn(G); afterTurn(ctx, G, s);
       }
       return;
     }
@@ -312,10 +319,10 @@ SB.register({
     if(!all && !late) return;
     const cnt = {}; Object.keys(votes).forEach(id => { cnt[votes[id]] = (cnt[votes[id]] || 0) + 1; });
     const ks = Object.keys(cnt), mx = Math.max(0, ...ks.map(k => cnt[k])), top = ks.filter(k => cnt[k] === mx);
-    if(!ks.length){ G.log = tr("Personne n'a voté : fin du tour.", "Nobody voted: turn over."); endTurn(G); afterTurn(ctx, G, s); return; }
-    if(top.length > 1){ ctx.set({ log: tr("Égalité entre plusieurs mots : revotez !", "Tie between several words: vote again!"), k: ctx.rid(), endAt: G.tw === "chrono" ? ctx.now() + 30000 : 0 }); return; }
+    if(!ks.length){ G.log = B("Personne n'a voté : fin du tour.", "Nobody voted: turn over."); endTurn(G); afterTurn(ctx, G, s); return; }
+    if(top.length > 1){ ctx.set({ log: B("Égalité entre plusieurs mots : revotez !", "Tie between several words: vote again!"), k: ctx.rid(), endAt: G.tw === "chrono" ? ctx.now() + 30000 : 0 }); return; }
     const pickI = +top[0];
-    if(pickI === -1){ G.log = tr("Les " + TN(t) + " s'arrêtent là.", TN(t) + " stop here."); endTurn(G); }
+    if(pickI === -1){ G.log = B("Les " + TNf(t) + " s'arrêtent là.", TNe(t) + " stop here."); endTurn(G); }
     else {
       const res = teamReveal(G, pickI);
       if(res === "other") ctx.gage(agents.map(id => ({ id, ev: "mauvais" })), s.k + ":m");
@@ -344,7 +351,7 @@ SB.register({
         const go = r.querySelector("[data-go]"); if(go) go.addEventListener("click", () => ctx.act(c => {
           const st = c.s, cnt = t => c.ids.filter(id => st.teams[id] === t).length;
           if(cnt("r") < 2 || cnt("b") < 2){ SB.u.toast(tr("Il faut au moins 2 joueurs par équipe.", "Each team needs at least 2 players.")); return; }
-          c.set({ phase: "play", log: tr("Les " + TN(st.start) + " commencent : ils ont 9 mots à trouver.", TN(st.start) + " go first: they have 9 words to find."), k: c.rid() });
+          c.set({ phase: "play", log: B("Les " + TNf(st.start) + " commencent : ils ont 9 mots à trouver.", TNe(st.start) + " go first: they have 9 words to find."), k: c.rid() });
         }));
       });
       return;
@@ -356,7 +363,7 @@ SB.register({
     const tm = myT ? '<span class="pill" style="background:' + TEAMC(myT) + '; color:#fff">' + TN(myT) + (isSpy ? " · " + tr("espion", "spymaster") : "") + "</span>" : "";
     let mid = "", dockH = "";
     if(G.win){
-      mid = '<div class="ag-clue" style="color:' + TEAMC(G.win) + '">' + tr("Les " + TN(G.win) + " gagnent !", TN(G.win) + " win!") + "<small>" + esc(G.log) + "</small></div>";
+      mid = '<div class="ag-clue" style="color:' + TEAMC(G.win) + '">' + tr("Les " + TN(G.win) + " gagnent !", TN(G.win) + " win!") + "<small>" + esc(SB.u.L(G.log)) + "</small></div>";
       dockH = ctx.isHost ? '<div class="row"><button class="btn ghost" type="button" data-again>' + tr("Nouvelle grille", "New grid") + '</button><button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button></div>" : '<p class="wait">' + tr("L'hôte choisit la suite…", "The host is picking what's next…") + "</p>";
     } else if(G.step === "clue"){
       mid = myTurnSpy ? clueForm(G.tw === "mime") + (G.tw === "flash" ? '<p class="ag-log" data-left>' + left2 + " s</p>" : "") : '<p class="ag-clue" style="font-size:20px">' + tr("L'espion " + TN1(G.turn) + ", " + esc(ctx.name(spyT)) + ", réfléchit…", "The " + TN1(G.turn) + " spymaster, " + esc(ctx.name(spyT)) + ", is thinking…") + "</p>";
@@ -367,7 +374,7 @@ SB.register({
         : '<p class="wait">' + (myT === G.turn && isSpy ? tr("Tes agents cherchent… Pas un mot !", "Your agents are searching… Not a word!") : tr("Les " + TN(G.turn) + " cherchent…", TN(G.turn) + " are searching…")) + "</p>";
     }
     const view = { key: isSpy || G.win ? G.key : null, votes: myT === G.turn || isSpy ? votes : null, sel: agent ? myVote : null, can: i => agent && !G.rev[i] };
-    screen(root, "p" + s.k + G.step + G.win + myVote + JSON.stringify(votes) + isSpy + JSON.stringify(G.spy), CSS + (tm ? '<div style="display:flex; justify-content:space-between; align-items:center">' + tm + "</div>" : "") + SB.u.twistHTML(T) + scoreHTML(G) + mid + gridHTML(G, view) + (isSpy ? legend(false) : "") + '<p class="ag-log">' + esc(G.win ? "" : G.log || "") + "</p>" +
+    screen(root, "p" + s.k + G.step + G.win + myVote + JSON.stringify(votes) + isSpy + JSON.stringify(G.spy), CSS + (tm ? '<div style="display:flex; justify-content:space-between; align-items:center">' + tm + "</div>" : "") + SB.u.twistHTML(T) + scoreHTML(G) + mid + gridHTML(G, view) + (isSpy ? legend(false) : "") + '<p class="ag-log">' + esc(G.win ? "" : SB.u.L(G.log || "")) + "</p>" +
       SB.u.dock(dockH), r => {
       const cl = r.querySelector("[data-clue]");
       if(cl){ const nGet = bindClue(r); cl.addEventListener("click", () => { const c = readClue(r, G, G.tw === "mime", nGet()); if(!c) return; buzz(12); ctx.send({ c }); cl.disabled = true; cl.textContent = tr("Indice envoyé", "Clue sent"); }); }
@@ -380,7 +387,7 @@ SB.register({
       }));
       const bk = r.querySelector("[data-back]"); if(bk) bk.addEventListener("click", () => ctx.act(c => {
         const st = c.s, w = c.ids.filter(id => st.teams[id] === st.win);
-        c.end({ title: tr("Agents secrets : les " + TN(st.win) + " gagnent", "Secret Agents: " + TN(st.win) + " win"), lines: [w.map(c.name).join(", "), st.log].filter(Boolean), win: w });
+        c.end({ title: B("Agents secrets : les " + TNf(st.win) + " gagnent", "Secret Agents: " + TNe(st.win) + " win"), lines: [w.map(c.name).join(", "), st.log].filter(Boolean), win: w });
       }));
     });
     if(agent){ const tl = ctx.ids.filter(id => s.teams[id] === G.turn && id !== spyT && ctx.here(id)); txt(root, "[data-wait]", tl.filter(id => { const x = ctx.input(id); return x && x.v != null; }).length + " / " + tl.length + tr(" votes", " votes")); }
@@ -442,7 +449,7 @@ SB.register({
       function turnStart(){
         if(G.win){ end(); return; }
         nTurn++; tw = twOn && nTurn > 1 ? SB.u.twist(TWL, { last: tw ? tw.id : "", rate: .3 }) : null; sel1 = null;
-        screen(root, "ts" + gno + ":" + nTurn, head() + '<p class="ag-log">' + esc(G.log || "") + '</p><div class="pass"><span class="eyebrow">' + (G.mode === "duo" ? tr("Donne l'indice", "Gives the clue") : tr("Espion " + TN1(G.turn), TN(G.turn) + " spymaster")) + '</span><div class="who">' + esc(giverName()) + '</div><p class="howto">' + tr("Prends le téléphone, les autres ne regardent pas l'écran.", "Take the phone, nobody else looks at the screen.") + "</p></div>" +
+        screen(root, "ts" + gno + ":" + nTurn, head() + '<p class="ag-log">' + esc(SB.u.L(G.log || "")) + '</p><div class="pass"><span class="eyebrow">' + (G.mode === "duo" ? tr("Donne l'indice", "Gives the clue") : tr("Espion " + TN1(G.turn), TN(G.turn) + " spymaster")) + '</span><div class="who">' + esc(giverName()) + '</div><p class="howto">' + tr("Prends le téléphone, les autres ne regardent pas l'écran.", "Take the phone, nobody else looks at the screen.") + "</p></div>" +
           SB.u.dock('<button class="btn acc" type="button" data-me>' + tr("C'est moi, je regarde la carte", "It's me, show me the map") + "</button>"), r => r.querySelector("[data-me]").addEventListener("click", spyView));
       }
       function spyView(){
@@ -459,7 +466,7 @@ SB.register({
         const duo = G.mode === "duo", can = i => (duo ? !G.found[i] && !(G.giver === "A" ? G.na : G.nb)[i] : !G.rev[i]);
         screen(root, "g" + gno + ":" + nTurn + ":" + (duo ? G.found.join("") + G.na.join("") + G.nb.join("") : G.rev.join(",")) + sel1, head() + clueHTML(G.clue, G) +
           '<p class="howto" style="text-align:center; margin:0">' + (G.mode === "duo" ? tr("Au tour de ", "") : tr("Au tour des ", "")) + esc(guesserLabel()) + (G.mode === "duo" ? tr(" : touche un mot puis « Retourner ».", ": tap a word then “Reveal”.") : tr(" : touchez un mot puis « Retourner ».", ": tap a word then “Reveal”.")) + "</p>" +
-          gridHTML(G, { side: G.giver, sel: sel1, can }) + '<p class="ag-log">' + esc(G.log || "") + "</p>" +
+          gridHTML(G, { side: G.giver, sel: sel1, can }) + '<p class="ag-log">' + esc(SB.u.L(G.log || "")) + "</p>" +
           SB.u.dock('<div class="row"><button class="btn ghost" type="button" data-stop' + (duo && !G.got ? " disabled" : "") + ">" + tr("Fin du tour", "End turn") + '</button><button class="btn acc" type="button" data-rv' + (sel1 == null ? " disabled" : "") + ">" + tr("Retourner", "Reveal") + "</button></div>"), r => {
           r.querySelectorAll(".ag-grid [data-i]").forEach(b => b.addEventListener("click", () => { const i = +b.dataset.i; sel1 = sel1 === i ? null : i; buzz(6); guess(); }));
           r.querySelector("[data-rv]").addEventListener("click", () => {
@@ -470,8 +477,8 @@ SB.register({
           });
           r.querySelector("[data-stop]").addEventListener("click", () => {
             const t = G.turn;
-            if(duo){ G.log = tr("Tour terminé.", "Turn over."); if(G.ok >= 3) giveIndice(); duoEnd(G); }
-            else { G.log = tr("Les " + TN(t) + " s'arrêtent là.", TN(t) + " stop here."); if(G.ok >= 3) giveIndice(); endTurn(G); }
+            if(duo){ G.log = B("Tour terminé.", "Turn over."); if(G.ok >= 3) giveIndice(); duoEnd(G); }
+            else { G.log = B("Les " + TNf(t) + " s'arrêtent là.", TNe(t) + " stop here."); if(G.ok >= 3) giveIndice(); endTurn(G); }
             turnEnd();
           });
         });
@@ -496,7 +503,7 @@ SB.register({
         const duo = G.mode === "duo", w = duo ? (G.win === "win" ? names.slice() : []) : names.filter(n => teams[n] === G.win);
         if(api.win){ let tries = 0; const win = () => { if(document.getElementById("gage-sheet") && tries++ < 1200) setTimeout(win, 500); else api.win(w); }; win(); }
         const title = duo ? (G.win === "win" ? tr("Mission réussie !", "Mission accomplished!") : tr("Mission ratée…", "Mission failed…")) : tr("Les " + TN(G.win) + " gagnent !", TN(G.win) + " win!");
-        screen(root, "end" + gno, CSS + '<div class="ag-clue" style="color:' + (duo ? (G.win === "win" ? "#2fa860" : "#ff5d6c") : TEAMC(G.win)) + '">' + title + "<small>" + esc(G.log || "") + "</small></div>" +
+        screen(root, "end" + gno, CSS + '<div class="ag-clue" style="color:' + (duo ? (G.win === "win" ? "#2fa860" : "#ff5d6c") : TEAMC(G.win)) + '">' + title + "<small>" + esc(SB.u.L(G.log || "")) + "</small></div>" +
           '<span class="eyebrow">' + tr("La carte complète", "The full map") + "</span>" + (duo
             ? gridHTML(G, { key: G.ka.map((k, i) => (k === "g" || G.kb[i] === "g" ? "g" : k === "a" || G.kb[i] === "a" ? "a" : "n")), side: "" })
             : gridHTML(G, { key: G.key })) + legend(duo) +
@@ -532,7 +539,7 @@ function renderDuo(ctx, root){
   const myKey = side ? duoKey(s, side) : null;
   let mid = "", dockH = "";
   if(s.win){
-    mid = '<div class="ag-clue" style="color:' + (s.win === "win" ? "#2fa860" : "#ff5d6c") + '">' + (s.win === "win" ? tr("Mission réussie !", "Mission accomplished!") : tr("Mission ratée…", "Mission failed…")) + "<small>" + esc(s.log || "") + "</small></div>";
+    mid = '<div class="ag-clue" style="color:' + (s.win === "win" ? "#2fa860" : "#ff5d6c") + '">' + (s.win === "win" ? tr("Mission réussie !", "Mission accomplished!") : tr("Mission ratée…", "Mission failed…")) + "<small>" + esc(SB.u.L(s.log || "")) + "</small></div>";
     dockH = ctx.isHost ? '<div class="row"><button class="btn ghost" type="button" data-again>' + tr("Nouvelle grille", "New grid") + '</button><button class="btn acc" type="button" data-back>' + tr("Retour au salon", "Back to the room") + "</button></div>" : '<p class="wait">' + tr("L'hôte choisit la suite…", "The host is picking what's next…") + "</p>";
   } else if(s.step === "clue"){
     mid = iGive ? clueForm(s.tw === "mime") : '<p class="ag-clue" style="font-size:20px">' + tr(esc(ctx.name(giverId)) + " cherche un indice…", esc(ctx.name(giverId)) + " is thinking of a clue…") + "</p>";
@@ -543,7 +550,7 @@ function renderDuo(ctx, root){
   }
   const nn = s.giver === "A" ? s.na : s.nb;
   const view = { key: s.win ? s.ka.map((k, i) => (k === "g" || s.kb[i] === "g" ? "g" : k === "a" || s.kb[i] === "a" ? "a" : "n")) : myKey, side: s.giver, can: i => iGuess && !s.found[i] && !nn[i] };
-  screen(root, "d" + s.k + s.step + s.win, CSS + SB.u.twistHTML(T) + duoHead(s) + mid + gridHTML(s, view) + (side ? '<p class="sm" style="text-align:center; margin:0">' + tr("Les couleurs en bas des mots : TA carte secrète.", "The colors under the words: YOUR secret map.") + "</p>" + legend(true) : "") + '<p class="ag-log">' + esc(s.win ? "" : s.log || "") + "</p>" + SB.u.dock(dockH), r => {
+  screen(root, "d" + s.k + s.step + s.win, CSS + SB.u.twistHTML(T) + duoHead(s) + mid + gridHTML(s, view) + (side ? '<p class="sm" style="text-align:center; margin:0">' + tr("Les couleurs en bas des mots : TA carte secrète.", "The colors under the words: YOUR secret map.") + "</p>" + legend(true) : "") + '<p class="ag-log">' + esc(s.win ? "" : SB.u.L(s.log || "")) + "</p>" + SB.u.dock(dockH), r => {
     const cl = r.querySelector("[data-clue]");
     if(cl){ const nGet = bindClue(r); cl.addEventListener("click", () => { const c = readClue(r, s, s.tw === "mime", nGet()); if(!c) return; buzz(12); ctx.send({ c }); cl.disabled = true; cl.textContent = tr("Indice envoyé", "Clue sent"); }); }
     r.querySelectorAll(".ag-grid [data-i]").forEach(b => b.addEventListener("click", () => { if(!iGuess) return; buzz(8); ctx.send({ g: +b.dataset.i }); }));
@@ -553,7 +560,7 @@ function renderDuo(ctx, root){
       c.set(Object.assign(newDuoGame(words), { phase: "play", pa: c.s.pb, pb: c.s.pc || c.s.pa, pc: c.s.pc ? c.s.pa : "", tw: "", n: 1, k: c.rid() }));
     }));
     const bk = r.querySelector("[data-back]"); if(bk) bk.addEventListener("click", () => ctx.act(c => {
-      c.end({ title: c.s.win === "win" ? tr("Agents secrets (Duo) : mission réussie", "Secret Agents (Duo): mission accomplished") : tr("Agents secrets (Duo) : mission ratée", "Secret Agents (Duo): mission failed"), lines: [c.s.log], win: c.s.win === "win" ? c.ids.slice() : [] });
+      c.end({ title: c.s.win === "win" ? B("Agents secrets (Duo) : mission réussie", "Secret Agents (Duo): mission accomplished") : B("Agents secrets (Duo) : mission ratée", "Secret Agents (Duo): mission failed"), lines: [c.s.log], win: c.s.win === "win" ? c.ids.slice() : [] });
     }));
   });
 }

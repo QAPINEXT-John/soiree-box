@@ -1,15 +1,18 @@
 {
- "version": "4.41.1",
+ "version": "4.42.0",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Course de défis : l'ancien thème « Soirée » rejoint « Hot & Hard ». Chaque jeu n'a plus qu'une seule catégorie 18+"
+  "En salon, chacun garde sa langue : un joueur en anglais voit tout en anglais (cartes, questions, mots, messages, fin de partie) même si l'hôte est en français, et inversement",
+  "Téléphone verrouillé ou appli en arrière-plan : le salon te garde ta place pendant 10 minutes (l'hôte aussi) au lieu de quelques secondes",
+  "Reconnexion : si l'appli se ferme ou que le réseau coupe, le bouton « Revenir dans le salon » sur l'accueil te remet dans la partie en cours, à ta place. L'hôte qui revient reprend la main",
+  "Listes anglaises réalignées dans plusieurs jeux (Agents secrets, Débat, 7 secondes, Je n'ai jamais, Punchline…) pour que tout le monde voie la même carte"
  ],
  "files": {
   "core.js": {
-   "h": "724faa725db2e42e00584aeb200fd18a18e52f290ba99b65c279f5c32441c81b",
-   "s": 311876
+   "h": "ca44be33194de16e8b67610ad24d8ae6f6e6096e7e42b90bafb8332882aa48c3",
+   "s": 316290
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -84,132 +87,132 @@
    "s": 6236
   },
   "games/actionverite.js": {
-   "h": "43da1a107f74d53e35526a33a091a34fa0fa4be4a7437a9b7a28559999012690",
-   "s": 107865
+   "h": "d00c7b001f338796c56d6e4b1372b304311a9b1c24b371afda4bf04401a1f7f1",
+   "s": 108717
   },
   "games/agents.js": {
-   "h": "1f0a97b36492a874fe5ca95b3ecb2ffa6eb0c67241f4c047a9bdb43f781879ba",
-   "s": 65590
+   "h": "e410f97b1a2124bf13e2b7a51614c7c273332fdabc80ef4a808151b0fea3946f",
+   "s": 67028
   },
   "games/blindtest.js": {
-   "h": "3c5224ed413afc55fd9fe1507065ce8898315e077977efba1de939a7dc830d99",
-   "s": 63400
+   "h": "917b2f87b12a26b09fcde679ecd5febbb66b8a51f79bc7b24d48f0f876ea874d",
+   "s": 63699
   },
   "games/bombe.js": {
-   "h": "5ccb177ad96736a458c3e846b4d86004f3ecf96f36fc5bed8eea2052d2c5e0c6",
-   "s": 34550
+   "h": "15fcc25a6c97ce08b70ede5b2005083be145069153ecdb083e51ab4eb0b5d909",
+   "s": 35016
   },
   "games/course.js": {
-   "h": "a47b2314f48dcbe9cd50f0ec6661bc27e988fbec678eab3ac76c16f18b456c55",
-   "s": 50954
+   "h": "806704dc71c6e25b35cb66a017f26a8f3cbb02e81cf54365adbbbe2e88b8a612",
+   "s": 51452
   },
   "games/debat.js": {
-   "h": "344552a82c30a60feb3579d695eeefa1aebe6315b55be8c6978f8777b7300b27",
-   "s": 51817
+   "h": "c0c08b6371d5269eb6a5f9a46c56a83827e21b55bbbee0b0ad1329770e313517",
+   "s": 52879
   },
   "games/defis.js": {
-   "h": "f7e7be6d2689b67674befc52e73a53a54125315fef2280e37db4406f0cedbd83",
-   "s": 66943
+   "h": "5b0ede9b0610e8c6682706e04822d4e39a282ebdf94a47147e4b347fbb857c67",
+   "s": 68346
   },
   "games/dernierecarte.js": {
-   "h": "b1a8998694d3a8b6f506b287d7c95a19b1f63bbf3c137b98ce5af564f4a58c69",
-   "s": 64167
+   "h": "1a056d0004b405f8a2dcc207ed33dce7c8aa5d690378f3769ff41b85d563c24b",
+   "s": 65084
   },
   "games/dixmais.js": {
-   "h": "39546e17c4a85bda0ce6ef29cde5563bf1e8a1826acb170da00d153357fc3c38",
-   "s": 60140
+   "h": "397c9aea78a2845b661020b7901f019134247e2deef731a194ca6abe3dd232f6",
+   "s": 61312
   },
   "games/grille.js": {
-   "h": "08544ed3bc1d7c9e0dc89433cbd0b5ef52e730371704a4d722e58b0f097799db",
-   "s": 53428
+   "h": "c5e9c514807a209ad46bd7ef5866da05272e6c5826aca01387ef98b8bb67ad89",
+   "s": 53691
   },
   "games/jamais.js": {
-   "h": "1310894e94c98c76cf7fbeed4b03c39be4db2be35c14eff8c9c976a1a87af3d0",
-   "s": 46520
+   "h": "3c684a8c3381ae452ad34b9241ff5a5befd91c29bb80c0c80499ea4bc3698975",
+   "s": 47191
   },
   "games/killer.js": {
-   "h": "0b33c0208fed32eab9d9c7a3823b7e8055d14ee357786d455038de9b7724d2da",
-   "s": 66635
+   "h": "8072a0f4fcdf6936d03fc88ed91770baa72a12421d8aaf1b1d4b0d4226ace0a7",
+   "s": 67087
   },
   "games/kink.js": {
-   "h": "b5dad12fd11d49ea7f5d5ca89af4030b48450134419471e228f29f1d31be4ada",
-   "s": 28404
+   "h": "ab31c157ed8224e184bad7c762ec66d8225c4ac9efb71b8bdba352bcfeb5b2a6",
+   "s": 28407
   },
   "games/loupgarou.js": {
-   "h": "46e7b353a1efa31310b9a24498fb1c9dc5a2b3c11fa42697134a5e7c82ee0c09",
-   "s": 70884
+   "h": "cb338450702637f5c0ecdbdc9be342b09610ee919d5e517a400c3fa3fd25467d",
+   "s": 71128
   },
   "games/menteurs.js": {
-   "h": "7c78a7248f52bbd85a5ff287689185e8ee575c1f83af36416c38897ddacb2efa",
-   "s": 44662
+   "h": "7155b7616ac72d2fedfd87681cc42b6603692577fb4f28d333730837fe501173",
+   "s": 45360
   },
   "games/motsint.js": {
-   "h": "0da506c442106d3e82867950d6ff587019659d6a64e9b7cbd27e99fb1690b268",
-   "s": 46981
+   "h": "53e524d2c45219ed1a55e9f5ff36b21eb0a77aae2fd2451e64084c560cf604cc",
+   "s": 47669
   },
   "games/note10.js": {
-   "h": "c8dbb60913bbdbf4f46b4b8a2dc90e7f2d1dd6d5cbe76cf482139ca0af5452bf",
-   "s": 135071
+   "h": "d12c189f6665d10ddda0967da21123083cb2f6d4a5e30226e58c88546c959cb1",
+   "s": 136358
   },
   "games/photoroulette.js": {
-   "h": "e30d23bed5605a39e74c98e6f4fc02fbabe0f9214013790d7d843c80175fc4ae",
-   "s": 45579
+   "h": "25e33d3b0bbcda60ec86f17da36f324152536abb844a1ff2a206e028deb2682c",
+   "s": 45593
   },
   "games/pmu.js": {
-   "h": "bba0f96d0d75dd8b511419b0a1329e4284cc933a791198c931419c37ef80e9a4",
-   "s": 29621
+   "h": "7a1233be94204ed8b1dfc41f06e95b57de878672d3567c9cc22a56a62897b065",
+   "s": 30002
   },
   "games/priorites.js": {
-   "h": "5f21869466d69a3b33d780d62c98b7aec61390564feccd450021cdf6fa3afd3a",
-   "s": 40720
+   "h": "b83727661ff7af9beb2f8b61697d839e6ff68f69a2e655bb313608401365d479",
+   "s": 40962
   },
   "games/puissance4.js": {
-   "h": "afe8f4ba7763f3247ae348e05f81892cf32e687bac56b3614416e971bdb508af",
-   "s": 31571
+   "h": "38d5016a22dcf6bd5fa3ea60f0b909ea4d052aaa5e8cc23cb664c96d0a7679af",
+   "s": 31798
   },
   "games/punchline.js": {
-   "h": "61e7ceaf45b8c2f0e806e0b5bbe85729fc6d37aa2fbe3c017ea022215bc2bcb1",
-   "s": 114001
+   "h": "d33f8a3ab4bcb4aae4d886a7e41b1d8c14c0ff4739741771d263de9e0e8374d2",
+   "s": 114873
   },
   "games/purete.js": {
-   "h": "2a7f1325fbc1dddf5fb9e8b21a98ab7601ad90af826377480299b582e24ab75e",
-   "s": 72219
+   "h": "ca4e526fb48a2f92277cc7d3327574d28ae34ac1aeaefbe234dca882d437b3ae",
+   "s": 72780
   },
   "games/quiadit.js": {
-   "h": "a5c465ebf6ccd15e7464ea72b05cc12bc19b2792c55779a4692c2e6a55012ef0",
-   "s": 50210
+   "h": "16ebf81b4bca6a30abbfe818c023697270df9d8e23e43f175cb1252fcce8a73f",
+   "s": 51430
   },
   "games/quiplus.js": {
-   "h": "362b4abab3c6d3b72a7f0158f1caddcc0e670364fb34b3bd99ee1c738c68f587",
-   "s": 42729
+   "h": "d0dba28722b14ccd415dc0b8f939ab03137af2d2e03faf66dcd4613b39147ade",
+   "s": 43342
   },
   "games/quiz-data.js": {
    "h": "a1f193364395541fe126dc79a6248992cb1bd6461ddd318f3182bc0ce29e2354",
    "s": 123463
   },
   "games/quiz.js": {
-   "h": "c5da48a439e80be5fdcaf8b70c90ec647a72a16b03fb611eb40bef66690e8ef8",
-   "s": 41375
+   "h": "53b6d9045d7f12a04659ff99c770e5ef947a42be6d4383690d2c44a8426fa724",
+   "s": 42144
   },
   "games/redflag.js": {
-   "h": "a4e87589b2cca3027d9d32448f44eaac6991dae6a23f230dfff076ae4131b98a",
-   "s": 66376
+   "h": "f5c968f4a12bd1affc05cb359bf1b183e548d80f60950e60fa8842ed42c1ec32",
+   "s": 67450
   },
   "games/rougenoir.js": {
-   "h": "bf563fe60276463ab48ab6714857c5b9fefe510b48516bd46ded338788e5272f",
-   "s": 27096
+   "h": "006ba105cdc19bb6ad18b47b232ccbd9f09589a41cc3d9a529cb3f22f60d345c",
+   "s": 27287
   },
   "games/sept.js": {
-   "h": "cc4b719ae1d37f5d1de059d4105da493cb964564bd2088c0e2817f218f377fdd",
-   "s": 48328
+   "h": "02c6e697ed851c3746e30bdf7827afb4bccbb54ccea984d8601e286108fc17fe",
+   "s": 49261
   },
   "games/tupref.js": {
-   "h": "427e6fcdd30b0b9de77b20ecb927f2acd0ae206f83742edb37592e52d95cdf97",
-   "s": 45675
+   "h": "d15fa7d08969d853402fd4c874cda8f86b61c663dd744ec94dc068e7ca4865eb",
+   "s": 46428
   },
   "games/undercover.js": {
-   "h": "4a9a62141945ddb9d68975e719a9d3fc1b2ce85539aa2c08f76045084b482c5d",
-   "s": 50530
+   "h": "342ce4c2d6504934a402961bb6054ac5e8526043a481ebcfc08b5db377f9d35a",
+   "s": 51555
   },
   "icons/apple-touch-icon.png": {
    "h": "c6a8d73afcfb5db146ca68617cea122c1b06465d3a6bde68efe2ecc2d8ece998",
