@@ -1,14 +1,14 @@
 {
- "version": "4.43.0",
+ "version": "4.43.1",
  "apk": 36,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Nouveau jeu : La Coupe du Roi (King's Cup). Chacun tire une carte, chaque valeur déclenche une règle : cascade, pour toi / pour moi, au sol, maître du pouce, je n'ai jamais, au ciel, partenaire, rimes, catégories, nouvelle règle, maître des questions. Le 4e roi boit la coupe. En salon ou sur un seul téléphone, avec ou sans alcool, option Hot & Hard"
+  "King's Cup : le jeu s'appelle King's Cup dans toutes les langues, et les cartes ont un nouveau look (vraies cartes à jouer avec points et figures couronnées, dos bordeaux et or, carte qui se retourne quand on la tire)"
  ],
  "files": {
   "core.js": {
-   "h": "2622f5000755d4ac35060ef4b724d1048040f497526793f6d15a73495be956c8",
+   "h": "62ec25009d3797e51d63bade90be2dceb3f2c1bc545c2291d4a6d6ff20af7976",
    "s": 316310
   },
   "firebase-app-compat.js": {
@@ -132,8 +132,8 @@
    "s": 67087
   },
   "games/kingscup.js": {
-   "h": "4e0d86e139ac2f8ea9cda72b12ac8d3acaedd8c0e6fb8c94076ca66340522c4b",
-   "s": 28605
+   "h": "86f465229916255d04c659fcff3990736058772da32abafbc2c094043cdabedf",
+   "s": 32119
   },
   "games/kink.js": {
    "h": "ab31c157ed8224e184bad7c762ec66d8225c4ac9efb71b8bdba352bcfeb5b2a6",

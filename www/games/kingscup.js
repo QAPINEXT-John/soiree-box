@@ -1,4 +1,4 @@
-/* La Coupe du Roi (King's Cup) : on tire les cartes une par une, chaque valeur déclenche une règle.
+/* King's Cup : on tire les cartes une par une, chaque valeur déclenche une règle.
    Le 4e roi boit la coupe (ou prend le gage XXL en mode sans alcool) et la partie s'arrête.
    Toute la logique est dans un « réducteur » pur (init / draw / resolve / next) partagé par le salon et le
    mode un seul téléphone. Les textes des règles sont calculés à l'affichage, dans la langue de chaque téléphone :
@@ -36,8 +36,8 @@ function rule(card, o){
     case "10": return { t: tr("Catégories", "Categories"), d: tr(who + " choisit une catégorie (" + (hot ? "positions, lieux insolites, sex-toys…" : "marques de bière, pays, Pokémon…") + "). Chacun à son tour cite un élément : le premier (la première) qui sèche " + V("boit", "prend un gage") + ".", who + " picks a category (" + (hot ? "positions, wild places, sex toys…" : "beer brands, countries, Pokémon…") + "). Everyone in turn names one: the first to dry up " + V("drinks", "takes a forfeit") + ".") };
     case "J": return { t: tr("Nouvelle règle", "New rule"), d: tr(who + " invente une règle valable toute la partie (ex. : interdit de dire « oui »). Qui l'oublie " + V("boit", "prend un gage") + ".", who + " makes up a rule for the whole game (e.g. no saying \"yes\"). Whoever forgets " + V("drinks", "takes a forfeit") + ".") };
     case "Q": return { t: tr("Maître des questions", "Question master"), d: tr("Jusqu'à la prochaine dame, quiconque répond à une question " + de(who) + " " + V("boit", "prend un gage") + ".", "Until the next queen, anyone who answers one of " + who + "'s questions " + V("drinks", "takes a forfeit") + ".") };
-    case "K": return o.kings >= 4 ? { t: tr("La coupe du roi", "The King's Cup"), d: h ? tr("4e roi : " + who + " boit la coupe du roi !", "4th king: " + who + " drinks the King's Cup!") : tr("4e roi : " + who + " prend le gage XXL de la coupe !", "4th king: " + who + " takes the cup's XXL forfeit!") }
-      : { t: tr("Roi n° " + o.kings, "King no. " + o.kings), d: h ? tr(who + " verse un peu de son verre dans la coupe du roi. Au 4e roi, on la boit.", who + " pours a little of their drink into the King's Cup. The 4th king drinks it.") : tr(who + " ajoute un gage à la coupe. Au 4e roi, on le prend.", who + " adds a forfeit to the cup. The 4th king takes it.") };
+    case "K": return o.kings >= 4 ? { t: "King's Cup", d: h ? tr("4e roi : " + who + " boit la King's Cup !", "4th king: " + who + " drinks the King's Cup!") : tr("4e roi : " + who + " prend le gage XXL de la coupe !", "4th king: " + who + " takes the cup's XXL forfeit!") }
+      : { t: tr("Roi n° " + o.kings, "King no. " + o.kings), d: h ? tr(who + " verse un peu de son verre dans la King's Cup. Au 4e roi, on la boit.", who + " pours a little of their drink into the King's Cup. The 4th king drinks it.") : tr(who + " ajoute un gage à la coupe. Au 4e roi, on le prend.", who + " adds a forfeit to the cup. The 4th king takes it.") };
   }
   return { t: "", d: "" };
 }
@@ -85,17 +85,44 @@ function next(st){
 /* ---------- Affichage commun ---------- */
 const CSS = '<style>' +
   '.kc-top{display:flex; justify-content:space-between; align-items:center; font-weight:800; color:var(--muted); font-size:13px}.kc-top b{color:var(--ink)}' +
-  '.kc-card{align-self:center; width:150px; height:210px; border-radius:18px; background:#fbf7ef; color:#14101a; display:flex; flex-direction:column; justify-content:space-between; padding:12px 14px; box-shadow:0 10px 30px rgba(0,0,0,.35); animation:kcIn .35s ease-out}' +
-  '.kc-card.red{color:#d6213b}.kc-card .c{font-family:var(--f-disp); font-size:30px; line-height:1}.kc-card .m{font-size:64px; text-align:center; line-height:1}.kc-card .c.b{align-self:flex-end; transform:rotate(180deg)}' +
-  '.kc-back{align-self:center; width:150px; height:210px; border-radius:18px; background:repeating-linear-gradient(45deg, var(--acc) 0 10px, transparent 10px 20px), var(--card); border:3px solid var(--acc)}' +
-  '@keyframes kcIn{from{transform:rotateY(90deg) scale(.9); opacity:.2}to{transform:none; opacity:1}}' +
+  // Cartes : face façon carte à jouer (index dans les coins, figures de points, figures couronnées), dos bordeaux et or avec couronne.
+  '.kc-stage{align-self:center; width:160px; height:224px; perspective:900px}' +
+  '.kc-flip{position:relative; width:100%; height:100%; transform-style:preserve-3d}.kc-flip.go{animation:kcFlip .55s cubic-bezier(.2,.7,.2,1) both}@keyframes kcFlip{from{transform:rotateY(180deg)}to{transform:none}}' +
+  '.kc-face,.kc-bk{position:absolute; inset:0; border-radius:16px; backface-visibility:hidden; -webkit-backface-visibility:hidden; box-shadow:0 14px 34px rgba(0,0,0,.45), 0 2px 0 rgba(255,255,255,.06) inset}' +
+  '.kc-bk{transform:rotateY(180deg)}.kc-stage.back .kc-bk{transform:none}' +
+  '.kc-face{background:#fffdf7; color:#1b1726; border:1px solid rgba(0,0,0,.08)}.kc-face.red{color:#c8102e}' +
+  '.kc-ix{position:absolute; display:flex; flex-direction:column; align-items:center; line-height:.95; font-family:var(--f-disp); font-weight:800}.kc-ix b{font-size:22px; letter-spacing:-.04em}.kc-ix i{font-style:normal; font-size:17px}' +
+  '.kc-ix.tl{top:9px; left:10px}.kc-ix.br{bottom:9px; right:10px; transform:rotate(180deg)}' +
+  '.kc-pips{position:absolute; inset:36px 50px}.kc-pips i{position:absolute; font-style:normal; font-size:22px; line-height:1; transform:translate(-50%,-50%)}.kc-pips i.dn{transform:translate(-50%,-50%) rotate(180deg)}' +
+  '.kc-ace{position:absolute; inset:0; display:grid; place-items:center; font-size:84px; line-height:1}' +
+  '.kc-fig{position:absolute; inset:32px 26px; border-radius:10px; border:2px solid currentColor; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; background:repeating-linear-gradient(135deg, rgba(201,151,0,.10) 0 6px, transparent 6px 12px)}' +
+  '.kc-fig svg{width:58px; height:44px; color:#c99700}.kc-fig b{font-family:var(--f-disp); font-size:46px; line-height:1}.kc-fig i{font-style:normal; font-size:20px}' +
+  '.kc-bk{background:radial-gradient(circle at 50% 50%, #4a1328 0 34%, transparent 35%), repeating-linear-gradient(45deg, rgba(255,204,61,.16) 0 2px, transparent 2px 13px), repeating-linear-gradient(-45deg, rgba(255,204,61,.16) 0 2px, transparent 2px 13px), #2b0c1a; border:3px solid #ffcc3d; display:grid; place-items:center}' +
+  '.kc-bk::before{content:""; position:absolute; inset:7px; border-radius:11px; border:1.5px solid rgba(255,204,61,.55)}' +
+  '.kc-bk svg{width:64px; height:50px; color:#ffcc3d; filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}' +
   '.kc-rule{text-align:center; display:flex; flex-direction:column; gap:6px}.kc-rule b{font-family:var(--f-disp); font-size:26px}.kc-rule p{margin:0; color:var(--ink); font-size:16px; line-height:1.35}' +
   '.kc-kings{display:flex; gap:6px; justify-content:center}.kc-kings i{width:26px; height:26px; border-radius:8px; border:2px solid var(--line); display:grid; place-items:center; font-style:normal; font-weight:800; font-size:13px; color:var(--muted)}.kc-kings i.on{background:var(--acc); border-color:var(--acc); color:var(--on-acc)}' +
   '.kc-pp{display:flex; flex-wrap:wrap; gap:8px; justify-content:center}.kc-pp button{min-height:44px; padding:0 16px; border-radius:99px; border:1.5px solid var(--line); background:var(--card); color:var(--ink); font-weight:800}.kc-pp button[aria-pressed="true"]{background:var(--acc); border-color:var(--acc); color:var(--on-acc)}' +
   '.kc-roles{display:flex; flex-direction:column; gap:4px; font-size:13px; color:var(--muted); font-weight:600}.kc-roles b{color:var(--ink)}' +
   '.kc-res{text-align:center; font-weight:800; font-size:17px}' +
   "</style>";
-const cardHTML = c => { const s = suitOf(c), red = s === "h" || s === "d"; return '<div class="kc-card' + (red ? " red" : "") + '" role="img" aria-label="' + esc(RLAB(rankOf(c)) + " " + SYM[s]) + '"><span class="c">' + esc(RLAB(rankOf(c))) + SYM[s] + '</span><span class="m">' + SYM[s] + '</span><span class="c b">' + esc(RLAB(rankOf(c))) + SYM[s] + "</span></div>"; };
+const CROWN = '<svg viewBox="0 0 64 48" aria-hidden="true"><path fill="currentColor" d="M4 14l14 12L32 4l14 22 14-12-6 28H10z"/><rect x="10" y="42" width="44" height="5" rx="2" fill="currentColor"/><circle cx="4" cy="12" r="4" fill="currentColor"/><circle cx="32" cy="4" r="4" fill="currentColor"/><circle cx="60" cy="12" r="4" fill="currentColor"/></svg>';
+// Emplacement des points (en % de la zone centrale) pour 2 à 10, comme sur une vraie carte.
+const PIPS = { 2: [[50, 0], [50, 100]], 3: [[50, 0], [50, 50], [50, 100]], 4: [[0, 0], [100, 0], [0, 100], [100, 100]], 5: [[0, 0], [100, 0], [50, 50], [0, 100], [100, 100]],
+  6: [[0, 0], [100, 0], [0, 50], [100, 50], [0, 100], [100, 100]], 7: [[0, 0], [100, 0], [50, 25], [0, 50], [100, 50], [0, 100], [100, 100]],
+  8: [[0, 0], [100, 0], [50, 25], [0, 50], [100, 50], [50, 75], [0, 100], [100, 100]], 9: [[0, 0], [100, 0], [0, 33], [100, 33], [50, 50], [0, 67], [100, 67], [0, 100], [100, 100]],
+  10: [[0, 0], [100, 0], [50, 17], [0, 33], [100, 33], [0, 67], [100, 67], [50, 83], [0, 100], [100, 100]] };
+const backHTML = () => '<div class="kc-bk">' + CROWN + "</div>";
+function cardHTML(c, flip){
+  const r = rankOf(c), s = suitOf(c), red = s === "h" || s === "d", sym = SYM[s], lab = RLAB(r);
+  let mid;
+  if(r === "A") mid = '<div class="kc-ace">' + sym + "</div>";
+  else if(r === "J" || r === "Q" || r === "K") mid = '<div class="kc-fig">' + CROWN + "<b>" + esc(lab) + "</b><i>" + sym + "</i></div>";
+  else mid = '<div class="kc-pips">' + PIPS[r].map(p => '<i class="' + (p[1] > 50 ? "dn" : "") + '" style="left:' + p[0] + "%; top:" + p[1] + '%">' + sym + "</i>").join("") + "</div>";
+  const ix = cls => '<span class="kc-ix ' + cls + '"><b>' + esc(lab) + "</b><i>" + sym + "</i></span>";
+  return '<div class="kc-stage" role="img" aria-label="' + esc(lab + " " + sym) + '"><div class="kc-flip' + (flip ? " go" : "") + '"><div class="kc-face' + (red ? " red" : "") + '">' + ix("tl") + mid + ix("br") + "</div>" + backHTML() + "</div></div>";
+}
+const deckBackHTML = () => '<div class="kc-stage back" aria-hidden="true"><div class="kc-flip">' + backHTML() + "</div></div>";
 const kingsHTML = n => '<div class="kc-kings" aria-label="' + esc(tr("Rois tirés : " + n + " sur 4", "Kings drawn: " + n + " of 4")) + '">' + [1, 2, 3, 4].map(i => '<i class="' + (i <= n ? "on" : "") + '">' + RLAB("K") + "</i>").join("") + "</div>";
 function rolesHTML(s, nameOf){
   const L = [];
@@ -141,7 +168,7 @@ function penHTML(ids, nameOf){
 }
 
 SB.register({
-  id: "kingscup", name: tr("La Coupe du Roi", "King's Cup"), glyph: tr("R♥", "K♥"),
+  id: "kingscup", name: "King's Cup", glyph: "K♥",
   pitch: tr("Une carte, une règle. Le 4e roi boit la coupe.", "One card, one rule. The 4th king drinks the cup."),
   accent: { light: "#c99700", dark: "#ffcc3d" },
   tag: tr("Le classique des soirées : chacun tire une carte, chaque valeur déclenche une règle (cascade, rimes, maître du pouce…). Au 4e roi, la coupe est bue.", "The party classic: everyone draws a card, each value triggers a rule (waterfall, rhymes, thumb master…). The 4th king drinks the cup."),
@@ -153,14 +180,14 @@ SB.register({
     { ev: "perdu", label: tr("Perdu au mini-jeu", "Lost the mini-game"), kind: "boit", n: 1 },
     { ev: "partenaire", label: tr("Ton (ta) partenaire a bu", "Your mate drank"), kind: "boit", n: 1 },
     { ev: "piege", label: tr("Règle pas respectée", "Broke a rule"), kind: "boit", n: 1 },
-    { ev: "coupe", label: tr("La coupe du roi (4e roi)", "The King's Cup (4th king)"), kind: "boit", n: 5 }
+    { ev: "coupe", label: tr("King's Cup (4e roi)", "King's Cup (4th king)"), kind: "boit", n: 5 }
   ],
   rules: tr([
     "On pose un paquet de 52 cartes. À ton tour, tu tires une carte : sa valeur déclenche une règle.",
     "As : cascade · 2 : pour toi (tu choisis qui prend) · 3 : pour moi · 4 : au sol · 5 : maître du pouce · 6 : je n'ai jamais · 7 : au ciel · 8 : partenaire · 9 : rimes · 10 : catégories · Valet : nouvelle règle · Dame : maître des questions · Roi : on remplit la coupe.",
     "Le maître du pouce, le maître des questions, les partenaires et les règles inventées restent valables jusqu'à ce qu'une autre carte les remplace. Ils s'affichent en bas de l'écran.",
     "Quelqu'un enfreint une règle ? Touche « Quelqu'un a enfreint une règle ? » et son prénom.",
-    "Le 4e roi boit la coupe du roi (en mode sans alcool : un gage XXL) et la partie s'arrête. En option, on joue tout le paquet.",
+    "Le 4e roi boit la King's Cup (en mode sans alcool : un gage XXL) et la partie s'arrête. En option, on joue tout le paquet.",
     "Sans alcool (mode Soft ou profil sans alcool), chaque « bois » devient un gage."
   ], [
     "Lay out a 52-card deck. On your turn, draw a card: its value triggers a rule.",
@@ -203,7 +230,7 @@ SB.register({
       }
       if(s.step === "next" && i.next){
         const n = next(s);
-        if(n.done){ ctx.end({ title: s.kings >= 4 ? SB.both("La coupe du roi est bue par " + ctx.name(s.cur) + " !", "The King's Cup is drunk by " + ctx.name(s.cur) + "!") : SB.both("Le paquet est fini", "The deck is done"), lines: [SB.both((52 - s.left) + " cartes tirées", (52 - s.left) + " cards drawn")], win: [] }); return; }
+        if(n.done){ ctx.end({ title: s.kings >= 4 ? SB.both("La King's Cup est bue par " + ctx.name(s.cur) + " !", "The King's Cup is drunk by " + ctx.name(s.cur) + "!") : SB.both("Le paquet est fini", "The deck is done"), lines: [SB.both((52 - s.left) + " cartes tirées", (52 - s.left) + " cards drawn")], win: [] }); return; }
         ctx.set(Object.assign(n, { k: ctx.rid(), pen: "" })); return;
       }
     }
@@ -216,10 +243,11 @@ SB.register({
     const ru = s.card ? rule(s.card, { hard, hot: s.hot, who: nameOf(s.cur), kings: s.kings }) : null;
     let mid = "", dock = "";
     if(s.step === "draw"){
-      mid = '<div class="kc-back" aria-hidden="true"></div><p class="kc-res">' + (me === s.cur ? tr("À toi de tirer !", "Your turn to draw!") : tr("Au tour de " + esc(nameOf(s.cur)), esc(nameOf(s.cur)) + "'s turn")) + "</p>";
+      mid = deckBackHTML() + '<p class="kc-res">' + (me === s.cur ? tr("À toi de tirer !", "Your turn to draw!") : tr("Au tour de " + esc(nameOf(s.cur)), esc(nameOf(s.cur)) + "'s turn")) + "</p>";
       dock = canAct ? SB.u.dock('<button class="btn acc" type="button" data-draw>' + tr("Tirer une carte", "Draw a card") + "</button>") : "";
     } else {
-      mid = cardHTML(s.card) + '<div class="kc-rule"><b>' + esc(ru.t) + "</b><p>" + esc(ru.d) + "</p></div>";
+      const fresh = root.dataset.kcc !== String(s.left); root.dataset.kcc = String(s.left);
+      mid = cardHTML(s.card, fresh) + '<div class="kc-rule"><b>' + esc(ru.t) + "</b><p>" + esc(ru.d) + "</p></div>";
       if(s.step === "act") mid += canAct ? actHTML(s, s.order, nameOf) : '<p class="wait" style="text-align:center">' + tr(esc(nameOf(s.cur)) + " choisit…", esc(nameOf(s.cur)) + " is choosing…") + "</p>";
       else { const rl = resLine(s, nameOf, hard); if(rl) mid += '<p class="kc-res">' + esc(rl) + "</p>"; dock = canAct ? SB.u.dock('<button class="btn acc" type="button" data-next>' + (s.done || s.left <= 0 ? tr("Terminer la partie", "End the game") : tr("Joueur suivant", "Next player")) + "</button>") : '<p class="wait" style="text-align:center">' + tr(esc(nameOf(s.cur)) + " passe au joueur suivant…", esc(nameOf(s.cur)) + " moves on…") + "</p>"; }
     }
@@ -255,10 +283,11 @@ SB.register({
         const top = '<div class="kc-top"><span>' + tr("Cartes restantes : ", "Cards left: ") + "<b>" + s.left + "</b></span>" + kingsHTML(s.kings) + "</div>";
         let mid = "", dock = "";
         if(s.step === "draw"){
-          mid = '<div class="kc-back" aria-hidden="true"></div><p class="kc-res">' + tr("À " + esc(s.cur) + " de tirer !", esc(s.cur) + "'s turn to draw!") + "</p>";
+          mid = deckBackHTML() + '<p class="kc-res">' + tr("À " + esc(s.cur) + " de tirer !", esc(s.cur) + "'s turn to draw!") + "</p>";
           dock = SB.u.dock('<button class="btn acc" type="button" data-draw>' + tr("Tirer une carte", "Draw a card") + "</button>");
         } else {
-          mid = cardHTML(s.card) + '<div class="kc-rule"><b>' + esc(ru.t) + "</b><p>" + esc(ru.d) + "</p></div>";
+          const fresh = root.dataset.kcc !== String(s.left); root.dataset.kcc = String(s.left);
+          mid = cardHTML(s.card, fresh) + '<div class="kc-rule"><b>' + esc(ru.t) + "</b><p>" + esc(ru.d) + "</p></div>";
           if(s.step === "act") mid += actHTML(s, s.order, nameOf);
           else { const rl = resLine(s, nameOf, hard); if(rl) mid += '<p class="kc-res">' + esc(rl) + "</p>"; dock = SB.u.dock('<button class="btn acc" type="button" data-next>' + (s.done || s.left <= 0 ? tr("Terminer la partie", "End the game") : tr("Joueur suivant", "Next player")) + "</button>"); }
         }
