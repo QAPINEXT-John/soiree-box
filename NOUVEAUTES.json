@@ -1,4 +1,10 @@
 {
+  "4.44.0": [
+    "Salons privés et sécurisés : le code fait maintenant 6 lettres, il n'apparaît plus sur les serveurs, et personne ne peut écouter ni lister les salons sans le connaître",
+    "Chaque téléphone signe ses messages : impossible de se faire passer pour l'hôte ou pour un autre joueur, et personne ne peut prendre la main tant que l'hôte est là",
+    "Nouvelle appli Android (à installer par-dessus) : les liens d'invitation acceptent les codes à 6 lettres. Avec l'ancienne appli, tape simplement le code",
+    "Tout le monde doit avoir cette version pour jouer ensemble"
+  ],
   "4.43.1": [
     "King's Cup : le jeu s'appelle King's Cup dans toutes les langues, et les cartes ont un nouveau look (vraies cartes à jouer avec points et figures couronnées, dos bordeaux et or, carte qui se retourne quand on la tire)"
   ],

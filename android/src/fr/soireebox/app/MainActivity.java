@@ -109,13 +109,13 @@ public class MainActivity extends Activity {
         else web.loadUrl("https://" + ORIGIN_HOST + "/index.html" + (code != null ? "#" + code : ""));
     }
 
-    /** Code de salon d'un lien d'invitation soireebox://join/ABCD (null sinon). */
+    /** Code de salon d'un lien d'invitation soireebox://join/ABCDEF (null sinon). */
     static String inviteCode(Intent i) {
         if (i == null || i.getData() == null) return null;
         Uri u = i.getData();
         if (!"soireebox".equals(u.getScheme()) || !"join".equals(u.getHost())) return null;
         String c = u.getPath() == null ? "" : u.getPath().replace("/", "").toUpperCase(java.util.Locale.ROOT);
-        if (!c.matches("[A-Z]{4}")) return null;
+        if (!c.matches("[A-Z]{4,8}")) return null;
         // Salon Soft ou Enfant : soireebox://join/ABCD?soft=1 -> "ABCD-soft", ?kid=1 -> "ABCD-kid".
         if ("1".equals(u.getQueryParameter("kid"))) return c + "-kid";
         return "1".equals(u.getQueryParameter("soft")) ? c + "-soft" : c;

@@ -384,13 +384,40 @@ function mqttConn(b, topics, on){
   open();
   return api;
 }
-async function relayKey(code){
-  try{
-    if(!(window.crypto && crypto.subtle)) return null;
-    const raw = await crypto.subtle.digest("SHA-256", TE.encode("soiree-box/cle/" + code));
-    return await crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["encrypt", "decrypt"]);
-  }catch(e){ return null; }
+/* ---------- Sécurité des salons (relais) ----------
+   - Le code (6 lettres) n'apparaît jamais sur les serveurs : l'adresse des messages et la clé de chiffrement
+     en sont tirées par une dérivation lente (PBKDF2), pour qu'un curieux ne puisse ni lister les salons ni les essayer tous.
+   - Chaque téléphone a une paire de clés (ECDSA P-256) gardée pour ce salon : tous ses messages sont signés.
+   - Le code du salon est tiré de la clé publique de l'hôte qui l'a créé : un invité vérifie ainsi que l'hôte est le bon.
+     Les clés des autres joueurs sont transmises par l'hôte (liste signée) ; un nouvel hôte (reprise) prouve sa place
+     par la chaîne des listes signées depuis le créateur.
+   - Un joueur ne peut pas prendre la place de l'hôte tant que celui-ci donne signe de vie. */
+const R2 = "soireebox-r2/", CODE_L = "ABCDEFGHJKLMNPQRSTUVWXYZ", CODE_N = 6;
+const ECP = { name: "ECDSA", namedCurve: "P-256" }, ECS = { name: "ECDSA", hash: "SHA-256" };
+const b64e = u8 => { let x = ""; for(let i = 0; i < u8.length; i++) x += String.fromCharCode(u8[i]); return btoa(x); };
+const b64d = str => Uint8Array.from(atob(str), c => c.charCodeAt(0));
+const hexe = u8 => Array.from(u8, b => b.toString(16).padStart(2, "0")).join("");
+async function codeFromPub(pub){ const h = new Uint8Array(await crypto.subtle.digest("SHA-256", TE.encode("soiree-box/code/" + pub))); let c = ""; for(let i = 0; i < CODE_N; i++) c += CODE_L[h[i] % CODE_L.length]; return c; }
+const RD = {};
+async function relayDerive(code){
+  if(RD[code]) return RD[code];
+  const base = await crypto.subtle.importKey("raw", TE.encode("soiree-box/" + code), "PBKDF2", false, ["deriveBits"]);
+  const bits = new Uint8Array(await crypto.subtle.deriveBits({ name: "PBKDF2", salt: TE.encode("soiree-box/r2/sel"), iterations: 150000, hash: "SHA-256" }, base, 384));
+  const key = await crypto.subtle.importKey("raw", bits.slice(0, 32), "AES-GCM", false, ["encrypt", "decrypt"]);
+  return (RD[code] = { key, topic: R2 + hexe(bits.slice(32, 48)) });
 }
+const relayOk = () => !!(window.crypto && crypto.subtle && typeof crypto.subtle.deriveBits === "function");
+// Banc d'essai (tests automatiques uniquement, window.SB_TEST) : un intrus qui connaît le code tente de se faire passer pour l'hôte.
+if(window.SB_TEST) SB._forge = async (code, hid, ep) => {
+  const dk = await relayDerive(code), k = await newKeys();
+  const sign = async o => { const c = Object.assign({}, o, { k: k.pub }); c.s = b64e(new Uint8Array(await crypto.subtle.sign(ECS, k.priv, TE.encode(JSON.stringify(c))))); return c; };
+  const bus = relayBus(dk.topic, dk.key, () => {}, () => {}, sign);
+  await new Promise(r => setTimeout(r, 1500));
+  const now = Date.now();
+  bus.pub("h", { t: "h", f: hid, n: now, ep, hid, ts: now }, true);
+  bus.pub("g", { t: "g", f: hid, n: now + 1, ep, hid, ts: now, g: { v: 1, phase: "salon", players: [], last: { title: "PIRATÉ" } }, list: [] }, true);
+  await new Promise(r => setTimeout(r, 1500)); return bus.close();
+};
 async function seal(key, obj){
   const data = TE.encode(JSON.stringify(obj));
   if(!key) return cat([Uint8Array.of(0), data]);
@@ -404,8 +431,8 @@ async function unseal(key, b){
   return null;
 }
 // Bus : publie sur tous les serveurs, reçoit de tous (les doublons sont filtrés plus haut).
-function relayBus(code, key, onMsg, onUp){
-  const base = "soireebox-r1/" + code.toLowerCase(), mine = {};
+function relayBus(base, key, onMsg, onUp, prep){
+  const mine = {};
   let q = Promise.resolve(), up = false;
   const state = () => { const u = conns.some(c => c.ok()); if(u !== up){ up = u; onUp(u); } };
   const conns = BROKERS.map(b => mqttConn(b, [base + "/#"], {
@@ -416,7 +443,7 @@ function relayBus(code, key, onMsg, onUp){
   return {
     up: () => up,
     count: () => conns.filter(c => c.ok()).length,
-    pub(t, obj, retain){ q = q.then(() => seal(key, obj)).then(p => { if(retain) mine[t] = p; conns.forEach(c => c.pub(base + "/" + t, p, retain)); }).catch(() => {}); return q; },
+    pub(t, obj, retain){ q = q.then(() => (prep ? prep(obj) : obj)).then(o => seal(key, o)).then(p => { if(retain) mine[t] = p; conns.forEach(c => c.pub(base + "/" + t, p, retain)); }).catch(() => {}); return q; },
     clear(t){ q = q.then(() => { delete mine[t]; conns.forEach(c => c.pub(base + "/" + t, new Uint8Array(0), true)); }); return q; },
     forget(){ Object.keys(mine).forEach(t => { delete mine[t]; }); },
     close(){ return q.then(() => new Promise(r => setTimeout(r, 120))).then(() => conns.forEach(c => c.close())); }
@@ -424,20 +451,69 @@ function relayBus(code, key, onMsg, onUp){
 }
 // Identité gardée par salon : en revenant dans le même salon (appli relancée, réseau coupé), on retrouve sa place
 // dans la partie en cours au lieu d'arriver comme un nouveau joueur.
-function relayId(code){
-  let m = {}; try{ m = JSON.parse(localStorage.getItem("soiree-rid") || "{}") || {}; }catch(e){}
-  const now = Date.now(); Object.keys(m).forEach(k => { if(!m[k] || now - (+m[k].at || 0) > 12 * 3600 * 1000) delete m[k]; });
-  const id = m[code] && /^r[a-z0-9]{8,20}$/.test(m[code].id) ? m[code].id : "r" + rid() + rid();
-  m[code] = { id, at: now }; try{ localStorage.setItem("soiree-rid", JSON.stringify(m)); }catch(e){}
-  return id;
+function ridLoad(){ let m = {}; try{ m = JSON.parse(localStorage.getItem("soiree-rid") || "{}") || {}; }catch(e){} const now = Date.now(); Object.keys(m).forEach(k => { if(!m[k] || now - (+m[k].at || 0) > 12 * 3600 * 1000) delete m[k]; }); return m; }
+function ridSave(m){ try{ localStorage.setItem("soiree-rid", JSON.stringify(m)); }catch(e){} }
+async function newKeys(){ const kp = await crypto.subtle.generateKey(ECP, true, ["sign", "verify"]); return { priv: kp.privateKey, pub: b64e(new Uint8Array(await crypto.subtle.exportKey("raw", kp.publicKey))), jwk: await crypto.subtle.exportKey("jwk", kp.privateKey) }; }
+async function relayId(code){
+  const m = ridLoad(); let e = m[code], priv = null;
+  const id = e && /^r[a-z0-9]{8,20}$/.test(e.id) ? e.id : "r" + rid() + rid();
+  if(e && e.jwk && typeof e.pub === "string"){ try{ priv = await crypto.subtle.importKey("jwk", e.jwk, ECP, true, ["sign"]); }catch(x){ priv = null; } }
+  if(!priv){ const k = await newKeys(); priv = k.priv; e = { id, jwk: k.jwk, pub: k.pub }; }
+  m[code] = { id, jwk: e.jwk, pub: e.pub, at: Date.now() }; ridSave(m);
+  return { id, priv, pub: e.pub };
+}
+// Nouveau salon : la clé de l'hôte d'abord, le code en découle.
+async function relayNewCode(){
+  const k = await newKeys(), code = await codeFromPub(k.pub), m = ridLoad();
+  m[code] = { id: "r" + rid() + rid(), jwk: k.jwk, pub: k.pub, at: Date.now() }; ridSave(m);
+  return code;
 }
 async function relayRoom(code, asHost){
-  const me = relayId(code), key = await relayKey(code);
+  if(!relayOk()) throw { code: "network" };
+  const ident = await relayId(code), me = ident.id, myPriv = ident.priv, myPub = ident.pub;
+  const dk = await relayDerive(code), key = dk.key;
+  // --- signatures ---
+  const keys = new Map(), pubC2 = {}, rootC = {};
+  let lastR = null, lastCh = [];
+  const imp = b => pubC2[b] || (pubC2[b] = crypto.subtle.importKey("raw", b64d(b), ECP, false, ["verify"]));
+  async function signObj(o){ const c = Object.assign({}, o, { k: myPub }); c.s = b64e(new Uint8Array(await crypto.subtle.sign(ECS, myPriv, TE.encode(JSON.stringify(c))))); return c; }
+  async function sigOk(o){ if(!o || typeof o.k !== "string" || typeof o.s !== "string") return false; const c = Object.assign({}, o); delete c.s; try{ return await crypto.subtle.verify(ECS, await imp(o.k), b64d(o.s), TE.encode(JSON.stringify(c))); }catch(e){ return false; } }
+  const isRoot = async k => (k in rootC ? rootC[k] : (rootC[k] = (await codeFromPub(k)) === code));
+  keys.set(me, myPub); await isRoot(myPub);
+  // Chaîne de preuves : listes de clés signées, du créateur du salon jusqu'à l'hôte actuel.
+  async function chainOk(ch, f, k){
+    ch = A(ch); if(!ch.length || ch.length > 12) return false;
+    let allowed = null;
+    for(const r of ch){
+      if(!r || r.t !== "r" || !(await sigOk(r))) return false;
+      if(allowed === null){ if(!(await isRoot(r.k))) return false; }
+      else if(allowed[r.f] !== r.k) return false;
+      allowed = r.ks && typeof r.ks === "object" ? r.ks : {};
+    }
+    return allowed[f] === k;
+  }
+  async function trust(o, t){
+    const pin = keys.get(o.f);
+    if(pin) return pin === o.k;
+    if(await isRoot(o.k)){ keys.set(o.f, o.k); return true; }
+    if(t === "c" && host){ keys.set(o.f, o.k); return true; } // l'hôte découvre la clé d'un invité à son arrivée
+    if(t === "h" && o.f === o.hid && await chainOk(o.ch, o.f, o.k)){ keys.set(o.f, o.k); A(o.ch).forEach(r => Object.keys(r.ks || {}).forEach(id => { if(!keys.has(id)) keys.set(id, r.ks[id]); })); return true; }
+    return false;
+  }
+  let rxq = Promise.resolve();
+  const verified = (t, o, ret) => { rxq = rxq.then(async () => {
+    if(typeof o.f !== "string" || !(await sigOk(o))) return;
+    const top = t.indexOf("c/") === 0 ? "c" : t.indexOf("b/") === 0 ? "b" : t;
+    if(!(await trust(o, top))){ if(top === "g" || top === "p" || top === "r"){ pend.push([t, o, ret]); if(pend.length > 12) pend.shift(); } return; }
+    onMsg(t, o, ret);
+    if(top === "h" && pend.length){ const P = pend.splice(0); for(const x of P){ if(keys.get(x[1].f) === x[1].k) onMsg(x[0], x[1], x[2]); } }
+  }).catch(() => {}); };
+  const pend = [];
   const ph = listeners(), ch = listeners(), hh = listeners(), seen = {};
   let bus = null, host = false, ep = 0, hid = null, hostSeen = Date.now(), gone = false, hb = null;
   // « En pause » : téléphone verrouillé ou appli en arrière-plan. On le signale aux autres pour qu'ils patientent
   // bien plus longtemps avant de considérer le joueur (ou l'hôte) comme parti.
-  let away = false, hostAway = false;
+  let away = false, hostAway = false, myCh = [];
   const AWAY_KEEP = 600000, AWAY_HOST = 600000, DROP = 30000, TAKE = 15000;
   let self = {}, game = null, priv = {}, list = [], snap = [], offset = 0, n = Date.now();
   let roster = new Map(), gT = null, pT = null, cT = null, tick = Date.now(), liveSeen = false, lastC = 0;
@@ -474,9 +550,11 @@ async function relayRoom(code, asHost){
   }
   function emit(){ build(); ph.fire(); }
   const msg = (t, extra) => Object.assign({ t, f: me, n: ++n, ep, hid }, extra);
-  function pubG(){ clearTimeout(gT); gT = setTimeout(() => { if(host) bus.pub("g", msg("g", { g: game, list: snap.map(p => ({ peer: p.peer, presence: p.presence })), ts: Date.now() }), true); }, 16); }
+  let rSent = "";
+  function pubR(){ const ks = {}; snap.forEach(p => { const k = keys.get(p.peer); if(k) ks[p.peer] = k; }); const j = JSON.stringify(ks); if(j === rSent) return; rSent = j; bus.pub("r", msg("r", { ks }), true); }
+  function pubG(){ clearTimeout(gT); gT = setTimeout(() => { if(host){ bus.pub("g", msg("g", { g: game, list: snap.map(p => ({ peer: p.peer, presence: p.presence, k: keys.get(p.peer) || "" })), ts: Date.now() }), true); pubR(); } }, 16); }
   function pubP(){ clearTimeout(pT); pT = setTimeout(() => { if(host) bus.pub("p", msg("p", { pv: priv }), true); }, 16); }
-  function pubH(x){ bus.pub("h", msg("h", Object.assign({ ts: Date.now(), a: away ? 1 : 0 }, x || {})), true); }
+  function pubH(x){ bus.pub("h", msg("h", Object.assign({ ts: Date.now(), a: away ? 1 : 0, ch: myCh }, x || {})), true); }
   function pubC(){ clearTimeout(cT); cT = setTimeout(() => { if(!host){ lastC = Date.now(); bus.pub("c/" + me, msg("c", { p: self, a: away ? 1 : 0 }), false); } }, 16); }
   function changed(){ emit(); pubG(); }
   function demote(){ host = false; bus.forget(); roster = new Map(); hostSeen = Date.now(); hh.fire(false, null); pubC(); }
@@ -499,10 +577,14 @@ async function relayRoom(code, asHost){
     if(typeof o.ep !== "number" || typeof o.hid !== "string" || o.f !== o.hid) return;
     if(o.hid !== hid){
       if(!better(o.ep, o.hid)){ if(host && o.hid !== me){ pubH(); pubG(); pubP(); } return; }
+      // Personne ne prend la place d'un hôte qui donne encore signe de vie (sauf égalité entre deux reprises simultanées).
+      if(hid && !gone && o.ep !== ep && Date.now() - hostSeen < 9000 && !(hid === me && !host)) return;
       ep = o.ep; hid = o.hid; game = null; list = []; priv = {};
       if(host && hid !== me) demote();
     } else if(o.ep < ep) return;
+    if(top === "r"){ if(o.f === hid && o.ks && typeof o.ks === "object"){ lastR = o; Object.keys(o.ks).forEach(id => { if(!keys.has(id) && typeof o.ks[id] === "string") keys.set(id, o.ks[id]); }); } return; }
     if(top === "h"){
+      if(Array.isArray(o.ch)) lastCh = o.ch;
       // Un hôte « en pause » (téléphone verrouillé) reste joignable : son dernier signal compte pendant AWAY_HOST.
       const fresh = !ret || Math.abs(Date.now() - (+o.ts || 0)) < (o.a ? AWAY_HOST : 12000);
       if(!o.gone && (!ret || fresh)) hostAway = !!o.a;
@@ -513,12 +595,14 @@ async function relayRoom(code, asHost){
     } else if(hid !== me || !host){
       // (hid === me sans être hôte : on revient après avoir été l'hôte ; on récupère la partie avant de la reprendre.)
       if(!ret){ hostSeen = Date.now(); liveSeen = true; gone = false; }
-      if(top === "g" && o.g && typeof o.g === "object"){ game = o.g; list = A(o.list); emit(); }
+      if(top === "g" && o.g && typeof o.g === "object"){ game = o.g; list = A(o.list); list.forEach(x => { if(x && typeof x.peer === "string" && typeof x.k === "string" && x.k && !keys.has(x.peer)) keys.set(x.peer, x.k); }); emit(); }
       else if(top === "p") priv = o.pv && typeof o.pv === "object" ? o.pv : {};
     }
   }
   function takeOver(){
     const old = hid;
+    // Preuve pour les futurs arrivants : la chaîne des listes signées qui mène jusqu'à moi.
+    myCh = rootC[myPub] === true ? [] : old === me ? lastCh : lastCh.concat(lastR ? [lastR] : []).slice(-12);
     ep += 1; hid = me; host = true; gone = false; hostSeen = Date.now();
     roster = new Map(list.filter(x => x && x.peer !== me && x.peer !== old).map(x => [x.peer, { p: Object.freeze(Object.assign({}, x.presence || {})), pj: "", last: Date.now() }]));
     build(); pubH(); pubP();
@@ -526,7 +610,7 @@ async function relayRoom(code, asHost){
     pubG();
   }
   const conn = listeners();
-  bus = relayBus(code, key, onMsg, u => { if(u) hostSeen = Math.max(hostSeen, Date.now() - 2000); conn.fire(u); ch.fire(u); });
+  bus = relayBus(dk.topic, key, verified, u => { if(u) hostSeen = Math.max(hostSeen, Date.now() - 2000); conn.fire(u); ch.fire(u); }, signObj);
   const beat = setInterval(() => {
     const now = Date.now();
     if(now - tick > 4000) hostSeen = now; // le téléphone était en veille : on laisse à l'hôte le temps de se manifester
@@ -861,7 +945,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.43.1";
+const VERSION = "4.44.0";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -1171,7 +1255,7 @@ function renderInvite(){
 }
 // Appelé par l'appli Android quand on l'ouvre avec un lien d'invitation (soireebox://join/CODE).
 SB.openInvite = function(code){
-  const mm = /^([A-Z]{4})(-SOFT|-KID)?$/.exec(String(code || "").toUpperCase());
+  const mm = /^([A-Z]{4,8})(-SOFT|-KID)?$/.exec(String(code || "").toUpperCase());
   if(!mm) return;
   code = mm[1]; if(mm[2] === "-KID") inviteKid(); else if(mm[2]) inviteSoft();
   if(N.nr){ if(N.code !== code) toast(tr("Quitte d'abord ce salon pour rejoindre " + code, "Leave this room first to join " + code)); return; }
@@ -1228,7 +1312,7 @@ function renderHome(){
   else if(!$("#h-err").hidden){ info.hidden = true; }
   else info.hidden = true;
   // Revenir dans le dernier salon (appli fermée, téléphone redémarré, réseau coupé) : on y retrouve sa place.
-  { const lr = store().lastRoom, ok = lr && /^[A-Z]{4}$/.test(lr.code || "") && Date.now() - (+lr.at || 0) < 12 * 3600 * 1000 && !N.nr && netReady;
+  { const lr = store().lastRoom, ok = lr && CODE_RX.test(lr.code || "") && Date.now() - (+lr.at || 0) < 12 * 3600 * 1000 && !N.nr && netReady;
     let rb = $("#h-resume");
     if(ok && !rb){ rb = document.createElement("button"); rb.type = "button"; rb.id = "h-resume"; rb.className = "btn acc"; $("#h-err").after(rb); rb.addEventListener("click", () => { const c = (store().lastRoom || {}).code; if(c) netEnter(c, false); }); }
     if(rb){ rb.hidden = !ok; rb.disabled = N.joining; if(ok) rb.textContent = tr("Revenir dans le salon " + lr.code, "Back to room " + lr.code); } }
@@ -1354,6 +1438,7 @@ function namedPeers(){ return N.peers.filter(p => clean(pres(p).name, 16)); }
 function G(){ if(!N.nr) return null; return N.host ? N.g : N.nr.game(); }
 function freshSalon(){ return { v: 1, code: N.code, phase: "salon", sel: "", game: "", gid: "", players: [], s: null, opts: null, last: null, gages: gLocalSettings(), gt: {}, hd: myHard(), kid: myKid(), kpin: myKid() ? (store().kid || {}).pin || null : null }; }
 function makeCode(){ const L = "ABCDEFGHJKLMNPQRSTUVWXYZ"; let s = ""; for(let i = 0; i < 4; i++) s += L[Math.floor(Math.random() * L.length)]; return s; }
+const CODE_RX = /^[A-Z]{4,8}$/;
 function myExtras(){ const x = Object.assign({}, CORE_X); SB.games.forEach(d => { if(typeof d.presence === "function"){ try{ const v = d.presence(); if(v != null) x[d.id] = v; }catch(e){} } }); return x; }
 SB.refreshExtras = function(){ if(N.nr) N.nr.presence({ x: plain(myExtras()) }); };
 
@@ -1362,7 +1447,9 @@ async function netEnter(code, asHost){
   const name = clean($("#h-name").value, 16);
   if(!netReady) return;
   if(!name){ homeErr(tr("Entre ton prénom pour que les autres te reconnaissent.", "Enter your name so the others know who you are.")); buzz([20, 60, 20]); $("#h-name").focus(); return; }
-  if(!/^[A-Z]{4}$/.test(code)){ homeErr(tr("Le code du salon doit faire 4 lettres.", "The room code must be 4 letters.")); buzz([20, 60, 20]); $("#h-code").focus(); return; }
+  if(asHost && !code){ try{ code = FB_ON || ROOM ? makeCode() : await relayNewCode(); }catch(e){ homeErr(tr("Impossible de créer le salon sur ce téléphone.", "Can't create a room on this phone.")); return; } }
+  const want = FB_ON || ROOM ? /^[A-Z]{4}$/ : new RegExp("^[A-Z]{" + CODE_N + "}$");
+  if(!want.test(code)){ homeErr(FB_ON || ROOM ? tr("Le code du salon doit faire 4 lettres.", "The room code must be 4 letters.") : tr("Le code du salon fait " + CODE_N + " lettres.", "The room code is " + CODE_N + " letters.")); buzz([20, 60, 20]); $("#h-code").focus(); return; }
   homeErr(""); N.joining = true;
   $("#h-netinfo").textContent = asHost ? tr("Ouverture du salon…", "Opening the room…") : tr("Connexion au salon " + code + "…", "Joining room " + code + "…");
   renderHome();
@@ -1371,7 +1458,7 @@ async function netEnter(code, asHost){
     if(asHost){
       for(let i = 0; ; i++){
         try{ nr = FB_ON ? await fbOpen(code) : ROOM ? await roomOpen(code) : await relayRoom(code, true); break; }
-        catch(e){ if(e && e.code === "taken" && i < 4){ code = makeCode(); continue; } throw e; }
+        catch(e){ if(e && e.code === "taken" && i < 4){ code = FB_ON || ROOM ? makeCode() : await relayNewCode(); continue; } throw e; }
       }
     } else nr = FB_ON ? await fbJoin(code) : ROOM ? await roomJoin(code) : await relayRoom(code, false);
   }catch(e){
@@ -2819,13 +2906,13 @@ SB.boot = function(){
   if(IS_BETA){ const br = $("h1.brand"); if(br && !$(".modepill.beta", br)) br.insertAdjacentHTML("beforeend", '<span class="modepill beta">beta</span>'); document.title = "Soirée Box (beta)"; }
   const nm = $("#h-name"), cd = $("#h-code");
   nm.value = store().name || "";
-  const m = (location.hash || "").match(/^#([A-Za-z]{4})(-soft|-kid(?:-(k[a-z0-9]{1,12}))?)?$/i);
+  const m = (location.hash || "").match(/^#([A-Za-z]{4,8})(-soft|-kid(?:-(k[a-z0-9]{1,12}))?)?$/i);
   if(m){ hashCode = m[1].toUpperCase(); cd.value = hashCode; if(m[2]) setTimeout(() => (/^-kid/i.test(m[2]) ? inviteKid(m[3] ? m[3].toLowerCase() : null) : inviteSoft()), 0); }
   nm.addEventListener("input", () => { persist({ name: clean(nm.value, 16) }); renderHome(); renderMe(); });
-  cd.addEventListener("input", () => { cd.value = cd.value.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 4); renderHome(); });
+  cd.addEventListener("input", () => { cd.value = cd.value.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, FB_ON || ROOM ? 4 : CODE_N); renderHome(); });
   cd.addEventListener("keydown", e => { if(e.key === "Enter" && !$("#h-join").disabled) $("#h-join").click(); });
-  $("#h-create").addEventListener("click", () => netEnter(makeCode(), true));
-  $("#h-join").addEventListener("click", () => netEnter(clean(cd.value, 4).toUpperCase(), false));
+  $("#h-create").addEventListener("click", () => netEnter(null, true));
+  $("#h-join").addEventListener("click", () => netEnter(clean(cd.value, 8).toUpperCase(), false));
   $("#h-local").addEventListener("click", openLocalList);
   const ht = $("#h-tiles");
   const drawHome = () => {

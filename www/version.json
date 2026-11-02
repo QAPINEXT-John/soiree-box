@@ -1,15 +1,18 @@
 {
- "version": "4.43.1",
- "apk": 36,
+ "version": "4.44.0",
+ "apk": 37,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "King's Cup : le jeu s'appelle King's Cup dans toutes les langues, et les cartes ont un nouveau look (vraies cartes à jouer avec points et figures couronnées, dos bordeaux et or, carte qui se retourne quand on la tire)"
+  "Salons privés et sécurisés : le code fait maintenant 6 lettres, il n'apparaît plus sur les serveurs, et personne ne peut écouter ni lister les salons sans le connaître",
+  "Chaque téléphone signe ses messages : impossible de se faire passer pour l'hôte ou pour un autre joueur, et personne ne peut prendre la main tant que l'hôte est là",
+  "Nouvelle appli Android (à installer par-dessus) : les liens d'invitation acceptent les codes à 6 lettres. Avec l'ancienne appli, tape simplement le code",
+  "Tout le monde doit avoir cette version pour jouer ensemble"
  ],
  "files": {
   "core.js": {
-   "h": "62ec25009d3797e51d63bade90be2dceb3f2c1bc545c2291d4a6d6ff20af7976",
-   "s": 316310
+   "h": "21e4ea7a0f5cbe8def8185a7d58fe0499a3a8b4d70091650d2ced14f34ac3454",
+   "s": 324188
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
@@ -240,8 +243,8 @@
    "s": 25520
   },
   "index.html": {
-   "h": "912afdb7f54a8963463dbee671a1d7c8b3287c4197c243273f9536e4f7e49aa2",
-   "s": 64094
+   "h": "f05425e864d3430c65affc1427bafa66001664999a99955e64fc9de8e6468fa2",
+   "s": 64096
   },
   "manifest.webmanifest": {
    "h": "f43ba64633a741667a34d7cdc3cf08eb491564863c689d3129a82670a6eead73",
