@@ -49,6 +49,8 @@ public class MainActivity extends Activity {
         s.setTextZoom(100);
 
         web.addJavascriptInterface(new ShareBridge(), "AndroidShare");
+        // Coffre-fort : données de l'appli chiffrées avec une clé de l'Android Keystore.
+        web.addJavascriptInterface(new Vault(), "AndroidVault");
         // Mises à jour sans réinstaller : les fichiers téléchargés (files/ota/www) passent avant ceux de l'APK.
         Updater.cleanup(this);
         web.addJavascriptInterface(new Updater(this, web), "AndroidUpdate");

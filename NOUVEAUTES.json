@@ -1,4 +1,10 @@
 {
+  "4.45.0": [
+    "Appli Android : tes données (profil, poids, compteur d'alcool, réglages, clés des salons) sont maintenant chiffrées avec une clé gardée dans le coffre-fort du téléphone (Android Keystore)",
+    "Appli Android : tes données ne partent plus dans la sauvegarde automatique Google",
+    "Les verres de plus de 12 h sont vraiment effacés du téléphone",
+    "Nouvelle appli Android à installer par-dessus (tes réglages sont gardés)"
+  ],
   "4.44.0": [
     "Salons privés et sécurisés : le code fait maintenant 6 lettres, il n'apparaît plus sur les serveurs, et personne ne peut écouter ni lister les salons sans le connaître",
     "Chaque téléphone signe ses messages : impossible de se faire passer pour l'hôte ou pour un autre joueur, et personne ne peut prendre la main tant que l'hôte est là",

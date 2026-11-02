@@ -37,10 +37,28 @@ function fix(v){
 }
 function plain(v){ return JSON.parse(JSON.stringify(v === undefined ? null : v)); }
 const STORE = "soiree-box";
-function store(){ try{ return JSON.parse(localStorage.getItem(STORE) || "{}") || {}; }catch(e){ return {}; } }
-function persist(patch){ try{ localStorage.setItem(STORE, JSON.stringify(Object.assign(store(), patch))); }catch(e){} }
+/* Coffre-fort (appli Android) : le profil, le compteur d'alcool, le poids, les réglages et les clés des salons sont
+   chiffrés avec une clé gardée dans l'Android Keystore (AndroidVault). Une copie des fichiers de l'appli est illisible.
+   Dans un navigateur, sans coffre-fort, tout reste en clair sur le téléphone. */
+const VAULT = (() => { try{ return window.AndroidVault && window.AndroidVault.ok() ? window.AndroidVault : null; }catch(e){ return null; } })();
+const SECC = {};
+function secGet(k){
+  if(VAULT && k in SECC) return SECC[k];
+  let v = localStorage.getItem(k) || "";
+  if(v.indexOf("v1:") === 0) v = VAULT ? VAULT.dec(v) : "";
+  if(VAULT) SECC[k] = v;
+  return v;
+}
+function secSet(k, v){
+  if(VAULT){ SECC[k] = v; const e = VAULT.enc(v); localStorage.setItem(k, e || v); }
+  else localStorage.setItem(k, v);
+}
+function store(){ try{ return JSON.parse(secGet(STORE) || "{}") || {}; }catch(e){ return {}; } }
+function persist(patch){ try{ secSet(STORE, JSON.stringify(Object.assign(store(), patch))); }catch(e){} }
+// Premier lancement avec le coffre-fort : on chiffre ce qui était en clair.
+try{ if(VAULT){ [STORE, "soiree-rid"].forEach(k => { const raw = localStorage.getItem(k); if(raw && raw.indexOf("v1:") !== 0) secSet(k, raw); }); } }catch(e){}
 // Statistiques d'utilisation (beta 4.39.0) retirées : on efface ce qu'elles avaient laissé sur le téléphone.
-try{ localStorage.removeItem("soiree-stats"); localStorage.removeItem("soiree-stats-col"); const o = JSON.parse(localStorage.getItem(STORE) || "{}"); if(o && ("statsOff" in o || "statsAdmin" in o)){ delete o.statsOff; delete o.statsAdmin; localStorage.setItem(STORE, JSON.stringify(o)); } }catch(e){}
+try{ localStorage.removeItem("soiree-stats"); localStorage.removeItem("soiree-stats-col"); const o = store(); if(o && ("statsOff" in o || "statsAdmin" in o)){ delete o.statsOff; delete o.statsAdmin; secSet(STORE, JSON.stringify(o)); } }catch(e){}
 
 /* =================== Langue (français / anglais) ===================
    La langue est choisie sur l'accueil et gardée sur le téléphone ; changer de langue recharge l'appli.
@@ -451,8 +469,8 @@ function relayBus(base, key, onMsg, onUp, prep){
 }
 // Identité gardée par salon : en revenant dans le même salon (appli relancée, réseau coupé), on retrouve sa place
 // dans la partie en cours au lieu d'arriver comme un nouveau joueur.
-function ridLoad(){ let m = {}; try{ m = JSON.parse(localStorage.getItem("soiree-rid") || "{}") || {}; }catch(e){} const now = Date.now(); Object.keys(m).forEach(k => { if(!m[k] || now - (+m[k].at || 0) > 12 * 3600 * 1000) delete m[k]; }); return m; }
-function ridSave(m){ try{ localStorage.setItem("soiree-rid", JSON.stringify(m)); }catch(e){} }
+function ridLoad(){ let m = {}; try{ m = JSON.parse(secGet("soiree-rid") || "{}") || {}; }catch(e){} const now = Date.now(); Object.keys(m).forEach(k => { if(!m[k] || now - (+m[k].at || 0) > 12 * 3600 * 1000) delete m[k]; }); return m; }
+function ridSave(m){ try{ secSet("soiree-rid", JSON.stringify(m)); }catch(e){} }
 async function newKeys(){ const kp = await crypto.subtle.generateKey(ECP, true, ["sign", "verify"]); return { priv: kp.privateKey, pub: b64e(new Uint8Array(await crypto.subtle.exportKey("raw", kp.publicKey))), jwk: await crypto.subtle.exportKey("jwk", kp.privateKey) }; }
 async function relayId(code){
   const m = ridLoad(); let e = m[code], priv = null;
@@ -945,7 +963,7 @@ SB.closePage = function(){ if(SB._pageClose) SB._pageClose(); };
    - Les erreurs JavaScript et les derniers évènements (écrans, réseau, phases de jeu) sont
      gardés sur le téléphone (localStorage « soiree-buglog »), même si l'appli a planté.
    - « Signaler un bug » ouvre un formulaire ; le rapport part par mail (BUG_MAIL), ou se partage / se copie. */
-const VERSION = "4.44.0";
+const VERSION = "4.45.0";
 SB.VERSION = VERSION;
 const BUG_MAIL = window.SB_BUG_MAIL || "johnvenien@gmail.com";
 const BUGLOG = "soiree-buglog", BUGDRAFT = "soiree-bugdraft";
@@ -2693,6 +2711,8 @@ function alcStore(){
     kg: Math.max(0, Math.min(250, +a.kg || 0)), r: a.r === 0.6 ? 0.6 : a.r === 0.7 ? 0.7 : 0, gk: typeof a.gk === "string" ? a.gk : "", gv: +a.gv || 0 };
 }
 function alcSave(p){ persist({ alc: Object.assign(alcStore(), p) }); alcShare(); }
+// Les verres de plus de 12 h disparaissent du téléphone (pas seulement de l'affichage).
+try{ const raw = store().alc; if(raw && A(raw.log).length !== alcStore().log.length) persist({ alc: alcStore() }); }catch(e){}
 const alcSum = (log, k) => Math.round(log.filter(e => e.k === k).reduce((a, e) => a + e.s, 0) * 100) / 100;
 function alcTotals(){ const a = alcStore(), v = alcSum(a.log, "v"), j = alcSum(a.log, "j"); return { v, j, n: a.log.filter(e => e.k === "v").length, tot: Math.max(v, j) }; }
 function alcShare(){ const t = alcTotals(); const x = { v: t.v, j: t.j, n: t.n }; if(JSON.stringify(CORE_X._alc) === JSON.stringify(x)) return; CORE_X._alc = x; try{ SB.refreshExtras(); }catch(e){} }

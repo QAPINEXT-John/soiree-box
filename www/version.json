@@ -1,18 +1,18 @@
 {
- "version": "4.44.0",
- "apk": 37,
+ "version": "4.45.0",
+ "apk": 38,
  "apkMin": 27,
  "base": "https://qapinext-john.github.io/soiree-box/",
  "notes": [
-  "Salons privés et sécurisés : le code fait maintenant 6 lettres, il n'apparaît plus sur les serveurs, et personne ne peut écouter ni lister les salons sans le connaître",
-  "Chaque téléphone signe ses messages : impossible de se faire passer pour l'hôte ou pour un autre joueur, et personne ne peut prendre la main tant que l'hôte est là",
-  "Nouvelle appli Android (à installer par-dessus) : les liens d'invitation acceptent les codes à 6 lettres. Avec l'ancienne appli, tape simplement le code",
-  "Tout le monde doit avoir cette version pour jouer ensemble"
+  "Appli Android : tes données (profil, poids, compteur d'alcool, réglages, clés des salons) sont maintenant chiffrées avec une clé gardée dans le coffre-fort du téléphone (Android Keystore)",
+  "Appli Android : tes données ne partent plus dans la sauvegarde automatique Google",
+  "Les verres de plus de 12 h sont vraiment effacés du téléphone",
+  "Nouvelle appli Android à installer par-dessus (tes réglages sont gardés)"
  ],
  "files": {
   "core.js": {
-   "h": "21e4ea7a0f5cbe8def8185a7d58fe0499a3a8b4d70091650d2ced14f34ac3454",
-   "s": 324188
+   "h": "aeeab352fc49d294482f983c58253e88ecb18d80644b8b437e0a7707cb739f8e",
+   "s": 325369
   },
   "firebase-app-compat.js": {
    "h": "0dbf0df8409c85768aa712c92cdc573bc768fff7975e8e19d17d54710006047a",
